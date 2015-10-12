@@ -59,16 +59,16 @@ scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) {
     fastInvSqrt
 -------------------------------------*/
 template <typename scalar_t> inline
-scalar_t math::fastInvSqrt(scalar_t input) {
-    return (scalar_t) fastInvSqrt<float>((float) input);
+scalar_t math::fast_inv_sqrt(scalar_t input) {
+    return (scalar_t) fast_inv_sqrt<float>((float) input);
 }
 
 /*-------------------------------------
     fastSqrt
 -------------------------------------*/
 template <typename scalar_t> inline
-scalar_t math::fastSqrt(scalar_t input) {
-    return scalar_t(1.0f / fastInvSqrt<scalar_t>(input));
+scalar_t math::fast_sqrt(scalar_t input) {
+    return scalar_t(1.0f / fast_inv_sqrt<scalar_t>(input));
 }
 
 /*-------------------------------------
@@ -81,7 +81,7 @@ scalar_t math::fastSqrt(scalar_t input) {
         http://jheriko-rtw.blogspot.com/2009/04/understanding-and-improving-fast.html
 -------------------------------------*/
 template <> inline
-float math::fastInvSqrt<float>(float x) {
+float math::fast_inv_sqrt<float>(float x) {
 
     union {
         float f;
@@ -95,15 +95,15 @@ float math::fastInvSqrt<float>(float x) {
     fastInvSqrt
 -------------------------------------*/
 template <> inline
-float math::fastSqrt<float>(float input) {
-    return float( 1.0f / fastInvSqrt<float>(input));
+float math::fast_sqrt<float>(float input) {
+    return float( 1.0f / fast_inv_sqrt<float>(input));
 }
 
 /*-------------------------------------
     degToRad
 -------------------------------------*/
 template <typename scalar_t> constexpr
-scalar_t math::degToRad(scalar_t input) {
+scalar_t math::deg_to_rad(scalar_t input) {
     return LS_DEG2RAD(input);
 }
 
@@ -111,7 +111,7 @@ scalar_t math::degToRad(scalar_t input) {
     radToDeg
 -------------------------------------*/
 template <typename scalar_t> constexpr
-scalar_t math::radToDeg(scalar_t input) {
+scalar_t math::rad_to_deg(scalar_t input) {
     return LS_RAD2DEG(input);
 }
 
@@ -119,8 +119,8 @@ scalar_t math::radToDeg(scalar_t input) {
     fastLog2
 -------------------------------------*/
 template <typename scalar_t> inline
-scalar_t math::fastLog2(scalar_t n) {
-    return (scalar_t) fastLog2<float>((float) n);
+scalar_t math::fast_log2(scalar_t n) {
+    return (scalar_t) fast_log2<float>((float) n);
 }
 
 /*-------------------------------------
@@ -133,7 +133,7 @@ scalar_t math::fastLog2(scalar_t n) {
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 template <> inline
-float math::fastLog2<float>(float n) {
+float math::fast_log2<float>(float n) {
     long* const exp = reinterpret_cast<long*> (&n);
     long x = *exp;
 
@@ -151,22 +151,22 @@ float math::fastLog2<float>(float n) {
     fastLog
 -------------------------------------*/
 template <typename scalar_t> inline
-scalar_t math::fastLog(scalar_t n) {
-    return fastLog2<scalar_t>(n) * 0.693147181f; // ln( 2 )
+scalar_t math::fast_log10(scalar_t n) {
+    return fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
 }
 
 /*-------------------------------------
     fastLogN
 -------------------------------------*/
 template <typename scalar_t> inline
-scalar_t math::fastLogN(scalar_t baseN, scalar_t n) {
-    return fastLog2<scalar_t>(n) / fastLog2<scalar_t>(baseN);
+scalar_t math::fast_logN(scalar_t baseN, scalar_t n) {
+    return fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
 }
 
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline unsigned math::nextPow2(unsigned n) {
+inline unsigned math::next_pow2(unsigned n) {
     if (n == 0) {
         return 0;
     }
@@ -183,14 +183,14 @@ inline unsigned math::nextPow2(unsigned n) {
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline int math::nextPow2(int n) {
-    return (int)nextPow2((unsigned)n);
+inline int math::next_pow2(int n) {
+    return (int)next_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline unsigned math::prevPow2(unsigned n) {
+inline unsigned math::prev_pow2(unsigned n) {
     if (n == 0) {
         return 0;
     }
@@ -207,16 +207,16 @@ inline unsigned math::prevPow2(unsigned n) {
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline int math::prevPow2(int n) {
-    return (int)prevPow2((unsigned)n);
+inline int math::prev_pow2(int n) {
+    return (int)prev_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline unsigned math::nearPow2(unsigned n) {
-    const unsigned pp2 = prevPow2(n);
-    const unsigned np2 = nextPow2(n);
+inline unsigned math::nearest_pow2(unsigned n) {
+    const unsigned pp2 = prev_pow2(n);
+    const unsigned np2 = next_pow2(n);
     const unsigned lo = n - pp2;
     const unsigned hi = np2 - n;
 
@@ -226,22 +226,22 @@ inline unsigned math::nearPow2(unsigned n) {
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline int math::nearPow2(int n) {
-    return (int)nearPow2((unsigned)n);
+inline int math::nearest_pow2(int n) {
+    return (int)nearest_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::isPow2(unsigned n) {
+constexpr bool math::is_pow2(unsigned n) {
     return n && !(n & (n-1));
 }
 
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::isPow2(int n) {
-    return (int)isPow2((unsigned)n);
+constexpr bool math::is_pow2(int n) {
+    return (int)is_pow2((unsigned)n);
 }
 
 /*-------------------------------------

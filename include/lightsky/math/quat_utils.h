@@ -39,7 +39,7 @@ N dot(const quat_t<N>&, const quat_t<N>&);
  *  @return The square of the length/magnitude of a quaternion.
  */
 template <typename N> constexpr
-N lengthSquared(const quat_t<N>&);
+N length_squared(const quat_t<N>&);
 
 /**
  *  @brief length
@@ -169,7 +169,7 @@ template <typename N> inline
 quat_t<N> slerp(const quat_t<N>&, const quat_t<N>&, N);
 
 /**
- * Quaternion LookAt
+ * Quaternion look_at
  * 
  * @param target
  * A vec3 type used to determine the orientation of the returned quaternion.
@@ -182,13 +182,13 @@ quat_t<N> slerp(const quat_t<N>&, const quat_t<N>&, N);
  * @return A quaternion, oriented in the direction of a target.
  */
 template <typename N> inline
-quat_t<N> lookAt(const vec3_t<N>& target, const vec3_t<N>& dir);
+quat_t<N> look_at(const vec3_t<N>& target, const vec3_t<N>& dir);
 
 /*-----------------------------------------------------------------------------
     Quaternions & Matrices
 -----------------------------------------------------------------------------*/
 /**
- *  @brief quatToMat3
+ *  @brief quat_to_mat3
  *  Convert a quaternion into a 3x3 rotational matrix.
  *  
  *  @param q
@@ -196,10 +196,10 @@ quat_t<N> lookAt(const vec3_t<N>& target, const vec3_t<N>& dir);
  *  @return a 3x3 rotation matrix.
  */
 template <typename N> inline
-mat3_t<N> quatToMat3(const quat_t<N>& q);
+mat3_t<N> quat_to_mat3(const quat_t<N>& q);
 
 /**
- *  @brief quatToMat4
+ *  @brief quat_to_mat4
  *  Convert a quaternion into a 4x4 rotational matrix.
  *  
  *  @param q
@@ -207,10 +207,10 @@ mat3_t<N> quatToMat3(const quat_t<N>& q);
  *  @return a 4x4 rotation matrix.
  */
 template <typename N> inline
-mat4_t<N> quatToMat4(const quat_t<N>& q);
+mat4_t<N> quat_to_mat4(const quat_t<N>& q);
 
 /**
- *  @brief matToQuat
+ *  @brief mat_to_quat
  *  Convert a 3x3 rotation matrix into a quaternion.
  *  
  *  @param m
@@ -218,10 +218,10 @@ mat4_t<N> quatToMat4(const quat_t<N>& q);
  *  @return a quaternion that represents a 3x3 rotation matrix.
  */
 template <typename N> inline
-quat_t<N> matToQuat(const mat3_t<N>& m);
+quat_t<N> mat_to_quat(const mat3_t<N>& m);
 
 /**
- *  @brief matToQuat
+ *  @brief mat_to_quat
  *  Convert a 4x4 rotation matrix into a quaternion.
  *  
  *  @param m
@@ -229,13 +229,13 @@ quat_t<N> matToQuat(const mat3_t<N>& m);
  *  @return a quaternion that represents a 4x4 rotation matrix.
  */
 template <typename N> inline
-quat_t<N> matToQuat(const mat4_t<N>& m);
+quat_t<N> mat_to_quat(const mat4_t<N>& m);
 
 /*-----------------------------------------------------------------------------
     Quaternions & Euler Angles
 -----------------------------------------------------------------------------*/
 /**
- *  @brief getAxisX
+ *  @brief get_x_axis
  *  Retrieve the "x-axis" of a quaternion. This is a short-circuited method of
  *  converting a quaternion into a rotation matrix, then extracting the axis of
  *  rotation along the x-axis.
@@ -245,10 +245,10 @@ quat_t<N> matToQuat(const mat4_t<N>& m);
  *  @return the rotational x-axis of a quaternion in R^3
  */
 template <typename N> constexpr
-vec3_t<N> getAxisX(const quat_t<N>& q); // Right-Vector
+vec3_t<N> get_x_axis(const quat_t<N>& q); // Right-Vector
 
 /**
- *  @brief getAxisY
+ *  @brief get_y_axis
  *  Retrieve the "y-axis" of a quaternion. This is a short-circuited method of
  *  converting a quaternion into a rotation matrix, then extracting the axis of
  *  rotation along the y-axis.
@@ -258,10 +258,10 @@ vec3_t<N> getAxisX(const quat_t<N>& q); // Right-Vector
  *  @return the rotational y-axis of a quaternion in R^3
  */
 template <typename N> constexpr
-vec3_t<N> getAxisY(const quat_t<N>& q); // Up-Vector
+vec3_t<N> get_y_axis(const quat_t<N>& q); // Up-Vector
 
 /**
- *  @brief getAxisZ
+ *  @brief get_z_axis
  *  Retrieve the "z-axis" of a quaternion. This is a short-circuited method of
  *  converting a quaternion into a rotation matrix, then extracting the axis of
  *  rotation along the z-axis.
@@ -271,10 +271,10 @@ vec3_t<N> getAxisY(const quat_t<N>& q); // Up-Vector
  *  @return the rotational z-axis of a quaternion in R^3
  */
 template <typename N> constexpr
-vec3_t<N> getAxisZ(const quat_t<N>& q); // Forwards Vector
+vec3_t<N> get_z_axis(const quat_t<N>& q); // Forwards Vector
 
 /**
- *  @brief getAngle
+ *  @brief get_angle
  *  Retrieve the angle of rotation (i.e. the real-component) of a quaternion,
  *  in R^3.
  *  
@@ -284,7 +284,7 @@ vec3_t<N> getAxisZ(const quat_t<N>& q); // Forwards Vector
  *  radians.
  */
 template <typename N> inline
-N getAngle(const quat_t<N>& q);
+N get_angle(const quat_t<N>& q);
 
 /**
  *  @brief toEuler
@@ -296,7 +296,7 @@ N getAngle(const quat_t<N>& q);
  *  quaternion, respectively.
  */
 template <typename N> inline
-vec3_t<N> toEuler(const quat_t<N>& q);
+vec3_t<N> to_euler(const quat_t<N>& q);
 
 /**
  *  @brief fromEuler
@@ -310,7 +310,7 @@ vec3_t<N> toEuler(const quat_t<N>& q);
  *  angles.
  */
 template <typename N> inline
-quat_t<N> fromEuler(const vec3_t<N>& pyr);
+quat_t<N> from_euler(const vec3_t<N>& pyr);
 
 /**
  *  @brief fromEuler
@@ -330,7 +330,7 @@ quat_t<N> fromEuler(const vec3_t<N>& pyr);
  *  angles.
  */
 template <typename N> inline
-quat_t<N> fromEuler(N pitch, N yaw, N roll);
+quat_t<N> from_euler(N pitch, N yaw, N roll);
 
 /**
  *  @brief toAxisAngle
@@ -347,7 +347,7 @@ quat_t<N> fromEuler(N pitch, N yaw, N roll);
  *  around a 3D axis in R^3.
  */
 template <typename N> inline
-void toAxisAngle(const quat_t<N>& q, vec3_t<N>& outAaxis, N& outAngle);
+void to_axis_angle(const quat_t<N>& q, vec3_t<N>& outAaxis, N& outAngle);
 
 /**
  *  @brief toAxisAngle
@@ -362,7 +362,7 @@ void toAxisAngle(const quat_t<N>& q, vec3_t<N>& outAaxis, N& outAngle);
  *  sphere, the last component of this vector is the angle.
  */
 template <typename N> inline
-vec4_t<N> toAxisAngle(const quat_t<N>& q);
+vec4_t<N> to_axis_angle(const quat_t<N>& q);
 
 /**
  *  @brief fromAxisAngle
@@ -378,7 +378,7 @@ vec4_t<N> toAxisAngle(const quat_t<N>& q);
  *  @return a rotational quaternion, converted from the input axis and angle.
  */
 template <typename N> inline
-quat_t<N> fromAxisAngle(const vec3_t<N>& axis, N angle);
+quat_t<N> from_axis_angle(const vec3_t<N>& axis, N angle);
 
 /**
  *  @brief fromAxisAngle
@@ -393,7 +393,7 @@ quat_t<N> fromAxisAngle(const vec3_t<N>& axis, N angle);
  *  vector.
  */
 template <typename N> inline
-quat_t<N> fromAxisAngle(const vec4_t<N>& axisAngle);
+quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 
 } // end math namespace
 } // end ls namespace

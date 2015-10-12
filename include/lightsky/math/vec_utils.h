@@ -76,7 +76,7 @@ vec2_t<N> normalize(const vec2_t<N>& v);
  *  @return The square of the length/magnitude of a 2D vector.
  */
 template <typename N> constexpr
-N lengthSquared(const vec2_t<N>& v);
+N length_squared(const vec2_t<N>& v);
 
 /**
  *  @brief length
@@ -117,7 +117,7 @@ vec2_t<N> rotate(const vec2_t<N>& v, N angle);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec2_t<N>& v1, const vec2_t<N>& v2);
+N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2);
 
 /**
  *  @brief angleBetween
@@ -134,7 +134,7 @@ N angleBetween(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origin);
+N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origin);
 
 /**
  *  @brief min
@@ -276,7 +276,7 @@ vec3_t<N> normalize(const vec3_t<N>& v);
  *  @return The square of the length/magnitude of a 3D vector.
  */
 template <typename N> constexpr
-N lengthSquared(const vec3_t<N>& v);
+N length_squared(const vec3_t<N>& v);
 
 /**
  *  @brief length
@@ -301,7 +301,7 @@ N length(const vec3_t<N>& v);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian X-Axis.
  */
 template <typename N> inline
-vec3_t<N> xRotation(N angle);
+vec3_t<N> x_rotation(N angle);
 
 /**
  *  @brief xRotation
@@ -314,7 +314,7 @@ vec3_t<N> xRotation(N angle);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian Y-Axis.
  */
 template <typename N> inline
-vec3_t<N> yRotation(N angle);
+vec3_t<N> y_rotation(N angle);
 
 /**
  *  @brief xRotation
@@ -327,7 +327,7 @@ vec3_t<N> yRotation(N angle);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian Z-Axis.
  */
 template <typename N> inline
-vec3_t<N> zRotation(N angle);
+vec3_t<N> z_rotation(N angle);
 
 /**
  *  @brief angleBetween
@@ -341,7 +341,7 @@ vec3_t<N> zRotation(N angle);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec3_t<N>& v1, const vec3_t<N>& v2);
+N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2);
 
 /**
  *  @brief angleBetween
@@ -358,7 +358,7 @@ N angleBetween(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origin);
+N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origin);
 
 /**
  *  @brief min
@@ -485,7 +485,7 @@ vec4_t<N> normalize(const vec4_t<N>& v);
  *  @return The square of the length/magnitude of a 4D vector.
  */
 template <typename N> constexpr
-N lengthSquared(const vec4_t<N>& v);
+N length_squared(const vec4_t<N>& v);
 
 /**
  *  @brief length
@@ -511,7 +511,7 @@ N length(const vec4_t<N>& v);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec4_t<N>& v1, const vec4_t<N>& v2);
+N angle_between(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 /**
  *  @brief angleBetween
@@ -528,7 +528,7 @@ N angleBetween(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angleBetween(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origin);
+N angle_bewteen(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origin);
 
 /**
  *  @brief min

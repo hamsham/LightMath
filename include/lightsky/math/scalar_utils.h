@@ -97,7 +97,7 @@ constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x);
  * @return The square root of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fastSqrt(scalar_t);
+inline scalar_t fast_sqrt(scalar_t);
 
 /**
  * @brief fastSqrt
@@ -110,7 +110,7 @@ inline scalar_t fastSqrt(scalar_t);
  * @return The square root of the input number.
  */
 template <>
-inline float fastSqrt<float>(float);
+inline float fast_sqrt<float>(float);
 
 /**
  * @brief fastInvSqrt
@@ -123,7 +123,7 @@ inline float fastSqrt<float>(float);
  * @return The inverse square root (1/sqrt(x)) of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fastInvSqrt(scalar_t);
+inline scalar_t fast_inv_sqrt(scalar_t);
 
 /**
  * @brief fastInvSqrt
@@ -136,7 +136,7 @@ inline scalar_t fastInvSqrt(scalar_t);
  * @return The inverse square root (1/sqrt(x)) of the input number.
  */
 template <>
-inline float fastInvSqrt<float>(float);
+inline float fast_inv_sqrt<float>(float);
 
 /**
  * @brief degToRad
@@ -147,7 +147,7 @@ inline float fastInvSqrt<float>(float);
  * @return the value of an angle, in radians.
  */
 template <typename scalar_t>
-constexpr scalar_t degToRad(scalar_t);
+constexpr scalar_t deg_to_rad(scalar_t);
 
 /**
  * @brief radToDeg
@@ -159,7 +159,7 @@ constexpr scalar_t degToRad(scalar_t);
  * @return the value of an angle, in degrees.
  */
 template <typename scalar_t>
-constexpr scalar_t radToDeg(scalar_t);
+constexpr scalar_t rad_to_deg(scalar_t);
 
 /**
  * @brief fastLog2
@@ -170,7 +170,7 @@ constexpr scalar_t radToDeg(scalar_t);
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fastLog2(scalar_t);
+inline scalar_t fast_log2(scalar_t);
 
 /**
  * @brief fastLog2
@@ -181,7 +181,7 @@ inline scalar_t fastLog2(scalar_t);
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <>
-inline float fastLog2<float>(float);
+inline float fast_log2<float>(float);
 
 /**
  * @brief fastLog
@@ -192,7 +192,7 @@ inline float fastLog2<float>(float);
  * @return the log-base10 of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fastLog(scalar_t);
+inline scalar_t fast_log10(scalar_t);
 
 /**
  * @brief fastLogBase
@@ -203,7 +203,7 @@ inline scalar_t fastLog(scalar_t);
  * @return the log-baseN of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fastLogN(scalar_t baseN, scalar_t);
+inline scalar_t fast_logN(scalar_t baseN, scalar_t);
 
 /**
  * @brief nextPow2
@@ -213,7 +213,7 @@ inline scalar_t fastLogN(scalar_t baseN, scalar_t);
  * 
  * @return The next greatest power of two.
  */
-inline unsigned nextPow2(unsigned);
+inline unsigned next_pow2(unsigned);
 
 /**
  * @brief nextPow2
@@ -223,7 +223,7 @@ inline unsigned nextPow2(unsigned);
  * 
  * @return The next greatest power of two.
  */
-inline int nextPow2(int);
+inline int next_pow2(int);
 
 /**
  * @brief prevPow2
@@ -233,7 +233,7 @@ inline int nextPow2(int);
  * 
  * @return The next lesser power of two.
  */
-inline unsigned prevPow2(unsigned);
+inline unsigned prev_pow2(unsigned);
 
 /**
  * @brief prevPow2
@@ -243,7 +243,7 @@ inline unsigned prevPow2(unsigned);
  * 
  * @return The next lesser power of two.
  */
-inline int prevPow2(int);
+inline int prev_pow2(int);
 
 /**
  * @brief nearPow2
@@ -254,7 +254,7 @@ inline int prevPow2(int);
  * 
  * @return The closest power of two to a number.
  */
-inline unsigned nearPow2(unsigned);
+inline unsigned nearest_pow2(unsigned);
 
 /**
  * @brief nearPow2
@@ -265,7 +265,7 @@ inline unsigned nearPow2(unsigned);
  * 
  * @return The closest power of two to a number.
  */
-inline int nearPow2(int);
+inline int nearest_pow2(int);
 
 /**
  * @brief isPow2
@@ -276,7 +276,7 @@ inline int nearPow2(int);
  * @return True if the number is a poiwer of two.
  * False if the number is not a power of two.
  */
-constexpr bool isPow2(unsigned);
+constexpr bool is_pow2(unsigned);
 
 /**
  * @brief isPow2
@@ -287,7 +287,7 @@ constexpr bool isPow2(unsigned);
  * @return True if the number is a poiwer of two.
  * False if the number is not a power of two.
  */
-constexpr bool isPow2(int);
+constexpr bool is_pow2(int);
 
 /**
  * @brief factorial

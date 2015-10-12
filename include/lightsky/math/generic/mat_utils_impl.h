@@ -159,7 +159,7 @@ math::mat3_t<num_t> math::translate(const mat3_t<num_t>& m, const vec2_t<num_t>&
     3x3 LookAt
 -------------------------------------*/
 template <typename num_t> inline
-math::mat3_t<num_t> math::pureLookAt(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
+math::mat3_t<num_t> math::pure_look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
     const vec3_t<num_t> yAxis = normalize(cross(zAxis, xAxis));
@@ -362,7 +362,7 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
     4x4 Infinite Perspective
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::infinitePerspective(num_t fov, num_t aspect, num_t zNear) {
+math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zNear) {
     const num_t top     = LS_TAN(fov / num_t{2}) * zNear;
     const num_t bottom  = -top;
     const num_t xMin    = bottom * aspect;
@@ -430,7 +430,7 @@ math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bott
     4x4 LookAt
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::lookAt(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
+math::mat4_t<num_t> math::look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
     const vec3_t<num_t> yAxis = normalize(cross(zAxis, xAxis));
@@ -447,7 +447,7 @@ math::mat4_t<num_t> math::lookAt(const vec3_t<num_t>& pos, const vec3_t<num_t>& 
  Look From
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::lookFrom(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
+math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
     const vec3_t<num_t> yAxis = normalize(cross(zAxis, xAxis));

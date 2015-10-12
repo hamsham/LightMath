@@ -367,7 +367,7 @@ fixed_t<fixed_base_t, num_frac_digits>::operator double() const {
 /*
  *  Integer cast.
  */
-template <typename fixed_base_t, unsigned num_frac_digits> constexpr
+template <typename fixed_base_t, unsigned num_frac_digits> inline
 fixed_t<fixed_base_t, num_frac_digits>::operator fixed_base_t() const {
     return num_frac_digits;
 }

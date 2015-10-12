@@ -645,7 +645,7 @@ class fixed_t final {
          *  An integer containing the same value as *this with no conversion of
          *  fractions.
          */
-        explicit constexpr operator fixed_base_t() const;
+        explicit inline operator fixed_base_t() const;
 
         /**
          *  @brief Single-Precision floating-point Assignment.
@@ -692,22 +692,16 @@ class fixed_t final {
     Fixed-Point Template Specializations
 -------------------------------------*/
 LS_DECLARE_CLASS_TYPE(lowp_t,           fixed_t,    int32_t,    7); // 24.7 (-1 for the sign)
-LS_DECLARE_CLASS_TYPE(lowp,             fixed_t,    LS_INT,     7);
 LS_DECLARE_CLASS_TYPE(medp_t,           fixed_t,    int32_t,    15); // 16.15
-LS_DECLARE_CLASS_TYPE(medp,             fixed_t,    LS_INT,     15);
 LS_DECLARE_CLASS_TYPE(highp_t,          fixed_t,    int32_t,    23); // 8.23
-LS_DECLARE_CLASS_TYPE(highp,            fixed_t,    LS_INT,     23);
 
 LS_DECLARE_CLASS_TYPE(long_lowp_t,      fixed_t,    int64_t,    15); // 48.15
 LS_DECLARE_CLASS_TYPE(long_medp_t,      fixed_t,    int64_t,    31); // 32.31
 LS_DECLARE_CLASS_TYPE(long_highp_t,     fixed_t,    int64_t,    47); // 16.47
 
 LS_DECLARE_CLASS_TYPE(ulowp_t,          fixed_t,    uint32_t,   8); // 24.8 (-1 for the sign)
-LS_DECLARE_CLASS_TYPE(ulowp,            fixed_t,    LS_UINT,    8);
 LS_DECLARE_CLASS_TYPE(umedp_t,          fixed_t,    uint32_t,   16); // 16.16
-LS_DECLARE_CLASS_TYPE(umedp,            fixed_t,    LS_UINT,    16);
 LS_DECLARE_CLASS_TYPE(uhighp_t,         fixed_t,    uint32_t,   24); // 8.24
-LS_DECLARE_CLASS_TYPE(uhigh,            fixed_t,    LS_UINT,    24);
 
 LS_DECLARE_CLASS_TYPE(ulong_lowp_t,     fixed_t,    uint64_t,   16); // 48.16
 LS_DECLARE_CLASS_TYPE(ulong_medp_t,     fixed_t,    uint64_t,   32); // 32.32

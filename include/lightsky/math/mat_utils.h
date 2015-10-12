@@ -180,7 +180,7 @@ mat3_t<N> translate(const mat3_t<N>& m, const vec2_t<N>& amount);
  *  target in 3D space.
  */
 template <typename N> inline
-mat3_t<N> pureLookAt(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat3_t<N> pure_look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
 
 /*-----------------------------------------------------------------------------
     4x4 Matrices
@@ -311,7 +311,7 @@ mat4_t<N> perspective(N fov, N aspect, N zNear, N zFar);
  *  A 4x4 perspective-projection matrix with no far plane.
  */
 template <typename N> inline
-mat4_t<N> infinitePerspective(N fov, N aspect, N zNear);
+mat4_t<N> infinite_perspective(N fov, N aspect, N zNear);
 
 /**
  *  @brief ortho
@@ -417,7 +417,7 @@ mat4_t<N> frustum(N left, N right, N top, N bottom, N near, N far);
  *  target in 3D space.
  */
 template <typename N> inline
-mat4_t<N> lookAt(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat4_t<N> look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
 
 /**
  *  @brief Look at a target from a specific position in 3D space.
@@ -436,7 +436,7 @@ mat4_t<N> lookAt(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>&
  *  target in 3D space.
  */
 template <typename N> inline
-mat4_t<N> lookFrom(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat4_t<N> look_from(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
 
 /**
  *  @brief billboard

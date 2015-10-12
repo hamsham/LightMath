@@ -16,7 +16,7 @@ num_t math::dot(const quat_t<num_t>& q1, const quat_t<num_t>& q2) {
     lengthSquared
 -------------------------------------*/
 template <typename num_t> constexpr
-num_t math::lengthSquared(const quat_t<num_t>& q) {
+num_t math::length_squared(const quat_t<num_t>& q) {
     return (q.q[0]*q.q[0]) + (q.q[1]*q.q[1]) + (q.q[2]*q.q[2]) + (q.q[3]*q.q[3]);
 }
 
@@ -25,7 +25,7 @@ num_t math::lengthSquared(const quat_t<num_t>& q) {
 -------------------------------------*/
 template <typename num_t> inline
 num_t math::length(const quat_t<num_t>& q) {
-    return (num_t) LS_SQRT(lengthSquared<num_t>(q));
+    return (num_t) LS_SQRT(length_squared<num_t>(q));
 }
 
 /*-------------------------------------
@@ -33,7 +33,7 @@ num_t math::length(const quat_t<num_t>& q) {
 -------------------------------------*/
 template <typename num_t> inline
 math::quat_t<num_t> math::inverse(const quat_t<num_t>& q) {
-    const num_t magInv{fastInvSqrt<num_t>(lengthSquared<num_t>(q))};
+    const num_t magInv{fast_inv_sqrt<num_t>(length_squared<num_t>(q))};
     return quat_t<num_t>{
         -q.q[0] * magInv,
         -q.q[1] * magInv,
@@ -55,7 +55,7 @@ math::quat_t<num_t> math::conjugate(const quat_t<num_t>& q) {
 -------------------------------------*/
 template <typename num_t> inline
 math::quat_t<num_t> math::normalize(const quat_t<num_t>& q) {
-    const num_t magInv{fastInvSqrt<num_t>(lengthSquared<num_t>(q))};
+    const num_t magInv{fast_inv_sqrt<num_t>(length_squared<num_t>(q))};
     
     return quat_t<num_t>{
         q.q[0] * magInv,
@@ -74,7 +74,7 @@ math::vec3_t<num_t> math::rotate(const vec3_t<num_t>& v, const quat_t<num_t>& q)
     const vec3_t<num_t> qCrossV = cross<num_t>(qVec, v);
     const num_t         qReal   = q[3];
     const num_t         qDotV   = dot<num_t>(qVec, v);
-    const num_t         qLenSq  = lengthSquared<num_t>(qVec);
+    const num_t         qLenSq  = length_squared<num_t>(qVec);
     
     return vec3_t<num_t>{
         num_t{2} * qDotV * qVec
@@ -130,7 +130,7 @@ math::quat_t<num_t> math::slerp(const quat_t<num_t>& q1, const quat_t<num_t>& q2
     lookAt
 -------------------------------------*/
 template <typename num_t>
-math::quat_t<num_t> math::lookAt(const math::vec3_t<num_t>& target, const math::vec3_t<num_t>& dir){
+math::quat_t<num_t> math::look_at(const math::vec3_t<num_t>& target, const math::vec3_t<num_t>& dir){
     const vec3_t<num_t>&& a = normalize<num_t>(target);
     const vec3_t<num_t>&& b = normalize<num_t>(dir);
     
@@ -148,7 +148,7 @@ math::quat_t<num_t> math::lookAt(const math::vec3_t<num_t>& target, const math::
     quatToMat3
 -------------------------------------*/
 template <typename num_t> inline
-math::mat3_t<num_t> math::quatToMat3(const quat_t<num_t>& q) {
+math::mat3_t<num_t> math::quat_to_mat3(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0] * num_t{2};
     const num_t yy = q.q[1] * q.q[1] * num_t{2};
     const num_t zz = q.q[2] * q.q[2] * num_t{2};
@@ -170,7 +170,7 @@ math::mat3_t<num_t> math::quatToMat3(const quat_t<num_t>& q) {
     quatToMat4
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::quatToMat4(const quat_t<num_t>& q) {
+math::mat4_t<num_t> math::quat_to_mat4(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0] * num_t{2};
     const num_t yy = q.q[1] * q.q[1] * num_t{2};
     const num_t zz = q.q[2] * q.q[2] * num_t{2};
@@ -193,7 +193,7 @@ math::mat4_t<num_t> math::quatToMat4(const quat_t<num_t>& q) {
     matToQuat
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::matToQuat(const mat3_t<num_t>& m) {
+math::quat_t<num_t> math::mat_to_quat(const mat3_t<num_t>& m) {
     num_t s(0);
     num_t trace(m.m[0][0] + m.m[1][1] + m.m[2][2]);
     quat_t<num_t> q;
@@ -236,7 +236,7 @@ math::quat_t<num_t> math::matToQuat(const mat3_t<num_t>& m) {
     matToQuat
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::matToQuat(const mat4_t<num_t>& m) {
+math::quat_t<num_t> math::mat_to_quat(const mat4_t<num_t>& m) {
     num_t s(0);
     num_t trace(m.m[0][0] + m.m[1][1] + m.m[2][2]);
     quat_t<num_t> q;
@@ -287,7 +287,7 @@ math::quat_t<num_t> math::matToQuat(const mat4_t<num_t>& m) {
     getAxisX
 -------------------------------------*/
 template <typename num_t> constexpr
-math::vec3_t<num_t> math::getAxisX(const math::quat_t<num_t>& q) {
+math::vec3_t<num_t> math::get_x_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{1} - num_t{2} * (q[1] * q[1] + q[2] * q[2]),
         num_t{2} * (q[0] * q[1] + q[3] * q[2]),
@@ -299,7 +299,7 @@ math::vec3_t<num_t> math::getAxisX(const math::quat_t<num_t>& q) {
     getAxisY
 -------------------------------------*/
 template <typename num_t> constexpr
-math::vec3_t<num_t> math::getAxisY(const math::quat_t<num_t>& q) {
+math::vec3_t<num_t> math::get_y_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{2} * (q[0] * q[1] - q[3] * q[2]),
         num_t{1} - num_t{2} * (q[0] * q[0] + q[2] * q[2]),
@@ -311,7 +311,7 @@ math::vec3_t<num_t> math::getAxisY(const math::quat_t<num_t>& q) {
     getAxisZ
 -------------------------------------*/
 template <typename num_t> constexpr
-math::vec3_t<num_t> math::getAxisZ(const math::quat_t<num_t>& q) {
+math::vec3_t<num_t> math::get_z_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{2} * (q[0] * q[2] + q[3] * q[1]),
         num_t{2} * (q[1] * q[2] - q[3] * q[0]),
@@ -323,7 +323,7 @@ math::vec3_t<num_t> math::getAxisZ(const math::quat_t<num_t>& q) {
     getAngle
 -------------------------------------*/
 template <typename num_t> inline
-num_t math::getAngle(const quat_t<num_t>& q) {
+num_t math::get_angle(const quat_t<num_t>& q) {
     return num_t{std::acos(q.q[3] * num_t{2})};
 }
 
@@ -331,7 +331,7 @@ num_t math::getAngle(const quat_t<num_t>& q) {
     toEuler
 -------------------------------------*/
 template <typename num_t> inline
-math::vec3_t<num_t> math::toEuler(const quat_t<num_t>& q) {
+math::vec3_t<num_t> math::to_euler(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0];
     const num_t yy = q.q[1] * q.q[1];
     const num_t zz = q.q[2] * q.q[2];
@@ -353,7 +353,7 @@ math::vec3_t<num_t> math::toEuler(const quat_t<num_t>& q) {
     fromEuler
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::fromEuler(const math::vec3_t<num_t>& angles) {
+math::quat_t<num_t> math::from_euler(const math::vec3_t<num_t>& angles) {
     const num_t cp = LS_COS(angles.v[0] * num_t{0.5});
     const num_t sp = LS_SIN(angles.v[0] * num_t{0.5});
 
@@ -375,7 +375,7 @@ math::quat_t<num_t> math::fromEuler(const math::vec3_t<num_t>& angles) {
     fromEuler
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::fromEuler(num_t pitch, num_t yaw, num_t roll) {
+math::quat_t<num_t> math::from_euler(num_t pitch, num_t yaw, num_t roll) {
     const num_t cp = LS_COS(pitch * num_t{0.5});
     const num_t sp = LS_SIN(pitch * num_t{0.5});
 
@@ -397,7 +397,7 @@ math::quat_t<num_t> math::fromEuler(num_t pitch, num_t yaw, num_t roll) {
     toAxisAngle
 -------------------------------------*/
 template <typename num_t> inline
-void math::toAxisAngle(const quat_t<num_t>& q, vec3_t<num_t>& outAxis, num_t& outAngle) {
+void math::to_axis_angle(const quat_t<num_t>& q, vec3_t<num_t>& outAxis, num_t& outAngle) {
     num_t s = LS_SQRT(num_t{1} - (q.q[3] * q.q[3]));
 
     if (std::abs(s) <= num_t{0}) {
@@ -417,7 +417,7 @@ void math::toAxisAngle(const quat_t<num_t>& q, vec3_t<num_t>& outAxis, num_t& ou
     toAxisAngle
 -------------------------------------*/
 template <typename num_t> inline
-math::vec4_t<num_t> math::toAxisAngle(const quat_t<num_t>& q) {
+math::vec4_t<num_t> math::to_axis_angle(const quat_t<num_t>& q) {
     const num_t c = q.q[3];
     num_t s = LS_SQRT(num_t{1} - c * c);
 
@@ -440,7 +440,7 @@ math::vec4_t<num_t> math::toAxisAngle(const quat_t<num_t>& q) {
     fromAxisAngle
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::fromAxisAngle(const vec3_t<num_t>& axis, num_t angle) {
+math::quat_t<num_t> math::from_axis_angle(const vec3_t<num_t>& axis, num_t angle) {
     num_t a = angle * num_t{0.5};
     num_t s = LS_SIN(a);
     
@@ -456,7 +456,7 @@ math::quat_t<num_t> math::fromAxisAngle(const vec3_t<num_t>& axis, num_t angle) 
     fromAxisAngle
 -------------------------------------*/
 template <typename num_t> inline
-math::quat_t<num_t> math::fromAxisAngle(const vec4_t<num_t>& v) {
+math::quat_t<num_t> math::from_axis_angle(const vec4_t<num_t>& v) {
     num_t a = v.v[3] * num_t{0.5};
     num_t s = LS_SIN(a);
     return quat_t<num_t>{

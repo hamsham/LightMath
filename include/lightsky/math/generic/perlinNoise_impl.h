@@ -26,7 +26,7 @@ perlinNoise_t<num_t>::perlinNoise_t() :
 -------------------------------------*/
 template <typename num_t>
 perlinNoise_t<num_t>::perlinNoise_t(unsigned long s) :
-    prng{new utils::randomNum{}},
+    prng{new utils::RandomNum{}},
     permutations{new int[MAX_PERMUTATIONS]}
 {
     this->seed(s);
@@ -37,7 +37,7 @@ perlinNoise_t<num_t>::perlinNoise_t(unsigned long s) :
 -------------------------------------*/
 template <typename num_t>
 perlinNoise_t<num_t>::perlinNoise_t(const perlinNoise_t& pn) :
-    prng{new utils::randomNum{*(pn.prng)}},
+    prng{new utils::RandomNum{*(pn.prng)}},
     permutations{new int[MAX_PERMUTATIONS]}
 {
     std::copy(pn.permutations, pn.permutations+MAX_PERMUTATIONS, permutations);
@@ -182,7 +182,7 @@ double perlinNoise_t<num_t>::grad(int hash, double x, double y, double z) {
 -------------------------------------*/
 template <typename num_t>
 template <typename point_t>
-num_t perlinNoise_t<num_t>::getNoise(const vec3_t<point_t>& point) {
+num_t perlinNoise_t<num_t>::get_noise(const vec3_t<point_t>& point) {
     // create coordinates for a "unit cube"
     int xi = (int)std::floor(point[0]) & 255;
     int yi = (int)std::floor(point[1]) & 255;
@@ -222,14 +222,14 @@ num_t perlinNoise_t<num_t>::getNoise(const vec3_t<point_t>& point) {
     http://flafla2.github.io/2014/08/09/perlinnoise.html
 -------------------------------------*/
 template <typename num_t>
-num_t perlinNoise_t<num_t>::getOctaveNoise(const vec3_t<num_t>& point, unsigned octaves, num_t persistence) {
+num_t perlinNoise_t<num_t>::get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistence) {
     num_t total = num_t{0};
     num_t frequency = num_t{1};
     num_t amplitude = num_t{1};
     num_t maxValue = num_t{1};
     
     for (unsigned i = 0; i < octaves; ++i) {
-        total += getNoise(point * frequency * amplitude);
+        total += get_noise(point * frequency * amplitude);
         maxValue += amplitude;
         amplitude *= persistence;
         frequency *= num_t{2};

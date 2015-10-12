@@ -30,7 +30,7 @@ class perlinNoise_t {
          * Pointer to a pseudo-random number generator that will be used to
          * generate random noise.
          */
-        utils::randomNum* prng = nullptr;
+        utils::RandomNum* prng = nullptr;
         
         /**
          * An array of 512 randomly ordered integers that are used to generate
@@ -163,7 +163,7 @@ class perlinNoise_t {
          * the input parameter. This value will be between [-1,1].
          */
         template <typename point_t>
-        num_t getNoise(const vec3_t<point_t>& point);
+        num_t get_noise(const vec3_t<point_t>& point);
         
         /**
          * Get a [pseudo] randomly generated noise value within a 3D Cartesian
@@ -188,7 +188,7 @@ class perlinNoise_t {
          * @return A Perlin noise value, calculated at the point specified by
          * the input parameter. This value will be between [-1,1].
          */
-        num_t getOctaveNoise(const vec3_t<num_t>& point, unsigned octaves, num_t persistance);
+        num_t get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistance);
 };
 
 /*-------------------------------------
