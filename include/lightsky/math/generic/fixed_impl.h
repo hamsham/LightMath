@@ -396,5 +396,5 @@ fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::
     return *this = fixed_t{f};
 }
 
-}//end math namespace
-}//end ls namespace
+} //end math namespace
+} //end ls namespace
