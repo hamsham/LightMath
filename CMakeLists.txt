@@ -35,7 +35,7 @@ set(LS_MATH_SOURCES
 add_library("${OUTPUT_NAME}" STATIC "${LS_MATH_SOURCES}")
 
 # Dependencies
-target_link_libraries("${OUTPUT_NAME}" liblssetup)
+target_link_libraries("${OUTPUT_NAME}" lssetup)
 
 
 
