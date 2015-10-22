@@ -8,6 +8,6 @@
 #ifndef __LS_MATH_SETUP_H__
 #define __LS_MATH_SETUP_H__
 
-#include "lightsky/setup/setup.h"
+#include "lightsky/setup/Setup.h"
 
 #endif /* __LS_MATH_SETUP_H__ */

@@ -8,10 +8,10 @@
 #ifndef __LS_MATH_VEC_UTILS_H__
 #define __LS_MATH_VEC_UTILS_H__
 
-#include "lightsky/math/types.h"
+#include "lightsky/math/Types.h"
 #include "lightsky/math/scalar_utils.h"
 
-#include "lightsky/math/types.h"
+#include "lightsky/math/Types.h"
 #include "lightsky/math/vec2.h"
 #include "lightsky/math/vec3.h"
 #include "lightsky/math/vec4.h"

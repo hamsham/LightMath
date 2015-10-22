@@ -17,15 +17,15 @@ enum : unsigned {
     Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>::perlinNoise_t() :
-    perlinNoise_t{(long unsigned)std::chrono::system_clock::now().time_since_epoch().count()}
+PerlinNoise<num_t>::PerlinNoise() :
+    PerlinNoise{(long unsigned)std::chrono::system_clock::now().time_since_epoch().count()}
 {}
 
 /*-------------------------------------
     Random Seed Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>::perlinNoise_t(unsigned long s) :
+PerlinNoise<num_t>::PerlinNoise(unsigned long s) :
     prng{new utils::RandomNum{}},
     permutations{new int[MAX_PERMUTATIONS]}
 {
@@ -36,7 +36,7 @@ perlinNoise_t<num_t>::perlinNoise_t(unsigned long s) :
     Copy Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>::perlinNoise_t(const perlinNoise_t& pn) :
+PerlinNoise<num_t>::PerlinNoise(const PerlinNoise& pn) :
     prng{new utils::RandomNum{*(pn.prng)}},
     permutations{new int[MAX_PERMUTATIONS]}
 {
@@ -47,7 +47,7 @@ perlinNoise_t<num_t>::perlinNoise_t(const perlinNoise_t& pn) :
     Move Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>::perlinNoise_t(perlinNoise_t&& pn) :
+PerlinNoise<num_t>::PerlinNoise(PerlinNoise&& pn) :
     prng{pn.prng},
     permutations{pn.permutations}
 {
@@ -59,7 +59,7 @@ perlinNoise_t<num_t>::perlinNoise_t(perlinNoise_t&& pn) :
     Destructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>::~perlinNoise_t() {
+PerlinNoise<num_t>::~PerlinNoise() {
     delete prng;
     delete [] permutations;
 }
@@ -68,7 +68,7 @@ perlinNoise_t<num_t>::~perlinNoise_t() {
     Copy Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>& perlinNoise_t<num_t>::operator=(const perlinNoise_t& pn) {
+PerlinNoise<num_t>& PerlinNoise<num_t>::operator=(const PerlinNoise& pn) {
     *prng = *pn.prng;
     
     std::copy(pn.permutations, pn.permutations+MAX_PERMUTATIONS, permutations);
@@ -81,7 +81,7 @@ perlinNoise_t<num_t>& perlinNoise_t<num_t>::operator=(const perlinNoise_t& pn) {
     Move Constructor
 -------------------------------------*/
 template <typename num_t>
-perlinNoise_t<num_t>& perlinNoise_t<num_t>::operator=(perlinNoise_t&& pn) {
+PerlinNoise<num_t>& PerlinNoise<num_t>::operator=(PerlinNoise&& pn) {
     delete prng;
     prng = pn.prng;
     pn.prng = nullptr;
@@ -97,7 +97,7 @@ perlinNoise_t<num_t>& perlinNoise_t<num_t>::operator=(perlinNoise_t&& pn) {
     Regenerate the noise permutations
 -------------------------------------*/
 template <typename num_t>
-void perlinNoise_t<num_t>::seed(unsigned long s) {
+void PerlinNoise<num_t>::seed(unsigned long s) {
     prng->seed(s);
     
     // initialize all of the numbers between 0-255
@@ -123,7 +123,7 @@ void perlinNoise_t<num_t>::seed(unsigned long s) {
     Regenerate the noise permutations
 -------------------------------------*/
 template <typename num_t>
-void perlinNoise_t<num_t>::seed() {
+void PerlinNoise<num_t>::seed() {
     this->seed((long unsigned)std::chrono::system_clock::now().time_since_epoch().count());
 }
 
@@ -132,7 +132,7 @@ void perlinNoise_t<num_t>::seed() {
     This was defined by Ken Perlin.
 -------------------------------------*/
 template <typename num_t>
-double perlinNoise_t<num_t>::fade(double t) {
+double PerlinNoise<num_t>::fade(double t) {
     return t * t * t * (t * (t * 6.0 - 15.0) + 10.0);
 }
 
@@ -140,7 +140,7 @@ double perlinNoise_t<num_t>::fade(double t) {
     Linearly interpolate between gradient values
 -------------------------------------*/
 template <typename num_t>
-double perlinNoise_t<num_t>::lerp(double a, double b, double x) {
+double PerlinNoise<num_t>::lerp(double a, double b, double x) {
     return a + x * (b - a);
 }
 
@@ -149,7 +149,7 @@ double perlinNoise_t<num_t>::lerp(double a, double b, double x) {
     This was defined by Ken Perlin.
 -------------------------------------*/
 template <typename num_t>
-double perlinNoise_t<num_t>::grad(int hash, double x, double y, double z) {
+double PerlinNoise<num_t>::grad(int hash, double x, double y, double z) {
     switch(hash & 0xF) {
         case 0x0:   return  x + y;
         case 0x1:   return -x + y;
@@ -182,7 +182,7 @@ double perlinNoise_t<num_t>::grad(int hash, double x, double y, double z) {
 -------------------------------------*/
 template <typename num_t>
 template <typename point_t>
-num_t perlinNoise_t<num_t>::get_noise(const vec3_t<point_t>& point) {
+num_t PerlinNoise<num_t>::get_noise(const vec3_t<point_t>& point) {
     // create coordinates for a "unit cube"
     int xi = (int)std::floor(point[0]) & 255;
     int yi = (int)std::floor(point[1]) & 255;
@@ -222,7 +222,7 @@ num_t perlinNoise_t<num_t>::get_noise(const vec3_t<point_t>& point) {
     http://flafla2.github.io/2014/08/09/perlinnoise.html
 -------------------------------------*/
 template <typename num_t>
-num_t perlinNoise_t<num_t>::get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistence) {
+num_t PerlinNoise<num_t>::get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistence) {
     num_t total = num_t{0};
     num_t frequency = num_t{1};
     num_t amplitude = num_t{1};

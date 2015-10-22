@@ -12,7 +12,7 @@
 #include <algorithm>
 
 #include "lightsky/math/vec3.h"
-#include "lightsky/utils/randomNum.h"
+#include "lightsky/utils/RandomNum.h"
 
 namespace ls {
 namespace math {
@@ -24,7 +24,7 @@ namespace math {
  * http://flafla2.github.io/2014/08/09/perlinnoise.html
  */
 template <typename num_t = float>
-class perlinNoise_t {
+class PerlinNoise {
     private:
         /**
          * Pointer to a pseudo-random number generator that will be used to
@@ -84,7 +84,7 @@ class perlinNoise_t {
         /**
          * Constructor
          */
-        perlinNoise_t();
+        PerlinNoise();
         
         /**
          * Seed Constructor
@@ -93,14 +93,14 @@ class perlinNoise_t {
          * A long, unsigned integral value that will be used to seed the random
          * number generator.
          */
-        explicit perlinNoise_t(unsigned long s);
+        explicit PerlinNoise(unsigned long s);
         
         /**
          * Copy Constructor
          * 
          * @param A constant reference to another Perlin noise object
          */
-        perlinNoise_t(const perlinNoise_t&);
+        PerlinNoise(const PerlinNoise&);
         
         /**
          * Move Constructor
@@ -110,13 +110,13 @@ class perlinNoise_t {
          * @param An R-Value reference to a Perlin noise object that's about to
          * go out of scope.
          */
-        perlinNoise_t(perlinNoise_t&&);
+        PerlinNoise(PerlinNoise&&);
         
         /**
          * Destructor
          * Frees all memory used by *this.
          */
-        ~perlinNoise_t();
+        ~PerlinNoise();
         
         /**
          * Copy Operator
@@ -125,7 +125,7 @@ class perlinNoise_t {
          * 
          * @return A reference to *this.
          */
-        perlinNoise_t& operator=(const perlinNoise_t&);
+        PerlinNoise& operator=(const PerlinNoise&);
         
         /**
          * Move Operator
@@ -135,7 +135,7 @@ class perlinNoise_t {
          * 
          * @return A reference to *this.
          */
-        perlinNoise_t& operator=(perlinNoise_t&&);
+        PerlinNoise& operator=(PerlinNoise&&);
         
         /**
          * Seed the random number generator in order to generate new noise.
@@ -194,11 +194,11 @@ class perlinNoise_t {
 /*-------------------------------------
     Perlin Noise Specializations
 -------------------------------------*/
-LS_DECLARE_CLASS_TYPE(perlinNoisef,     perlinNoise_t, float);
-LS_DECLARE_CLASS_TYPE(perlinNoised,     perlinNoise_t, double);
-LS_DECLARE_CLASS_TYPE(perlinNoisei,     perlinNoise_t, int);
-LS_DECLARE_CLASS_TYPE(perlinNoiseuu,    perlinNoise_t, unsigned);
-LS_DECLARE_CLASS_TYPE(perlinNoisex,     perlinNoise_t, medp_t);
+LS_DECLARE_CLASS_TYPE(PerlinNoisef,     PerlinNoise, float);
+LS_DECLARE_CLASS_TYPE(PerlinNoised,     PerlinNoise, double);
+LS_DECLARE_CLASS_TYPE(PerlinNoisei,     PerlinNoise, int);
+LS_DECLARE_CLASS_TYPE(PerlinNoiseuu,    PerlinNoise, unsigned);
+LS_DECLARE_CLASS_TYPE(PerlinNoisex,     PerlinNoise, medp_t);
 
 } // end math namespace
 } // end ls namespace

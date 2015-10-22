@@ -16,8 +16,8 @@
  * variables, so this might make readability slightly difficult at first.
  */
 
-#include "lightsky/math/setup.h"
-#include "lightsky/math/types.h"
+#include "lightsky/math/Setup.h"
+#include "lightsky/math/Types.h"
 
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/mat2.h"
@@ -33,6 +33,6 @@
 #include "lightsky/math/vec_utils.h"
 #include "lightsky/math/mat_utils.h"
 
-#include "lightsky/math/perlinNoise.h"
+#include "lightsky/math/PerlinNoise.h"
 
 #endif /* __LS_MATH_H__ */

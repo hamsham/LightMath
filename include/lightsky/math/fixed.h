@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <utility> // std::move()
 
-#include "lightsky/math/setup.h"
-#include "lightsky/math/types.h"
+#include "lightsky/math/Setup.h"
+#include "lightsky/math/Types.h"
 
 namespace ls {
 namespace math {

@@ -18,7 +18,7 @@ set(LS_MATH_SOURCES
     "src/math/mat3.cpp"
     "src/math/mat4.cpp"
     "src/math/mat_utils.cpp"
-    "src/math/perlinNoise.cpp"
+    "src/math/PerlinNoise.cpp"
     "src/math/quat.cpp"
     "src/math/scalar_utils.cpp"
     "src/math/vec2.cpp"
