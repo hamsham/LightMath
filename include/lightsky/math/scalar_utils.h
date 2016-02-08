@@ -72,6 +72,55 @@ template <typename scalar_t>
 constexpr scalar_t clamp(scalar_t n, scalar_t minVal, scalar_t maxVal);
 
 /**
+ * @brief Retrieve the nearest integer less than or equal to the input float.
+ * 
+ * @param n
+ * A floating-point number.
+ * 
+ * @return A value equal to the nearest integer that is less than or equal to
+ * the input parameter.
+ */
+template <typename float_t>
+constexpr float_t floor(const float_t n);
+
+/**
+ * @brief Retrieve the nearest integer greater than or equal to the input
+ * float.
+ * 
+ * @param n
+ * A floating-point number.
+ * 
+ * @return A value equal to the nearest integer that is greater than or equal
+ * to the input parameter.
+ */
+template <typename float_t>
+constexpr float_t ceil(const float_t n);
+
+/**
+ * @brief Calculate the nearest integer closest to the input parameter.
+ * 
+ * @param n
+ * A floating-point number.
+ * 
+ * @return A value equal to the nearest integer to the input parameter.
+ */
+template <typename float_t>
+constexpr float_t round(const float_t n);
+
+/**
+ * @brief fract
+ * Compute the fractional part of a floating-point number.
+ * 
+ * @param n
+ * A floating-point number.
+ * 
+ * @return The fractional part of the input float. This is calculated as
+ * "x - floor(x)".
+ */
+template <typename float_t>
+constexpr float_t fract(const float_t n);
+
+/**
  * @brief smoothstep
  * Perform a smooth interpolation of a number along the sub-sequence [a, b].
  * 

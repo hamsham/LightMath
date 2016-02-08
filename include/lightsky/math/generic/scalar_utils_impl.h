@@ -37,6 +37,38 @@ constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) {
 }
 
 /*-------------------------------------
+    floor
+-------------------------------------*/
+template <typename float_t>
+constexpr float_t floor(const float_t n) {
+    return (float_t)((long long)n - (n >= float_t{0} ? 0 : 1));
+}
+
+/*-------------------------------------
+    ceil
+-------------------------------------*/
+template <typename float_t>
+constexpr float_t ceil(const float_t n) {
+    return (float_t)((long long)n + (n >= float_t{0.0} ? 1 : 0));
+}
+
+/*-------------------------------------
+    round
+-------------------------------------*/
+template <typename float_t>
+constexpr float_t round(const float_t n) {
+    return math::floor(n + float_t{0.5});
+}
+
+/*-------------------------------------
+    fract
+-------------------------------------*/
+template <typename float_t>
+constexpr float_t fract(const float_t n) {
+    return n - math::floor(n);
+}
+
+/*-------------------------------------
     smoothstep
 -------------------------------------*/
 namespace math { namespace impl {
