@@ -468,6 +468,37 @@ constexpr unsigned count_set_bits(const unsigned long long num);
 template <typename scalar_t>
 constexpr unsigned count_set_bits(const scalar_t num);
 
+/**
+ * @Brief Scale a number from one data type with a range of values to another
+ * data type with a range of values.
+ * 
+ * @param num
+ * A number which will be linearly scaled from one numerical range to another.
+ * 
+ * @param oldMin
+ * The minimum value of the input number's current range of valid values.
+ * 
+ * @param oldMax
+ * The maximum value of the input number's current range of valid values.
+ * 
+ * @param newMin
+ * The minimum number by which the input number should be scaled to represent.
+ * 
+ * @param newMax
+ * The maximum number by which the input number should be scaled to represent.
+ * 
+ * @return The input number, linearly scaled from one numerical range to
+ * another.
+ */
+template <typename in_type, typename out_type>
+constexpr out_type scale_num_to_range(
+    const in_type num,
+    const out_type oldMin = std::numeric_limits<in_type>::min(),
+    const out_type oldMax = std::numeric_limits<in_type>::max(),
+    const out_type newMin = std::numeric_limits<out_type>::min(),
+    const out_type newMax = std::numeric_limits<out_type>::max()
+);
+
 } // end math namespace
 } // end ls namespace
 

@@ -372,4 +372,18 @@ constexpr unsigned math::count_set_bits(const scalar_t num) {
     return count_set_bits((unsigned long long)num);
 }
 
+/*-------------------------------------
+    Scale a number from one number range to another.
+-------------------------------------*/
+template <typename in_type, typename out_type>
+constexpr out_type math::scale_num_to_range(
+    const in_type num,
+    const out_type oldMin,
+    const out_type oldMax,
+    const out_type newMin,
+    const out_type newMax
+) {
+    return (((num - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
+}
+
 } /* end ls namespace */
