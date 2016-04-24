@@ -40,16 +40,32 @@ constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) {
     floor
 -------------------------------------*/
 template <typename float_t>
-constexpr float_t floor(const float_t n) {
-    return (float_t)((long long)n - (n >= float_t{0} ? 0 : 1));
+constexpr float_t math::floor(const float_t n) {
+    return (float_t) ((long long) n - (n >= float_t{0} ? 0 : 1));
+}
+
+/*-------------------------------------
+    ranged-floor
+-------------------------------------*/
+template <typename float_t, typename int_t, int_t range>
+constexpr int_t math::ranged_floor(const float_t n) {
+    return (int_t)(n + (float_t)range) - range;
 }
 
 /*-------------------------------------
     ceil
 -------------------------------------*/
 template <typename float_t>
-constexpr float_t ceil(const float_t n) {
-    return (float_t)((long long)n + (n >= float_t{0.0} ? 1 : 0));
+constexpr float_t math::ceil(const float_t n) {
+    return (float_t) ((long long) n + (n >= float_t{0.0} ? 1 : 0));
+}
+
+/*-------------------------------------
+    ranged-ceil
+-------------------------------------*/
+template <typename float_t, typename int_t, int_t range>
+constexpr int_t math::ranged_ceil(const float_t n) {
+    return range - (int_t)((float_t)range - n);
 }
 
 /*-------------------------------------
@@ -105,7 +121,7 @@ scalar_t math::fast_sqrt(scalar_t input) {
 
 /*-------------------------------------
     fastInvSqrt
-    
+
     The fast inverse square root method adopted for regular square rooting.
     this method was found at:
         http://rrrola.wz.cz/inv_sqrt.html
@@ -157,7 +173,7 @@ scalar_t math::fast_log2(scalar_t n) {
 
 /*-------------------------------------
     fastLog2
-    
+
     Fast Approximate logarithms
     This method was found on flipcode:
         http://www.flipcode.com/archives/Fast_log_Function.shtml
