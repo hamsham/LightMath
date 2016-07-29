@@ -16,23 +16,23 @@
  * variables, so this might make readability slightly difficult at first.
  */
 
-#include "ls/math/Setup.h"
-#include "ls/math/Types.h"
+#include "lightsky/math/Setup.h"
+#include "lightsky/math/Types.h"
 
-#include "ls/math/fixed.h"
-#include "ls/math/mat2.h"
-#include "ls/math/mat3.h"
-#include "ls/math/mat4.h"
-#include "ls/math/quat.h"
-#include "ls/math/vec2.h"
-#include "ls/math/vec3.h"
-#include "ls/math/vec4.h"
+#include "lightsky/math/fixed.h"
+#include "lightsky/math/mat2.h"
+#include "lightsky/math/mat3.h"
+#include "lightsky/math/mat4.h"
+#include "lightsky/math/quat.h"
+#include "lightsky/math/vec2.h"
+#include "lightsky/math/vec3.h"
+#include "lightsky/math/vec4.h"
 
-#include "ls/math/scalar_utils.h"
-#include "ls/math/quat_utils.h"
-#include "ls/math/vec_utils.h"
-#include "ls/math/mat_utils.h"
+#include "lightsky/math/scalar_utils.h"
+#include "lightsky/math/quat_utils.h"
+#include "lightsky/math/vec_utils.h"
+#include "lightsky/math/mat_utils.h"
 
-#include "ls/math/PerlinNoise.h"
+#include "lightsky/math/PerlinNoise.h"
 
 #endif /* __LS_MATH_H__ */

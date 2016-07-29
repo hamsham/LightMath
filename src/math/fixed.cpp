@@ -1,6 +1,6 @@
 
-#include "ls/math/Types.h"
-#include "ls/math/fixed.h"
+#include "lightsky/math/Types.h"
+#include "lightsky/math/fixed.h"
 
 namespace ls {
 namespace math {

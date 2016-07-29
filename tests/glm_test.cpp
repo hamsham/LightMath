@@ -18,11 +18,11 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 
-#include "ls/math/vec4.h"
-#include "ls/math/mat4.h"
-#include "ls/math/mat_utils.h"
-#include "ls/math/quat.h"
-#include "ls/math/quat_utils.h"
+#include "lightsky/math/vec4.h"
+#include "lightsky/math/mat4.h"
+#include "lightsky/math/mat_utils.h"
+#include "lightsky/math/quat.h"
+#include "lightsky/math/quat_utils.h"
 
 template <typename vec_t>
 void print_vec_type(std::ostream& ostr, const vec_t& v) {

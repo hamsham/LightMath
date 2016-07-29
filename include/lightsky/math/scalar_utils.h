@@ -8,8 +8,8 @@
 #ifndef __LS_MATH_SCALAR_UTILS_H__
 #define __LS_MATH_SCALAR_UTILS_H__
 
-#include "ls/math/Setup.h"
-#include "ls/math/Types.h"
+#include "lightsky/math/Setup.h"
+#include "lightsky/math/Types.h"
 
 namespace ls {
 namespace math {
@@ -545,6 +545,6 @@ constexpr out_type scale_num_to_range(
 } // end math namespace
 } // end ls namespace
 
-#include "ls/math/generic/scalar_utils_impl.h"
+#include "lightsky/math/generic/scalar_utils_impl.h"
 
 #endif /* __LS_MATH_SCALAR_UTILS_H__ */

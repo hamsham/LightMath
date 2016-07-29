@@ -2,13 +2,13 @@
 #ifndef __LS_MATH_QUAT_UTILS_H__
 #define __LS_MATH_QUAT_UTILS_H__
 
-#include "ls/math/scalar_utils.h"
-#include "ls/math/vec3.h"
-#include "ls/math/vec4.h"
-#include "ls/math/mat3.h"
-#include "ls/math/mat4.h"
-#include "ls/math/quat.h"
-#include "ls/math/vec_utils.h"
+#include "lightsky/math/scalar_utils.h"
+#include "lightsky/math/vec3.h"
+#include "lightsky/math/vec4.h"
+#include "lightsky/math/mat3.h"
+#include "lightsky/math/mat4.h"
+#include "lightsky/math/quat.h"
+#include "lightsky/math/vec_utils.h"
 
 namespace ls {
 namespace math {
@@ -398,6 +398,6 @@ quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 } // end math namespace
 } // end ls namespace
 
-#include "ls/math/generic/quat_utils_impl.h"
+#include "lightsky/math/generic/quat_utils_impl.h"
 
 #endif /* __LS_MATH_QUAT_UTILS_H__ */

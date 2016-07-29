@@ -2,10 +2,10 @@
 #ifndef __LS_MATH_MAT_UTILS_H__
 #define __LS_MATH_MAT_UTILS_H__
 
-#include "ls/math/vec_utils.h"
-#include "ls/math/mat2.h"
-#include "ls/math/mat3.h"
-#include "ls/math/mat4.h"
+#include "lightsky/math/vec_utils.h"
+#include "lightsky/math/mat2.h"
+#include "lightsky/math/mat3.h"
+#include "lightsky/math/mat4.h"
 
 namespace ls {
 namespace math {
@@ -459,6 +459,6 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
 } // end math namespace
 } // end ls namespace
 
-#include "ls/math/generic/mat_utils_impl.h"
+#include "lightsky/math/generic/mat_utils_impl.h"
 
 #endif    /* __LS_MATH_MAT_UTILS_H__ */

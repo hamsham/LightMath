@@ -2,8 +2,8 @@
 #ifndef __LS_MATH_VEC4_H__
 #define __LS_MATH_VEC4_H__
 
-#include "ls/math/scalar_utils.h"
-#include "ls/math/fixed.h"
+#include "lightsky/math/scalar_utils.h"
+#include "lightsky/math/fixed.h"
 
 namespace ls {
 namespace math {
@@ -119,6 +119,6 @@ LS_DECLARE_STRUCT_TYPE(vec4, vec4_t, LS_FLOAT);
 } //end math namespace
 } //end ls namespace
 
-#include "ls/math/generic/vec4_impl.h"
+#include "lightsky/math/generic/vec4_impl.h"
 
 #endif /* __LS_MATH_VEC4_H__ */

@@ -2,9 +2,9 @@
 #ifndef __LS_MATH_MAT2_H__
 #define __LS_MATH_MAT2_H__
 
-#include "ls/math/scalar_utils.h"
-#include "ls/math/fixed.h"
-#include "ls/math/vec2.h"
+#include "lightsky/math/scalar_utils.h"
+#include "lightsky/math/fixed.h"
+#include "lightsky/math/vec2.h"
 
 namespace ls {
 namespace math {
@@ -114,6 +114,6 @@ LS_DECLARE_STRUCT_TYPE(mat2, mat2_t, LS_FLOAT);
 } //end math namespace
 } //end ls namespace
 
-#include "ls/math/generic/mat2_impl.h"
+#include "lightsky/math/generic/mat2_impl.h"
 
 #endif /*_LS_MATH_MAT2_H_*/

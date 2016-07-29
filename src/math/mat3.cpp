@@ -1,6 +1,6 @@
 
-#include "ls/math/Math.h"
-#include "ls/math/mat3.h"
+#include "lightsky/math/Math.h"
+#include "lightsky/math/mat3.h"
 
 namespace ls {
 namespace math {

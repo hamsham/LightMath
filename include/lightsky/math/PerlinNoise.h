@@ -12,9 +12,9 @@
 #include <utility> // std::move
 #include <algorithm> // std::copy
 
-#include "ls/math/vec3.h"
-#include "ls/utils/Copy.h"
-#include "ls/utils/RandomNum.h"
+#include "lightsky/math/vec3.h"
+#include "lightsky/utils/Copy.h"
+#include "lightsky/utils/RandomNum.h"
 
 namespace ls {
 namespace math {
@@ -207,6 +207,6 @@ LS_DECLARE_CLASS_TYPE(PerlinNoisex, PerlinNoise, medp_t);
 } // end math namespace
 } // end ls namespace
 
-#include "ls/math/generic/perlinNoise_impl.h"
+#include "lightsky/math/generic/perlinNoise_impl.h"
 
 #endif  /* __LS__MATH_PERLIN_NOISE_H__ */

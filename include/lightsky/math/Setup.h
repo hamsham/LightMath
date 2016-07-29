@@ -10,6 +10,6 @@
 
 #include <limits>
 
-#include "ls/setup/Setup.h"
+#include "lightsky/setup/Setup.h"
 
 #endif /* __LS_MATH_SETUP_H__ */

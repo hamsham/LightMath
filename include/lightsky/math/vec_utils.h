@@ -8,13 +8,13 @@
 #ifndef __LS_MATH_VEC_UTILS_H__
 #define __LS_MATH_VEC_UTILS_H__
 
-#include "ls/math/Types.h"
-#include "ls/math/scalar_utils.h"
+#include "lightsky/math/Types.h"
+#include "lightsky/math/scalar_utils.h"
 
-#include "ls/math/Types.h"
-#include "ls/math/vec2.h"
-#include "ls/math/vec3.h"
-#include "ls/math/vec4.h"
+#include "lightsky/math/Types.h"
+#include "lightsky/math/vec2.h"
+#include "lightsky/math/vec3.h"
+#include "lightsky/math/vec4.h"
 
 namespace ls {
 namespace math {
@@ -620,6 +620,6 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
 } // end math namespace
 } // end ls namespace
 
-#include "ls/math/generic/vec_utils_impl.h"
+#include "lightsky/math/generic/vec_utils_impl.h"
 
 #endif /* __LS_MATH_VEC_UTILS_H__ */

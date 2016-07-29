@@ -6,8 +6,8 @@
 #include <cstdint>
 #include <utility> // std::move()
 
-#include "ls/math/Setup.h"
-#include "ls/math/Types.h"
+#include "lightsky/math/Setup.h"
+#include "lightsky/math/Types.h"
 
 namespace ls {
 namespace math {
@@ -711,6 +711,6 @@ LS_DECLARE_CLASS_TYPE(ulong_highp_t, fixed_t, uint64_t, 48); // 16.48
 }//end math namespace
 }//end ls namespace
 
-#include "ls/math/generic/fixed_impl.h"
+#include "lightsky/math/generic/fixed_impl.h"
 
 #endif    /* __LS_MATH_FIXED_H__ */

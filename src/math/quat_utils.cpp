@@ -1,2 +1,2 @@
 
-#include "ls/math/quat_utils.h"
+#include "lightsky/math/quat_utils.h"

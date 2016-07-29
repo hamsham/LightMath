@@ -1,6 +1,6 @@
 
-#include "ls/math/Math.h"
-#include "ls/math/quat.h"
+#include "lightsky/math/Math.h"
+#include "lightsky/math/quat.h"
 
 namespace ls {
 namespace math {
