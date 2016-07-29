@@ -8,8 +8,8 @@
 #ifndef __LS_MATH_SCALAR_UTILS_H__
 #define __LS_MATH_SCALAR_UTILS_H__
 
-#include "lightsky/math/Setup.h"
-#include "lightsky/math/Types.h"
+#include "ls/math/Setup.h"
+#include "ls/math/Types.h"
 
 namespace ls {
 namespace math {
@@ -147,6 +147,21 @@ constexpr float_t round(const float_t n);
  */
 template <typename float_t>
 constexpr float_t fract(const float_t n);
+
+/**
+ * @brief fmod
+ * Compute remainder of the division of one floating-point number by another.
+ *
+ * @param n1
+ * The dividend.
+ *
+ * @param n2
+ * The divisor.
+ *
+ * @return The remainder of the division between n1 / n2.
+ */
+template <typename float_t>
+inline float_t fmod(const float_t n1, const float_t n2);
 
 /**
  * @brief smoothstep
@@ -525,11 +540,11 @@ constexpr out_type scale_num_to_range(
     const out_type oldMax = std::numeric_limits<in_type>::max(),
     const out_type newMin = std::numeric_limits<out_type>::min(),
     const out_type newMax = std::numeric_limits<out_type>::max()
-);
+    );
 
 } // end math namespace
 } // end ls namespace
 
-#include "lightsky/math/generic/scalar_utils_impl.h"
+#include "ls/math/generic/scalar_utils_impl.h"
 
 #endif /* __LS_MATH_SCALAR_UTILS_H__ */

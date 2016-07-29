@@ -1,6 +1,6 @@
 
-#include "lightsky/math/Math.h"
-#include "lightsky/math/quat.h"
+#include "ls/math/Math.h"
+#include "ls/math/quat.h"
 
 namespace ls {
 namespace math {
@@ -16,4 +16,3 @@ LS_DEFINE_STRUCT_TYPE(quat_t, medp_t);
 
 } /* End math namespace */
 } /* End ls namespace */
-

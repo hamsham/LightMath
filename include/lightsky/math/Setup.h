@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   math/setup.h
  * Author: Miles Lacey
  *
@@ -10,6 +10,6 @@
 
 #include <limits>
 
-#include "lightsky/setup/Setup.h"
+#include "ls/setup/Setup.h"
 
 #endif /* __LS_MATH_SETUP_H__ */

@@ -4,6 +4,7 @@ namespace ls {
 /*-----------------------------------------------------------------------------
     2x2 Matrices
 -----------------------------------------------------------------------------*/
+
 /*-------------------------------------
     2x2 Determinant
 -------------------------------------*/
@@ -29,10 +30,11 @@ math::mat2_t<num_t> math::transpose(const mat2_t<num_t>& m) {
 template <typename num_t> constexpr
 math::mat2_t<num_t> math::inverse(const mat2_t<num_t>& m) {
     return mat2_t<num_t>{
-        m.m[1][1],  -m.m[0][1],
+        m.m[1][1], -m.m[0][1],
         -m.m[1][0], m.m[0][0]
     }
-    *(num_t{1} / determinant(m));
+    *(num_t{1}
+    / determinant(m));
 }
 
 /*-------------------------------------
@@ -42,9 +44,9 @@ template <typename num_t> inline
 math::mat2_t<num_t> math::rotate(const mat2_t<num_t>& m, num_t angle) {
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
-    
+
     return m * mat2_t<num_t>{
-        c,  s,
+        c, s,
         -s, c
     };
 }
@@ -55,21 +57,22 @@ math::mat2_t<num_t> math::rotate(const mat2_t<num_t>& m, num_t angle) {
 template <typename num_t> constexpr
 math::mat2_t<num_t> math::scale(const mat2_t<num_t>& m, const vec2_t<num_t>& amount) {
     return mat2_t<num_t>{
-        m.m[0][0]*amount.v[0],  m.m[0][1],
-        m.m[1][0],              m.m[1][1]*amount.v[1]
+        m.m[0][0] * amount.v[0], m.m[0][1],
+        m.m[1][0], m.m[1][1] * amount.v[1]
     };
 }
 
 /*-----------------------------------------------------------------------------
     3x3 Matrices
 -----------------------------------------------------------------------------*/
+
 /*-------------------------------------
     3x3 Determinant
 -------------------------------------*/
 template <typename num_t> constexpr
 num_t math::determinant(const mat3_t<num_t>& m) {
     return
-        (m.m[0][0] * m.m[1][1] * m.m[2][2]) +
+    (m.m[0][0] * m.m[1][1] * m.m[2][2]) +
         (m.m[0][1] * m.m[1][2] * m.m[2][0]) +
         (m.m[0][2] * m.m[1][0] * m.m[2][1]) -
         (m.m[0][2] * m.m[1][1] * m.m[2][0]) -
@@ -83,17 +86,18 @@ num_t math::determinant(const mat3_t<num_t>& m) {
 template <typename num_t> constexpr
 math::mat3_t<num_t> math::inverse(const mat3_t<num_t>& m) {
     return mat3_t<num_t>{
-        (m.m[1][1]*m.m[2][2] - m.m[2][1]*m.m[1][2]),
-        (m.m[2][0]*m.m[1][2] - m.m[1][0]*m.m[2][2]),
-        (m.m[1][0]*m.m[2][1] - m.m[2][0]*m.m[1][1]),
-        (m.m[2][1]*m.m[0][2] - m.m[0][1]*m.m[2][2]),
-        (m.m[0][0]*m.m[2][2] - m.m[2][0]*m.m[0][2]),
-        (m.m[2][0]*m.m[0][1] - m.m[0][0]*m.m[2][1]),
-        (m.m[0][1]*m.m[1][2] - m.m[1][1]*m.m[0][2]),
-        (m.m[1][0]*m.m[0][2] - m.m[0][0]*m.m[1][2]),
-        (m.m[0][0]*m.m[1][1] - m.m[1][0]*m.m[0][1])
+        (m.m[1][1] * m.m[2][2] - m.m[2][1] * m.m[1][2]),
+        (m.m[2][0] * m.m[1][2] - m.m[1][0] * m.m[2][2]),
+        (m.m[1][0] * m.m[2][1] - m.m[2][0] * m.m[1][1]),
+        (m.m[2][1] * m.m[0][2] - m.m[0][1] * m.m[2][2]),
+        (m.m[0][0] * m.m[2][2] - m.m[2][0] * m.m[0][2]),
+        (m.m[2][0] * m.m[0][1] - m.m[0][0] * m.m[2][1]),
+        (m.m[0][1] * m.m[1][2] - m.m[1][1] * m.m[0][2]),
+        (m.m[1][0] * m.m[0][2] - m.m[0][0] * m.m[1][2]),
+        (m.m[0][0] * m.m[1][1] - m.m[1][0] * m.m[0][1])
     }
-    *(num_t{1} / determinant(m));
+    *(num_t{1}
+    / determinant(m));
 }
 
 /*-------------------------------------
@@ -113,21 +117,22 @@ math::mat3_t<num_t> math::transpose(const mat3_t<num_t>& m) {
 -------------------------------------*/
 template <typename num_t> inline
 math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) {
-    const num_t c           = LS_COS(angle);
-    const num_t s           = LS_SIN(angle);
+    const num_t c = LS_COS(angle);
+    const num_t s = LS_SIN(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
-    const num_t omc         = num_t{1} - c;
-    const num_t xy          = (a.v[0] * a.v[1]) * omc;
-    const num_t yz          = (a.v[1] * a.v[2]) * omc;
-    const num_t zx          = (a.v[2] * a.v[0]) * omc;
-    const num_t sx          = s * a.v[0];
-    const num_t sy          = s * a.v[1];
-    const num_t sz          = s * a.v[2];
+    const num_t omc = num_t{1}
+    -c;
+    const num_t xy = (a.v[0] * a.v[1]) * omc;
+    const num_t yz = (a.v[1] * a.v[2]) * omc;
+    const num_t zx = (a.v[2] * a.v[0]) * omc;
+    const num_t sx = s * a.v[0];
+    const num_t sy = s * a.v[1];
+    const num_t sz = s * a.v[2];
 
     return m * mat3_t<num_t>{
-        c + ((a.v[0] * a.v[0]) * omc),          xy + sz,                        zx - sy,
-        xy - sz,                                c + ((a.v[1] * a.v[1]) * omc),  yz + sx,
-        zx + sy,                                yz - sx,                        c + ((a.v[2] * a.v[2]) * omc)
+        c + ((a.v[0] * a.v[0]) * omc), xy + sz, zx - sy,
+        xy - sz, c + ((a.v[1] * a.v[1]) * omc), yz + sx,
+        zx + sy, yz - sx, c + ((a.v[2] * a.v[2]) * omc)
     };
 }
 
@@ -137,9 +142,9 @@ math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& ax
 template <typename num_t> constexpr
 math::mat3_t<num_t> math::scale(const mat3_t<num_t>& m, const vec3_t<num_t>& scale) {
     return mat3_t<num_t>{
-        m.m[0][0]*scale.v[0],   m.m[0][1],              m.m[0][2],
-        m.m[1][0],              m.m[1][1]*scale.v[1],   m.m[1][2],
-        m.m[2][0],              m.m[2][1],              m.m[2][2]*scale.v[2]
+        m.m[0][0] * scale.v[0], m.m[0][1], m.m[0][2],
+        m.m[1][0], m.m[1][1] * scale.v[1], m.m[1][2],
+        m.m[2][0], m.m[2][1], m.m[2][2] * scale.v[2]
     };
 }
 
@@ -149,9 +154,9 @@ math::mat3_t<num_t> math::scale(const mat3_t<num_t>& m, const vec3_t<num_t>& sca
 template <typename num_t> constexpr
 math::mat3_t<num_t> math::translate(const mat3_t<num_t>& m, const vec2_t<num_t>& t) {
     return mat3_t<num_t>{
-        m.m[0][0],          m.m[0][1],          m.m[0][2],
-        m.m[1][0],          m.m[1][1],          m.m[1][2],
-        m.m[2][0]+t.v[0],   m.m[2][1]+t.v[1],   m.m[2][2]
+        m.m[0][0], m.m[0][1], m.m[0][2],
+        m.m[1][0], m.m[1][1], m.m[1][2],
+        m.m[2][0] + t.v[0], m.m[2][1] + t.v[1], m.m[2][2]
     };
 }
 
@@ -174,6 +179,7 @@ math::mat3_t<num_t> math::pure_look_at(const vec3_t<num_t>& pos, const vec3_t<nu
 /*-----------------------------------------------------------------------------
     4x4 Matrices
 -----------------------------------------------------------------------------*/
+
 /*-------------------------------------
     4x4 Determinant
 -------------------------------------*/
@@ -220,7 +226,7 @@ template <typename num_t> inline
 math::mat4_t<num_t> math::inverse(const mat4_t<num_t>& m) {
     // grab a pointer to the internal array in order to reduce the amount of dereferences
     // This helped to shrink the number of assembly instructions.
-    const vec4_t<num_t>* const pm = m.m;
+    const vec4_t<num_t> * const pm = m.m;
 
     //these operations appear only 2 times in the return value
     const num_t zwwx = pm[2][3] * pm[3][0];
@@ -294,21 +300,22 @@ math::mat4_t<num_t> math::transpose(const mat4_t<num_t>& m) {
 -------------------------------------*/
 template <typename num_t> inline
 math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) {
-    const num_t c           = LS_COS(angle);
-    const num_t s           = LS_SIN(angle);
+    const num_t c = LS_COS(angle);
+    const num_t s = LS_SIN(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
-    const num_t omc         = num_t{1} - c;
-    const num_t xy          = (a.v[0] * a.v[1]) * omc;
-    const num_t yz          = (a.v[1] * a.v[2]) * omc;
-    const num_t zx          = (a.v[2] * a.v[0]) * omc;
-    const num_t sx          = s * a.v[0];
-    const num_t sy          = s * a.v[1];
-    const num_t sz          = s * a.v[2];
+    const num_t omc = num_t{1}
+    -c;
+    const num_t xy = (a.v[0] * a.v[1]) * omc;
+    const num_t yz = (a.v[1] * a.v[2]) * omc;
+    const num_t zx = (a.v[2] * a.v[0]) * omc;
+    const num_t sx = s * a.v[0];
+    const num_t sy = s * a.v[1];
+    const num_t sz = s * a.v[2];
 
     return m * mat4_t<num_t>{
-        c + ((a.v[0] * a.v[0]) * omc),  xy + sz,                        zx - sy,                        num_t{0},
-        xy - sz,                        c + ((a.v[1] * a.v[1]) * omc),  yz + sx,                        num_t{0},
-        zx + sy,                        yz - sx,                        c + ((a.v[2] * a.v[2]) * omc),  num_t{0},
+        c + ((a.v[0] * a.v[0]) * omc),  xy + sz,                        zx - sy,                        num_t {0},
+        xy - sz,                        c + ((a.v[1] * a.v[1]) * omc),  yz + sx,                        num_t {0},
+        zx + sy,                        yz - sx,                        c + ((a.v[2] * a.v[2]) * omc),  num_t {0},
         num_t{0},                       num_t{0},                       num_t{0},                       num_t{1}
     };
 }
@@ -319,9 +326,9 @@ math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& ax
 template <typename num_t> constexpr
 math::mat4_t<num_t> math::scale(const mat4_t<num_t>& m, const vec3_t<num_t>& scale) {
     return mat4_t<num_t>{
-        m.m[0][0]*scale.v[0],   m.m[0][1],              m.m[0][2],              m.m[0][3],
-        m.m[1][0],              m.m[1][1]*scale.v[1],   m.m[1][2],              m.m[1][3],
-        m.m[2][0],              m.m[2][1],              m.m[2][2]*scale.v[2],   m.m[2][3],
+        m.m[0][0] * scale.v[0], m.m[0][1],              m.m[0][2],              m.m[0][3],
+        m.m[1][0],              m.m[1][1] * scale.v[1], m.m[1][2],              m.m[1][3],
+        m.m[2][0],              m.m[2][1],              m.m[2][2] * scale.v[2], m.m[2][3],
         m.m[3][0],              m.m[3][1],              m.m[3][2],              m.m[3][3]
     };
 }
@@ -335,7 +342,7 @@ math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>&
         m.m[0][0],          m.m[0][1],          m.m[0][2],          m.m[0][3],
         m.m[1][0],          m.m[1][1],          m.m[1][2],          m.m[1][3],
         m.m[2][0],          m.m[2][1],          m.m[2][2],          m.m[2][3],
-        m.m[3][0]+t.v[0],   m.m[3][1]+t.v[1],   m.m[3][2]+t.v[2],   m.m[3][3]
+        m.m[3][0] + t.v[0], m.m[3][1] + t.v[1], m.m[3][2] + t.v[2], m.m[3][3]
     };
 }
 
@@ -344,17 +351,17 @@ math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>&
 -------------------------------------*/
 template <typename num_t> inline
 math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_t zFar) {
-    const num_t top     = LS_TAN(fov / num_t{2}) * zNear;
-    const num_t bottom  = -top;
-    const num_t xMin    = bottom * aspect;
-    const num_t xMax    = top * aspect;
-    const num_t zDelta  = zFar - zNear;
+    const num_t top = LS_TAN(fov / num_t{2}) * zNear;
+    const num_t bottom = -top;
+    const num_t xMin = bottom * aspect;
+    const num_t xMax = top * aspect;
+    const num_t zDelta = zFar - zNear;
 
     return mat4_t<num_t>{
-        (num_t{2}*zNear) / (xMax-xMin), num_t{0},                           num_t{0},                           num_t{0},
-        num_t{0},                       (num_t{2}*zNear) / (top-bottom),    num_t{0},                           num_t{0},
-        num_t{0},                       num_t{0},                           -(zFar+zNear) / zDelta,             num_t{-1},
-        num_t{0},                       num_t{0},                           (num_t{-2}*zFar*zNear) / zDelta,    num_t{0}
+        (num_t{2}*zNear) / (xMax - xMin),   num_t{0},                           num_t{0},                           num_t{0},
+        num_t{0},                           (num_t{2}*zNear) / (top - bottom),  num_t{0},                           num_t{0},
+        num_t{0},                           num_t{0},                           -(zFar + zNear) / zDelta,           num_t{-1},
+        num_t{0},                           num_t{0},                           (num_t{-2}*zFar * zNear) / zDelta,  num_t{0}
     };
 }
 
@@ -363,16 +370,16 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
 -------------------------------------*/
 template <typename num_t> inline
 math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zNear) {
-    const num_t top     = LS_TAN(fov / num_t{2}) * zNear;
-    const num_t bottom  = -top;
-    const num_t xMin    = bottom * aspect;
-    const num_t xMax    = top * aspect;
+    const num_t top = LS_TAN(fov / num_t{2}) * zNear;
+    const num_t bottom = -top;
+    const num_t xMin = bottom * aspect;
+    const num_t xMax = top * aspect;
 
     return mat4_t<num_t>{
-        (num_t{2}*zNear) / (xMax-xMin), num_t{0},                           num_t{0},           num_t{0},
-        num_t{0},                       (num_t{2}*zNear) / (top-bottom),    num_t{0},           num_t{0},
-        num_t{0},                       num_t{0},                           num_t{-1},          num_t{-1},
-        num_t{0},                       num_t{0},                           num_t{-2}*zNear,    num_t{0}
+        (num_t{2}*zNear) / (xMax - xMin),   num_t {0},                          num_t{0},           num_t{0},
+        num_t{0},                           (num_t{2}*zNear) / (top - bottom),  num_t {0},          num_t{0},
+        num_t{0},                           num_t{0},                           num_t{-1},          num_t{-1},
+        num_t{0},                           num_t{0},                           num_t{-2}*zNear,    num_t{0}
     };
 }
 
@@ -385,10 +392,10 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
     const num_t h = bottom - top;
 
     return mat4_t<num_t>{
-        num_t{2} / w,       num_t{0},           num_t{0},   num_t{0},
-        num_t{0},           num_t{2} / h,       num_t{0},   num_t{0},
-        num_t{0},           num_t{0},           num_t{-1},  num_t{0},
-        -(right+left) / w,  -(top+bottom) / h,  num_t{0},   num_t{1}
+        num_t{2}/ w,            num_t{0},               num_t{0},   num_t{0},
+        num_t{0},               num_t{2}/ h,            num_t{0},   num_t{0},
+        num_t{0},               num_t{0},               num_t{-1},  num_t{0},
+        -(right + left) / w,    -(top + bottom) / h,    num_t{0},   num_t{1}
     };
 }
 
@@ -402,10 +409,10 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
     const num_t d = far - near;
 
     return mat4_t<num_t>{
-        num_t{2} / w, num_t{0}, num_t{0}, num_t{0},
-        num_t{0}, num_t{2} / h, num_t{0}, num_t{0},
-        num_t{0}, num_t{0}, num_t{-2} / d, num_t{0},
-        -(right + left) / w, -(top + bottom) / h, -(far + near) / d, num_t{1}
+        num_t{2}/ w,            num_t{0},               num_t{0},           num_t{0},
+        num_t{0},               num_t{2}/ h,            num_t{0},           num_t{0},
+        num_t{0},               num_t{0},               num_t{-2}/ d,       num_t{0},
+        -(right + left) / w,    -(top + bottom) / h,    -(far + near) / d,  num_t{1}
     };
 }
 
@@ -419,10 +426,10 @@ math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bott
     const num_t d = far - near;
 
     return mat4_t<num_t>{
-        (num_t{2}*near) / w,    num_t{0},               num_t{0},                   num_t{0},
-        num_t{0},               (num_t{2}*near) / h,    num_t{0},                   num_t{0},
-        (right+left) / w,       (top+bottom) / h,       -(far+near) / d,            num_t{-1},
-        num_t{0},               num_t{0},               (num_t{-2}*far*near) / d,   num_t{0}
+        (num_t{2}*near) / w,    num_t {0},                  num_t{0},                   num_t{0},
+        num_t{0},               (num_t{2}*near) / h,        num_t {0},                  num_t{0},
+        (right + left) / w,     (top + bottom) / h,         -(far + near) / d,          num_t {-1},
+        num_t{0},               num_t{0},                   (num_t{-2}*far * near) / d, num_t {0}
     };
 }
 
@@ -466,10 +473,10 @@ math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t
 template <typename num_t> inline
 math::mat4_t<num_t> math::billboard(const vec3_t<num_t>& pos, const mat4_t<num_t>& viewMat) {
     return mat4_t<num_t>{
-        viewMat[0][0],  viewMat[1][0],  viewMat[2][0],  num_t{0},
-        viewMat[0][1],  viewMat[1][1],  viewMat[2][1],  num_t{0},
-        viewMat[0][2],  viewMat[1][2],  viewMat[2][2],  num_t{0},
-        pos[0],         pos[1],         pos[2],         num_t{1}
+        viewMat[0][0],  viewMat[1][0],  viewMat[2][0], num_t{0},
+        viewMat[0][1],  viewMat[1][1],  viewMat[2][1], num_t{0},
+        viewMat[0][2],  viewMat[1][2],  viewMat[2][2], num_t{0},
+        pos[0],         pos[1],         pos[2],        num_t{1}
     };
 }
 
