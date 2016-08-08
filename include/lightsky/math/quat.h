@@ -2,6 +2,8 @@
 #ifndef __LS_MATH_QUAT_H__
 #define __LS_MATH_QUAT_H__
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 
@@ -23,7 +25,7 @@ namespace math {
  *      3 = W   (real component)
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct quat_t {
+struct LS_API quat_t {
     // data
     num_t q[4];
 

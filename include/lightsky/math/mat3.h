@@ -2,6 +2,8 @@
 #ifndef __LS_MATH_MAT3_H__
 #define __LS_MATH_MAT3_H__
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec3.h"
@@ -26,7 +28,7 @@ struct mat4_t;
  *      2[0-2] = ZX  ZY  ZZ
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct mat3_t {
+struct LS_API mat3_t {
     // data
     vec3_t<num_t> m[3];
 

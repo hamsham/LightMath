@@ -2,6 +2,8 @@
 #ifndef __LS_MATH_MAT4_H__
 #define __LS_MATH_MAT4_H__
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec4.h"
@@ -25,7 +27,7 @@ namespace math {
  *      3[0-3] = WX  WY  WZ  WW
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct mat4_t {
+struct LS_API mat4_t {
     // data
     vec4_t<num_t> m[4];
 

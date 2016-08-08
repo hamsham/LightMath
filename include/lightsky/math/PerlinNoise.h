@@ -12,6 +12,8 @@
 #include <utility> // std::move
 #include <algorithm> // std::copy
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/vec3.h"
 #include "lightsky/utils/Copy.h"
 #include "lightsky/utils/RandomNum.h"
@@ -28,7 +30,7 @@ namespace math {
  * http://flafla2.github.io/2014/08/09/perlinnoise.html
  */
 template <typename num_t = float>
-class PerlinNoise {
+class LS_API PerlinNoise {
   private:
     /**
      * Pointer to a pseudo-random number generator that will be used to

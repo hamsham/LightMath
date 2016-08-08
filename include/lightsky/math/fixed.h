@@ -6,6 +6,8 @@
 #include <cstdint>
 #include <utility> // std::move()
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/Setup.h"
 #include "lightsky/math/Types.h"
 
@@ -22,7 +24,7 @@ namespace math {
  *  In it's current state, it's prone to overflows.
 -----------------------------------------------------------------------------*/
 template <typename fixed_base_t, unsigned num_frac_digits>
-class fixed_t final {
+class LS_API fixed_t final {
     static_assert(
         num_frac_digits < (sizeof (fixed_base_t)) * CHAR_BIT,
         "Fixed-Point object has too much precision."

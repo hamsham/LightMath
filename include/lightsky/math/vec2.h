@@ -2,6 +2,8 @@
 #ifndef __LS_MATH_VEC2_H__
 #define __LS_MATH_VEC2_H__
 
+#include "lightsky/setup/Api.h"
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 
@@ -25,7 +27,7 @@ struct mat2_t;
  *      1 = Y
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct vec2_t {
+struct LS_API vec2_t {
     // data
     num_t v[2];
 
