@@ -15,23 +15,43 @@ namespace ls {
 namespace math {
 
 /**
- * @brief max
- * Get the minimum of two single numbers
+ * @brief min
+ * Get the minimum of two single numbers.
+ * 
  * This function can be run at compile-time.
  *
  * @param a
  *
  * @param b
  *
- * @return The largest number of the two parameters a and b.
+ * @return The smallest of the two parameters a and b.
  */
 template <typename scalar_t>
 constexpr scalar_t min(scalar_t a, scalar_t b);
 
 /**
- * @brief mix
- * Perform a linear interpolation of x between the two scalars a, b
+ * @brief min
+ * Get the minimum of two or more numbers.
+ * 
+ * This function can be run at compile-time.
+ *
  * @param a
+ *
+ * @param b
+ * 
+ * @param nums
+ *
+ * @return The smallest number of the input parameters.
+ */
+template <typename scalar_t, typename... scalars_t>
+constexpr scalar_t min(const scalar_t& a, const scalar_t& b, const scalars_t&... nums);
+
+/**
+ * @brief mix
+ * Perform a linear interpolation of x between the two scalars a, b.
+ * 
+ * @param a
+ * 
  * @param b
  *
  * @return The linear "mix" of a and b.
@@ -52,6 +72,23 @@ constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t percent);
  */
 template <typename scalar_t>
 constexpr scalar_t max(scalar_t a, scalar_t b);
+
+/**
+ * @brief max
+ * Get the maximum of two or more numbers.
+ * 
+ * This function can be run at compile-time.
+ *
+ * @param a
+ *
+ * @param b
+ * 
+ * @param nums
+ *
+ * @return The largest number of the input parameters.
+ */
+template <typename scalar_t, typename... scalars_t>
+constexpr scalar_t max(const scalar_t& a, const scalar_t& b, const scalars_t&... nums);
 
 /**
  * @brief clamp

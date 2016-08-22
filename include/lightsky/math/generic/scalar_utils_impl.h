@@ -14,6 +14,14 @@ scalar_t math::min(scalar_t a, scalar_t b) {
 }
 
 /*-------------------------------------
+    min
+-------------------------------------*/
+template <typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) {
+    return math::min(math::min(a, b), nums...);
+}
+
+/*-------------------------------------
     mix
 -------------------------------------*/
 template <typename scalar_t> constexpr
@@ -22,11 +30,19 @@ scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) {
 }
 
 /*-------------------------------------
-    mac
+    max
 -------------------------------------*/
 template <typename scalar_t> constexpr
 scalar_t math::max(scalar_t a, scalar_t b) {
     return (a > b) ? a : b;
+}
+
+/*-------------------------------------
+    min
+-------------------------------------*/
+template <typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) {
+    return math::max(math::max(a, b), nums...);
 }
 
 /*-------------------------------------
@@ -110,9 +126,7 @@ namespace impl {
 
 template <typename scalar_t> constexpr
 scalar_t smoothstep_impl(const scalar_t& t) {
-    return (scalar_t{3}
-    *t * t * t) - (scalar_t{2}
-    *t * t);
+    return (scalar_t{3} *t * t * t) - (scalar_t{2} *t * t);
 }
 } // math::impl namespace
 } // math namespace
@@ -123,7 +137,7 @@ scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) {
         ? scalar_t {0}
         : (x >= b)
             ? scalar_t {1}
-            : impl::smoothstep_impl(x - a) / (b - a);
+            : math::impl::smoothstep_impl(x - a) / (b - a);
 }
 
 /*-------------------------------------
@@ -131,7 +145,7 @@ scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) {
 -------------------------------------*/
 template <typename scalar_t> inline
 scalar_t math::fast_inv_sqrt(scalar_t input) {
-    return (scalar_t) fast_inv_sqrt<float>((float) input);
+    return (scalar_t) math::fast_inv_sqrt<float>((float) input);
 }
 
 /*-------------------------------------
@@ -139,7 +153,7 @@ scalar_t math::fast_inv_sqrt(scalar_t input) {
 -------------------------------------*/
 template <typename scalar_t> inline
 scalar_t math::fast_sqrt(scalar_t input) {
-    return scalar_t(1.0f / fast_inv_sqrt<scalar_t>(input));
+    return scalar_t(1.0f / math::fast_inv_sqrt<scalar_t>(input));
 }
 
 /*-------------------------------------
@@ -166,10 +180,7 @@ float math::fast_inv_sqrt<float>(float x) {
 -------------------------------------*/
 template <> inline
 float math::fast_sqrt<float>(float input) {
-    return float
-    {
-        1.0f / fast_inv_sqrt<float>(input)
-    };
+    return float{1.0f / math::fast_inv_sqrt<float>(input)};
 }
 
 /*-------------------------------------
@@ -193,7 +204,7 @@ scalar_t math::rad_to_deg(scalar_t input) {
 -------------------------------------*/
 template <typename scalar_t> inline
 scalar_t math::fast_log2(scalar_t n) {
-    return (scalar_t) fast_log2<float>((float) n);
+    return (scalar_t) math::fast_log2<float>((float) n);
 }
 
 /*-------------------------------------
@@ -225,7 +236,7 @@ float math::fast_log2<float>(float n) {
 -------------------------------------*/
 template <typename scalar_t> inline
 scalar_t math::fast_log10(scalar_t n) {
-    return fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
+    return math::fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
 }
 
 /*-------------------------------------
@@ -233,7 +244,7 @@ scalar_t math::fast_log10(scalar_t n) {
 -------------------------------------*/
 template <typename scalar_t> inline
 scalar_t math::fast_logN(scalar_t baseN, scalar_t n) {
-    return fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
+    return math::fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
 }
 
 /*-------------------------------------
@@ -257,7 +268,7 @@ inline unsigned math::next_pow2(unsigned n) {
     nextPow2
 -------------------------------------*/
 inline int math::next_pow2(int n) {
-    return (int) next_pow2((unsigned) n);
+    return (int) math::next_pow2((unsigned) n);
 }
 
 /*-------------------------------------
@@ -281,15 +292,15 @@ inline unsigned math::prev_pow2(unsigned n) {
     prevPow2
 -------------------------------------*/
 inline int math::prev_pow2(int n) {
-    return (int) prev_pow2((unsigned) n);
+    return (int) math::prev_pow2((unsigned) n);
 }
 
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
 inline unsigned math::nearest_pow2(unsigned n) {
-    const unsigned pp2 = prev_pow2(n);
-    const unsigned np2 = next_pow2(n);
+    const unsigned pp2 = math::prev_pow2(n);
+    const unsigned np2 = math::next_pow2(n);
     const unsigned lo = n - pp2;
     const unsigned hi = np2 - n;
 
@@ -300,7 +311,7 @@ inline unsigned math::nearest_pow2(unsigned n) {
     nearPow2
 -------------------------------------*/
 inline int math::nearest_pow2(int n) {
-    return (int) nearest_pow2((unsigned) n);
+    return (int) math::nearest_pow2((unsigned) n);
 }
 
 /*-------------------------------------
@@ -314,7 +325,7 @@ constexpr bool math::is_pow2(unsigned n) {
     isPow2
 -------------------------------------*/
 constexpr bool math::is_pow2(int n) {
-    return (int) is_pow2((unsigned) n);
+    return (int) math::is_pow2((unsigned) n);
 }
 
 /*-------------------------------------
@@ -322,7 +333,7 @@ constexpr bool math::is_pow2(int n) {
 -------------------------------------*/
 template <typename scalar_t>
 constexpr scalar_t math::factorial(scalar_t x) {
-    return (1 < x) ? x * factorial(x - 1) : 1;
+    return (1 < x) ? x * math::factorial(x - 1) : 1;
 }
 
 /*-------------------------------------
@@ -330,7 +341,7 @@ constexpr scalar_t math::factorial(scalar_t x) {
 -------------------------------------*/
 template <typename scalar_t, typename int_t>
 constexpr scalar_t math::pow(scalar_t x, int_t y) {
-    return (0 < y) ? x * pow(x, y - 1) : 1;
+    return (0 < y) ? x * math::pow(x, y - 1) : 1;
 }
 
 /*-------------------------------------
@@ -382,7 +393,7 @@ constexpr scalar_t math::sum(const scalar_t& num) {
 -------------------------------------*/
 template <typename scalar_t, typename... scalars_t>
 constexpr scalar_t math::sum(const scalar_t& num, const scalars_t&... nums) {
-    return num + sum(nums...);
+    return num + math::sum(nums...);
 }
 
 /*-------------------------------------
@@ -398,19 +409,19 @@ constexpr scalar_t math::average() {
 -------------------------------------*/
 template <typename scalar_t, typename... scalars_t>
 constexpr scalar_t math::average(const scalar_t& num, const scalars_t&... nums) {
-    return sum(num, nums...) / scalar_t(sizeof...(scalars_t) + 1);
+    return math::sum(num, nums...) / scalar_t(sizeof...(scalars_t) + 1);
 }
 
 /*-------------------------------------
     Count the number of bits in an integer.
 -------------------------------------*/
 constexpr unsigned math::count_set_bits(const unsigned long long num) {
-    return num ? count_set_bits(num >> 1) + (1 & num) : 0;
+    return num ? math::count_set_bits(num >> 1) + (1 & num) : 0;
 }
 
 template <typename scalar_t>
 constexpr unsigned math::count_set_bits(const scalar_t num) {
-    return count_set_bits((unsigned long long) num);
+    return math::count_set_bits((unsigned long long) num);
 }
 
 /*-------------------------------------
