@@ -363,7 +363,7 @@ template <typename scalar_t>
 constexpr scalar_t math::const_cos(scalar_t x) {
     return 1
     - (x * x * scalar_t(1.f / 2))
-        +(x * x * x * x * scalar_t(1.f / 4))
+        +(x * x * x * x * scalar_t(1.f / 24))
         -(x * x * x * x * x * x * scalar_t(1.f / 720))
         +(x * x * x * x * x * x * x * x * scalar_t(1.f / 40320));
 }
