@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_QUAT_H__
-#define __LS_MATH_QUAT_H__
+#ifndef LS_MATH_QUAT_H
+#define LS_MATH_QUAT_H
 
 #include "lightsky/setup/Api.h"
 
@@ -25,7 +25,7 @@ namespace math {
  *      3 = W   (real component)
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API quat_t {
+struct LS_API alignas(sizeof(num_t)) quat_t {
     // data
     num_t q[4];
 
@@ -80,16 +80,24 @@ struct LS_API quat_t {
 /*-------------------------------------
     Quaternion Template Specializations
 -------------------------------------*/
+/*
 LS_DECLARE_STRUCT_TYPE(quatf, quat_t, float);
 LS_DECLARE_STRUCT_TYPE(quatd, quat_t, double);
 LS_DECLARE_STRUCT_TYPE(quati, quat_t, int); // not recommended
-LS_DECLARE_STRUCT_TYPE(quatui, quat_t, unsigned); // not recommended
+LS_DECLARE_STRUCT_TYPE(quatu, quat_t, unsigned); // not recommended
 LS_DECLARE_STRUCT_TYPE(quatx, quat_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(quat, quat_t, LS_FLOAT);
+*/
+typedef quat_t<float>    quatf;
+typedef quat_t<double>   quatd;
+typedef quat_t<int>      quati;
+typedef quat_t<unsigned> quatu;
+typedef quat_t<medp_t>   quatx;
+typedef quat_t<LS_FLOAT> quat;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/quat_impl.h"
 
-#endif /* __LS_MATH_QUAT_H__ */
+#endif /* LS_MATH_QUAT_H */

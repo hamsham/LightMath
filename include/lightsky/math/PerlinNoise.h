@@ -5,12 +5,11 @@
  * Created on August 15, 2014, 9:23 PM
  */
 
-#ifndef __LS__MATH_PERLIN_NOISE_H__
-#define __LS__MATH_PERLIN_NOISE_H__
+#ifndef LS__MATH_PERLIN_NOISE_H
+#define LS__MATH_PERLIN_NOISE_H
 
 #include <chrono>
 #include <utility> // std::move
-#include <algorithm> // std::copy
 
 #include "lightsky/setup/Api.h"
 
@@ -51,7 +50,7 @@ class LS_API PerlinNoise {
      *
      * @return num_t
      */
-    static double fade(double);
+    static double fade(double) noexcept;
 
     /**
      * Linearly interpolate two values over a certain percentage.
@@ -67,7 +66,7 @@ class LS_API PerlinNoise {
      *
      * @return A linear interpolation of A->B
      */
-    static double lerp(double a, double b, double x);
+    static double lerp(double a, double b, double x) noexcept;
 
     /**
      * Generate a gradient value based on a hash function at the points x,
@@ -84,13 +83,19 @@ class LS_API PerlinNoise {
      * @return A gradient value that will assist in smoothly transitioning
      * from one set of points to another.
      */
-    static double grad(int hash, double x, double y, double z);
+    static double grad(int hash, double x, double y, double z) noexcept;
 
   public:
     /**
+     * Destructor
+     * Frees all memory used by *this.
+     */
+    ~PerlinNoise() noexcept;
+
+    /**
      * Constructor
      */
-    PerlinNoise();
+    PerlinNoise() noexcept;
 
     /**
      * Seed Constructor
@@ -99,14 +104,14 @@ class LS_API PerlinNoise {
      * A long, unsigned integral value that will be used to seed the random
      * number generator.
      */
-    explicit PerlinNoise(unsigned long s);
+    explicit PerlinNoise(unsigned long s) noexcept;
 
     /**
      * Copy Constructor
      *
      * @param A constant reference to another Perlin noise object
      */
-    PerlinNoise(const PerlinNoise&);
+    PerlinNoise(const PerlinNoise&) noexcept;
 
     /**
      * Move Constructor
@@ -116,13 +121,7 @@ class LS_API PerlinNoise {
      * @param An R-Value reference to a Perlin noise object that's about to
      * go out of scope.
      */
-    PerlinNoise(PerlinNoise&&);
-
-    /**
-     * Destructor
-     * Frees all memory used by *this.
-     */
-    ~PerlinNoise();
+    PerlinNoise(PerlinNoise&&) noexcept;
 
     /**
      * Copy Operator
@@ -131,7 +130,7 @@ class LS_API PerlinNoise {
      *
      * @return A reference to *this.
      */
-    PerlinNoise& operator=(const PerlinNoise&);
+    PerlinNoise& operator=(const PerlinNoise&) noexcept;
 
     /**
      * Move Operator
@@ -141,12 +140,12 @@ class LS_API PerlinNoise {
      *
      * @return A reference to *this.
      */
-    PerlinNoise& operator=(PerlinNoise&&);
+    PerlinNoise& operator=(PerlinNoise&&) noexcept;
 
     /**
      * Seed the random number generator in order to generate new noise.
      */
-    void seed();
+    void seed() noexcept;
 
     /**
      * Seed the random number generator in order to generate new noise.
@@ -155,7 +154,7 @@ class LS_API PerlinNoise {
      * A long, unsigned integral value that will be used to seed the random
      * number generator.
      */
-    void seed(unsigned long s);
+    void seed(unsigned long s) noexcept;
 
     /**
      * Get a [pseudo] randomly generated noise value within a 3D Cartesian
@@ -169,7 +168,7 @@ class LS_API PerlinNoise {
      * the input parameter. This value will be between [-1,1].
      */
     template <typename point_t>
-    num_t get_noise(const vec3_t<point_t>& point);
+    num_t get_noise(const vec3_t<point_t>& point) const noexcept;
 
     /**
      * Get a [pseudo] randomly generated noise value within a 3D Cartesian
@@ -194,7 +193,7 @@ class LS_API PerlinNoise {
      * @return A Perlin noise value, calculated at the point specified by
      * the input parameter. This value will be between [-1,1].
      */
-    num_t get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistance);
+    num_t get_octave_noise(const vec3_t<num_t>& point, unsigned octaves, num_t persistance) const noexcept;
 };
 
 /*-------------------------------------
@@ -211,4 +210,4 @@ LS_DECLARE_CLASS_TYPE(PerlinNoisex, PerlinNoise, medp_t);
 
 #include "lightsky/math/generic/perlinNoise_impl.h"
 
-#endif  /* __LS__MATH_PERLIN_NOISE_H__ */
+#endif  /* LS__MATH_PERLIN_NOISE_H */

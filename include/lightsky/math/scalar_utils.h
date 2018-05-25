@@ -5,14 +5,26 @@
  * Created on March 6, 2014, 10:04 PM
  */
 
-#ifndef __LS_MATH_SCALAR_UTILS_H__
-#define __LS_MATH_SCALAR_UTILS_H__
+#ifndef LS_MATH_SCALAR_UTILS_H
+#define LS_MATH_SCALAR_UTILS_H
 
-#include "lightsky/math/Setup.h"
+#include <limits> // std::numeric_limits
+
 #include "lightsky/math/Types.h"
 
 namespace ls {
 namespace math {
+
+/**
+ * @brief Calculate the greatest common divisor between two integers.
+ *
+ * @param a
+ * @param b
+ *
+ * @return The greatest common divisor between a & b.
+ */
+template <typename scalar_t>
+constexpr scalar_t gcd(scalar_t a, scalar_t b);
 
 /**
  * @brief min
@@ -443,6 +455,18 @@ template <typename scalar_t, typename int_t>
 constexpr scalar_t pow(scalar_t, int_t);
 
 /**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename scalar_t>
+inline scalar_t exp(scalar_t x);
+
+/**
  * @brief const_sin
  * Evaluate the sine of an angle at compile-time.
  *
@@ -584,4 +608,4 @@ constexpr out_type scale_num_to_range(
 
 #include "lightsky/math/generic/scalar_utils_impl.h"
 
-#endif /* __LS_MATH_SCALAR_UTILS_H__ */
+#endif /* LS_MATH_SCALAR_UTILS_H */

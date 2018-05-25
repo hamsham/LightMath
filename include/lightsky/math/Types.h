@@ -6,8 +6,8 @@
  * objects/types.
  */
 
-#ifndef __LS_MATH_TYPES_H__
-#define __LS_MATH_TYPES_H__
+#ifndef LS_MATH_TYPES_H
+#define LS_MATH_TYPES_H
 
 #include <cmath>
 #include <cstdint>
@@ -68,4 +68,4 @@
 
 #endif /* LS_MATH_HIGH_PREC */
 
-#endif /* __LS_MATH_TYPES_H__ */
+#endif /* LS_MATH_TYPES_H */

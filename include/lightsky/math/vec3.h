@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_VEC3_H__
-#define __LS_MATH_VEC3_H__
+#ifndef LS_MATH_VEC3_H
+#define LS_MATH_VEC3_H
 
 #include "lightsky/setup/Api.h"
 
@@ -28,7 +28,7 @@ struct mat3_t;
  *      2 = Z
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API vec3_t {
+struct LS_API alignas(sizeof(num_t)) vec3_t {
     // data
     num_t v[3];
 
@@ -110,16 +110,25 @@ vec3_t<num_t> operator*(num_t n, const vec3_t<num_t>& v);
 /*-------------------------------------
     3D Vector Specializations
 -------------------------------------*/
+/*
+LS_DECLARE_STRUCT_TYPE(vec3f, vec3_t, float);
 LS_DECLARE_STRUCT_TYPE(vec3f, vec3_t, float);
 LS_DECLARE_STRUCT_TYPE(vec3d, vec3_t, double);
 LS_DECLARE_STRUCT_TYPE(vec3i, vec3_t, int);
 LS_DECLARE_STRUCT_TYPE(vec3ui, vec3_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(vec3x, vec3_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(vec3, vec3_t, LS_FLOAT);
+*/
+typedef vec3_t<float>    vec3f;
+typedef vec3_t<double>   vec3d;
+typedef vec3_t<int>      vec3i;
+typedef vec3_t<unsigned> vec3u;
+typedef vec3_t<medp_t>   vec3x;
+typedef vec3_t<LS_FLOAT> vec3;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/vec3_impl.h"
 
-#endif /* __LS_MATH_VEC3_H__ */
+#endif /* LS_MATH_VEC3_H */

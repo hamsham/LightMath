@@ -5,8 +5,8 @@
  * Created on January 8, 2013, 3:14 PM
  */
 
-#ifndef __LS_MATH_VEC_UTILS_H__
-#define __LS_MATH_VEC_UTILS_H__
+#ifndef LS_MATH_VEC_UTILS_H
+#define LS_MATH_VEC_UTILS_H
 
 #include "lightsky/math/Types.h"
 #include "lightsky/math/scalar_utils.h"
@@ -622,4 +622,4 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 #include "lightsky/math/generic/vec_utils_impl.h"
 
-#endif /* __LS_MATH_VEC_UTILS_H__ */
+#endif /* LS_MATH_VEC_UTILS_H */

@@ -370,16 +370,13 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
 -------------------------------------*/
 template <typename num_t> inline
 math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zNear) {
-    const num_t top = LS_TAN(fov / num_t{2}) * zNear;
-    const num_t bottom = -top;
-    const num_t xMin = bottom * aspect;
-    const num_t xMax = top * aspect;
+    const num_t viewAngle = num_t{1} / LS_TAN(fov / num_t{2});
 
     return mat4_t<num_t>{
-        (num_t{2}*zNear) / (xMax - xMin),   num_t {0},                          num_t{0},           num_t{0},
-        num_t{0},                           (num_t{2}*zNear) / (top - bottom),  num_t {0},          num_t{0},
-        num_t{0},                           num_t{0},                           num_t{-1},          num_t{-1},
-        num_t{0},                           num_t{0},                           num_t{-2}*zNear,    num_t{0}
+        viewAngle/aspect, num_t{0},  num_t{0}, num_t{0},
+        num_t{0},        viewAngle, num_t{0}, num_t{0},
+        num_t{0},        num_t{0},  num_t{0}, num_t{-1},
+        num_t{0},        num_t{0},  zNear,    num_t{0}
     };
 }
 
@@ -446,7 +443,7 @@ math::mat4_t<num_t> math::look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>&
         xAxis.v[0], yAxis.v[0], zAxis.v[0], num_t{0},
         xAxis.v[1], yAxis.v[1], zAxis.v[1], num_t{0},
         xAxis.v[2], yAxis.v[2], zAxis.v[2], num_t{0},
-        0.f,        0.f,        0.f,        num_t{1}
+        num_t{0},   num_t{0},   num_t{0},   num_t{1}
     };
 }
 

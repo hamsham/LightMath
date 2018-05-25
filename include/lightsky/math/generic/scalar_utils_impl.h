@@ -1,158 +1,193 @@
 
-namespace ls {
+namespace ls
+{
 
 /*-----------------------------------------------------------------------------
 // Function definitions
 -----------------------------------------------------------------------------*/
+/*-------------------------------------
+    gcd
+-------------------------------------*/
+template <typename scalar_t>
+constexpr scalar_t math::gcd(scalar_t a, scalar_t b)
+{
+    return b == 0 ? a : math::gcd<scalar_t>(b, a % b);
+}
 
 /*-------------------------------------
     min
 -------------------------------------*/
-template <typename scalar_t> constexpr
-scalar_t math::min(scalar_t a, scalar_t b) {
+template<typename scalar_t>
+constexpr
+scalar_t math::min(scalar_t a, scalar_t b)
+{
     return (a < b) ? a : b;
 }
 
 /*-------------------------------------
     min
 -------------------------------------*/
-template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) {
+template<typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums)
+{
     return math::min(math::min(a, b), nums...);
 }
 
 /*-------------------------------------
     mix
 -------------------------------------*/
-template <typename scalar_t> constexpr
-scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) {
+template<typename scalar_t>
+constexpr
+scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent)
+{
     return a + ((b - a) * percent);
 }
 
 /*-------------------------------------
     max
 -------------------------------------*/
-template <typename scalar_t> constexpr
-scalar_t math::max(scalar_t a, scalar_t b) {
+template<typename scalar_t>
+constexpr
+scalar_t math::max(scalar_t a, scalar_t b)
+{
     return (a > b) ? a : b;
 }
 
 /*-------------------------------------
     min
 -------------------------------------*/
-template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) {
+template<typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums)
+{
     return math::max(math::max(a, b), nums...);
 }
 
 /*-------------------------------------
     clamp
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) {
+template<typename scalar_t>
+constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal)
+{
     return (n < minVal) ? minVal : (n > maxVal) ? maxVal : n;
 }
 
 /*-------------------------------------
     floor
 -------------------------------------*/
-template <typename float_t>
-constexpr float_t math::floor(const float_t n) {
-    return (float_t) ((long long) n - (n >= float_t{0} ? 0 : 1));
+template<typename float_t>
+constexpr float_t math::floor(const float_t n)
+{
+    return (float_t)((long long)n - (n >= float_t{0} ? 0 : 1));
 }
 
 /*-------------------------------------
     ranged-floor
 -------------------------------------*/
-template <typename float_t, typename int_t, int_t range>
-constexpr int_t math::ranged_floor(const float_t n) {
+template<typename float_t, typename int_t, int_t range>
+constexpr int_t math::ranged_floor(const float_t n)
+{
     return (int_t)(n + (float_t)range) - range;
 }
 
 /*-------------------------------------
     ceil
 -------------------------------------*/
-template <typename float_t>
-constexpr float_t math::ceil(const float_t n) {
-    return (float_t) ((long long) n + (n >= float_t{0.0} ? 1 : 0));
+template<typename float_t>
+constexpr float_t math::ceil(const float_t n)
+{
+    return (float_t)((long long)n + (n >= float_t{0.0} ? 1 : 0));
 }
 
 /*-------------------------------------
     ranged-ceil
 -------------------------------------*/
-template <typename float_t, typename int_t, int_t range>
-constexpr int_t math::ranged_ceil(const float_t n) {
+template<typename float_t, typename int_t, int_t range>
+constexpr int_t math::ranged_ceil(const float_t n)
+{
     return range - (int_t)((float_t)range - n);
 }
 
 /*-------------------------------------
     round
 -------------------------------------*/
-template <typename float_t>
-constexpr float_t math::round(const float_t n) {
+template<typename float_t>
+constexpr float_t math::round(const float_t n)
+{
     return math::floor(n + float_t{0.5});
 }
 
 /*-------------------------------------
     fract
 -------------------------------------*/
-template <typename float_t>
-constexpr float_t math::fract(const float_t n) {
+template<typename float_t>
+constexpr float_t math::fract(const float_t n)
+{
     return n - math::floor(n);
 }
 
 /*-------------------------------------
  fmod
 -------------------------------------*/
-template <typename float_t>
-inline float_t math::fmod(const float_t n1, const float_t n2) {
-    if (n2 == float_t{0.0}) {
+template<typename float_t>
+inline float_t math::fmod(const float_t n1, const float_t n2)
+{
+    if (n2 == float_t{0.0})
+    {
         return float_t{0.0};
     }
-    
-    const float_t f = n1 - (math::floor(n1/n2)*n2);
-    
+
+    const float_t f = n1 - (math::floor(n1 / n2) * n2);
+
     return ((n1 < float_t{0.0}) != (n2 < float_t{0.0}))
-        ? f-n2
-        : f;
-    
+           ? f - n2
+           : f;
 }
 
 /*-------------------------------------
     smoothstep
 -------------------------------------*/
-namespace math {
-namespace impl {
+namespace math
+{
+namespace impl
+{
 
-template <typename scalar_t> constexpr
-scalar_t smoothstep_impl(const scalar_t& t) {
-    return (scalar_t{3} *t * t * t) - (scalar_t{2} *t * t);
+template<typename scalar_t>
+constexpr
+scalar_t smoothstep_impl(const scalar_t& t)
+{
+    return (scalar_t{3} * t * t * t) - (scalar_t{2} * t * t);
 }
 } // math::impl namespace
 } // math namespace
 
-template <typename scalar_t> constexpr
-scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) {
+template<typename scalar_t>
+constexpr
+scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x)
+{
     return (x <= a)
-        ? scalar_t {0}
-        : (x >= b)
-            ? scalar_t {1}
-            : math::impl::smoothstep_impl(x - a) / (b - a);
+           ? scalar_t{0}
+           : (x >= b)
+             ? scalar_t{1}
+             : math::impl::smoothstep_impl(x - a) / (b - a);
 }
 
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template <typename scalar_t> inline
-scalar_t math::fast_inv_sqrt(scalar_t input) {
-    return (scalar_t) math::fast_inv_sqrt<float>((float) input);
+template<typename scalar_t>
+inline
+scalar_t math::fast_inv_sqrt(scalar_t input)
+{
+    return (scalar_t)math::fast_inv_sqrt<float>((float)input);
 }
 
 /*-------------------------------------
     fastSqrt
 -------------------------------------*/
-template <typename scalar_t> inline
-scalar_t math::fast_sqrt(scalar_t input) {
+template<typename scalar_t>
+inline
+scalar_t math::fast_sqrt(scalar_t input)
+{
     return scalar_t(1.0f / math::fast_inv_sqrt<scalar_t>(input));
 }
 
@@ -165,9 +200,12 @@ scalar_t math::fast_sqrt(scalar_t input) {
     and:
         http://jheriko-rtw.blogspot.com/2009/04/understanding-and-improving-fast.html
 -------------------------------------*/
-template <> inline
-float math::fast_inv_sqrt<float>(float x) {
-    union {
+template<>
+inline
+float math::fast_inv_sqrt<float>(float x)
+{
+    union
+    {
         float f;
         unsigned int u;
     } y = {x};
@@ -178,33 +216,41 @@ float math::fast_inv_sqrt<float>(float x) {
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template <> inline
-float math::fast_sqrt<float>(float input) {
+template<>
+inline
+float math::fast_sqrt<float>(float input)
+{
     return float{1.0f / math::fast_inv_sqrt<float>(input)};
 }
 
 /*-------------------------------------
     degToRad
 -------------------------------------*/
-template <typename scalar_t> constexpr
-scalar_t math::deg_to_rad(scalar_t input) {
+template<typename scalar_t>
+constexpr
+scalar_t math::deg_to_rad(scalar_t input)
+{
     return LS_DEG2RAD(input);
 }
 
 /*-------------------------------------
     radToDeg
 -------------------------------------*/
-template <typename scalar_t> constexpr
-scalar_t math::rad_to_deg(scalar_t input) {
+template<typename scalar_t>
+constexpr
+scalar_t math::rad_to_deg(scalar_t input)
+{
     return LS_RAD2DEG(input);
 }
 
 /*-------------------------------------
     fastLog2
 -------------------------------------*/
-template <typename scalar_t> inline
-scalar_t math::fast_log2(scalar_t n) {
-    return (scalar_t) math::fast_log2<float>((float) n);
+template<typename scalar_t>
+inline
+scalar_t math::fast_log2(scalar_t n)
+{
+    return (scalar_t)math::fast_log2<float>((float)n);
 }
 
 /*-------------------------------------
@@ -216,8 +262,10 @@ scalar_t math::fast_log2(scalar_t n) {
     Accurate to within 5 decimal places.
     This method relies on the IEEE floating point specification
 -------------------------------------*/
-template <> inline
-float math::fast_log2<float>(float n) {
+template<>
+inline
+float math::fast_log2<float>(float n)
+{
     long* const exp = reinterpret_cast<long*> (&n);
     long x = *exp;
 
@@ -234,24 +282,30 @@ float math::fast_log2<float>(float n) {
 /*-------------------------------------
     fastLog
 -------------------------------------*/
-template <typename scalar_t> inline
-scalar_t math::fast_log10(scalar_t n) {
+template<typename scalar_t>
+inline
+scalar_t math::fast_log10(scalar_t n)
+{
     return math::fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
 }
 
 /*-------------------------------------
     fastLogN
 -------------------------------------*/
-template <typename scalar_t> inline
-scalar_t math::fast_logN(scalar_t baseN, scalar_t n) {
+template<typename scalar_t>
+inline
+scalar_t math::fast_logN(scalar_t baseN, scalar_t n)
+{
     return math::fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
 }
 
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline unsigned math::next_pow2(unsigned n) {
-    if (n == 0) {
+inline unsigned math::next_pow2(unsigned n)
+{
+    if (n == 0)
+    {
         return 0;
     }
 
@@ -267,15 +321,18 @@ inline unsigned math::next_pow2(unsigned n) {
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline int math::next_pow2(int n) {
-    return (int) math::next_pow2((unsigned) n);
+inline int math::next_pow2(int n)
+{
+    return (int)math::next_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline unsigned math::prev_pow2(unsigned n) {
-    if (n == 0) {
+inline unsigned math::prev_pow2(unsigned n)
+{
+    if (n == 0)
+    {
         return 0;
     }
 
@@ -291,14 +348,16 @@ inline unsigned math::prev_pow2(unsigned n) {
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline int math::prev_pow2(int n) {
-    return (int) math::prev_pow2((unsigned) n);
+inline int math::prev_pow2(int n)
+{
+    return (int)math::prev_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline unsigned math::nearest_pow2(unsigned n) {
+inline unsigned math::nearest_pow2(unsigned n)
+{
     const unsigned pp2 = math::prev_pow2(n);
     const unsigned np2 = math::next_pow2(n);
     const unsigned lo = n - pp2;
@@ -310,132 +369,165 @@ inline unsigned math::nearest_pow2(unsigned n) {
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline int math::nearest_pow2(int n) {
-    return (int) math::nearest_pow2((unsigned) n);
+inline int math::nearest_pow2(int n)
+{
+    return (int)math::nearest_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::is_pow2(unsigned n) {
+constexpr bool math::is_pow2(unsigned n)
+{
     return n && !(n & (n - 1));
 }
 
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::is_pow2(int n) {
-    return (int) math::is_pow2((unsigned) n);
+constexpr bool math::is_pow2(int n)
+{
+    return (int)math::is_pow2((unsigned)n);
 }
 
 /*-------------------------------------
     factorial
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::factorial(scalar_t x) {
+template<typename scalar_t>
+constexpr scalar_t math::factorial(scalar_t x)
+{
     return (1 < x) ? x * math::factorial(x - 1) : 1;
 }
 
 /*-------------------------------------
     pow
 -------------------------------------*/
-template <typename scalar_t, typename int_t>
-constexpr scalar_t math::pow(scalar_t x, int_t y) {
+template<typename scalar_t, typename int_t>
+constexpr scalar_t math::pow(scalar_t x, int_t y)
+{
     return (0 < y) ? x * math::pow(x, y - 1) : 1;
+}
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+template<typename scalar_t>
+inline scalar_t exp(scalar_t x)
+{
+    x = 1.f + x / 256.f;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
 }
 
 /*-------------------------------------
     const_sin
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::const_sin(scalar_t x) {
+template<typename scalar_t>
+constexpr scalar_t math::const_sin(scalar_t x)
+{
     return x
-        - (x * x * x * scalar_t(1.f / 6))
-        +(x * x * x * x * x * scalar_t(1.f / 120))
-        -(x * x * x * x * x * x * x * scalar_t(1.f / 5040))
-        +(x * x * x * x * x * x * x * x * x * scalar_t(1.f / 362880));
+           - (x * x * x * scalar_t(1.f / 6))
+           + (x * x * x * x * x * scalar_t(1.f / 120))
+           - (x * x * x * x * x * x * x * scalar_t(1.f / 5040))
+           + (x * x * x * x * x * x * x * x * x * scalar_t(1.f / 362880));
 }
 
 /*-------------------------------------
     const_cos
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::const_cos(scalar_t x) {
+template<typename scalar_t>
+constexpr scalar_t math::const_cos(scalar_t x)
+{
     return 1
-    - (x * x * scalar_t(1.f / 2))
-        +(x * x * x * x * scalar_t(1.f / 24))
-        -(x * x * x * x * x * x * scalar_t(1.f / 720))
-        +(x * x * x * x * x * x * x * x * scalar_t(1.f / 40320));
+           - (x * x * scalar_t(1.f / 2))
+           + (x * x * x * x * scalar_t(1.f / 24))
+           - (x * x * x * x * x * x * scalar_t(1.f / 720))
+           + (x * x * x * x * x * x * x * x * scalar_t(1.f / 40320));
 }
 
 /*-------------------------------------
     const_tan
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::const_tan(scalar_t x) {
+template<typename scalar_t>
+constexpr scalar_t math::const_tan(scalar_t x)
+{
     return x
-        + (x * x * x * scalar_t(1.f / 3))
-        +(x * x * x * x * x * scalar_t(2.f / 15))
-        +(x * x * x * x * x * x * x * scalar_t(17.f / 315))
-        +(x * x * x * x * x * x * x * x * x * scalar_t(62.f / 2835));
+           + (x * x * x * scalar_t(1.f / 3))
+           + (x * x * x * x * x * scalar_t(2.f / 15))
+           + (x * x * x * x * x * x * x * scalar_t(17.f / 315))
+           + (x * x * x * x * x * x * x * x * x * scalar_t(62.f / 2835));
 }
 
 /*-------------------------------------
     sum
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::sum(const scalar_t& num) {
+template<typename scalar_t>
+constexpr scalar_t math::sum(const scalar_t& num)
+{
     return num;
 }
 
 /*-------------------------------------
     sum
 -------------------------------------*/
-template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::sum(const scalar_t& num, const scalars_t&... nums) {
+template<typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::sum(const scalar_t& num, const scalars_t& ... nums)
+{
     return num + math::sum(nums...);
 }
 
 /*-------------------------------------
     average
 -------------------------------------*/
-template <typename scalar_t>
-constexpr scalar_t math::average() {
+template<typename scalar_t>
+constexpr scalar_t math::average()
+{
     return scalar_t(0);
 }
 
 /*-------------------------------------
     average
 -------------------------------------*/
-template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::average(const scalar_t& num, const scalars_t&... nums) {
+template<typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::average(const scalar_t& num, const scalars_t& ... nums)
+{
     return math::sum(num, nums...) / scalar_t(sizeof...(scalars_t) + 1);
 }
 
 /*-------------------------------------
     Count the number of bits in an integer.
 -------------------------------------*/
-constexpr unsigned math::count_set_bits(const unsigned long long num) {
+constexpr unsigned math::count_set_bits(const unsigned long long num)
+{
     return num ? math::count_set_bits(num >> 1) + (1 & num) : 0;
 }
 
-template <typename scalar_t>
-constexpr unsigned math::count_set_bits(const scalar_t num) {
-    return math::count_set_bits((unsigned long long) num);
+template<typename scalar_t>
+constexpr unsigned math::count_set_bits(const scalar_t num)
+{
+    return math::count_set_bits((unsigned long long)num);
 }
 
 /*-------------------------------------
     Scale a number from one number range to another.
 -------------------------------------*/
-template <typename in_type, typename out_type>
+template<typename in_type, typename out_type>
 constexpr out_type math::scale_num_to_range(
     const in_type num,
     const out_type oldMin,
     const out_type oldMax,
     const out_type newMin,
     const out_type newMax
-) {
+)
+{
     return (((num - oldMin) * (newMax - newMin)) / (oldMax - oldMin)) + newMin;
 }
-
 } /* end ls namespace */

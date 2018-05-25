@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_VEC2_H__
-#define __LS_MATH_VEC2_H__
+#ifndef LS_MATH_VEC2_H
+#define LS_MATH_VEC2_H
 
 #include "lightsky/setup/Api.h"
 
@@ -27,7 +27,7 @@ struct mat2_t;
  *      1 = Y
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API vec2_t {
+struct LS_API alignas(sizeof(num_t)) vec2_t {
     // data
     num_t v[2];
 
@@ -109,16 +109,24 @@ vec2_t<num_t> operator*(num_t n, const vec2_t<num_t>& v);
 /*-------------------------------------
     2D Vector Specializations
 -------------------------------------*/
+/*
 LS_DECLARE_STRUCT_TYPE(vec2f, vec2_t, float);
 LS_DECLARE_STRUCT_TYPE(vec2d, vec2_t, double);
 LS_DECLARE_STRUCT_TYPE(vec2i, vec2_t, int);
 LS_DECLARE_STRUCT_TYPE(vec2ui, vec2_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(vec2x, vec2_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(vec2, vec2_t, LS_FLOAT);
+*/
+typedef vec2_t<float>    vec2f;
+typedef vec2_t<double>   vec2d;
+typedef vec2_t<int>      vec2i;
+typedef vec2_t<unsigned> vec2u;
+typedef vec2_t<medp_t>   vec2x;
+typedef vec2_t<LS_FLOAT> vec2;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/vec2_impl.h"
 
-#endif /* __LS_MATH_VEC2_H__ */
+#endif /* LS_MATH_VEC2_H */

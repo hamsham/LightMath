@@ -1,14 +1,14 @@
 
-#ifndef __LS_MATH_FIXED_H__
-#define __LS_MATH_FIXED_H__
+#ifndef LS_MATH_FIXED_H
+#define LS_MATH_FIXED_H
 
 #include <climits> // CHAR_BIT
-#include <cstdint>
+#include <cstdint> // fixed-width types
 #include <utility> // std::move()
 
 #include "lightsky/setup/Api.h"
+#include "lightsky/setup/Macros.h"
 
-#include "lightsky/math/Setup.h"
 #include "lightsky/math/Types.h"
 
 namespace ls {
@@ -25,17 +25,15 @@ namespace math {
 -----------------------------------------------------------------------------*/
 template <typename fixed_base_t, unsigned num_frac_digits>
 class LS_API fixed_t final {
-    static_assert(
-        num_frac_digits < (sizeof (fixed_base_t)) * CHAR_BIT,
-        "Fixed-Point object has too much precision."
-        );
 
-    static_assert(
-        num_frac_digits != 0,
-        "Fixed-Point object has no precision."
-        );
+    static_assert(num_frac_digits < (sizeof (fixed_base_t)) * CHAR_BIT, "Fixed-Point object has too much precision.");
+    static_assert(num_frac_digits != 0, "Fixed-Point object has no precision.");
 
-  private:
+  public:
+    typedef fixed_base_t base_type;
+
+    static constexpr fixed_base_t fraction_digits = num_frac_digits;
+
     /**
      *  @brief number
      *  The singular piece of data contained within this class which
@@ -44,7 +42,6 @@ class LS_API fixed_t final {
      */
     fixed_base_t number;
 
-  public:
     /**
      *  @brief Constructors
      *  Initializes all data.
@@ -116,587 +113,82 @@ class LS_API fixed_t final {
      */
     ~fixed_t() = default;
 
-    /**
-     *  @brief Pre-Increment operator
-     *
-     *  Increments *this by a factor of 1.
-     *
-     *  @return
-     *  A reference to *this after it has been incremented.
-     */
     inline fixed_t& operator++();
-
-    /**
-     *  @brief Pre-Decrement operator
-     *
-     *  Decrements *this by a factor of 1.
-     *
-     *  @return
-     *  A reference to *this after it has been decremented.
-     */
     inline fixed_t& operator--();
-
-    /**
-     *  @brief Post-Increment operator
-     *
-     *  Increments *this by a factor of 1.
-     *
-     *  @param
-     *  unused
-     *
-     *  @return
-     *  A copy of *this containing the currently contained numerical value
-     *  before it has been incremented.
-     */
     inline fixed_t operator++(int);
-
-    /**
-     *  @brief Post-Decrement operator
-     *
-     *  Decrements *this by a factor of 1.
-     *
-     *  @param
-     *  unused
-     *
-     *  @return
-     *  A copy of *this containing the currently contained numerical value
-     *  before it has been decremented.
-     */
     inline fixed_t operator--(int);
 
-    /**
-     *  @brief Arithmetic "not" operator.
-     *
-     *  Determines if this object contains a value equal to 0.
-     *
-     *  @return
-     *  TRUE if this object contains a value equal to zero, FALSE if
-     *  otherwise.
-     */
     constexpr bool operator!() const;
-
-    /**
-     *  @brief Equivalence operator
-     *
-     *  Determines if *this object contains a value that is equivalent to
-     *  the value contained within the input parameter.
-     *
-     *  @param f
-     *  Another fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE if the numerical values between this and the input parameters
-     *  are the same, false if not.
-     */
     constexpr bool operator==(const fixed_t& f) const;
-
-    /**
-     *  @brief Non-Equivalence operator
-     *
-     *  Determines if *this object contains a value that is not equivalent
-     *  to the value contained within the input parameter.
-     *
-     *  @param f
-     *  Another fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE if the numerical values between this and the input parameters
-     *  are not the same, false if they are.
-     */
     constexpr bool operator!=(const fixed_t& f) const;
-
-    /**
-     *  @brief Greater than or equal to operator.
-     *
-     *  Determines if *this object contains a value that is greater than or
-     *  equal to the value contained within the input parameter.
-     *
-     *  @param f
-     *  Another fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE *this contains a value greater than or equal to the input
-     *  parameter, FALSE if not.
-     */
     constexpr bool operator>=(const fixed_t& f) const;
-
-    /**
-     *  @brief Less than or equal to operator.
-     *
-     *  Determines if *this object contains a value that is less than or
-     *  equal to the value contained within the input parameter.
-     *
-     *  @param f
-     *  Another fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE *this contains a value less than or equal to the input
-     *  parameter, FALSE if not.
-     */
     constexpr bool operator<=(const fixed_t& f) const;
-
-    /**
-     *  @brief Greater than operator.
-     *
-     *  Determines if *this object contains a value that is greater than
-     *  the value contained within the input parameter.
-     *
-     *  @param f
-     *  Another fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE *this contains a value greater than the input parameter, FALSE
-     *  if not.
-     */
     constexpr bool operator>(const fixed_t& f) const;
-
-    /**
-     *  @brief Less than operator.
-     *
-     *  Determines if *this object contains a value that is less than the
-     *  value contained within the input parameter.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  TRUE *this contains a value less than the input parameter, FALSE if
-     *  not.
-     */
     constexpr bool operator<(const fixed_t& f) const;
 
-    /**
-     *  @brief Addition operator
-     *
-     *  Adds the current value to another fixed-point number.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number containing the added value of *this and the
-     *  input parameter.
-     */
     constexpr fixed_t operator+(const fixed_t& f) const;
-
-    /**
-     *  @brief Subtraction operator
-     *
-     *  Subtracts the current value from another fixed-point number.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number containing the subtracted value of the input
-     *  parameter from *this.
-     */
     constexpr fixed_t operator-(const fixed_t& f) const;
-
-    /**
-     *  @brief Negation operator
-     *
-     *  Subtracts the current value from 0.
-     *
-     *  @return
-     *  A fixed-point number containing the value of *this with its sign
-     *  flipped between positive or negative.
-     */
     constexpr fixed_t operator-() const;
-
-    /**
-     *  @brief Multiplication operator
-     *
-     *  Multiplied the current value with another fixed-point number.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number containing the multiplied value of the input
-     *  parameter and *this.
-     */
     constexpr fixed_t operator*(const fixed_t& f) const;
-
-    /**
-     *  @brief Division operator
-     *
-     *  Divides the current value by another fixed-point number.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number containing the value of *this, divided by the
-     *  input parameter.
-     */
     constexpr fixed_t operator/(const fixed_t& f) const;
-
-    /**
-     *  @brief Modulus operator
-     *
-     *  Retrieves the remainder of a division of *this by another
-     *  fixed-point number.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  The remainder of a division of *this by the input parameter.
-     */
     constexpr fixed_t operator%(const fixed_t& f) const;
 
-    /**
-     *  @brief Logical AND operator
-     *
-     *  Performs a logical AND operation on the values contained within
-     *  *this and the input parameter.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this and the input
-     *  parameter combined using a logical AND.
-     */
     constexpr fixed_t operator&(const fixed_t& f) const;
-
-    /**
-     *  @brief Logical OR operator
-     *
-     *  Performs a logical OR operation on the values contained within
-     *  *this and the input parameter.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this and the input
-     *  parameter combined using a logical OR.
-     */
     constexpr fixed_t operator|(const fixed_t& f) const;
-
-    /**
-     *  @brief Logical XOR operator
-     *
-     *  Performs a logical XOR operation on the values contained within
-     *  *this and the input parameter.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this and the input
-     *  parameter combined using a logical XOR.
-     */
     constexpr fixed_t operator ^ (const fixed_t& f) const;
-
-    /**
-     *  @brief Logical NOT operator
-     *
-     *  Performs a logical NOT operation on the value contained within
-     *  *this.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this, after a logical NOT.
-     */
     constexpr fixed_t operator~() const;
-
-    /**
-     *  @brief Shift-Right operator
-     *
-     *  Shifts all of the bits in *this rightward by a specified number of
-     *  times.
-     *
-     *  @param n
-     *  An integer that determines how many times the bits in *this will be
-     *  shifted.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this shifted to the right
-     *  by N number of times.
-     */
     constexpr fixed_t operator>>(int n) const;
-
-    /**
-     *  @brief Shift-Left operator
-     *
-     *  Shifts all of the bits in *this leftward by a specified number of
-     *  times.
-     *
-     *  @param n
-     *  An integer that determines how many times the bits in *this will be
-     *  shifted.
-     *
-     *  @return
-     *  A fixed-point number with the values of *this shifted to the left
-     *  by N number of times.
-     */
     constexpr fixed_t operator<<(int n) const;
 
-    /**
-     *  @brief Copy-Assignment operator
-     *
-     *  Assigns the value in *this to the one contained within the input
-     *  parameter.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value assigned to
-     *  the value in the input parameter.
-     */
     inline fixed_t& operator=(const fixed_t& f);
-
-    /**
-     *  @brief Move-Assignment operator
-     *
-     *  Assigns the value in *this to the one contained within the input
-     *  parameter by moving instead of copying.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value assigned to
-     *  the value in the input parameter through a move operation.
-     */
     inline fixed_t& operator=(fixed_t&& f);
-
-    /**
-     *  @brief Addition-Assignment operator
-     *
-     *  Assigns the value in *this to the one in the input parameter after
-     *  combining both values through addition.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value added to the
-     *  value in the input parameter.
-     */
     inline fixed_t& operator+=(const fixed_t& f);
-
-    /**
-     *  @brief Subtraction-Assignment operator
-     *
-     *  Assigns the value in *this to the one in the input parameter after
-     *  combining both values through subtraction.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value subtracted by
-     *  the value in the input parameter.
-     */
     inline fixed_t& operator-=(const fixed_t& f);
-
-    /**
-     *  @brief Multiplication-Assignment operator
-     *
-     *  Assigns the value in *this to the one in the input parameter after
-     *  combining both values through multiplication.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value multiplied by
-     *  the value in the input parameter.
-     */
     inline fixed_t& operator*=(const fixed_t& f);
-
-    /**
-     *  @brief Division-Assignment operator
-     *
-     *  Assigns the value in *this to the one in the input parameter after
-     *  combining both values through division.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value divided by
-     *  the value in the input parameter.
-     */
     inline fixed_t& operator/=(const fixed_t& f);
-
-    /**
-     *  @brief Modulo-Assignment operator
-     *
-     *  Divides *this by the input parameter and assigns the value of the
-     *  remainder into *this.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after having it's internal value divided by
-     *  the input parameter and assigned to the division remainder.
-     */
     inline fixed_t& operator%=(const fixed_t& f);
 
-    /**
-     *  @brief Logical AND-Assignment operator
-     *
-     *  Assigns the value of a logical AND, between *this and the input
-     *  parameter, into *this.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after a logical AND operation with the input
-     *  parameter.
-     */
     inline fixed_t& operator&=(const fixed_t& f);
-
-    /**
-     *  @brief Logical OR-Assignment operator
-     *
-     *  Assigns the value of a logical OR, between *this and the input
-     *  parameter, into *this.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after a logical OR operation with the input
-     *  parameter.
-     */
     inline fixed_t& operator|=(const fixed_t& f);
-
-    /**
-     *  @brief Logical XOR-Assignment operator
-     *
-     *  Assigns the value of a logical XOR, between *this and the input
-     *  parameter, into *this.
-     *
-     *  @param f
-     *  A fixed-point number of the same type as *this.
-     *
-     *  @return
-     *  A reference to *this after a logical XOR operation with the input
-     *  parameter.
-     */
     inline fixed_t& operator^=(const fixed_t& f);
-
-    /**
-     *  @brief Shift-Right and Assign operator
-     *
-     *  Assigns the value of a right shift back into *this.
-     *
-     *  @param n
-     *  An integral type which denotes the number of times to shift the
-     *  value contained within *this.
-     *
-     *  @return
-     *  A reference to *this after having its bits shifted rightward by N
-     *  number of times.
-     */
     inline fixed_t& operator>>=(int n);
-
-    /**
-     *  @brief Shift-Left and Assign operator
-     *
-     *  Assigns the value of a left shift back into *this.
-     *
-     *  @param n
-     *  An integral type which denotes the number of times to shift the
-     *  value contained within *this.
-     *
-     *  @return
-     *  A reference to *this after having its bits shifted leftward by N
-     *  number of times.
-     */
     inline fixed_t& operator<<=(int n);
 
-    /**
-     *  @brief Single-Precision floating-point cast.
-     *
-     *  Converts *this object's internal value into a single-precision
-     *  floating-point value.
-     *
-     *  @return
-     *  A single-precision floating-point value with an approximate value
-     *  of *this.
-     */
     constexpr operator float() const;
-
-    /**
-     *  @brief Double-Precision floating-point cast.
-     *
-     *  Converts *this object's internal value into a double-precision
-     *  floating-point value.
-     *
-     *  @return
-     *  A double-precision floating-point value with an approximate value
-     *  of *this.
-     */
     explicit constexpr operator double() const;
-
-    /**
-     *  @brief Integer cast.
-     *
-     *  Converts *this object's internal value into an integer, preserving
-     *  the fixed-point representation.
-     *
-     *  @return
-     *  An integer containing the same value as *this with no conversion of
-     *  fractions.
-     */
     explicit inline operator fixed_base_t() const;
 
-    /**
-     *  @brief Single-Precision floating-point Assignment.
-     *
-     *  Assigns *this to an approximate value of a single-precision float.
-     *
-     *  @param f
-     *  A single-precision float
-     *
-     *  @return
-     *  A reference to *this after being converted from a float.
-     */
+
     inline fixed_t& operator=(float f);
-
-    /**
-     *  @brief Double-Precision floating-point Assignment.
-     *
-     *  Assigns *this to an approximate value of a double-precision float.
-     *
-     *  @param f
-     *  A double-precision float
-     *
-     *  @return
-     *  A reference to *this after being converted from a double.
-     */
     inline fixed_t& operator=(double d);
-
-    /**
-     *  @brief Integral Assignment.
-     *
-     *  Assigns *this to the exact value of an integral type
-     *
-     *  @param f
-     *  An integral type.
-     *
-     *  @return
-     *  A reference to *this after being assigned to the same value as an
-     *  integer.
-     */
     inline fixed_t& operator=(fixed_base_t f);
 };
+
+
+
+template <class fixed_type>
+constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename fixed_type::base_type& n)
+{
+    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n * (typename fixed_type::base_type{1} << fixed_type::fraction_digits)};
+}
+
+
+
+template <typename fixed_base_t, unsigned num_frac_digits>
+constexpr fixed_base_t fixed_cast(const fixed_t<fixed_base_t, num_frac_digits>& n)
+{
+    return (fixed_base_t)n;
+}
+
+
 
 /*-------------------------------------
     Fixed-Point Template Specializations
 -------------------------------------*/
-LS_DECLARE_CLASS_TYPE(lowp_t, fixed_t, int32_t, 7); // 24.7 (-1 for the sign)
-LS_DECLARE_CLASS_TYPE(medp_t, fixed_t, int32_t, 15); // 16.15
-LS_DECLARE_CLASS_TYPE(highp_t, fixed_t, int32_t, 23); // 8.23
+/*
+LS_DECLARE_CLASS_TYPE(lowp_t, fixed_t, int32_t, 8); // 23.8 (-1 for the sign)
+LS_DECLARE_CLASS_TYPE(medp_t, fixed_t, int32_t, 12); // 19.12
+LS_DECLARE_CLASS_TYPE(highp_t, fixed_t, int32_t, 16); // 15.16
 
 LS_DECLARE_CLASS_TYPE(long_lowp_t, fixed_t, int64_t, 15); // 48.15
 LS_DECLARE_CLASS_TYPE(long_medp_t, fixed_t, int64_t, 31); // 32.31
@@ -709,10 +201,24 @@ LS_DECLARE_CLASS_TYPE(uhighp_t, fixed_t, uint32_t, 24); // 8.24
 LS_DECLARE_CLASS_TYPE(ulong_lowp_t, fixed_t, uint64_t, 16); // 48.16
 LS_DECLARE_CLASS_TYPE(ulong_medp_t, fixed_t, uint64_t, 32); // 32.32
 LS_DECLARE_CLASS_TYPE(ulong_highp_t, fixed_t, uint64_t, 48); // 16.48
+*/
+
+typedef fixed_t<int32_t, 8> lowp_t; // 23.8 (-1 for the sign)
+typedef fixed_t<int32_t, 12> medp_t; // 19.12
+typedef fixed_t<int32_t, 15> highp_t; // 15.16
+typedef fixed_t<int64_t, 15> long_lowp_t; // 48.15
+typedef fixed_t<int64_t, 31> long_medp_t; // 32.31
+typedef fixed_t<int64_t, 47> long_highp_t; // 16.47
+typedef fixed_t<uint32_t, 8> ulowp_t; // 24.8 (-1 for the sign)
+typedef fixed_t<uint32_t, 16> umedp_t; // 16.16
+typedef fixed_t<uint32_t, 24> uhighp_t; // 8.24
+typedef fixed_t<uint64_t, 16> ulong_lowp_t; // 48.16
+typedef fixed_t<uint64_t, 32> ulong_medp_t; // 32.32
+typedef fixed_t<uint64_t, 48> ulong_highp_t; // 16.48
 
 }//end math namespace
 }//end ls namespace
 
 #include "lightsky/math/generic/fixed_impl.h"
 
-#endif    /* __LS_MATH_FIXED_H__ */
+#endif    /* LS_MATH_FIXED_H */

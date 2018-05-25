@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_MAT2_H__
-#define __LS_MATH_MAT2_H__
+#ifndef LS_MATH_MAT2_H
+#define LS_MATH_MAT2_H
 
 #include "lightsky/setup/Api.h"
 
@@ -24,7 +24,7 @@ namespace math {
  *      1[0-1] = YX  YY
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API mat2_t {
+struct LS_API alignas(sizeof(num_t)) mat2_t {
     // data
     vec2_t<num_t> m[2];
 
@@ -106,16 +106,24 @@ mat2_t<num_t> operator*(num_t n, const mat2_t<num_t>& m);
 /*-------------------------------------
     2x2 Matrix Specializations
 -------------------------------------*/
+/*
 LS_DECLARE_STRUCT_TYPE(mat2f, mat2_t, float);
 LS_DECLARE_STRUCT_TYPE(mat2d, mat2_t, double);
 LS_DECLARE_STRUCT_TYPE(mat2i, mat2_t, int);
-LS_DECLARE_STRUCT_TYPE(mat2ui, mat2_t, unsigned);
+LS_DECLARE_STRUCT_TYPE(mat2u, mat2_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat2x, mat2_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat2, mat2_t, LS_FLOAT);
+*/
+typedef mat2_t<float>    mat2f;
+typedef mat2_t<double>   mat2d;
+typedef mat2_t<int>      mat2i;
+typedef mat2_t<unsigned> mat2u;
+typedef mat2_t<medp_t>   mat2x;
+typedef mat2_t<LS_FLOAT> mat2;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/mat2_impl.h"
 
-#endif /*_LS_MATH_MAT2_H_*/
+#endif /*LS_MATH_MAT2_H*/

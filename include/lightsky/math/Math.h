@@ -5,8 +5,8 @@
  * This file contains all includes for the math module of LightSky.
  */
 
-#ifndef __LS_MATH_H__
-#define __LS_MATH_H__
+#ifndef LS_MATH_H
+#define LS_MATH_H
 
 /*
  * NOTES:
@@ -16,7 +16,6 @@
  * variables, so this might make readability slightly difficult at first.
  */
 
-#include "lightsky/math/Setup.h"
 #include "lightsky/math/Types.h"
 
 #include "lightsky/math/fixed.h"
@@ -35,4 +34,4 @@
 
 #include "lightsky/math/PerlinNoise.h"
 
-#endif /* __LS_MATH_H__ */
+#endif /* LS_MATH_H */

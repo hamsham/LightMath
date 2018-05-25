@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_MAT3_H__
-#define __LS_MATH_MAT3_H__
+#ifndef LS_MATH_MAT3_H
+#define LS_MATH_MAT3_H
 
 #include "lightsky/setup/Api.h"
 
@@ -28,7 +28,7 @@ struct mat4_t;
  *      2[0-2] = ZX  ZY  ZZ
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API mat3_t {
+struct LS_API alignas(sizeof(num_t)) mat3_t {
     // data
     vec3_t<num_t> m[3];
 
@@ -113,16 +113,24 @@ mat3_t<num_t> operator*(num_t n, const mat3_t<num_t>& m);
 /*-------------------------------------
     3x3 Matrix Specializations
 -------------------------------------*/
+/*
 LS_DECLARE_STRUCT_TYPE(mat3f, mat3_t, float);
 LS_DECLARE_STRUCT_TYPE(mat3d, mat3_t, double);
 LS_DECLARE_STRUCT_TYPE(mat3i, mat3_t, int);
-LS_DECLARE_STRUCT_TYPE(mat3ui, mat3_t, unsigned);
+LS_DECLARE_STRUCT_TYPE(mat3u, mat3_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat3x, mat3_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat3, mat3_t, LS_FLOAT);
+*/
+typedef mat3_t<float>    mat3f;
+typedef mat3_t<double>   mat3d;
+typedef mat3_t<int>      mat3i;
+typedef mat3_t<unsigned> mat3u;
+typedef mat3_t<medp_t>   mat3x;
+typedef mat3_t<LS_FLOAT> mat3;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/mat3_impl.h"
 
-#endif /*_LS_MATH_MAT3_H_*/
+#endif /*LS_MATH_MAT3_H*/

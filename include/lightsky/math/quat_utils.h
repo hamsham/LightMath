@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_QUAT_UTILS_H__
-#define __LS_MATH_QUAT_UTILS_H__
+#ifndef LS_MATH_QUAT_UTILS_H
+#define LS_MATH_QUAT_UTILS_H
 
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/vec3.h"
@@ -400,4 +400,4 @@ quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 
 #include "lightsky/math/generic/quat_utils_impl.h"
 
-#endif /* __LS_MATH_QUAT_UTILS_H__ */
+#endif /* LS_MATH_QUAT_UTILS_H */

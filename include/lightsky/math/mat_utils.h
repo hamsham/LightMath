@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_MAT_UTILS_H__
-#define __LS_MATH_MAT_UTILS_H__
+#ifndef LS_MATH_MAT_UTILS_H
+#define LS_MATH_MAT_UTILS_H
 
 #include "lightsky/math/vec_utils.h"
 #include "lightsky/math/mat2.h"
@@ -461,4 +461,4 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
 
 #include "lightsky/math/generic/mat_utils_impl.h"
 
-#endif    /* __LS_MATH_MAT_UTILS_H__ */
+#endif    /* LS_MATH_MAT_UTILS_H */

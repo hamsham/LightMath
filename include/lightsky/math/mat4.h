@@ -1,6 +1,6 @@
 
-#ifndef __LS_MATH_MAT4_H__
-#define __LS_MATH_MAT4_H__
+#ifndef LS_MATH_MAT4_H
+#define LS_MATH_MAT4_H
 
 #include "lightsky/setup/Api.h"
 
@@ -27,7 +27,7 @@ namespace math {
  *      3[0-3] = WX  WY  WZ  WW
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API mat4_t {
+struct LS_API alignas(sizeof(num_t)) mat4_t {
     // data
     vec4_t<num_t> m[4];
 
@@ -115,16 +115,24 @@ mat4_t<num_t> operator*(num_t n, const mat4_t<num_t>& m);
 /*-------------------------------------
     4x4 Matrix Specializations
 -------------------------------------*/
+/*
 LS_DECLARE_STRUCT_TYPE(mat4f, mat4_t, float);
 LS_DECLARE_STRUCT_TYPE(mat4d, mat4_t, double);
 LS_DECLARE_STRUCT_TYPE(mat4i, mat4_t, int);
-LS_DECLARE_STRUCT_TYPE(mat4ui, mat4_t, unsigned);
+LS_DECLARE_STRUCT_TYPE(mat4u, mat4_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat4x, mat4_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat4, mat4_t, LS_FLOAT);
+*/
+typedef mat4_t<float>    mat4f;
+typedef mat4_t<double>   mat4d;
+typedef mat4_t<int>      mat4i;
+typedef mat4_t<unsigned> mat4u;
+typedef mat4_t<medp_t>   mat4x;
+typedef mat4_t<LS_FLOAT> mat4;
 
 } //end math namespace
 } //end ls namespace
 
 #include "lightsky/math/generic/mat4_impl.h"
 
-#endif /*_LS_MATH_MAT4_H_*/
+#endif /*LS_MATH_MAT4_H*/
