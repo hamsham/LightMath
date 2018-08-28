@@ -2,6 +2,20 @@
 #ifndef LS_MATH_QUAT_UTILS_H
 #define LS_MATH_QUAT_UTILS_H
 
+#include "lightsky/setup/Arch.h"
+#include "lightsky/setup/Compiler.h"
+
+// MSVC defines its own min/max functions.
+#ifdef LS_COMPILER_MSC
+#ifdef min
+        #undef min
+    #endif /* min */
+
+    #ifdef max
+        #undef max
+    #endif /* max */
+#endif /* LS_COMPILER_MSC */
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/vec3.h"
 #include "lightsky/math/vec4.h"
@@ -397,6 +411,12 @@ quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 
 } // end math namespace
 } // end ls namespace
+
+#ifdef LS_ARCH_X86
+    #include "lightsky/math/x86/quatf_utils_impl.h"
+#elif defined(LS_ARCH_ARM)
+    #include "lightsky/math/arm/quatf_utils_impl.h"
+#endif
 
 #include "lightsky/math/generic/quat_utils_impl.h"
 

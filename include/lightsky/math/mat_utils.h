@@ -2,6 +2,8 @@
 #ifndef LS_MATH_MAT_UTILS_H
 #define LS_MATH_MAT_UTILS_H
 
+#include "lightsky/setup/Arch.h"
+
 #include "lightsky/math/vec_utils.h"
 #include "lightsky/math/mat2.h"
 #include "lightsky/math/mat3.h"
@@ -206,7 +208,7 @@ N determinant(const mat4_t<N>& m);
  *
  *  @return the transposition of a matrix.
  */
-template <typename N> constexpr
+template <typename N> inline
 mat4_t<N> transpose(const mat4_t<N>& m);
 
 /**
@@ -367,7 +369,7 @@ mat4_t<N> ortho(N left, N right, N top, N bottom);
  *  projected into a 2D representation without distance-scaling.
  */
 template <typename N> inline
-mat4_t<N> ortho(N left, N right, N top, N bottom, N near, N far);
+mat4_t<N> ortho(N left, N right, N top, N bottom, N zNear, N zFar);
 
 /**
  *  @brief frustum
@@ -397,7 +399,7 @@ mat4_t<N> ortho(N left, N right, N top, N bottom, N near, N far);
  *  plane.
  */
 template <typename N> inline
-mat4_t<N> frustum(N left, N right, N top, N bottom, N near, N far);
+mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar);
 
 /**
  *  @brief lookAt
@@ -458,6 +460,10 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
 
 } // end math namespace
 } // end ls namespace
+
+#ifdef LS_ARCH_X86
+    #include "lightsky/math/x86/matf_utils_impl.h"
+#endif
 
 #include "lightsky/math/generic/mat_utils_impl.h"
 

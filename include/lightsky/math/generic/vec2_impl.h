@@ -46,7 +46,7 @@ constexpr vec2_t<num_t>::operator vec2_t<other_t>() const {
 }
 
 template <typename num_t>
-const num_t* vec2_t<num_t>::operator&() const {
+constexpr const num_t* vec2_t<num_t>::operator&() const {
     return v;
 }
 
@@ -59,19 +59,21 @@ inline num_t* vec2_t<num_t>::operator&() {
     Subscripting Operators
 -------------------------------------*/
 template <typename num_t>
-constexpr num_t vec2_t<num_t>::operator[](int i) const {
+template <typename index_t>
+constexpr num_t vec2_t<num_t>::operator[](index_t i) const {
     return v[i];
 }
 
 template <typename num_t>
-inline num_t& vec2_t<num_t>::operator[](int i) {
+template <typename index_t>
+inline num_t& vec2_t<num_t>::operator[](index_t i) {
     return v[i];
 }
 
 /*-------------------------------------
     Vector-Vector Math Operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator+(const vec2_t<num_t>& input) const {
     return vec2_t<num_t>{
         v[0] + input.v[0],
@@ -79,7 +81,7 @@ vec2_t<num_t> vec2_t<num_t>::operator+(const vec2_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator-(const vec2_t<num_t>& input) const {
     return vec2_t<num_t>{
         v[0] - input.v[0],
@@ -89,12 +91,12 @@ vec2_t<num_t> vec2_t<num_t>::operator-(const vec2_t<num_t>& input) const {
 
 //for operations like "vectA = -vectB"
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator-() const {
     return vec2_t<num_t>{-v[0], -v[1]};
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator*(const vec2_t<num_t>& input) const {
     return vec2_t<num_t>{
         v[0] * input.v[0],
@@ -102,7 +104,7 @@ vec2_t<num_t> vec2_t<num_t>::operator*(const vec2_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator/(const vec2_t<num_t>& input) const {
     return vec2_t<num_t>{
         v[0] / input.v[0],
@@ -187,42 +189,42 @@ vec2_t<num_t> vec2_t<num_t>::operator--(int) {
 
 //comparisons
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator==(const vec2_t<num_t>& compare) const {
     return
     v[0] == compare.v[0] &&
         v[1] == compare.v[1];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator!=(const vec2_t<num_t>& compare) const {
     return
     v[0] != compare.v[0] ||
         v[1] != compare.v[1];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator<(const vec2_t<num_t>& compare) const {
     return
     v[0] < compare.v[0] &&
         v[1] < compare.v[1];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator>(const vec2_t<num_t>& compare) const {
     return
     v[0] > compare.v[0] &&
         v[1] > compare.v[1];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator<=(const vec2_t<num_t>& compare) const {
     return
     v[0] <= compare.v[0] &&
         v[1] <= compare.v[1];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec2_t<num_t>::operator>=(const vec2_t<num_t>& compare) const {
     return
     v[0] >= compare.v[0] &&
@@ -232,7 +234,7 @@ bool vec2_t<num_t>::operator>=(const vec2_t<num_t>& compare) const {
 /*-------------------------------------
     Vector-Scalar Math Operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator-(num_t input) const {
     return vec2_t<num_t>{
         v[0] - input,
@@ -240,7 +242,7 @@ vec2_t<num_t> vec2_t<num_t>::operator-(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator*(num_t input) const {
     return vec2_t<num_t>{
         v[0] * input,
@@ -248,7 +250,7 @@ vec2_t<num_t> vec2_t<num_t>::operator*(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator/(num_t input) const {
     return vec2_t<num_t>{
         v[0] / input,
@@ -263,7 +265,7 @@ vec2_t<num_t> vec2_t<num_t>::operator=(num_t input) {
     return *this;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> vec2_t<num_t>::operator+(num_t input) const {
     return vec2_t<num_t>{
         v[0] + input,
@@ -302,17 +304,17 @@ vec2_t<num_t>& vec2_t<num_t>::operator/=(num_t input) {
 /*-------------------------------------
     Non-Member Vector-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> operator+(num_t n, const vec2_t<num_t>& v) {
     return v + n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> operator-(num_t n, const vec2_t<num_t>& v) {
     return v - n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec2_t<num_t> operator*(num_t n, const vec2_t<num_t>& v) {
     return v * n;
 }

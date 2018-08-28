@@ -140,8 +140,8 @@ class LS_API fixed_t final {
     constexpr fixed_t operator>>(int n) const;
     constexpr fixed_t operator<<(int n) const;
 
-    inline fixed_t& operator=(const fixed_t& f);
-    inline fixed_t& operator=(fixed_t&& f);
+    inline fixed_t& operator=(const fixed_t& f) = default;
+    inline fixed_t& operator=(fixed_t&& f) = default;
     inline fixed_t& operator+=(const fixed_t& f);
     inline fixed_t& operator-=(const fixed_t& f);
     inline fixed_t& operator*=(const fixed_t& f);
@@ -167,9 +167,9 @@ class LS_API fixed_t final {
 
 
 template <class fixed_type>
-constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename fixed_type::base_type& n)
+constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename fixed_type::base_type n)
 {
-    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n * (typename fixed_type::base_type{1} << fixed_type::fraction_digits)};
+    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{{n << fixed_type::fraction_digits}};
 }
 
 

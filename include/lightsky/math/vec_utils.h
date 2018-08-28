@@ -8,6 +8,20 @@
 #ifndef LS_MATH_VEC_UTILS_H
 #define LS_MATH_VEC_UTILS_H
 
+#include "lightsky/setup/Arch.h"
+#include "lightsky/setup/Compiler.h"
+
+ // MSVC defines its own min/max functions.
+#ifdef LS_COMPILER_MSC
+    #ifdef min
+        #undef min
+    #endif /* min */
+
+    #ifdef max
+        #undef max
+    #endif /* max */
+#endif /* LS_COMPILER_MSC */
+
 #include "lightsky/math/Types.h"
 #include "lightsky/math/scalar_utils.h"
 
@@ -22,6 +36,17 @@ namespace math {
 /*-----------------------------------------------------------------------------
     2D Vectors
 -----------------------------------------------------------------------------*/
+/**
+ *  @brief sum
+ *  Retrieve the sum of all components in a 2D vector.
+ *
+ *  @param v
+ *
+ *  @return the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum(const vec2_t<N>& v);
+
 /**
  *  @brief dot
  *  Retrieve the dot product of a 2D vector.
@@ -226,6 +251,17 @@ vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
 /*-----------------------------------------------------------------------------
     3D Vectors
 -----------------------------------------------------------------------------*/
+/**
+ *  @brief sum
+ *  Retrieve the sum of all components in a 3D vector.
+ *
+ *  @param v
+ *
+ *  @return the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum(const vec3_t<N>& v);
+
 /**
  *  @brief dot
  *  Retrieve the dot product of a 3D vector.
@@ -451,6 +487,17 @@ vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
     4D Vectors
 -----------------------------------------------------------------------------*/
 /**
+ *  @brief sum
+ *  Retrieve the sum of all components in a 4D vector.
+ *
+ *  @param v
+ *
+ *  @return the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum(const vec4_t<N>& v);
+
+/**
  *  @brief dot
  *  Retrieve the dot product of two 4D vectors.
  *
@@ -461,7 +508,7 @@ vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  @return the 4D dot product of v1 & v2.
  */
 template <typename N> constexpr
-N dot(const vec4_t<N>&, const vec4_t<N>& v);
+N dot(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 /**
  *  @brief normalize
@@ -619,6 +666,12 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 } // end math namespace
 } // end ls namespace
+
+#ifdef LS_ARCH_X86
+    #include "lightsky/math/x86/vecf_utils_impl.h"
+#elif defined(LS_ARCH_ARM)
+    #include "lightsky/math/arm/vecf_utils_impl.h"
+#endif
 
 #include "lightsky/math/generic/vec_utils_impl.h"
 

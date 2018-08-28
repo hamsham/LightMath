@@ -14,11 +14,7 @@ constexpr vec4_t<num_t>::vec4_t(num_t inX, num_t inY, num_t inZ, num_t inW) :
 
 template <typename num_t>
 constexpr vec4_t<num_t>::vec4_t() :
-    v{num_t
-    {0}, num_t
-    {0}, num_t
-    {0}, num_t
-    {0}}
+    v{num_t{0}, num_t{0}, num_t{0}, num_t{0}}
 {
 }
 
@@ -45,9 +41,12 @@ constexpr vec4_t<num_t>::vec4_t(vec4_t<num_t>&& v) :
 -------------------------------------*/
 template <typename num_t>
 template <typename other_t>
-constexpr vec4_t<num_t>::operator vec4_t<other_t>() const {
+inline vec4_t<num_t>::operator vec4_t<other_t>() const {
     return vec4_t<other_t>{
-        (other_t) v[0], (other_t) v[1], (other_t) v[2], (other_t) v[3]
+        (other_t) v[0],
+        (other_t) v[1],
+        (other_t) v[2],
+        (other_t) v[3]
     };
 }
 
@@ -65,19 +64,21 @@ inline num_t* vec4_t<num_t>::operator&() {
     Subscripting Operators
 -------------------------------------*/
 template <typename num_t>
-constexpr num_t vec4_t<num_t>::operator[](int i) const {
+template <typename index_t>
+constexpr num_t vec4_t<num_t>::operator[](index_t i) const {
     return v[i];
 }
 
 template <typename num_t>
-inline num_t& vec4_t<num_t>::operator[](int i) {
+template <typename index_t>
+inline num_t& vec4_t<num_t>::operator[](index_t i) {
     return v[i];
 }
 
 /*-------------------------------------
     Vector-Vector Math Operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator+(const vec4_t<num_t>& input) const {
     return vec4_t{
         v[0] + input.v[0],
@@ -87,7 +88,7 @@ vec4_t<num_t> vec4_t<num_t>::operator+(const vec4_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator-(const vec4_t<num_t>& input) const {
     return vec4_t{
         v[0] - input.v[0],
@@ -99,12 +100,12 @@ vec4_t<num_t> vec4_t<num_t>::operator-(const vec4_t<num_t>& input) const {
 
 //for operations like "vectA = -vectB"
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator-() const {
     return vec4_t<num_t>{-v[0], -v[1], -v[2], -v[3]};
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator*(const vec4_t<num_t>& input) const {
     return vec4_t<num_t>{
         v[0] * input.v[0],
@@ -114,7 +115,7 @@ vec4_t<num_t> vec4_t<num_t>::operator*(const vec4_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator/(const vec4_t<num_t>& input) const {
     return vec4_t<num_t>{
         v[0] / input.v[0],
@@ -222,7 +223,7 @@ vec4_t<num_t> vec4_t<num_t>::operator--(int) {
 
 //comparisons
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator==(const vec4_t<num_t>& compare) const {
     return
     v[0] == compare.v[0] &&
@@ -231,7 +232,7 @@ bool vec4_t<num_t>::operator==(const vec4_t<num_t>& compare) const {
         v[3] == compare.v[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator!=(const vec4_t<num_t>& compare) const {
     return
     v[0] != compare.v[0] ||
@@ -240,7 +241,7 @@ bool vec4_t<num_t>::operator!=(const vec4_t<num_t>& compare) const {
         v[3] != compare.v[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator<(const vec4_t<num_t>& compare) const {
     return
     v[0] < compare.v[0] &&
@@ -249,7 +250,7 @@ bool vec4_t<num_t>::operator<(const vec4_t<num_t>& compare) const {
         v[3] < compare.v[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator>(const vec4_t<num_t>& compare) const {
     return
     v[0] > compare.v[0] &&
@@ -258,7 +259,7 @@ bool vec4_t<num_t>::operator>(const vec4_t<num_t>& compare) const {
         v[3] > compare.v[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator<=(const vec4_t<num_t>& compare) const {
     return
     v[0] <= compare.v[0] &&
@@ -267,7 +268,7 @@ bool vec4_t<num_t>::operator<=(const vec4_t<num_t>& compare) const {
         v[3] <= compare.v[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool vec4_t<num_t>::operator>=(const vec4_t<num_t>& compare) const {
     return
     v[0] >= compare.v[0] &&
@@ -288,7 +289,7 @@ vec4_t<num_t> vec4_t<num_t>::operator=(num_t input) {
     return *this;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator+(num_t input) const {
     return vec4_t<num_t>{
         v[0] + input,
@@ -298,7 +299,7 @@ vec4_t<num_t> vec4_t<num_t>::operator+(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator-(num_t input) const {
     return vec4_t<num_t>{
         v[0] - input,
@@ -308,7 +309,7 @@ vec4_t<num_t> vec4_t<num_t>::operator-(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator*(num_t input) const {
     return vec4_t<num_t>{
         v[0] * input,
@@ -318,7 +319,7 @@ vec4_t<num_t> vec4_t<num_t>::operator*(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> vec4_t<num_t>::operator/(num_t input) const {
     return vec4_t<num_t>{
         v[0] / input,
@@ -367,17 +368,17 @@ vec4_t<num_t>& vec4_t<num_t>::operator/=(num_t input) {
 /*-------------------------------------
     Non-Member Vector-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> operator+(num_t n, const vec4_t<num_t>& v) {
     return v + n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> operator-(num_t n, const vec4_t<num_t>& v) {
     return v - n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 vec4_t<num_t> operator*(num_t n, const vec4_t<num_t>& v) {
     return v * n;
 }

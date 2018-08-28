@@ -285,7 +285,7 @@ math::mat4_t<num_t> math::inverse(const mat4_t<num_t>& m) {
 /*-------------------------------------
     4x4 Transpose
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> inline
 math::mat4_t<num_t> math::transpose(const mat4_t<num_t>& m) {
     return mat4_t<num_t>{
         m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
@@ -303,8 +303,7 @@ math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& ax
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
-    const num_t omc = num_t{1}
-    -c;
+    const num_t omc = num_t{1} - c;
     const num_t xy = (a.v[0] * a.v[1]) * omc;
     const num_t yz = (a.v[1] * a.v[2]) * omc;
     const num_t zx = (a.v[2] * a.v[0]) * omc;
@@ -313,10 +312,10 @@ math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& ax
     const num_t sz = s * a.v[2];
 
     return m * mat4_t<num_t>{
-        c + ((a.v[0] * a.v[0]) * omc),  xy + sz,                        zx - sy,                        num_t {0},
-        xy - sz,                        c + ((a.v[1] * a.v[1]) * omc),  yz + sx,                        num_t {0},
-        zx + sy,                        yz - sx,                        c + ((a.v[2] * a.v[2]) * omc),  num_t {0},
-        num_t{0},                       num_t{0},                       num_t{0},                       num_t{1}
+        c + ((a.v[0] * a.v[0]) * omc), xy + sz,                       zx - sy,                       num_t {0},
+        xy - sz,                       c + ((a.v[1] * a.v[1]) * omc), yz + sx,                       num_t {0},
+        zx + sy,                       yz - sx,                       c + ((a.v[2] * a.v[2]) * omc), num_t {0},
+        num_t{0},                      num_t{0},                      num_t{0},                      num_t{1}
     };
 }
 
@@ -358,10 +357,10 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
     const num_t zDelta = zFar - zNear;
 
     return mat4_t<num_t>{
-        (num_t{2}*zNear) / (xMax - xMin),   num_t{0},                           num_t{0},                           num_t{0},
-        num_t{0},                           (num_t{2}*zNear) / (top - bottom),  num_t{0},                           num_t{0},
-        num_t{0},                           num_t{0},                           -(zFar + zNear) / zDelta,           num_t{-1},
-        num_t{0},                           num_t{0},                           (num_t{-2}*zFar * zNear) / zDelta,  num_t{0}
+        (num_t{2}*zNear) / (xMax - xMin), num_t{0},                          num_t{0},                          num_t{0},
+        num_t{0},                         (num_t{2}*zNear) / (top - bottom), num_t{0},                          num_t{0},
+        num_t{0},                         num_t{0},                          -(zFar + zNear) / zDelta,          num_t{-1},
+        num_t{0},                         num_t{0},                          (num_t{-2}*zFar * zNear) / zDelta, num_t{0}
     };
 }
 
@@ -374,9 +373,9 @@ math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zN
 
     return mat4_t<num_t>{
         viewAngle/aspect, num_t{0},  num_t{0}, num_t{0},
-        num_t{0},        viewAngle, num_t{0}, num_t{0},
-        num_t{0},        num_t{0},  num_t{0}, num_t{-1},
-        num_t{0},        num_t{0},  zNear,    num_t{0}
+        num_t{0},         viewAngle, num_t{0}, num_t{0},
+        num_t{0},         num_t{0},  num_t{0}, num_t{-1},
+        num_t{0},         num_t{0},  zNear,    num_t{0}
     };
 }
 
@@ -389,10 +388,10 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
     const num_t h = bottom - top;
 
     return mat4_t<num_t>{
-        num_t{2}/ w,            num_t{0},               num_t{0},   num_t{0},
-        num_t{0},               num_t{2}/ h,            num_t{0},   num_t{0},
-        num_t{0},               num_t{0},               num_t{-1},  num_t{0},
-        -(right + left) / w,    -(top + bottom) / h,    num_t{0},   num_t{1}
+        num_t{2}/ w,         num_t{0},            num_t{0},  num_t{0},
+        num_t{0},            num_t{2}/ h,         num_t{0},  num_t{0},
+        num_t{0},            num_t{0},            num_t{-1}, num_t{0},
+        -(right + left) / w, -(top + bottom) / h, num_t{0},  num_t{1}
     };
 }
 
@@ -400,16 +399,16 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
     4x4 Ortho
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom, num_t near, num_t far) {
+math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom, num_t zNear, num_t zFar) {
     const num_t w = right - left;
     const num_t h = bottom - top;
-    const num_t d = far - near;
+    const num_t d = zFar - zNear;
 
     return mat4_t<num_t>{
-        num_t{2}/ w,            num_t{0},               num_t{0},           num_t{0},
-        num_t{0},               num_t{2}/ h,            num_t{0},           num_t{0},
-        num_t{0},               num_t{0},               num_t{-2}/ d,       num_t{0},
-        -(right + left) / w,    -(top + bottom) / h,    -(far + near) / d,  num_t{1}
+        num_t{2}/ w,         num_t{0},            num_t{0},            num_t{0},
+        num_t{0},            num_t{2}/ h,         num_t{0},            num_t{0},
+        num_t{0},            num_t{0},            num_t{-2}/ d,        num_t{0},
+        -(right + left) / w, -(top + bottom) / h, -(zFar + zNear) / d, num_t{1}
     };
 }
 
@@ -417,16 +416,16 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
     4x4 Frustum
 -------------------------------------*/
 template <typename num_t> inline
-math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bottom, num_t near, num_t far) {
+math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bottom, num_t zNear, num_t zFar) {
     const num_t w = right - left;
     const num_t h = bottom - top;
-    const num_t d = far - near;
+    const num_t d = zFar - zNear;
 
     return mat4_t<num_t>{
-        (num_t{2}*near) / w,    num_t {0},                  num_t{0},                   num_t{0},
-        num_t{0},               (num_t{2}*near) / h,        num_t {0},                  num_t{0},
-        (right + left) / w,     (top + bottom) / h,         -(far + near) / d,          num_t {-1},
-        num_t{0},               num_t{0},                   (num_t{-2}*far * near) / d, num_t {0}
+        (num_t{2}*zNear) / w,  num_t {0},            num_t{0},                    num_t{0},
+        num_t{0},             (num_t{2}*zNear) / h,  num_t{0},                    num_t{0},
+        (right + left) / w,   (top + bottom) / h,    -(zFar + zNear) / d,          num_t{-1},
+        num_t{0},             num_t{0},              (num_t{-2}*zFar * zNear) / d, num_t{0}
     };
 }
 
@@ -443,7 +442,7 @@ math::mat4_t<num_t> math::look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>&
         xAxis.v[0], yAxis.v[0], zAxis.v[0], num_t{0},
         xAxis.v[1], yAxis.v[1], zAxis.v[1], num_t{0},
         xAxis.v[2], yAxis.v[2], zAxis.v[2], num_t{0},
-        num_t{0},   num_t{0},   num_t{0},   num_t{1}
+        -pos[0],    -pos[1],    -pos[2],    num_t{1}
     };
 }
 
@@ -457,10 +456,10 @@ math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t
     const vec3_t<num_t> yAxis = normalize(cross(zAxis, xAxis));
 
     return mat4_t<num_t>{
-        xAxis.v[0],         yAxis.v[0],         zAxis.v[0],         num_t{0},
-        xAxis.v[1],         yAxis.v[1],         zAxis.v[1],         num_t{0},
-        xAxis.v[2],         yAxis.v[2],         zAxis.v[2],         num_t{0},
-        -dot(xAxis, pos),   -dot(yAxis, pos),   -dot(zAxis, pos),   num_t{1}
+        xAxis.v[0],       yAxis.v[0],        zAxis.v[0],       num_t{0},
+        xAxis.v[1],       yAxis.v[1],        zAxis.v[1],       num_t{0},
+        xAxis.v[2],       yAxis.v[2],        zAxis.v[2],       num_t{0},
+        -dot(xAxis, pos), -dot(yAxis, pos),  -dot(zAxis, pos), num_t{1}
     };
 }
 
@@ -470,10 +469,10 @@ math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t
 template <typename num_t> inline
 math::mat4_t<num_t> math::billboard(const vec3_t<num_t>& pos, const mat4_t<num_t>& viewMat) {
     return mat4_t<num_t>{
-        viewMat[0][0],  viewMat[1][0],  viewMat[2][0], num_t{0},
-        viewMat[0][1],  viewMat[1][1],  viewMat[2][1], num_t{0},
-        viewMat[0][2],  viewMat[1][2],  viewMat[2][2], num_t{0},
-        pos[0],         pos[1],         pos[2],        num_t{1}
+        viewMat[0][0], viewMat[1][0], viewMat[2][0], num_t{0},
+        viewMat[0][1], viewMat[1][1], viewMat[2][1], num_t{0},
+        viewMat[0][2], viewMat[1][2], viewMat[2][2], num_t{0},
+        pos[0],        pos[1],        pos[2],        num_t{1}
     };
 }
 

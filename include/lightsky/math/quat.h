@@ -29,47 +29,52 @@ struct LS_API alignas(sizeof(num_t)) quat_t {
     // data
     num_t q[4];
 
-    // Main Constructor
-    constexpr quat_t(num_t inX, num_t inY, num_t inZ, num_t inW);
-    constexpr quat_t();
-    constexpr quat_t(num_t n);
-    constexpr quat_t(const quat_t<num_t>& input);
-    constexpr quat_t(quat_t<num_t>&& input);
-
     ~quat_t() = default;
+
+    // Main Constructor
+    constexpr quat_t();
+    constexpr quat_t(num_t inX, num_t inY, num_t inZ, num_t inW);
+    constexpr quat_t(num_t n);
+
+    quat_t(const quat_t<num_t>& input) = default;
+    quat_t(quat_t<num_t>&& input) = default;
 
     // Conversions & Casting
     template <typename other_t>
-    constexpr explicit operator quat_t<other_t>() const;
+    inline explicit operator quat_t<other_t>() const;
 
-    const num_t* operator&() const;
+    constexpr const num_t* operator&() const;
     inline num_t* operator&();
 
     // Subscripting Operators
-    constexpr num_t operator[](int i) const;
-    inline num_t& operator[](int i);
+    template <typename index_t>
+    constexpr num_t operator[](index_t i) const;
+
+    template <typename index_t>
+    inline num_t& operator[](index_t i);
 
     //quaternion-quaternion operators
     quat_t& operator++(); //prefix operators
     quat_t& operator--();
     quat_t operator++(int); //postfix operators
     quat_t operator--(int);
-    quat_t operator+(const quat_t<num_t>& input) const;
-    quat_t operator-(const quat_t<num_t>& input) const;
-    quat_t operator*(const quat_t<num_t>& input) const;
-    quat_t& operator=(const quat_t<num_t>& input);
-    quat_t& operator=(quat_t<num_t>&& input);
+    constexpr quat_t operator-() const;
+    constexpr quat_t operator+(const quat_t<num_t>& input) const;
+    constexpr quat_t operator-(const quat_t<num_t>& input) const;
+    constexpr quat_t operator*(const quat_t<num_t>& input) const;
+    quat_t& operator=(const quat_t<num_t>& input) = default;
+    quat_t& operator=(quat_t<num_t>&& input) = default;
     quat_t& operator+=(const quat_t<num_t>& input);
     quat_t& operator-=(const quat_t<num_t>& input);
     quat_t& operator*=(const quat_t<num_t>& input);
-    bool operator==(const quat_t<num_t>& input) const;
-    bool operator!=(const quat_t<num_t>& input) const;
+    constexpr bool operator==(const quat_t<num_t>& input) const;
+    constexpr bool operator!=(const quat_t<num_t>& input) const;
 
     //quaternion-scalar operators
-    quat_t operator+(num_t) const;
-    quat_t operator-(num_t) const;
-    quat_t operator*(num_t) const;
-    quat_t operator/(num_t) const;
+    constexpr quat_t operator+(num_t) const;
+    constexpr quat_t operator-(num_t) const;
+    constexpr quat_t operator*(num_t) const;
+    constexpr quat_t operator/(num_t) const;
     quat_t& operator=(num_t);
     quat_t& operator+=(num_t);
     quat_t& operator-=(num_t);

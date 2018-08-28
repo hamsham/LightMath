@@ -10,10 +10,14 @@
 
 #include <limits> // std::numeric_limits
 
+#include "lightsky/setup/Arch.h"
+
 #include "lightsky/math/Types.h"
 
-namespace ls {
-namespace math {
+namespace ls
+{
+namespace math
+{
 
 /**
  * @brief Calculate the greatest common divisor between two integers.
@@ -24,7 +28,7 @@ namespace math {
  * @return The greatest common divisor between a & b.
  */
 template <typename scalar_t>
-constexpr scalar_t gcd(scalar_t a, scalar_t b);
+constexpr scalar_t gcd(scalar_t a, scalar_t b) noexcept;
 
 /**
  * @brief min
@@ -39,7 +43,7 @@ constexpr scalar_t gcd(scalar_t a, scalar_t b);
  * @return The smallest of the two parameters a and b.
  */
 template <typename scalar_t>
-constexpr scalar_t min(scalar_t a, scalar_t b);
+constexpr scalar_t min(scalar_t a, scalar_t b) noexcept;
 
 /**
  * @brief min
@@ -56,7 +60,7 @@ constexpr scalar_t min(scalar_t a, scalar_t b);
  * @return The smallest number of the input parameters.
  */
 template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t min(const scalar_t& a, const scalar_t& b, const scalars_t&... nums);
+constexpr scalar_t min(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) noexcept;
 
 /**
  * @brief mix
@@ -69,7 +73,7 @@ constexpr scalar_t min(const scalar_t& a, const scalar_t& b, const scalars_t&...
  * @return The linear "mix" of a and b.
  */
 template <typename scalar_t>
-constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t percent);
+constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t percent) noexcept;
 
 /**
  * @brief max
@@ -83,7 +87,7 @@ constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t percent);
  * @return The largest number of the two parameters a and b.
  */
 template <typename scalar_t>
-constexpr scalar_t max(scalar_t a, scalar_t b);
+constexpr scalar_t max(scalar_t a, scalar_t b) noexcept;
 
 /**
  * @brief max
@@ -100,7 +104,7 @@ constexpr scalar_t max(scalar_t a, scalar_t b);
  * @return The largest number of the input parameters.
  */
 template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t max(const scalar_t& a, const scalar_t& b, const scalars_t&... nums);
+constexpr scalar_t max(const scalar_t& a, const scalar_t& b, const scalars_t&... nums) noexcept;
 
 /**
  * @brief clamp
@@ -118,7 +122,7 @@ constexpr scalar_t max(const scalar_t& a, const scalar_t& b, const scalars_t&...
  * @return a number, such that minVal <= n <= maxVal
  */
 template <typename scalar_t>
-constexpr scalar_t clamp(scalar_t n, scalar_t minVal, scalar_t maxVal);
+constexpr scalar_t clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noexcept;
 
 /**
  * @brief Retrieve the nearest integer less than or equal to the input float.
@@ -129,8 +133,8 @@ constexpr scalar_t clamp(scalar_t n, scalar_t minVal, scalar_t maxVal);
  * @return A value equal to the nearest integer that is less than or equal to
  * the input parameter.
  */
-template <typename float_t>
-constexpr float_t floor(const float_t n);
+template <typename floating_t>
+constexpr floating_t floor(const floating_t n) noexcept;
 
 /**
  * @brief Retrieve the nearest integer less than or equal to the input float.
@@ -143,8 +147,8 @@ constexpr float_t floor(const float_t n);
  * @return A value equal to the nearest integer that is less than or equal to
  * the input parameter.
  */
-template <typename float_t, typename int_t, int_t range>
-constexpr int_t ranged_floor(const float_t n);
+template <typename floating_t, typename int_t, int_t range>
+constexpr int_t ranged_floor(const floating_t n) noexcept;
 
 /**
  * @brief Retrieve the nearest integer greater than or equal to the input
@@ -156,8 +160,8 @@ constexpr int_t ranged_floor(const float_t n);
  * @return A value equal to the nearest integer that is greater than or equal
  * to the input parameter.
  */
-template <typename float_t>
-constexpr float_t ceil(const float_t n);
+template <typename floating_t>
+constexpr floating_t ceil(const floating_t n) noexcept;
 
 /**
  * @brief Retrieve the nearest integer greater than or equal to the input
@@ -170,8 +174,8 @@ constexpr float_t ceil(const float_t n);
  * @return A value equal to the nearest integer that is less than or equal to
  * the input parameter.
  */
-template <typename float_t, typename int_t, int_t range>
-constexpr int_t ranged_ceil(const float_t n);
+template <typename floating_t, typename int_t, int_t range>
+constexpr int_t ranged_ceil(const floating_t n) noexcept;
 
 /**
  * @brief Calculate the nearest integer closest to the input parameter.
@@ -181,8 +185,8 @@ constexpr int_t ranged_ceil(const float_t n);
  *
  * @return A value equal to the nearest integer to the input parameter.
  */
-template <typename float_t>
-constexpr float_t round(const float_t n);
+template <typename floating_t>
+constexpr floating_t round(const floating_t n) noexcept;
 
 /**
  * @brief fract
@@ -194,8 +198,8 @@ constexpr float_t round(const float_t n);
  * @return The fractional part of the input float. This is calculated as
  * "x - floor(x)".
  */
-template <typename float_t>
-constexpr float_t fract(const float_t n);
+template <typename floating_t>
+constexpr floating_t fract(const floating_t n) noexcept;
 
 /**
  * @brief fmod
@@ -209,8 +213,20 @@ constexpr float_t fract(const float_t n);
  *
  * @return The remainder of the division between n1 / n2.
  */
-template <typename float_t>
-inline float_t fmod(const float_t n1, const float_t n2);
+template <typename floating_t>
+constexpr floating_t fmod(const floating_t n1, const floating_t n2) noexcept;
+
+/**
+ * @brief fmod_1
+ * Compute remainder of the division of one floating-point number by 1.
+ *
+ * @param n
+ * The dividend.
+ *
+ * @return The remainder of the division between n1 / 1.0.
+ */
+template <typename floating_t>
+constexpr floating_t fmod_1(const floating_t n) noexcept;
 
 /**
  * @brief smoothstep
@@ -225,7 +241,7 @@ inline float_t fmod(const float_t n1, const float_t n2);
  * @return The smooth linear interpolation of x in between the interval a and b.
  */
 template <typename scalar_t>
-constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x);
+constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept;
 
 /**
  * @brief fastSqrt
@@ -238,20 +254,7 @@ constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x);
  * @return The square root of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fast_sqrt(scalar_t);
-
-/**
- * @brief fastSqrt
- * Perform a square root on a single number without using the standard library.
- * This method uses IEEE floating point arithmetic. Use only if the input
- * argument uses this format.
- *
- * @param a number whose square root should be obtained.
- *
- * @return The square root of the input number.
- */
-template <>
-inline float fast_sqrt<float>(float);
+inline scalar_t fast_sqrt(scalar_t) noexcept;
 
 /**
  * @brief fastInvSqrt
@@ -264,20 +267,7 @@ inline float fast_sqrt<float>(float);
  * @return The inverse square root (1/sqrt(x)) of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fast_inv_sqrt(scalar_t);
-
-/**
- * @brief fastInvSqrt
- * Get the inverse square root of a number.
- * This method uses IEEE floating point arithmetic. Use only if the input
- * argument uses this format.
- *
- * @param a number whose square root should be obtained.
- *
- * @return The inverse square root (1/sqrt(x)) of the input number.
- */
-template <>
-inline float fast_inv_sqrt<float>(float);
+inline scalar_t fast_inv_sqrt(scalar_t) noexcept;
 
 /**
  * @brief degToRad
@@ -288,7 +278,7 @@ inline float fast_inv_sqrt<float>(float);
  * @return the value of an angle, in radians.
  */
 template <typename scalar_t>
-constexpr scalar_t deg_to_rad(scalar_t);
+constexpr scalar_t deg_to_rad(scalar_t) noexcept;
 
 /**
  * @brief radToDeg
@@ -300,7 +290,23 @@ constexpr scalar_t deg_to_rad(scalar_t);
  * @return the value of an angle, in degrees.
  */
 template <typename scalar_t>
-constexpr scalar_t rad_to_deg(scalar_t);
+constexpr scalar_t rad_to_deg(scalar_t) noexcept;
+
+/**
+ * @brief Compute the modulus of num%denom only when necessary.
+ *
+ * This method only works with positive integers.
+ *
+ * @param num
+ * Numerator
+ *
+ * @param denom
+ * Denominator
+ *
+ * @return num % denom
+ */
+template <typename integral_t>
+constexpr integral_t fast_mod(const integral_t num, const integral_t denom) noexcept;
 
 /**
  * @brief fastLog2
@@ -311,7 +317,7 @@ constexpr scalar_t rad_to_deg(scalar_t);
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_log2(scalar_t);
+inline scalar_t fast_log2(scalar_t) noexcept;
 
 /**
  * @brief fastLog2
@@ -322,7 +328,7 @@ inline scalar_t fast_log2(scalar_t);
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <>
-inline float fast_log2<float>(float);
+inline float fast_log2<float>(float) noexcept;
 
 /**
  * @brief fastLog
@@ -333,7 +339,7 @@ inline float fast_log2<float>(float);
  * @return the log-base10 of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_log10(scalar_t);
+inline scalar_t fast_log10(scalar_t) noexcept;
 
 /**
  * @brief fastLogBase
@@ -344,7 +350,7 @@ inline scalar_t fast_log10(scalar_t);
  * @return the log-baseN of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_logN(scalar_t baseN, scalar_t);
+inline scalar_t fast_logN(scalar_t baseN, scalar_t) noexcept;
 
 /**
  * @brief nextPow2
@@ -354,7 +360,7 @@ inline scalar_t fast_logN(scalar_t baseN, scalar_t);
  *
  * @return The next greatest power of two.
  */
-inline unsigned next_pow2(unsigned);
+inline unsigned next_pow2(unsigned) noexcept;
 
 /**
  * @brief nextPow2
@@ -364,7 +370,7 @@ inline unsigned next_pow2(unsigned);
  *
  * @return The next greatest power of two.
  */
-inline int next_pow2(int);
+inline int next_pow2(int) noexcept;
 
 /**
  * @brief prevPow2
@@ -374,7 +380,7 @@ inline int next_pow2(int);
  *
  * @return The next lesser power of two.
  */
-inline unsigned prev_pow2(unsigned);
+inline unsigned prev_pow2(unsigned) noexcept;
 
 /**
  * @brief prevPow2
@@ -384,7 +390,7 @@ inline unsigned prev_pow2(unsigned);
  *
  * @return The next lesser power of two.
  */
-inline int prev_pow2(int);
+inline int prev_pow2(int) noexcept;
 
 /**
  * @brief nearPow2
@@ -395,7 +401,7 @@ inline int prev_pow2(int);
  *
  * @return The closest power of two to a number.
  */
-inline unsigned nearest_pow2(unsigned);
+inline unsigned nearest_pow2(unsigned) noexcept;
 
 /**
  * @brief nearPow2
@@ -406,7 +412,7 @@ inline unsigned nearest_pow2(unsigned);
  *
  * @return The closest power of two to a number.
  */
-inline int nearest_pow2(int);
+inline int nearest_pow2(int) noexcept;
 
 /**
  * @brief isPow2
@@ -417,7 +423,7 @@ inline int nearest_pow2(int);
  * @return True if the number is a poiwer of two.
  * False if the number is not a power of two.
  */
-constexpr bool is_pow2(unsigned);
+constexpr bool is_pow2(unsigned) noexcept;
 
 /**
  * @brief isPow2
@@ -428,7 +434,7 @@ constexpr bool is_pow2(unsigned);
  * @return True if the number is a poiwer of two.
  * False if the number is not a power of two.
  */
-constexpr bool is_pow2(int);
+constexpr bool is_pow2(int) noexcept;
 
 /**
  * @brief factorial
@@ -439,7 +445,7 @@ constexpr bool is_pow2(int);
  * @return The factorial of a given number.
  */
 template <typename scalar_t>
-constexpr scalar_t factorial(scalar_t);
+constexpr scalar_t factorial(scalar_t) noexcept;
 
 /**
  * @brief pow
@@ -451,8 +457,8 @@ constexpr scalar_t factorial(scalar_t);
  *
  * @return A number, raised to a given power.
  */
-template <typename scalar_t, typename int_t>
-constexpr scalar_t pow(scalar_t, int_t);
+template <typename scalar_t, typename int_t = scalar_t>
+constexpr scalar_t pow(scalar_t, int_t) noexcept;
 
 /**
  * @brief pow
@@ -464,7 +470,7 @@ constexpr scalar_t pow(scalar_t, int_t);
  * @return E, raised to the power x.
  */
 template <typename scalar_t>
-inline scalar_t exp(scalar_t x);
+inline scalar_t exp(scalar_t x) noexcept;
 
 /**
  * @brief const_sin
@@ -475,7 +481,7 @@ inline scalar_t exp(scalar_t x);
  * @return The sine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_sin(scalar_t);
+constexpr scalar_t const_sin(scalar_t) noexcept;
 
 /**
  * @brief const_cos
@@ -486,7 +492,7 @@ constexpr scalar_t const_sin(scalar_t);
  * @return The cosine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_cos(scalar_t);
+constexpr scalar_t const_cos(scalar_t) noexcept;
 
 /**
  * @brief const_tan
@@ -497,7 +503,7 @@ constexpr scalar_t const_cos(scalar_t);
  * @return The tangent of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_tan(scalar_t);
+constexpr scalar_t const_tan(scalar_t) noexcept;
 
 /**
  * @brief sum
@@ -508,7 +514,7 @@ constexpr scalar_t const_tan(scalar_t);
  * @return The sum of a set of numbers.
  */
 template <typename scalar_t>
-constexpr scalar_t sum(const scalar_t&);
+constexpr scalar_t sum(const scalar_t&) noexcept;
 
 /**
  * @brief sum
@@ -519,7 +525,7 @@ constexpr scalar_t sum(const scalar_t&);
  * @return The sum of a set of numbers.
  */
 template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t sum(const scalar_t& num, const scalars_t&... nums);
+constexpr scalar_t sum(const scalar_t& num, const scalars_t&... nums) noexcept;
 
 /**
  * @brief average
@@ -530,7 +536,7 @@ constexpr scalar_t sum(const scalar_t& num, const scalars_t&... nums);
  * @return The average of a set of numbers.
  */
 template <typename scalar_t>
-constexpr scalar_t average();
+constexpr scalar_t average() noexcept;
 
 /**
  * @brief average
@@ -541,7 +547,7 @@ constexpr scalar_t average();
  * @return The average of a set of numbers.
  */
 template <typename scalar_t, typename... scalars_t>
-constexpr scalar_t average(const scalar_t& num, const scalars_t&... nums);
+constexpr scalar_t average(const scalar_t& num, const scalars_t&... nums) noexcept;
 
 /**
  * @brief Count the number of bits in an integer.
@@ -551,7 +557,7 @@ constexpr scalar_t average(const scalar_t& num, const scalars_t&... nums);
  *
  * @return A count of all the set bits in an integer.
  */
-constexpr unsigned count_set_bits(const unsigned long long num);
+constexpr unsigned count_set_bits(const unsigned long long num) noexcept;
 
 /**
  * @brief Count the number of bits in an integer.
@@ -570,7 +576,7 @@ constexpr unsigned count_set_bits(const unsigned long long num);
  * @return A count of all the set bits in an integer.
  */
 template <typename scalar_t>
-constexpr unsigned count_set_bits(const scalar_t num);
+constexpr unsigned count_set_bits(const scalar_t num) noexcept;
 
 /**
  * @Brief Scale a number from one data type with a range of values to another
@@ -601,10 +607,16 @@ constexpr out_type scale_num_to_range(
     const out_type oldMax = std::numeric_limits<in_type>::max(),
     const out_type newMin = std::numeric_limits<out_type>::min(),
     const out_type newMax = std::numeric_limits<out_type>::max()
-    );
+    ) noexcept;
 
 } // end math namespace
 } // end ls namespace
+
+#ifdef LS_ARCH_X86
+    #include "lightsky/math/x86/scalarf_utils_impl.h"
+#elif defined(LS_ARCH_ARM)
+    #include "lightsky/math/arm/scalarf_utils_impl.h"
+#endif
 
 #include "lightsky/math/generic/scalar_utils_impl.h"
 

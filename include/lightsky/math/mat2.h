@@ -51,39 +51,42 @@ struct LS_API alignas(sizeof(num_t)) mat2_t {
     constexpr explicit operator mat2_t<other_t>() const;
 
     // Subscripting
-    inline const vec2_t<num_t>& operator[](int i) const;
-    inline vec2_t<num_t>& operator[](int i);
+    template <typename index_t>
+    constexpr const vec2_t<num_t>& operator[](index_t i) const;
+
+    template <typename index_t>
+    inline vec2_t<num_t>& operator[](index_t i);
 
     //mat-mat operators
     mat2_t& operator++(); //prefix operators
     mat2_t& operator--();
     mat2_t operator++(int); //postfix operators
     mat2_t operator--(int);
-    mat2_t operator+(const mat2_t<num_t>& input) const;
-    mat2_t operator-(const mat2_t<num_t>& input) const;
-    mat2_t operator-() const;
-    mat2_t operator*(const mat2_t<num_t>& input) const;
+    constexpr mat2_t operator+(const mat2_t<num_t>& input) const;
+    constexpr mat2_t operator-(const mat2_t<num_t>& input) const;
+    constexpr mat2_t operator-() const;
+    constexpr mat2_t operator*(const mat2_t<num_t>& input) const;
     mat2_t& operator=(const mat2_t<num_t>& input);
     mat2_t& operator=(mat2_t<num_t>&& input);
     mat2_t& operator+=(const mat2_t<num_t>& input);
     mat2_t& operator-=(const mat2_t<num_t>& input);
     mat2_t& operator*=(const mat2_t<num_t>& input);
-    bool operator==(const mat2_t<num_t>& input) const;
-    bool operator!=(const mat2_t<num_t>& input) const;
+    constexpr bool operator==(const mat2_t<num_t>& input) const;
+    constexpr bool operator!=(const mat2_t<num_t>& input) const;
 
     //mat-vector operators
-    mat2_t operator+(const vec2_t<num_t>&) const;
-    mat2_t operator-(const vec2_t<num_t>&) const;
-    vec2_t<num_t> operator*(const vec2_t<num_t>&) const;
+    constexpr mat2_t operator+(const vec2_t<num_t>&) const;
+    constexpr mat2_t operator-(const vec2_t<num_t>&) const;
+    constexpr vec2_t<num_t> operator*(const vec2_t<num_t>&) const;
     mat2_t& operator=(const vec2_t<num_t>&);
     mat2_t& operator+=(const vec2_t<num_t>&);
     mat2_t& operator-=(const vec2_t<num_t>&);
 
     //mat-scalar operators
-    mat2_t operator+(num_t) const;
-    mat2_t operator-(num_t) const;
-    mat2_t operator*(num_t) const;
-    mat2_t operator/(num_t) const;
+    constexpr mat2_t operator+(num_t) const;
+    constexpr mat2_t operator-(num_t) const;
+    constexpr mat2_t operator*(num_t) const;
+    constexpr mat2_t operator/(num_t) const;
     mat2_t& operator=(num_t);
     mat2_t& operator+=(num_t);
     mat2_t& operator-=(num_t);
@@ -94,13 +97,13 @@ struct LS_API alignas(sizeof(num_t)) mat2_t {
 /*-------------------------------------
     Non-Member Matrix-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat2_t<num_t> operator+(num_t n, const mat2_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat2_t<num_t> operator-(num_t n, const mat2_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat2_t<num_t> operator*(num_t n, const mat2_t<num_t>& m);
 
 /*-------------------------------------

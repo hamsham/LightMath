@@ -58,39 +58,42 @@ struct LS_API alignas(sizeof(num_t)) mat3_t {
     constexpr explicit operator mat3_t<other_t>() const;
 
     //Subscripting operators
-    inline const vec3_t<num_t>& operator[](int i) const;
-    inline vec3_t<num_t>& operator[](int i);
+    template <typename index_t>
+    constexpr const vec3_t<num_t>& operator[](index_t i) const;
+
+    template <typename index_t>
+    inline vec3_t<num_t>& operator[](index_t i);
 
     //matrix-matrix operators
     mat3_t& operator++(); //prefix operators
     mat3_t& operator--();
     mat3_t operator++(int); //postfix operators
     mat3_t operator--(int);
-    mat3_t operator+(const mat3_t<num_t>& input) const;
-    mat3_t operator-(const mat3_t<num_t>& input) const;
-    mat3_t operator-() const;
-    mat3_t operator*(const mat3_t<num_t>& input) const;
+    constexpr mat3_t operator+(const mat3_t<num_t>& input) const;
+    constexpr mat3_t operator-(const mat3_t<num_t>& input) const;
+    constexpr mat3_t operator-() const;
+    constexpr mat3_t operator*(const mat3_t<num_t>& input) const;
     mat3_t& operator=(const mat3_t<num_t>& input);
     mat3_t& operator=(mat3_t<num_t>&& input);
     mat3_t& operator+=(const mat3_t<num_t>& input);
     mat3_t& operator-=(const mat3_t<num_t>& input);
     mat3_t& operator*=(const mat3_t<num_t>& input);
-    bool operator==(const mat3_t<num_t>& input) const;
-    bool operator!=(const mat3_t<num_t>& input) const;
+    constexpr bool operator==(const mat3_t<num_t>& input) const;
+    constexpr bool operator!=(const mat3_t<num_t>& input) const;
 
     //matrix-vector operators
-    mat3_t operator+(const vec3_t<num_t>&) const;
-    mat3_t operator-(const vec3_t<num_t>&) const;
-    vec3_t<num_t> operator*(const vec3_t<num_t>&) const;
+    constexpr mat3_t operator+(const vec3_t<num_t>&) const;
+    constexpr mat3_t operator-(const vec3_t<num_t>&) const;
+    constexpr vec3_t<num_t> operator*(const vec3_t<num_t>&) const;
     mat3_t& operator=(const vec3_t<num_t>&);
     mat3_t& operator+=(const vec3_t<num_t>&);
     mat3_t& operator-=(const vec3_t<num_t>&);
 
     //matrix-scalar operators
-    mat3_t operator+(num_t) const;
-    mat3_t operator-(num_t) const;
-    mat3_t operator*(num_t) const;
-    mat3_t operator/(num_t) const;
+    constexpr mat3_t operator+(num_t) const;
+    constexpr mat3_t operator-(num_t) const;
+    constexpr mat3_t operator*(num_t) const;
+    constexpr mat3_t operator/(num_t) const;
     mat3_t& operator=(num_t);
     mat3_t& operator+=(num_t);
     mat3_t& operator-=(num_t);
@@ -101,13 +104,13 @@ struct LS_API alignas(sizeof(num_t)) mat3_t {
 /*-------------------------------------
     Non-Member Matrix-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat3_t<num_t> operator+(num_t n, const mat3_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat3_t<num_t> operator-(num_t n, const mat3_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat3_t<num_t> operator*(num_t n, const mat3_t<num_t>& m);
 
 /*-------------------------------------

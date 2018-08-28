@@ -3,6 +3,7 @@
 #define LS_MATH_MAT4_H
 
 #include "lightsky/setup/Api.h"
+#include "lightsky/setup/Arch.h"
 
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
@@ -27,7 +28,7 @@ namespace math {
  *      3[0-3] = WX  WY  WZ  WW
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) mat4_t {
+struct LS_API alignas(sizeof(vec4_t<num_t>)) mat4_t {
     // data
     vec4_t<num_t> m[4];
 
@@ -40,18 +41,18 @@ struct LS_API alignas(sizeof(num_t)) mat4_t {
         );
 
     // Delegated constructors
-    constexpr mat4_t();
+    constexpr mat4_t() = default;
     constexpr mat4_t(num_t);
     constexpr mat4_t(const mat3_t<num_t>&);
-    constexpr mat4_t(const mat4_t<num_t>&);
+    constexpr mat4_t(const mat4_t<num_t>&) = default;
     constexpr mat4_t(mat3_t<num_t>&&);
-    constexpr mat4_t(mat4_t<num_t>&&);
+    constexpr mat4_t(mat4_t<num_t>&&) = default;
     constexpr mat4_t(
         const vec4_t<num_t>& x,
         const vec4_t<num_t>& y,
         const vec4_t<num_t>& z,
         const vec4_t<num_t>& w
-        );
+    );
 
     ~mat4_t() = default;
 
@@ -60,39 +61,42 @@ struct LS_API alignas(sizeof(num_t)) mat4_t {
     constexpr explicit operator mat4_t<other_t>() const;
 
     // Subscripting Operators
-    inline const vec4_t<num_t>& operator[](int i) const;
-    inline vec4_t<num_t>& operator[](int i);
+    template <typename index_t>
+    constexpr const vec4_t<num_t>& operator[](index_t) const;
+
+    template <typename index_t>
+    inline vec4_t<num_t>& operator[](index_t);
 
     //matrix-matrix operators
     mat4_t& operator++(); //prefix operators
     mat4_t& operator--();
     mat4_t operator++(int); //postfix operators
     mat4_t operator--(int);
-    mat4_t operator+(const mat4_t<num_t>& input) const;
-    mat4_t operator-(const mat4_t<num_t>& input) const;
-    mat4_t operator-() const;
-    mat4_t operator*(const mat4_t<num_t>& input) const;
-    mat4_t& operator=(const mat4_t<num_t>& input);
-    mat4_t& operator=(mat4_t<num_t>&& input);
-    mat4_t& operator+=(const mat4_t<num_t>& input);
-    mat4_t& operator-=(const mat4_t<num_t>& input);
-    mat4_t& operator*=(const mat4_t<num_t>& input);
-    bool operator==(const mat4_t<num_t>& input) const;
-    bool operator!=(const mat4_t<num_t>& input) const;
+    constexpr mat4_t operator+(const mat4_t<num_t>&) const;
+    constexpr mat4_t operator-(const mat4_t<num_t>&) const;
+    constexpr mat4_t operator-() const;
+    constexpr mat4_t operator*(const mat4_t<num_t>&) const;
+    mat4_t& operator=(const mat4_t<num_t>&) = default;
+    mat4_t& operator=(mat4_t<num_t>&&) = default;
+    mat4_t& operator+=(const mat4_t<num_t>&);
+    mat4_t& operator-=(const mat4_t<num_t>&);
+    mat4_t& operator*=(const mat4_t<num_t>&);
+    constexpr bool operator==(const mat4_t<num_t>&) const;
+    constexpr bool operator!=(const mat4_t<num_t>&) const;
 
     //matrix-vector operators
-    mat4_t operator+(const vec4_t<num_t>&) const;
-    mat4_t operator-(const vec4_t<num_t>&) const;
-    vec4_t<num_t> operator*(const vec4_t<num_t>&) const;
+    constexpr mat4_t operator+(const vec4_t<num_t>&) const;
+    constexpr mat4_t operator-(const vec4_t<num_t>&) const;
+    inline vec4_t<num_t> operator*(const vec4_t<num_t>&) const;
     mat4_t& operator=(const vec4_t<num_t>&);
     mat4_t& operator+=(const vec4_t<num_t>&);
     mat4_t& operator-=(const vec4_t<num_t>&);
 
     //matrix-scalar operators
-    mat4_t operator+(num_t) const;
-    mat4_t operator-(num_t) const;
-    mat4_t operator*(num_t) const;
-    mat4_t operator/(num_t) const;
+    constexpr mat4_t operator+(num_t) const;
+    constexpr mat4_t operator-(num_t) const;
+    constexpr mat4_t operator*(num_t) const;
+    constexpr mat4_t operator/(num_t) const;
     mat4_t& operator=(num_t);
     mat4_t& operator+=(num_t);
     mat4_t& operator-=(num_t);
@@ -103,13 +107,13 @@ struct LS_API alignas(sizeof(num_t)) mat4_t {
 /*-------------------------------------
     Non-Member Matrix-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat4_t<num_t> operator+(num_t n, const mat4_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat4_t<num_t> operator-(num_t n, const mat4_t<num_t>& m);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 mat4_t<num_t> operator*(num_t n, const mat4_t<num_t>& m);
 
 /*-------------------------------------
@@ -132,6 +136,12 @@ typedef mat4_t<LS_FLOAT> mat4;
 
 } //end math namespace
 } //end ls namespace
+
+#ifdef LS_ARCH_X86
+    #include "lightsky/math/x86/mat4f_impl.h"
+#elif defined(LS_ARCH_ARM)
+    #include "lightsky/math/arm/mat4f_impl.h"
+#endif
 
 #include "lightsky/math/generic/mat4_impl.h"
 

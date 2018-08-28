@@ -5,16 +5,16 @@ namespace math {
 /*-------------------------------------
     Non-Member Quaternion-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator+(num_t n, const quat_t<num_t>& q);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator-(num_t n, const quat_t<num_t>& q);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator*(num_t n, const quat_t<num_t>& q);
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator/(num_t n, const quat_t<num_t>& q);
 
 /*-------------------------------------
@@ -22,13 +22,13 @@ quat_t<num_t> operator/(num_t n, const quat_t<num_t>& q);
 -------------------------------------*/
 // Main Constructor
 template <typename num_t>
-constexpr quat_t<num_t>::quat_t(num_t inX, num_t inY, num_t inZ, num_t inW) :
-    q{inX, inY, inZ, inW}
+constexpr quat_t<num_t>::quat_t() :
+    q{num_t{0}, num_t{0}, num_t{0}, num_t{1}}
 {}
 
 template <typename num_t>
-constexpr quat_t<num_t>::quat_t() :
-    q{num_t{0}, num_t{0}, num_t{0}, num_t{1}}
+constexpr quat_t<num_t>::quat_t(num_t inX, num_t inY, num_t inZ, num_t inW) :
+    q{inX, inY, inZ, inW}
 {}
 
 template <typename num_t>
@@ -36,6 +36,7 @@ constexpr quat_t<num_t>::quat_t(num_t n) :
     q{n, n, n, num_t{1}}
 {}
 
+/*
 template <typename num_t>
 constexpr quat_t<num_t>::quat_t(const quat_t<num_t>& q) :
     q{q.q[0], q.q[1], q.q[2], q.q[3]}
@@ -45,20 +46,21 @@ template <typename num_t>
 constexpr quat_t<num_t>::quat_t(quat_t<num_t>&& q) :
     q{q.q[0], q.q[1], q.q[2], q.q[3]}
 {}
+*/
 
 /*-------------------------------------
     Conversions & Casting
 -------------------------------------*/
 template <typename num_t>
 template <typename other_t>
-constexpr quat_t<num_t>::operator quat_t<other_t>() const {
+inline quat_t<num_t>::operator quat_t<other_t>() const {
     return quat_t<other_t>{
         (other_t) q[0], (other_t) q[1], (other_t) q[2], (other_t) q[3]
     };
 }
 
 template <typename num_t>
-const num_t* quat_t<num_t>::operator&() const {
+constexpr const num_t* quat_t<num_t>::operator&() const {
     return q;
 }
 
@@ -71,12 +73,14 @@ inline num_t* quat_t<num_t>::operator&() {
     Subscripting Operators
 -------------------------------------*/
 template <typename num_t>
-constexpr num_t quat_t<num_t>::operator[](int i) const {
+template <typename index_t>
+constexpr num_t quat_t<num_t>::operator[](index_t i) const {
     return q[i];
 }
 
 template <typename num_t>
-inline num_t& quat_t<num_t>::operator[](int i) {
+template <typename index_t>
+inline num_t& quat_t<num_t>::operator[](index_t i) {
     return q[i];
 }
 
@@ -119,7 +123,13 @@ quat_t<num_t> quat_t<num_t>::operator--(int) {
     };
 }
 
-template <typename num_t> inline
+// conjugate
+template <typename num_t> constexpr
+quat_t<num_t> quat_t<num_t>::operator-() const {
+    return quat_t<num_t>{-q[0], -q[1], -q[2], q[3]};
+}
+
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator+(const quat_t<num_t>& input) const {
     return quat_t<num_t>{
         q[0] + input.q[0],
@@ -129,7 +139,7 @@ quat_t<num_t> quat_t<num_t>::operator+(const quat_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator-(const quat_t<num_t>& input) const {
     return quat_t<num_t>{
         q[0] - input.q[0],
@@ -139,7 +149,7 @@ quat_t<num_t> quat_t<num_t>::operator-(const quat_t<num_t>& input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator*(const quat_t<num_t>& input) const {
     return quat_t<num_t>{
         (q[3] * input.q[0]) + (q[0] * input.q[3]) + (q[1] * input.q[2]) - (q[2] * input.q[1]),
@@ -149,6 +159,7 @@ quat_t<num_t> quat_t<num_t>::operator*(const quat_t<num_t>& input) const {
     };
 }
 
+/*
 template <typename num_t> inline
 quat_t<num_t>& quat_t<num_t>::operator=(const quat_t<num_t>& input) {
     q[0] = input.q[0];
@@ -166,6 +177,7 @@ quat_t<num_t>& quat_t<num_t>::operator=(quat_t<num_t>&& input) {
     q[3] = input.q[3];
     return *this;
 }
+*/
 
 template <typename num_t> inline
 quat_t<num_t>& quat_t<num_t>::operator+=(const quat_t<num_t>& input) {
@@ -190,7 +202,7 @@ quat_t<num_t>& quat_t<num_t>::operator*=(const quat_t<num_t>& input) {
     return *this = *this * input;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool quat_t<num_t>::operator==(const quat_t<num_t>& compare) const {
     return
     q[0] == compare.q[0] &&
@@ -199,7 +211,7 @@ bool quat_t<num_t>::operator==(const quat_t<num_t>& compare) const {
         q[3] == compare.q[3];
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 bool quat_t<num_t>::operator!=(const quat_t<num_t>& compare) const {
     return
     q[0] != compare.q[0] ||
@@ -211,7 +223,7 @@ bool quat_t<num_t>::operator!=(const quat_t<num_t>& compare) const {
 /*-------------------------------------
     Quaternion-Scalar Operators
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator+(num_t input) const {
     return quat_t<num_t>{
         q[0] + input,
@@ -221,7 +233,7 @@ quat_t<num_t> quat_t<num_t>::operator+(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator-(num_t input) const {
     return quat_t<num_t>{
         q[0] - input,
@@ -231,7 +243,7 @@ quat_t<num_t> quat_t<num_t>::operator-(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator*(num_t input) const {
     return quat_t<num_t>{
         q[0] * input,
@@ -241,7 +253,7 @@ quat_t<num_t> quat_t<num_t>::operator*(num_t input) const {
     };
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> quat_t<num_t>::operator/(num_t input) const {
     return quat_t<num_t>{
         q[0] / input,
@@ -299,22 +311,22 @@ quat_t<num_t>& quat_t<num_t>::operator/=(num_t input) {
 /*-------------------------------------
     Non-Member Quaternion-Scalar operations
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator+(num_t n, const quat_t<num_t>& q) {
     return q + n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator-(num_t n, const quat_t<num_t>& q) {
     return q - n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator*(num_t n, const quat_t<num_t>& q) {
     return q * n;
 }
 
-template <typename num_t> inline
+template <typename num_t> constexpr
 quat_t<num_t> operator/(num_t n, const quat_t<num_t>& q) {
     return q / n;
 }
