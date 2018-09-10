@@ -461,6 +461,11 @@ constexpr scalar_t factorial(scalar_t) noexcept;
  * @return x^y
  */
 template <typename scalar_t>
+constexpr scalar_t pow(
+    typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type x,
+    typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept;
+
+template <typename scalar_t>
 constexpr scalar_t pow(scalar_t x, scalar_t y) noexcept;
 
 /**
