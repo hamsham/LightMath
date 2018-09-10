@@ -36,8 +36,8 @@ struct LS_API alignas(sizeof(num_t)) quat_t {
     constexpr quat_t(num_t inX, num_t inY, num_t inZ, num_t inW);
     constexpr quat_t(num_t n);
 
-    quat_t(const quat_t<num_t>& input) = default;
-    quat_t(quat_t<num_t>&& input) = default;
+    quat_t(const quat_t<num_t>&) = default;
+    quat_t(quat_t<num_t>&&) = default;
 
     // Conversions & Casting
     template <typename other_t>
@@ -62,8 +62,8 @@ struct LS_API alignas(sizeof(num_t)) quat_t {
     constexpr quat_t operator+(const quat_t<num_t>& input) const;
     constexpr quat_t operator-(const quat_t<num_t>& input) const;
     constexpr quat_t operator*(const quat_t<num_t>& input) const;
-    quat_t& operator=(const quat_t<num_t>& input) = default;
-    quat_t& operator=(quat_t<num_t>&& input) = default;
+    quat_t& operator=(const quat_t<num_t>&) = default;
+    quat_t& operator=(quat_t<num_t>&&) = default;
     quat_t& operator+=(const quat_t<num_t>& input);
     quat_t& operator-=(const quat_t<num_t>& input);
     quat_t& operator*=(const quat_t<num_t>& input);

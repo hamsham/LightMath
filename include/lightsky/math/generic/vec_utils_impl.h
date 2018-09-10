@@ -152,9 +152,19 @@ math::vec2_t<num_t> math::reflect(const vec2_t<num_t>& v, const vec2_t<num_t>& n
 template <typename num_t> constexpr
 math::vec2_t<num_t> math::mid(const vec2_t<num_t>& v1, const vec2_t<num_t>& v2) {
     return std::is_integral<num_t>::value
-        ? vec2_t<num_t>{(v1[0] + v2[0]) / num_t {2}, (v1[1] + v2[1]) / num_t{2}}
-        : vec2_t<num_t>{(v1[0] + v2[0]) * num_t {0.5}, (v1[1] + v2[1]) * num_t{0.5}};
+        ? ((v1[0] + v2[0]) / num_t{2})
+        : ((v1[0] + v2[0]) * num_t{0.5});
 }
+
+/*-------------------------------------
+    2D RCP
+-------------------------------------*/
+template <typename num_t> constexpr
+math::vec2_t<num_t> math::rcp(const vec2_t<num_t>& v) {
+    return vec2_t<num_t>{1.0} / v;
+}
+
+
 
 /*-----------------------------------------------------------------------------
     3D Vectors
@@ -335,15 +345,19 @@ math::vec3_t<num_t> math::reflect(const vec3_t<num_t>& v, const vec3_t<num_t>& n
 template <typename num_t> constexpr
 math::vec3_t<num_t> math::mid(const vec3_t<num_t>& v1, const vec3_t<num_t>& v2) {
     return std::is_integral<num_t>::value
-    ? vec3_t<num_t>{
-        (v1[0] + v2[0]) / num_t{2},
-        (v1[1] + v2[1]) / num_t{2},
-        (v1[2] + v2[2]) / num_t{2}}
-    : vec3_t<num_t>{
-        (v1[0] + v2[0]) * num_t{0.5},
-        (v1[1] + v2[1]) * num_t{0.5},
-        (v1[2] + v2[2]) * num_t{0.5}};
+        ? ((v1[0] + v2[0]) / num_t{2})
+        : ((v1[0] + v2[0]) * num_t{0.5});
 }
+
+/*-------------------------------------
+    3D RCP
+-------------------------------------*/
+template <typename num_t> constexpr
+math::vec3_t<num_t> math::rcp(const vec3_t<num_t>& v) {
+    return vec3_t<num_t>{1.0} / v;
+}
+
+
 
 /*-----------------------------------------------------------------------------
     4D Vectors
@@ -362,6 +376,19 @@ num_t math::sum(const vec4_t<num_t>& v) {
 template <typename num_t> constexpr
 num_t math::dot(const vec4_t<num_t>& v1, const vec4_t<num_t>& v2) {
     return math::sum<num_t>(v1 * v2);
+}
+
+/*-------------------------------------
+    4D Cross
+-------------------------------------*/
+template <typename num_t> constexpr
+math::vec4_t<num_t> math::cross(const vec4_t<num_t>& v1, const vec4_t<num_t>& v2) {
+    return vec4_t<num_t>{
+        (v1.v[1] * v2.v[2]) - (v1.v[2] * v2.v[1]),
+        (v1.v[2] * v2.v[0]) - (v1.v[0] * v2.v[2]),
+        (v1.v[0] * v2.v[1]) - (v1.v[1] * v2.v[0]),
+        num_t{0}
+    };
 }
 
 /*-------------------------------------
@@ -478,16 +505,17 @@ math::vec4_t<num_t> math::reflect(const vec4_t<num_t>& v, const vec4_t<num_t>& n
 template <typename num_t> constexpr
 math::vec4_t<num_t> math::mid(const vec4_t<num_t>& v1, const vec4_t<num_t>& v2) {
     return std::is_integral<num_t>::value
-    ? vec4_t<num_t>{
-        (v1[0] + v2[0]) / num_t{2},
-        (v1[1] + v2[1]) / num_t{2},
-        (v1[2] + v2[2]) / num_t{2},
-        (v1[3] + v2[3]) / num_t{2}}
-    : vec4_t<num_t>{
-        (v1[0] + v2[0]) * num_t{0.5},
-        (v1[1] + v2[1]) * num_t{0.5},
-        (v1[2] + v2[2]) * num_t{0.5},
-        (v1[3] + v2[3]) * num_t{0.5}};
+        ? ((v1[0] + v2[0]) / num_t{2})
+        : ((v1[0] + v2[0]) * num_t{0.5});
 }
+
+/*-------------------------------------
+    4D RCP
+-------------------------------------*/
+template <typename num_t> constexpr
+math::vec4_t<num_t> math::rcp(const vec4_t<num_t>& v) {
+    return vec4_t<num_t>{1.0} / v;
+}
+
 
 } // end ls namespace

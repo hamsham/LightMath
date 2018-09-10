@@ -18,6 +18,8 @@ union LS_API alignas(sizeof(float32x4_t)) vec4_t<float>
 
     float32x4_t simd;
 
+    ~vec4_t() = default;
+
     // Main Constructor
     constexpr vec4_t(float inX, float inY, float inZ, float inW);
 
@@ -31,8 +33,6 @@ union LS_API alignas(sizeof(float32x4_t)) vec4_t<float>
     vec4_t(const vec4_t<float>& input) = default;
 
     vec4_t(vec4_t<float>&& input) = default;
-
-    ~vec4_t() = default;
 
     // Conversions & Casting
     template<typename other_t>
@@ -168,10 +168,27 @@ inline vec4_t<float>::operator vec4_t<other_t>() const
 
 template <>
 template <>
-inline vec4_t<unsigned char>::operator vec4_t<float>() const
+inline vec4_t<uint8_t>::operator vec4_t<float>() const
 {
     const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
     return vec4_t<float>{vcvtq_f32_u32(vld1q_u32(vals))};
+}
+
+template <>
+inline vec4_t<float>::operator vec4_t<uint8_t>() const
+{
+    union
+    {
+        const int32x4_t simd;
+        const int32_t vec[4];
+    } data{vcvtq_s32_f32(simd)};
+
+    return vec4_t<uint8_t>{
+        (uint8_t)data.vec[0],
+        (uint8_t)data.vec[1],
+        (uint8_t)data.vec[2],
+        (uint8_t)data.vec[3]
+    };
 }
 
 inline const float* vec4_t<float>::operator&() const
@@ -231,7 +248,9 @@ vec4_t<float> vec4_t<float>::operator*(const vec4_t<float>& input) const
 inline
 vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 {
-    return vec4_t{vmulq_f32(simd, vrecpeq_f32(input.simd))};
+    const float32x4_t scalar = input.simd;
+    const float32x4_t recip = vrecpeq_f32(scalar);
+    return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
 }
 
 /*
@@ -274,7 +293,9 @@ vec4_t<float>& vec4_t<float>::operator*=(const vec4_t<float>& input)
 inline
 vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 {
-    simd = vmulq_f32(simd, vrecpeq_f32(input.simd));
+    const float32x4_t scalar = input.simd;
+    const float32x4_t recip = vrecpeq_f32(scalar);
+    simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip));
     return *this;
 }
 
@@ -405,7 +426,10 @@ vec4_t<float> vec4_t<float>::operator*(float input) const
 inline
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
-    return vec4_t<float>{vmulq_f32(simd, vrecpeq_f32(vdupq_n_f32(input)))};
+    const float32x4_t scalar = vdupq_n_f32(input);
+    const float32x4_t recip = vrecpeq_f32(scalar);
+
+    return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
 }
 
 inline
@@ -432,7 +456,11 @@ vec4_t<float>& vec4_t<float>::operator*=(float input)
 inline
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
-    simd = vmulq_f32(simd, vrecpeq_f32(vdupq_n_f32(input)));
+    const float32x4_t scalar = vdupq_n_f32(input);
+    const float32x4_t recip = vrecpeq_f32(scalar);
+
+    simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip));
+
     return *this;
 }
 

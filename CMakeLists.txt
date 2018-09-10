@@ -43,6 +43,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/vec3.h
     include/lightsky/math/vec4.h
     include/lightsky/math/vec_utils.h
+
     include/lightsky/math/generic/fixed_impl.h
     include/lightsky/math/generic/mat2_impl.h
     include/lightsky/math/generic/mat3_impl.h
@@ -56,6 +57,19 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/vec3_impl.h
     include/lightsky/math/generic/vec4_impl.h
     include/lightsky/math/generic/vec_utils_impl.h
+
+    include/lightsky/math/x86/mat4f_impl.h
+    include/lightsky/math/x86/matf_utils_impl.h
+    include/lightsky/math/x86/quatf_utils_impl.h
+    include/lightsky/math/x86/scalarf_utils_impl.h
+    include/lightsky/math/x86/vec4f_impl.h
+    include/lightsky/math/x86/vecf_utils_impl.h
+
+    include/lightsky/math/arm/mat4f_impl.h
+    include/lightsky/math/arm/quatf_utils_impl.h
+    include/lightsky/math/arm/scalarf_utils_impl.h
+    include/lightsky/math/arm/vec4f_impl.h
+    include/lightsky/math/arm/vecf_utils_impl.h
 )
 
 

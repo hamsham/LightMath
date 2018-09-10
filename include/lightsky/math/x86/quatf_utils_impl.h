@@ -26,7 +26,7 @@ math::quat_t<float> normalize(const quat_t<float>& q)
     const __m128 a = _mm_mul_ps(s, s);
 
     // swap the words of each vector
-    const __m128 b = _mm_shuffle_ps(a, a, 0xA1);
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector

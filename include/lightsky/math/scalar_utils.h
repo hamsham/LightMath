@@ -11,7 +11,7 @@
 #include <limits> // std::numeric_limits
 
 #include "lightsky/setup/Arch.h"
-
+#include "lightsky/utils/Types.hpp"
 #include "lightsky/math/Types.h"
 
 namespace ls
@@ -332,14 +332,14 @@ inline float fast_log2<float>(float) noexcept;
 
 /**
  * @brief fastLog
- * Calculate the log-base10 of a number
+ * Calculate the natural log of a number
  *
  * @param a number
  *
- * @return the log-base10 of a number, using IEEE floating point arithmetic
+ * @return ln(x), using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_log10(scalar_t) noexcept;
+inline scalar_t fast_log(scalar_t) noexcept;
 
 /**
  * @brief fastLogBase
@@ -451,14 +451,17 @@ constexpr scalar_t factorial(scalar_t) noexcept;
  * @brief pow
  * Evaluate a number to a given power.
  *
- * @param A number who's power is to be evaluated.
+ * This function's implmentation will be defined at compile-time for integers
+ * and floats.
  *
- * @param The degree to which the first parameter's power should be evaluated.
+ * @param x
  *
- * @return A number, raised to a given power.
+ * @param y
+ *
+ * @return x^y
  */
-template <typename scalar_t, typename int_t = scalar_t>
-constexpr scalar_t pow(scalar_t, int_t) noexcept;
+template <typename scalar_t>
+constexpr scalar_t pow(scalar_t x, scalar_t y) noexcept;
 
 /**
  * @brief pow
@@ -504,6 +507,19 @@ constexpr scalar_t const_cos(scalar_t) noexcept;
  */
 template <typename scalar_t>
 constexpr scalar_t const_tan(scalar_t) noexcept;
+
+/**
+ * @brief rcp
+ * Evaluate the reciprocal of a decimal scalar.
+ *
+ * @note This function does not check for division-by-zero.
+ *
+ * @param The value to be evaluated.
+ *
+ * @return A reciprocal estimate of the input number.
+ */
+template <typename scalar_t>
+constexpr scalar_t rcp(const scalar_t&) noexcept;
 
 /**
  * @brief sum

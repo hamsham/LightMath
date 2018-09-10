@@ -30,7 +30,7 @@ struct mat4_t;
  *      3 = W
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-union LS_API alignas(sizeof(num_t)) vec4_t {
+union LS_API vec4_t {
     // data
     num_t v[4];
 

@@ -248,6 +248,20 @@ vec2_t<N> reflect(const vec2_t<N>& v, const vec2_t<N>& norm);
 template <typename N> constexpr
 vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
 
+/**
+ *  @brief rcp
+ *
+ *  Estimate the reciprocal of all elements in the input vector.
+ *
+ *  @param v
+ *
+ *  @return the element-wise reciprocal between v.
+ */
+template <typename N> constexpr
+vec2_t<N> rcp(const vec2_t<N>& v);
+
+
+
 /*-----------------------------------------------------------------------------
     3D Vectors
 -----------------------------------------------------------------------------*/
@@ -483,6 +497,20 @@ vec3_t<N> reflect(const vec3_t<N>& v1, const vec3_t<N>& norm);
 template <typename N> constexpr
 vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
 
+/**
+ *  @brief rcp
+ *
+ *  Estimate the reciprocal of all elements in the input vector.
+ *
+ *  @param v
+ *
+ *  @return the element-wise reciprocal between v.
+ */
+template <typename N> constexpr
+vec3_t<N> rcp(const vec3_t<N>& v);
+
+
+
 /*-----------------------------------------------------------------------------
     4D Vectors
 -----------------------------------------------------------------------------*/
@@ -509,6 +537,21 @@ N sum(const vec4_t<N>& v);
  */
 template <typename N> constexpr
 N dot(const vec4_t<N>& v1, const vec4_t<N>& v2);
+
+/**
+ *  @brief cross
+ *  Retrieve the cross product of two 4D vectors, treated as though they were
+ *  3D vectors. This result is 3D perpendicular to the two input vectors.
+ *
+ *  @param v1
+ *
+ *  @param v2
+ *
+ *  @return A 4D vector which represents the axis of rotation of two 4D
+ *  vectors. The final component is set to zero.
+ */
+template <typename N> constexpr
+vec4_t<N> cross(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 /**
  *  @brief normalize
@@ -663,6 +706,20 @@ vec4_t<N> reflect(const vec4_t<N>& v1, const vec4_t<N>& norm);
  */
 template <typename N> constexpr
 vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
+
+/**
+ *  @brief rcp
+ *
+ *  Estimate the reciprocal of all elements in the input vector.
+ *
+ *  @param v
+ *
+ *  @return the element-wise reciprocal between v.
+ */
+template <typename N> constexpr
+vec4_t<N> rcp(const vec4_t<N>& v);
+
+
 
 } // end math namespace
 } // end ls namespace

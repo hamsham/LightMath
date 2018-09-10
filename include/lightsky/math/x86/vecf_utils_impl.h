@@ -39,11 +39,28 @@ float dot<float>(const vec3_t<float>& v1, const vec3_t<float>& v2)
 */
 
 /*-------------------------------------
+    3D Cross
+-------------------------------------*/
+inline vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float>& v2) {
+    union
+    {
+        vec3_t<float> vec;
+        __m128 simd;
+    } a{v1}, b{v2}, ret;
+
+    const __m128 yzxA = _mm_shuffle_ps(a.simd, a.simd, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 yzxB = _mm_shuffle_ps(b.simd, b.simd, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 c = _mm_sub_ps(_mm_mul_ps(a.simd, yzxB), _mm_mul_ps(yzxA, b.simd));
+
+    ret.simd = _mm_shuffle_ps(c, c, _MM_SHUFFLE(3, 0, 2, 1));
+    return ret.vec;
+}
+
+/*-------------------------------------
     3D Magnitude
 -------------------------------------*/
 template <>
-inline
-float length(const vec3_t<float>& v)
+inline float length(const vec3_t<float>& v)
 {
     // cache
     const __m128 s = _mm_set_ps(v.v[0], v.v[1], v.v[2], 0.f);
@@ -52,7 +69,7 @@ float length(const vec3_t<float>& v)
     const __m128 a = _mm_mul_ps(s, s);
 
     // swap the words of each vector
-    const __m128 b = _mm_shuffle_ps(a, a, 0xA1);
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
@@ -68,50 +85,61 @@ float length(const vec3_t<float>& v)
     4D Vectors
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
-    4D Dot
+    4D Sum
 -------------------------------------*/
-/*
-template <> inline
-float dot<float>(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline float sum(const vec4_t<float>& v)
 {
-    //__m128 a = _mm_mul_ps(v1.simd, v2.simd);
-    //__m128 b = _mm_hadd_ps(a, a);
-    //__m128 c = _mm_hadd_ps(b, b);
-    //return _mm_cvtss_f32(c);
-}
-*/
-
-/*-------------------------------------
-    4D Magnitude
--------------------------------------*/
-template <>
-inline
-float length(const vec4_t<float>& v)
-{
-    // cache
-    const __m128 s = v.simd;
-
     // horizontal add
-    const __m128 a = _mm_mul_ps(s, s);
+    const __m128 a = v.simd;
 
     // swap the words of each vector
-    const __m128 b = _mm_shuffle_ps(a, a, 0xA1);
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
     const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
     const __m128 e = _mm_add_ps(c, d);
 
-    return _mm_cvtss_f32(_mm_sqrt_ps(e));
+    return _mm_cvtss_f32(e);
 }
 
 /*-------------------------------------
-    4D Normalize
+    4D Cross
 -------------------------------------*/
-/*
+inline vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float>& v2) {
+    const __m128 a = v1.simd;
+    const __m128 b = v2.simd;
+    const __m128 yzxA = _mm_shuffle_ps(a, a, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 yzxB = _mm_shuffle_ps(b, b, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 c = _mm_sub_ps(_mm_mul_ps(a, yzxB), _mm_mul_ps(yzxA, b));
+
+    return vec4_t<float>{_mm_shuffle_ps(c, c, _MM_SHUFFLE(3, 0, 2, 1))};
+}
+
+/*-------------------------------------
+    4D Dot
+-------------------------------------*/
+inline float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
+{
+    // horizontal add
+    const __m128 a = _mm_mul_ps(v1.simd, v2.simd);
+
+    // swap the words of each vector
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
+    const __m128 c = _mm_add_ps(a, b);
+
+    // swap each half of the vector
+    const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
+    const __m128 e = _mm_add_ps(c, d);
+
+    return _mm_cvtss_f32(e);
+}
+
+/*-------------------------------------
+    4D Magnitude
+-------------------------------------*/
 template <>
-inline
-math::vec4_t<float> normalize(const vec4_t<float>& v)
+inline float length(const vec4_t<float>& v)
 {
     // cache
     const __m128 s = v.simd;
@@ -120,7 +148,30 @@ math::vec4_t<float> normalize(const vec4_t<float>& v)
     const __m128 a = _mm_mul_ps(s, s);
 
     // swap the words of each vector
-    const __m128 b = _mm_shuffle_ps(a, a, 0xA1);
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
+    const __m128 c = _mm_add_ps(a, b);
+
+    // swap each half of the vector
+    const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
+    const __m128 e = _mm_add_ps(c, d);
+
+    return _mm_cvtss_f32(_mm_rcp_ps(_mm_rsqrt_ps(e)));
+}
+
+/*-------------------------------------
+    4D Normalize
+-------------------------------------*/
+template <>
+inline math::vec4_t<float> normalize(const vec4_t<float>& v)
+{
+    // cache
+    const __m128 s = v.simd;
+
+    // horizontal add
+    const __m128 a = _mm_mul_ps(s, s);
+
+    // swap the words of each vector
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
@@ -130,8 +181,30 @@ math::vec4_t<float> normalize(const vec4_t<float>& v)
     // normalization
     return vec4_t<float>{_mm_mul_ps(s, _mm_rsqrt_ps(e))};
 }
-*/
 
+/*-------------------------------------
+    4D Min
+-------------------------------------*/
+inline vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
+{
+    return math::vec4_t<float>{_mm_min_ps(v1.simd, v2.simd)};
+}
+
+/*-------------------------------------
+    4D Max
+-------------------------------------*/
+inline vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
+{
+    return math::vec4_t<float>{_mm_max_ps(v1.simd, v2.simd)};
+}
+
+/*-------------------------------------
+    4D RCP
+-------------------------------------*/
+inline vec4_t<float> rcp(const vec4_t<float>& v)
+{
+    return vec4_t<float>{_mm_rcp_ps(v.simd)};
+}
 
 
 } // end math namespace
