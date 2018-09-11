@@ -1,4 +1,6 @@
 
+#include "lightsky/math/vec4.h"
+
 #include "lightsky/math/mat3.h"
 #include "lightsky/math/mat4.h"
 
