@@ -40,8 +40,8 @@ union LS_API vec4_t {
     // Delegated Constructors
     constexpr vec4_t() = default;
     constexpr vec4_t(num_t n);
-    constexpr vec4_t(const vec4_t<num_t>& input) = default;
-    constexpr vec4_t(vec4_t<num_t>&& input) = default;
+    constexpr vec4_t(const vec4_t<num_t>& input);
+    constexpr vec4_t(vec4_t<num_t>&& input);
 
     ~vec4_t() = default;
 
@@ -65,8 +65,8 @@ union LS_API vec4_t {
     constexpr vec4_t operator-() const;
     constexpr vec4_t operator*(const vec4_t<num_t>&) const;
     constexpr vec4_t operator/(const vec4_t<num_t>&) const;
-    vec4_t& operator=(const vec4_t<num_t>&) = default;
-    vec4_t& operator=(vec4_t<num_t>&&) = default;
+    vec4_t& operator=(const vec4_t<num_t>&);
+    vec4_t& operator=(vec4_t<num_t>&&);
     vec4_t& operator+=(const vec4_t<num_t>&);
     vec4_t& operator-=(const vec4_t<num_t>&);
     vec4_t& operator*=(const vec4_t<num_t>&);
