@@ -126,7 +126,7 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
 constexpr vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
     //simd(_mm_setr_ps(inX, inY, inZ, inW))
     //simd(_mm_set_ps(inW, inZ, inY, inX))
-    v{inX, inY, inZ, inW}
+    simd{inX, inY, inZ, inW}
 {
 }
 
