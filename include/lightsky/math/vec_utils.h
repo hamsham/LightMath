@@ -260,6 +260,18 @@ vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
 template <typename N> constexpr
 vec2_t<N> rcp(const vec2_t<N>& v);
 
+/**
+ * @brief Retrieve the sign bits of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of the lower 2 bits of the return value if
+ * the signs are set.
+ */
+template <typename N> constexpr
+int sign_bits(const vec2_t<N>& x) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -509,6 +521,18 @@ vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
 template <typename N> constexpr
 vec3_t<N> rcp(const vec3_t<N>& v);
 
+/**
+ * @brief Retrieve the sign bits of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of the lower 3 bits of the return value if
+ * the signs are set.
+ */
+template <typename N> constexpr
+int sign_bits(const vec3_t<N>& x) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -718,6 +742,18 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
  */
 template <typename N> constexpr
 vec4_t<N> rcp(const vec4_t<N>& v);
+
+/**
+ * @brief Retrieve the sign bits of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of the lower 4 bits of the return value if
+ * the signs are set.
+ */
+template <typename N> constexpr
+int sign_bits(const vec4_t<N>& x) noexcept;
 
 
 

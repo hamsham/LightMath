@@ -12,6 +12,8 @@
 #include <cmath>
 #include <cstdint>
 
+#include "lightsky/utils/Types.hpp"
+
 /*
  * Floating Point Values & Precision
  */
@@ -76,18 +78,11 @@ namespace math
  * Replacement for std::is_integral
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
- * Integer Specialization
+ * General Case
 -------------------------------------*/
 template <typename data_t>
-struct IsIntegral
+struct IsIntegral : public utils::TrueType<data_t>
 {
-    typedef data_t value_type;
-
-    static constexpr bool value = true;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -96,15 +91,8 @@ struct IsIntegral
  * Float Specialization
 -------------------------------------*/
 template <>
-struct IsIntegral<float>
+struct IsIntegral<float> : public utils::FalseType<float>
 {
-    typedef float value_type;
-
-    static constexpr bool value = false;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -113,15 +101,8 @@ struct IsIntegral<float>
  * Double Specialization
 -------------------------------------*/
 template <>
-struct IsIntegral<double>
+struct IsIntegral<double> : public utils::FalseType<double>
 {
-    typedef double value_type;
-
-    static constexpr bool value = false;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -130,38 +111,9 @@ struct IsIntegral<double>
  * Long Double Specialization
 -------------------------------------*/
 template <>
-struct IsIntegral<long double>
+struct IsIntegral<long double> : public utils::FalseType<long double>
 {
-    typedef long double value_type;
-
-    static constexpr bool value = false;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
-
-
-
-/*-------------------------------------
- * Boolean Cast Implementation
--------------------------------------*/
-template <typename data_t>
-constexpr IsIntegral<data_t>::operator bool() const noexcept
-{
-    return IsIntegral<data_t>::value;
-}
-
-
-
-/*-------------------------------------
- * Functor Call Implementation
--------------------------------------*/
-template <typename data_t>
-constexpr bool IsIntegral<data_t>::operator() () const noexcept
-{
-    return IsIntegral<data_t>::value;
-}
 
 
 
@@ -169,18 +121,11 @@ constexpr bool IsIntegral<data_t>::operator() () const noexcept
  * Replacement for std::is_floating_point
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
- * Float Specialization
+ * General Case
 -------------------------------------*/
 template <typename data_t>
-struct IsFloat
+struct IsFloat : public utils::FalseType<data_t>
 {
-    typedef data_t value_type;
-
-    static constexpr bool value = false;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -189,15 +134,8 @@ struct IsFloat
  * Float Specialization
 -------------------------------------*/
 template <>
-struct IsFloat<float>
+struct IsFloat<float> : public utils::TrueType<float>
 {
-    typedef float value_type;
-
-    static constexpr bool value = true;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -206,15 +144,8 @@ struct IsFloat<float>
  * Double Specialization
 -------------------------------------*/
 template <>
-struct IsFloat<double>
+struct IsFloat<double> : public utils::TrueType<double>
 {
-    typedef double value_type;
-
-    static constexpr bool value = true;
-
-    constexpr explicit operator bool() const noexcept;
-
-    constexpr bool operator() () const noexcept;
 };
 
 
@@ -223,38 +154,87 @@ struct IsFloat<double>
  * Long Double Specialization
 -------------------------------------*/
 template <>
-struct IsFloat<long double>
+struct IsFloat<long double> : public utils::TrueType<long double>
 {
-    typedef long double value_type;
+};
 
-    static constexpr bool value = true;
 
-    constexpr explicit operator bool() const noexcept;
 
-    constexpr bool operator() () const noexcept;
+/*-----------------------------------------------------------------------------
+ * Replacement for std::is_signed
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * General Implementation
+-------------------------------------*/
+template <typename data_t>
+struct IsSigned : public utils::TrueType<data_t>
+{
 };
 
 
 
 /*-------------------------------------
- * Boolean Cast Implementation
+ * Unsigned Specializations
 -------------------------------------*/
-template <typename data_t>
-constexpr IsFloat<data_t>::operator bool() const noexcept
+template <>
+struct IsSigned<unsigned char> : public utils::FalseType<unsigned char>
 {
-    return IsFloat<data_t>::value;
-}
+};
 
 
 
+template <>
+struct IsSigned<unsigned short> : public utils::FalseType<unsigned short>
+{
+};
+
+
+
+template <>
+struct IsSigned<unsigned int> : public utils::FalseType<unsigned int>
+{
+};
+
+
+
+template <>
+struct IsSigned<unsigned long> : public utils::FalseType<unsigned long>
+{
+};
+
+
+
+template <>
+struct IsSigned<unsigned long long> : public utils::FalseType<unsigned long long>
+{
+};
+
+
+
+/*-----------------------------------------------------------------------------
+ * Replacement for std::is_unsigned
+-----------------------------------------------------------------------------*/
 /*-------------------------------------
- * Functor Call Implementation
+ * General Implementation
 -------------------------------------*/
 template <typename data_t>
-constexpr bool IsFloat<data_t>::operator() () const noexcept
+struct IsUnsigned
 {
-    return IsFloat<data_t>::value;
-}
+    typedef data_t value_type;
+
+    static constexpr bool value = !IsSigned<data_t>::value;
+
+    constexpr explicit operator bool() const noexcept
+    {
+        return value;
+    }
+
+    constexpr bool operator() () const noexcept
+    {
+        return value;
+    }
+};
+
 
 
 } // end math namespace

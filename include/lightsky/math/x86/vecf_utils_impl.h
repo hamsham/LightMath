@@ -206,6 +206,14 @@ inline vec4_t<float> rcp(const vec4_t<float>& v)
     return vec4_t<float>{_mm_rcp_ps(v.simd)};
 }
 
+/*-------------------------------------
+    4D Sign Bits
+-------------------------------------*/
+inline int sign_bits(const vec4_t<float>& x) noexcept
+{
+    return _mm_movemask_ps(x.simd);
+}
+
 
 } // end math namespace
 } // end ls namespace

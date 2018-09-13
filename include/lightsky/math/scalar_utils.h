@@ -8,16 +8,19 @@
 #ifndef LS_MATH_SCALAR_UTILS_H
 #define LS_MATH_SCALAR_UTILS_H
 
+#include <climits> // CHAR_BIT
 #include <limits> // std::numeric_limits
 
 #include "lightsky/setup/Arch.h"
-#include "lightsky/utils/Types.hpp"
+
 #include "lightsky/math/Types.h"
 
 namespace ls
 {
 namespace math
 {
+
+
 
 /**
  * @brief Calculate the greatest common divisor between two integers.
@@ -600,7 +603,7 @@ template <typename scalar_t>
 constexpr unsigned count_set_bits(const scalar_t num) noexcept;
 
 /**
- * @Brief Scale a number from one data type with a range of values to another
+ * @brief Scale a number from one data type with a range of values to another
  * data type with a range of values.
  *
  * @param num
@@ -628,7 +631,23 @@ constexpr out_type scale_num_to_range(
     const out_type oldMax = std::numeric_limits<in_type>::max(),
     const out_type newMin = std::numeric_limits<out_type>::min(),
     const out_type newMax = std::numeric_limits<out_type>::max()
-    ) noexcept;
+) noexcept;
+
+/**
+ * @brief Retrieve the sign bits of a scalar type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
+ */
+template <typename data_t>
+constexpr int sign_bit(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+
+template <typename data_t>
+constexpr int sign_bit(data_t x) noexcept;
+
+
 
 } // end math namespace
 } // end ls namespace

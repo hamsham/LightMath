@@ -17,4 +17,5 @@ endfunction(LS_MATH_ADD_TARGET)
 
 LS_MATH_ADD_TARGET(glm_test glm_test.cpp)
 LS_MATH_ADD_TARGET(fixed_test fixed_test.cpp)
+LS_MATH_ADD_TARGET(sign_test sign_test.cpp)
 

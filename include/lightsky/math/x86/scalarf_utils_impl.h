@@ -162,5 +162,15 @@ inline float sum(float num0, float num1, float num2, float num3) noexcept
 
 
 
+/*-------------------------------------
+    sign_bit
+-------------------------------------*/
+inline int sign_bit(float x) noexcept
+{
+    return _mm_cvtsi128_si32(_mm_castps_si128(_mm_set_ss(x))) >> 31;
+}
+
+
+
 } // end math namespace
 } // end ls namespace

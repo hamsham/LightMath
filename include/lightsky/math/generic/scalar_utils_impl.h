@@ -662,4 +662,23 @@ constexpr out_type math::scale_num_to_range(
 
 
 
+/*-------------------------------------
+    Get a number's sign bit
+-------------------------------------*/
+template <typename data_t>
+constexpr int math::sign_bit(
+    typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
+) noexcept
+{
+    return math::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+}
+
+template <typename data_t>
+constexpr int math::sign_bit(data_t x) noexcept
+{
+    return math::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
+}
+
+
+
 } /* end ls namespace */
