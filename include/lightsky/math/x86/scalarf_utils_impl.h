@@ -139,8 +139,7 @@ inline float fmod_1(const float n) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template<>
-inline float fast_inv_sqrt<float>(float x) noexcept
+inline float fast_inv_sqrt(float x) noexcept
 {
     return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 }
@@ -150,8 +149,7 @@ inline float fast_inv_sqrt<float>(float x) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template<>
-inline float fast_sqrt<float>(float input) noexcept
+inline float fast_sqrt(float input) noexcept
 {
     return _mm_cvtss_f32(_mm_rcp_ss(_mm_rsqrt_ss(_mm_set_ss(input))));
 }
