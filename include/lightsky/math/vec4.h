@@ -133,12 +133,12 @@ typedef vec4_t<LS_FLOAT> vec4;
 } //end math namespace
 } //end ls namespace
 
+#include "lightsky/math/generic/vec4_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/vec4f_impl.h"
 #elif defined(LS_ARCH_ARM)
     #include "lightsky/math/arm/vec4f_impl.h"
 #endif
-
-#include "lightsky/math/generic/vec4_impl.h"
 
 #endif /* LS_MATH_VEC4_H */
