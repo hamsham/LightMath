@@ -608,6 +608,28 @@ constexpr scalar_t math::sum(const scalar_t& num, const scalars_t& ... nums) noe
 
 
 /*-------------------------------------
+    sum_inv
+-------------------------------------*/
+template<typename scalar_t>
+constexpr scalar_t math::sum_inv(const scalar_t& num) noexcept
+{
+    return scalar_t{1} / num;
+}
+
+
+
+/*-------------------------------------
+    sum_inv
+-------------------------------------*/
+template<typename scalar_t, typename... scalars_t>
+constexpr scalar_t math::sum_inv(const scalar_t& num, const scalars_t& ... nums) noexcept
+{
+    return scalar_t{1} / (num + math::sum(nums...));
+}
+
+
+
+/*-------------------------------------
     average
 -------------------------------------*/
 template<typename scalar_t>

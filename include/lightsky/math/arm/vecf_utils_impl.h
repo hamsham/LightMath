@@ -57,6 +57,23 @@ inline float sum(const vec4_t<float>& v)
 }
 
 /*-------------------------------------
+    4D Reciprocal Sum
+-------------------------------------*/
+inline float sum_inv(const vec4_t<float>& v)
+{
+    const float32x4_t a = v.simd;
+    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
+    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
+    const float32x4_t d = vaddq_f32(b, c);
+
+    const float32x2_t sums = vget_low_f32(d);
+    const float32x2_t recip = vrecpe_f32(sums);
+    const float32x2_t ret = vmul_f32(vrecps_f32(sums, recip), recip);
+
+    return vget_lane_f32(ret, 0);
+}
+
+/*-------------------------------------
     4D Dot
 -------------------------------------*/
 inline float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)

@@ -552,6 +552,28 @@ template <typename scalar_t, typename... scalars_t>
 constexpr scalar_t sum(const scalar_t& num, const scalars_t&... nums) noexcept;
 
 /**
+ * @brief reciprocal sum
+ * Evaluate the reciprocal of a sum.
+ *
+ * @param A set of numbers who's values are to be added together.
+ *
+ * @return The inverse of a sequence sum.
+ */
+template <typename scalar_t>
+constexpr scalar_t sum_inv(const scalar_t&) noexcept;
+
+/**
+ * @brief reciprocal sum
+ * Evaluate the reciprocal of a sum.
+ *
+ * @param A set of numbers who's values are to be added together.
+ *
+ * @return The inverse of a sequence sum.
+ */
+template <typename scalar_t, typename... scalars_t>
+constexpr scalar_t sum_inv(const scalar_t& num, const scalars_t&... nums) noexcept;
+
+/**
  * @brief average
  * Evaluate the average of a series of numbers at compile-time.
  *

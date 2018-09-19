@@ -15,6 +15,14 @@ num_t math::sum(const vec2_t<num_t>& v) {
 }
 
 /*-------------------------------------
+    2D Reciprocal Sum
+-------------------------------------*/
+template <typename num_t> constexpr
+num_t math::sum_inv(const vec2_t<num_t>& v) {
+    return math::rcp<num_t>(v.v[0] + v.v[1]);
+}
+
+/*-------------------------------------
     2D Dot
 -------------------------------------*/
 template <typename num_t> constexpr
@@ -184,6 +192,14 @@ int math::sign_bits(const vec2_t<N>& x) noexcept
 template <typename num_t> constexpr
 num_t math::sum(const vec3_t<num_t>& v) {
     return v.v[0] + v.v[1] + v.v[2];
+}
+
+/*-------------------------------------
+    3D Reciprocal Sum
+-------------------------------------*/
+template <typename num_t> constexpr
+num_t math::sum_inv(const vec3_t<num_t>& v) {
+    return math::rcp<num_t>(v.v[0] + v.v[1] + v.v[2]);
 }
 
 /*-------------------------------------
@@ -386,6 +402,14 @@ int math::sign_bits(const vec3_t<N>& x) noexcept
 template <typename num_t> constexpr
 num_t math::sum(const vec4_t<num_t>& v) {
     return v.v[0] + v.v[1] + v.v[2] + v.v[3];
+}
+
+/*-------------------------------------
+    4D Reciprocal Sum
+-------------------------------------*/
+template <typename num_t> constexpr
+num_t math::sum_inv(const vec4_t<num_t>& v) {
+    return math::rcp<num_t>(v.v[0] + v.v[1] + v.v[2] + v.v[3]);
 }
 
 /*-------------------------------------

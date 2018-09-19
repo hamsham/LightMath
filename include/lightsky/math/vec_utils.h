@@ -48,6 +48,17 @@ template <typename N> constexpr
 N sum(const vec2_t<N>& v);
 
 /**
+ *  @brief reciprocal sum
+ *  Retrieve the reciprocal of the sum sum of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return the reciprocal of the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum_inv(const vec2_t<N>& v);
+
+/**
  *  @brief dot
  *  Retrieve the dot product of a 2D vector.
  *
@@ -287,6 +298,17 @@ int sign_bits(const vec2_t<N>& x) noexcept;
  */
 template <typename N> constexpr
 N sum(const vec3_t<N>& v);
+
+/**
+ *  @brief reciprocal sum
+ *  Retrieve the reciprocal of the sum sum of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return the reciprocal of the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum_inv(const vec3_t<N>& v);
 
 /**
  *  @brief dot
@@ -548,6 +570,17 @@ int sign_bits(const vec3_t<N>& x) noexcept;
  */
 template <typename N> constexpr
 N sum(const vec4_t<N>& v);
+
+/**
+ *  @brief reciprocal sum
+ *  Retrieve the reciprocal of the sum sum of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return the reciprocal of the sum of elements within v.
+ */
+template <typename N> constexpr
+N sum_inv(const vec2_t<N>& v);
 
 /**
  *  @brief dot
