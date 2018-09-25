@@ -173,26 +173,30 @@ template <>
 template <>
 inline vec4_t<uint8_t>::operator vec4_t<float>() const
 {
+    /*
     union alignas(sizeof(__m128i))
     {
         uint32_t vec[4];
         __m128i simd;
     } values{{v[0], v[1], v[2], v[3]}};
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
-    //return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
+    */
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
 }
 
 template <>
 template <>
 inline vec4_t<int8_t>::operator vec4_t<float>() const
 {
+    /*
     union alignas(sizeof(__m128i))
     {
         int32_t vec[4];
         __m128i simd;
     } values{{v[0], v[1], v[2], v[3]}};
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
-    //return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
+    */
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
 }
 
 template <>
@@ -444,14 +448,14 @@ vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 inline
 vec4_t<float>& vec4_t<float>::operator++()
 {
-    simd = _mm_add_ps(simd, _mm_set_ps1(1.f));
+    simd = _mm_add_ps(simd, _mm_set1_ps(1.f));
     return *this;
 }
 
 inline
 vec4_t<float>& vec4_t<float>::operator--()
 {
-    simd = _mm_sub_ps(simd, _mm_set_ps1(1.f));
+    simd = _mm_sub_ps(simd, _mm_set1_ps(1.f));
     return *this;
 }
 
@@ -461,7 +465,7 @@ inline
 vec4_t<float> vec4_t<float>::operator++(int)
 {
     __m128 ret = simd;
-    simd = _mm_add_ps(simd, _mm_set_ps1(1.f));
+    simd = _mm_add_ps(simd, _mm_set1_ps(1.f));
     return vec4_t<float>{ret};
 }
 
@@ -469,7 +473,7 @@ inline
 vec4_t<float> vec4_t<float>::operator--(int)
 {
     __m128 ret = simd;
-    simd = _mm_sub_ps(simd, _mm_set_ps1(1.f));
+    simd = _mm_sub_ps(simd, _mm_set1_ps(1.f));
     return vec4_t<float>{ret};
 }
 
@@ -541,59 +545,59 @@ bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 inline
 vec4_t<float> vec4_t<float>::operator=(float input)
 {
-    simd = _mm_set_ps1(input);
+    simd = _mm_set1_ps(input);
     return *this;
 }
 
 inline
 vec4_t<float> vec4_t<float>::operator+(float input) const
 {
-    return vec4_t<float>{_mm_add_ps(simd, _mm_set_ps1(input))};
+    return vec4_t<float>{_mm_add_ps(simd, _mm_set1_ps(input))};
 }
 
 inline
 vec4_t<float> vec4_t<float>::operator-(float input) const
 {
-    return vec4_t<float>{_mm_sub_ps(simd, _mm_set_ps1(input))};
+    return vec4_t<float>{_mm_sub_ps(simd, _mm_set1_ps(input))};
 }
 
 inline
 vec4_t<float> vec4_t<float>::operator*(float input) const
 {
-    return vec4_t<float>{_mm_mul_ps(simd, _mm_set_ps1(input))};
+    return vec4_t<float>{_mm_mul_ps(simd, _mm_set1_ps(input))};
 }
 
 inline
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
-    return vec4_t<float>{_mm_div_ps(simd, _mm_set_ps1(input))};
+    return vec4_t<float>{_mm_div_ps(simd, _mm_set1_ps(input))};
 }
 
 inline
 vec4_t<float>& vec4_t<float>::operator+=(float input)
 {
-    simd = _mm_add_ps(simd, _mm_set_ps1(input));
+    simd = _mm_add_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
 inline
 vec4_t<float>& vec4_t<float>::operator-=(float input)
 {
-    simd = _mm_sub_ps(simd, _mm_set_ps1(input));
+    simd = _mm_sub_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
 inline
 vec4_t<float>& vec4_t<float>::operator*=(float input)
 {
-    simd = _mm_mul_ps(simd, _mm_set_ps1(input));
+    simd = _mm_mul_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
 inline
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
-    simd = _mm_div_ps(simd, _mm_set_ps1(input));
+    simd = _mm_div_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
