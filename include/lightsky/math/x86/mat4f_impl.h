@@ -30,10 +30,11 @@ vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 -------------------------------------*/
 inline vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
 {
-    __m128 row0(_mm_mul_ps(this->simd, m.m[0].simd));
-    __m128 row1(_mm_mul_ps(this->simd, m.m[1].simd));
-    __m128 row2(_mm_mul_ps(this->simd, m.m[2].simd));
-    __m128 row3(_mm_mul_ps(this->simd, m.m[3].simd));
+    const __m128 s = this->simd;
+    __m128 row0(_mm_mul_ps(s, m.m[0].simd));
+    __m128 row1(_mm_mul_ps(s, m.m[1].simd));
+    __m128 row2(_mm_mul_ps(s, m.m[2].simd));
+    __m128 row3(_mm_mul_ps(s, m.m[3].simd));
 
     // transpose, then add
     //_MM_TRANSPOSE4_PS(row0, row1, row2, row3);

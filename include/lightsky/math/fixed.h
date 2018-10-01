@@ -84,6 +84,20 @@ class LS_API fixed_t final {
     explicit constexpr fixed_t(fixed_base_t f);
 
     /**
+     *  @brief Numeric Constructor
+     *
+     *  Constructs a fixed-point number using a plain data type.
+     *
+     *  @param
+     *  An integral type that will be used to construct this object's
+     *  internal data.
+     *
+     *
+     */
+    template <typename integral_t>
+    constexpr fixed_t(typename ls::utils::EnableIf<ls::math::IsIntegral<integral_t>::value, integral_t>::type f);
+
+    /**
      *  @brief Constructor
      *
      *  This constructor attempts to create a fixed-point value from a
@@ -154,10 +168,9 @@ class LS_API fixed_t final {
     inline fixed_t& operator>>=(int n);
     inline fixed_t& operator<<=(int n);
 
-    constexpr operator float() const;
+    explicit constexpr operator float() const;
     explicit constexpr operator double() const;
-    explicit inline operator fixed_base_t() const;
-
+    constexpr operator fixed_base_t() const;
 
     inline fixed_t& operator=(float f);
     inline fixed_t& operator=(double d);
@@ -215,6 +228,21 @@ typedef fixed_t<uint32_t, 24> uhighp_t; // 8.24
 typedef fixed_t<uint64_t, 16> ulong_lowp_t; // 48.16
 typedef fixed_t<uint64_t, 32> ulong_medp_t; // 32.32
 typedef fixed_t<uint64_t, 48> ulong_highp_t; // 16.48
+
+
+
+/*-------------------------------------
+ * Type Specialization
+-------------------------------------*/
+/*
+template <>
+template <typename fixed_base_t, unsigned num_frac_digits>
+struct IsFloat<fixed_t<fixed_base_t, num_frac_digits>> : public utils::TrueType<fixed_t<fixed_base_t, num_frac_digits>>
+{
+};
+*/
+
+
 
 }//end math namespace
 }//end ls namespace

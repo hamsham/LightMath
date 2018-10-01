@@ -201,9 +201,6 @@ class LS_API PerlinNoise {
 -------------------------------------*/
 LS_DECLARE_CLASS_TYPE(PerlinNoisef, PerlinNoise, float);
 LS_DECLARE_CLASS_TYPE(PerlinNoised, PerlinNoise, double);
-LS_DECLARE_CLASS_TYPE(PerlinNoisei, PerlinNoise, int);
-LS_DECLARE_CLASS_TYPE(PerlinNoiseuu, PerlinNoise, unsigned);
-LS_DECLARE_CLASS_TYPE(PerlinNoisex, PerlinNoise, medp_t);
 
 } // end math namespace
 } // end ls namespace

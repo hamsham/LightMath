@@ -90,7 +90,7 @@ constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noe
 template<typename floating_t>
 constexpr floating_t math::floor(const floating_t n) noexcept
 {
-    return (floating_t)((long long)n - (n < floating_t{0}));
+    return static_cast<floating_t>(static_cast<long long>(n) - (n < floating_t{0}));
 }
 
 

@@ -13,7 +13,7 @@ int main()
     float f = 1.f;
     FixedType fx(f);
 
-    std::cout << f << " == " << fx << '\n' << std::endl;
+    std::cout << f << " == " << fx.number << '\n' << std::endl;
 
     f *= 4.f;
     fx *= FixedType(4.f);

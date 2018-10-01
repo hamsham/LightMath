@@ -200,13 +200,13 @@ template<typename point_t>
 num_t PerlinNoise<num_t>::get_noise(const vec3_t <point_t>& point) const noexcept
 {
     // create coordinates for a "unit cube"
-    int xi = (int)std::floor(point[0]) & 255;
-    int yi = (int)std::floor(point[1]) & 255;
-    int zi = (int)std::floor(point[2]) & 255;
+    int xi = (int)ls::math::floor(point[0]) & 255;
+    int yi = (int)ls::math::floor(point[1]) & 255;
+    int zi = (int)ls::math::floor(point[2]) & 255;
 
-    double xr = point[0] - std::floor(point[0]);
-    double yr = point[1] - std::floor(point[1]);
-    double zr = point[2] - std::floor(point[2]);
+    double xr = point[0] - ls::math::floor(point[0]);
+    double yr = point[1] - ls::math::floor(point[1]);
+    double zr = point[2] - ls::math::floor(point[2]);
 
     // compute how each value fades across u/v/w
     double u = fade(xr);

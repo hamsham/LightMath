@@ -39,7 +39,20 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_t&& f) :
 /*
  *  Numeric Constructor
  */
-template <typename fixed_base_t, unsigned num_frac_digits> constexpr
+template <typename fixed_base_t, unsigned num_frac_digits>
+template <typename integral_t>
+constexpr
+fixed_t<fixed_base_t, num_frac_digits>::fixed_t(typename ls::utils::EnableIf<ls::math::IsIntegral<integral_t>::value, integral_t>::type f) :
+    number{f}
+{}
+
+
+
+/*
+ *  Integer Constructor
+ */
+template <typename fixed_base_t, unsigned num_frac_digits>
+constexpr
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_base_t f) :
     number{f}
 {}
@@ -459,12 +472,26 @@ fixed_t<fixed_base_t, num_frac_digits>::operator double() const {
 
 
 /*
- *  Integer cast.
+ *  Numeric cast.
  */
-template <typename fixed_base_t, unsigned num_frac_digits> inline
+template <typename fixed_base_t, unsigned num_frac_digits> constexpr
 fixed_t<fixed_base_t, num_frac_digits>::operator fixed_base_t() const {
     return number >> num_frac_digits;
 }
+
+
+
+/*
+ *  Integral cast.
+ */
+/*
+template <typename fixed_base_t, unsigned num_frac_digits>
+template <typename integral_t>
+constexpr
+fixed_t<fixed_base_t, num_frac_digits>::operator typename ls::utils::EnableIf<ls::math::IsIntegral<integral_t>::value, integral_t>::type() const {
+    return number >> num_frac_digits;
+}
+*/
 
 
 
