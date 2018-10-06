@@ -173,14 +173,7 @@ template <>
 template <>
 inline vec4_t<uint8_t>::operator vec4_t<float>() const
 {
-    /*
-    union alignas(sizeof(__m128i))
-    {
-        uint32_t vec[4];
-        __m128i simd;
-    } values{{v[0], v[1], v[2], v[3]}};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
-    */
+    //return vec4_t<float>{_mm_cvtpu8_ps(*reinterpret_cast<const __m64*>(v))};
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
 }
 

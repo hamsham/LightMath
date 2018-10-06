@@ -3,6 +3,7 @@
 #define LS_MATH_FIXED_H
 
 #include <climits> // CHAR_BIT
+#include <limits> // std::numeric_limits
 #include <cstdint> // fixed-width types
 #include <utility> // std::move()
 

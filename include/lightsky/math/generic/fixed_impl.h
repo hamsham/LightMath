@@ -525,5 +525,30 @@ fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::
 
 
 
+/*-----------------------------------------------------------------------------
+    Fixed-Point Utility Functions
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+    rcp
+-------------------------------------*/
+template <typename fixed_base_t, unsigned num_frac_digits>
+constexpr fixed_t<fixed_base_t, num_frac_digits> rcp(const fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
+{
+    return num.number ? (fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)1} / num) : fixed_cast<fixed_t<fixed_base_t, num_frac_digits>>(std::numeric_limits<fixed_base_t>::max());
+}
+
+
+
+/*-------------------------------------
+    sign_bit
+-------------------------------------*/
+template <typename fixed_base_t, unsigned num_frac_digits>
+constexpr int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    return IsSigned<fixed_base_t>::value ? (int)(x.number >> (((sizeof(fixed_base_t)*CHAR_BIT)-1)) & 0x01) : 0;
+}
+
+
+
 } //end math namespace
 } //end ls namespace

@@ -169,7 +169,10 @@ math::vec2_t<num_t> math::mid(const vec2_t<num_t>& v1, const vec2_t<num_t>& v2) 
 -------------------------------------*/
 template <typename num_t> constexpr
 math::vec2_t<num_t> math::rcp(const vec2_t<num_t>& v) {
-    return vec2_t<num_t>{1.0} / v;
+    return vec2_t<num_t> {
+        ls::math::rcp(v[0]),
+        ls::math::rcp(v[1])
+    };
 }
 
 /*-------------------------------------
@@ -178,7 +181,7 @@ math::vec2_t<num_t> math::rcp(const vec2_t<num_t>& v) {
 template <typename N> constexpr
 int math::sign_bits(const vec2_t<N>& x) noexcept
 {
-    return math::sign_bit<N>(x.v[0]) | (math::sign_bit<N>(x.v[1]) << 1);
+    return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1);
 }
 
 
@@ -379,7 +382,11 @@ math::vec3_t<num_t> math::mid(const vec3_t<num_t>& v1, const vec3_t<num_t>& v2) 
 -------------------------------------*/
 template <typename num_t> constexpr
 math::vec3_t<num_t> math::rcp(const vec3_t<num_t>& v) {
-    return vec3_t<num_t>{1.0} / v;
+    return vec3_t<num_t> {
+        ls::math::rcp(v[0]),
+        ls::math::rcp(v[1]),
+        ls::math::rcp(v[2])
+    };
 }
 
 /*-------------------------------------
@@ -388,7 +395,7 @@ math::vec3_t<num_t> math::rcp(const vec3_t<num_t>& v) {
 template <typename N> constexpr
 int math::sign_bits(const vec3_t<N>& x) noexcept
 {
-    return math::sign_bit<N>(x.v[0]) | (math::sign_bit<N>(x.v[1]) << 1) | (math::sign_bit<N>(x.v[2]) << 2);
+    return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1) | (math::sign_bit(x.v[2]) << 2);
 }
 
 
@@ -556,7 +563,12 @@ math::vec4_t<num_t> math::mid(const vec4_t<num_t>& v1, const vec4_t<num_t>& v2) 
 -------------------------------------*/
 template <typename num_t> constexpr
 math::vec4_t<num_t> math::rcp(const vec4_t<num_t>& v) {
-    return vec4_t<num_t>{1.0} / v;
+    return vec4_t<num_t>{
+        ls::math::rcp(v[0]),
+        ls::math::rcp(v[1]),
+        ls::math::rcp(v[2]),
+        ls::math::rcp(v[3])
+    };
 }
 
 /*-------------------------------------
@@ -565,10 +577,10 @@ math::vec4_t<num_t> math::rcp(const vec4_t<num_t>& v) {
 template <typename N> constexpr
 int math::sign_bits(const vec4_t<N>& x) noexcept
 {
-    return math::sign_bit<N>(x.v[0])
-        | (math::sign_bit<N>(x.v[1]) << 1)
-        | (math::sign_bit<N>(x.v[2]) << 2)
-        | (math::sign_bit<N>(x.v[3]) << 3);
+    return math::sign_bit(x.v[0])
+        | (math::sign_bit(x.v[1]) << 1)
+        | (math::sign_bit(x.v[2]) << 2)
+        | (math::sign_bit(x.v[3]) << 3);
 }
 
 
