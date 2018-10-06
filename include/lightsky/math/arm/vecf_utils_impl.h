@@ -155,15 +155,11 @@ inline vec4_t<float> rcp(const vec4_t<float>& v)
 -------------------------------------*/
 inline int sign_bits(const vec4_t<float>& x) noexcept
 {
+    uint32_t vals[4];
+    const uint32x4_t a = vreinterpretq_u32_f32(x.simd);
+    vst1q_u32(vals, a);
 
-    constexpr uint32_t movemaskList[4] = {1, 2, 4, 8};
-    const uint32x4_t   movemask        = vld1q_u32(movemaskList);
-    const uint32x4_t   highbit         = vdupq_n_u32(0x80000000);
-    const uint32x4_t   a               = vreinterpretq_u32_f32(x.simd);
-    const uint32x4_t   b               = vtstq_u32(a, highbit);
-    const uint32x4_t   c               = vandq_u32(b, movemask);
-    const uint32x2_t   d               = vorr_u32(vget_low_u32(c), vget_high_u32(c));
-    return vget_lane_u32(d, 0) | vget_lane_u32(d, 1);
+    return ((a[3] >> 28) & 8) | ((a[2] >> 29) & 4) | ((a[1] >> 30) & 2) | ((a[0] >> 31) & 1);
 }
 
 
