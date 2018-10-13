@@ -13,6 +13,9 @@ namespace math
 template<>
 union LS_API alignas(sizeof(__m128)) vec4_t<float>
 {
+    typedef float value_type;
+    static constexpr unsigned num_components() noexcept { return 4; }
+
     // data
     float v[4];
 

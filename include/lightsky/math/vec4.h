@@ -30,7 +30,11 @@ struct mat4_t;
  *      3 = W
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-union LS_API vec4_t {
+union LS_API vec4_t
+{
+    typedef num_t value_type;
+    static constexpr unsigned num_components() noexcept { return 4; }
+
     // data
     num_t v[4];
 

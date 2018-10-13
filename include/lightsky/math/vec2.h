@@ -27,7 +27,11 @@ struct mat2_t;
  *      1 = Y
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) vec2_t {
+struct LS_API alignas(sizeof(num_t)) vec2_t
+{
+    typedef num_t value_type;
+    static constexpr unsigned num_components() noexcept { return 2; }
+
     // data
     num_t v[2];
 
