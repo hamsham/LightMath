@@ -27,15 +27,13 @@ float length(const vec3_t<float>& v)
     const float lanes[4] = {v.v[0], v.v[1], v.v[2], 0.f};
     const float32x4_t s = vld1q_f32(lanes);
     const float32x4_t a = vmulq_f32(s, s);
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
-    const float32x4_t e = vrsqrteq_f32(d);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
+    const float32x2_t d = vrsqrte_f32(c);
 
-    const float32x4_t recip = vrecpeq_f32(e);
-    const float32x4_t ret = vmulq_f32(vrecpsq_f32(e, recip), recip);
-
-    return vget_lane_f32(vget_low_f32(ret), 0);
+    const float32x2_t recip0 = vrecpe_f32(d);
+    const float32x2_t recip1 = vmul_f32(vrecps_f32(d, recip0), recip0);
+    return vget_lane_f32(recip1, 0);
 }
 
 
@@ -49,11 +47,9 @@ float length(const vec3_t<float>& v)
 inline float sum(const vec4_t<float>& v)
 {
     const float32x4_t a = v.simd;
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
-
-    return vget_lane_f32(vget_low_f32(d), 0);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
+    return vget_lane_f32(c, 0);
 }
 
 /*-------------------------------------
@@ -62,15 +58,13 @@ inline float sum(const vec4_t<float>& v)
 inline float sum_inv(const vec4_t<float>& v)
 {
     const float32x4_t a = v.simd;
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
 
-    const float32x2_t sums = vget_low_f32(d);
-    const float32x2_t recip = vrecpe_f32(sums);
-    const float32x2_t ret = vmul_f32(vrecps_f32(sums, recip), recip);
+    const float32x2_t recip0 = vrecpe_f32(c);
+    const float32x2_t recip1 = vmul_f32(vrecps_f32(c, recip0), recip0);
 
-    return vget_lane_f32(ret, 0);
+    return vget_lane_f32(recip1, 0);
 }
 
 /*-------------------------------------
@@ -79,11 +73,10 @@ inline float sum_inv(const vec4_t<float>& v)
 inline float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
     const float32x4_t a = vmulq_f32(v1.simd, v2.simd);
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
 
-    return vget_lane_f32(vget_low_f32(d), 0);
+    return vget_lane_f32(c, 0);
 }
 
 /*-------------------------------------
@@ -95,15 +88,13 @@ float length(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
-    const float32x4_t e = vrsqrteq_f32(d);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
+    const float32x2_t d = vrsqrte_f32(c);
 
-    const float32x4_t recip = vrecpeq_f32(e);
-    const float32x4_t ret = vmulq_f32(vrecpsq_f32(e, recip), recip);
-
-    return vget_lane_f32(vget_low_f32(ret), 0);
+    const float32x2_t recip0 = vrecpe_f32(d);
+    const float32x2_t recip1 = vmul_f32(vrecps_f32(d, recip0), recip0);
+    return vget_lane_f32(recip1, 0);
 }
 
 /*-------------------------------------
@@ -115,9 +106,9 @@ math::vec4_t<float> normalize(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);
-    const float32x4_t b = vaddq_f32(a, vrev64q_f32(a));
-    const float32x4_t c = vcombine_f32(vget_high_f32(b), vget_low_f32(b));
-    const float32x4_t d = vaddq_f32(b, c);
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
+    const float32x4_t d = vcombine_f32(c, c);
 
     // normalization
     return vec4_t<float>{vmulq_f32(s, vrsqrteq_f32(d))};
