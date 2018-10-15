@@ -580,7 +580,7 @@ N sum(const vec4_t<N>& v);
  *  @return the reciprocal of the sum of elements within v.
  */
 template <typename N> constexpr
-N sum_inv(const vec2_t<N>& v);
+N sum_inv(const vec4_t<N>& v);
 
 /**
  *  @brief dot
