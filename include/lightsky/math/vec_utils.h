@@ -174,14 +174,14 @@ N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origi
 
 /**
  *  @brief min
- *  Determine which of two vectors has the smallest length/magnitude.
+ *  Retrieve the component-wise minimum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return A vector with the minimum X/Y values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec2_t<N> min(const vec2_t<N>& v1, const vec2_t<N>& v2);
@@ -199,22 +199,22 @@ vec2_t<N> min(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  The percentage (clamped from [0, 1]) to which v2 should be interpolated
  *  towards v2.
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return An interpolated vector value between v1 and v2, according to the
+ *  percentage N.
  */
 template <typename N> constexpr
 vec2_t<N> mix(const vec2_t<N>& v1, const vec2_t<N>& v2, N percent);
 
 /**
  *  @brief max
- *  Determine which of two vectors has the largest length/magnitude.
+ *  Retrieve the component-wise maximum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the greatest
- *  length/magnitude.
+ *  @return A vector with the maximum X/Y values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec2_t<N> max(const vec2_t<N>& v1, const vec2_t<N>& v2);
@@ -446,14 +446,14 @@ N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origi
 
 /**
  *  @brief min
- *  Determine which of two vectors has the smallest length/magnitude.
+ *  Retrieve the component-wise minimum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return A vector with the minimum X/Y/Z values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec3_t<N> min(const vec3_t<N>&, const vec3_t<N>&);
@@ -471,22 +471,22 @@ vec3_t<N> min(const vec3_t<N>&, const vec3_t<N>&);
  *  The percentage (clamped from [0, 1]) to which v2 should be interpolated
  *  towards v2.
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return An interpolated vector value between v1 and v2, according to the
+ *  percentage N.
  */
 template <typename N> constexpr
 vec3_t<N> mix(const vec3_t<N>&, const vec3_t<N>&, N);
 
 /**
  *  @brief max
- *  Determine which of two vectors has the largest length/magnitude.
+ *  Retrieve the component-wise maximum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the greatest
- *  length/magnitude.
+ *  @return A vector with the maximum X/Y/Z values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec3_t<N> max(const vec3_t<N>&, const vec3_t<N>&);
@@ -679,14 +679,14 @@ N angle_bewteen(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origi
 
 /**
  *  @brief min
- *  Determine which of two vectors has the smallest length/magnitude.
+ *  Retrieve the component-wise minimum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return A vector with the minimum X/Y/Z/W values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec4_t<N> min(const vec4_t<N>& v1, const vec4_t<N>& v2);
@@ -704,22 +704,22 @@ vec4_t<N> min(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  The percentage (clamped from [0, 1]) to which v2 should be interpolated
  *  towards v2.
  *
- *  @return The vector, either v1 or v2, which has the smallest
- *  length/magnitude.
+ *  @return An interpolated vector value between v1 and v2, according to the
+ *  percentage N.
  */
 template <typename N> constexpr
 vec4_t<N> mix(const vec4_t<N>& v1, const vec4_t<N>& v2, N percent);
 
 /**
  *  @brief max
- *  Determine which of two vectors has the largest length/magnitude.
+ *  Retrieve the component-wise maximum of two vectors.
  *
  *  @param v1
  *
  *  @param v2
  *
- *  @return The vector, either v1 or v2, which has the greatest
- *  length/magnitude.
+ *  @return A vector with the maximum X/Y/Z/W values extracted from either of the
+ *  input vectors.
  */
 template <typename N> constexpr
 vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2);
