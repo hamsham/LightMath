@@ -793,12 +793,12 @@ int sign_bits(const vec4_t<N>& x) noexcept;
 } // end math namespace
 } // end ls namespace
 
+#include "lightsky/math/generic/vec_utils_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/vecf_utils_impl.h"
 #elif defined(LS_ARCH_ARM)
     #include "lightsky/math/arm/vecf_utils_impl.h"
 #endif
-
-#include "lightsky/math/generic/vec_utils_impl.h"
 
 #endif /* LS_MATH_VEC_UTILS_H */

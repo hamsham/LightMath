@@ -137,12 +137,12 @@ typedef mat4_t<LS_FLOAT> mat4;
 } //end math namespace
 } //end ls namespace
 
+#include "lightsky/math/generic/mat4_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/mat4f_impl.h"
 #elif defined(LS_ARCH_ARM)
     #include "lightsky/math/arm/mat4f_impl.h"
 #endif
-
-#include "lightsky/math/generic/mat4_impl.h"
 
 #endif /*LS_MATH_MAT4_H*/

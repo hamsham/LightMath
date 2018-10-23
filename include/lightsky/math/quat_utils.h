@@ -412,12 +412,12 @@ quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 } // end math namespace
 } // end ls namespace
 
+#include "lightsky/math/generic/quat_utils_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/quatf_utils_impl.h"
 #elif defined(LS_ARCH_ARM)
     #include "lightsky/math/arm/quatf_utils_impl.h"
 #endif
-
-#include "lightsky/math/generic/quat_utils_impl.h"
 
 #endif /* LS_MATH_QUAT_UTILS_H */

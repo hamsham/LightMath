@@ -23,6 +23,14 @@ inline float min(float a, float b) noexcept
 /*-------------------------------------
     min
 -------------------------------------*/
+inline float min(float a, float b, float c) noexcept
+{
+    return _mm_cvtss_f32(_mm_min_ss(_mm_set_ss(a), _mm_min_ss(_mm_set_ss(b), _mm_set_ss(c))));
+}
+
+/*-------------------------------------
+    min
+-------------------------------------*/
 inline float min(float a, float b, float c, float d) noexcept
 {
     const __m128 v = _mm_set_ps(a, b, c, d);
@@ -41,6 +49,14 @@ inline float min(float a, float b, float c, float d) noexcept
 inline float max(float a, float b) noexcept
 {
     return _mm_cvtss_f32(_mm_max_ss(_mm_set_ss(a), _mm_set_ss(b)));
+}
+
+/*-------------------------------------
+    max
+-------------------------------------*/
+inline float max(float a, float b, float c) noexcept
+{
+    return _mm_cvtss_f32(_mm_max_ss(_mm_set_ss(a), _mm_max_ss(_mm_set_ss(b), _mm_set_ss(c))));
 }
 
 /*-------------------------------------

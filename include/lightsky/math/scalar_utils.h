@@ -674,12 +674,12 @@ constexpr int sign_bit(data_t x) noexcept;
 } // end math namespace
 } // end ls namespace
 
+#include "lightsky/math/generic/scalar_utils_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/scalarf_utils_impl.h"
 #elif defined(LS_ARCH_ARM)
     #include "lightsky/math/arm/scalarf_utils_impl.h"
 #endif
-
-#include "lightsky/math/generic/scalar_utils_impl.h"
 
 #endif /* LS_MATH_SCALAR_UTILS_H */

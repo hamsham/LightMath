@@ -461,10 +461,10 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
 } // end math namespace
 } // end ls namespace
 
+#include "lightsky/math/generic/mat_utils_impl.h"
+
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/matf_utils_impl.h"
 #endif
-
-#include "lightsky/math/generic/mat_utils_impl.h"
 
 #endif    /* LS_MATH_MAT_UTILS_H */
