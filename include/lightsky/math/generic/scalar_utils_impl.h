@@ -245,8 +245,27 @@ inline scalar_t math::fast_inv_sqrt(scalar_t input) noexcept
 
 
 /*-------------------------------------
-    fastSqrt
+    fast_sqrt
 -------------------------------------*/
+// Nearest truncated integral closest to the actual square root.
+template<typename scalar_t>
+inline scalar_t math::fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type x) noexcept
+{
+
+    // Return 0 if the input digit is less than 1.
+    if (x < scalar_t{2})
+    {
+        return -(x > 0) & x;
+    }
+
+    const scalar_t i = fast_sqrt<scalar_t>(x >> scalar_t{2}) << scalar_t{1};
+    const scalar_t j = i + scalar_t{1};
+    return ((j*j) > x) ? i : j;
+}
+
+
+
+// Standard Float version
 template<typename scalar_t>
 inline scalar_t math::fast_sqrt(scalar_t input) noexcept
 {

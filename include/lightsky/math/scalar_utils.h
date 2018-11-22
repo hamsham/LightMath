@@ -257,6 +257,9 @@ constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept;
  * @return The square root of the input number.
  */
 template <typename scalar_t>
+inline scalar_t fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type) noexcept;
+
+template <typename scalar_t>
 inline scalar_t fast_sqrt(scalar_t) noexcept;
 
 /**
