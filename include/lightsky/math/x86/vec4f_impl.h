@@ -126,7 +126,7 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
     Constructors
 -------------------------------------*/
 // Main Constructor
-constexpr vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
     //simd(_mm_setr_ps(inX, inY, inZ, inW))
     //simd(_mm_set_ps(inW, inZ, inY, inX))
     simd{inX, inY, inZ, inW}
@@ -134,30 +134,30 @@ constexpr vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
 }
 
 /*
-constexpr vec4_t<float>::vec4_t() :
+constexpr LS_INLINE vec4_t<float>::vec4_t() :
     v{0.f}
 {
 }
 */
 
-inline vec4_t<float>::vec4_t(float n) :
+inline LS_INLINE vec4_t<float>::vec4_t(float n) :
     simd(_mm_set1_ps(n))
     //v{n, n, n, n}
 {
 }
 
-constexpr vec4_t<float>::vec4_t(const __m128 n) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(const __m128 n) :
     simd(n)
 {
 }
 
 /*
-constexpr vec4_t<float>::vec4_t(const vec4_t<float>& v) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(const vec4_t<float>& v) :
     simd(v.simd)
 {
 }
 
-constexpr vec4_t<float>::vec4_t(vec4_t<float>&& v) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(vec4_t<float>&& v) :
     simd(v.simd)
 {
 }
@@ -167,14 +167,14 @@ constexpr vec4_t<float>::vec4_t(vec4_t<float>&& v) :
     Conversions & Casting
 -------------------------------------*/
 template<typename other_t>
-inline vec4_t<float>::operator vec4_t<other_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<other_t>() const
 {
     return vec4_t<other_t>{(other_t)v[0], (other_t)v[1], (other_t)v[2], (other_t)v[3]};
 }
 
 template <>
 template <>
-inline vec4_t<uint8_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
     //return vec4_t<float>{_mm_cvtpu8_ps(*reinterpret_cast<const __m64*>(v))};
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
@@ -182,7 +182,7 @@ inline vec4_t<uint8_t>::operator vec4_t<float>() const
 
 template <>
 template <>
-inline vec4_t<int8_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
 {
     /*
     union alignas(sizeof(__m128i))
@@ -197,7 +197,7 @@ inline vec4_t<int8_t>::operator vec4_t<float>() const
 
 template <>
 template <>
-inline vec4_t<uint16_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<uint16_t>::operator vec4_t<float>() const
 {
     union alignas(sizeof(__m128i))
     {
@@ -209,7 +209,7 @@ inline vec4_t<uint16_t>::operator vec4_t<float>() const
 
 template <>
 template <>
-inline vec4_t<int16_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<int16_t>::operator vec4_t<float>() const
 {
     union alignas(sizeof(__m128i))
     {
@@ -221,7 +221,7 @@ inline vec4_t<int16_t>::operator vec4_t<float>() const
 
 template <>
 template <>
-inline vec4_t<uint32_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
 {
     union alignas(sizeof(__m128i))
     {
@@ -233,7 +233,7 @@ inline vec4_t<uint32_t>::operator vec4_t<float>() const
 
 template <>
 template <>
-inline vec4_t<int32_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
 {
     union alignas(sizeof(__m128i))
     {
@@ -244,7 +244,7 @@ inline vec4_t<int32_t>::operator vec4_t<float>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<uint8_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     union
     {
@@ -261,7 +261,7 @@ inline vec4_t<float>::operator vec4_t<uint8_t>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<int8_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
 {
     union
     {
@@ -278,7 +278,7 @@ inline vec4_t<float>::operator vec4_t<int8_t>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<uint16_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 {
     union
     {
@@ -295,7 +295,7 @@ inline vec4_t<float>::operator vec4_t<uint16_t>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<int16_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
 {
     union
     {
@@ -312,7 +312,7 @@ inline vec4_t<float>::operator vec4_t<int16_t>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<uint32_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 {
     union
     {
@@ -324,7 +324,7 @@ inline vec4_t<float>::operator vec4_t<uint32_t>() const
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<int32_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
 {
     union
     {
@@ -335,12 +335,12 @@ inline vec4_t<float>::operator vec4_t<int32_t>() const
     return data.vec;
 }
 
-inline const float* vec4_t<float>::operator&() const
+inline LS_INLINE const float* vec4_t<float>::operator&() const
 {
     return v;
 }
 
-inline float* vec4_t<float>::operator&()
+inline LS_INLINE float* vec4_t<float>::operator&()
 {
     return v;
 }
@@ -355,7 +355,7 @@ constexpr float vec4_t<float>::operator[](index_t i) const
 }
 
 template <typename index_t>
-inline float& vec4_t<float>::operator[](index_t i)
+inline LS_INLINE float& vec4_t<float>::operator[](index_t i)
 {
     return v[i];
 }
@@ -363,13 +363,13 @@ inline float& vec4_t<float>::operator[](index_t i)
 /*-------------------------------------
     Vector-Vector Math Operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator+(const vec4_t<float>& input) const
 {
     return vec4_t{_mm_add_ps(simd, input.simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-(const vec4_t<float>& input) const
 {
     return vec4_t{_mm_sub_ps(simd, input.simd)};
@@ -377,33 +377,33 @@ vec4_t<float> vec4_t<float>::operator-(const vec4_t<float>& input) const
 
 //for operations like "vectA = -vectB"
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-() const
 {
     return vec4_t<float>{_mm_sub_ps(_mm_setzero_ps(), simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator*(const vec4_t<float>& input) const
 {
     return vec4_t{_mm_mul_ps(simd, input.simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 {
     return vec4_t{_mm_div_ps(simd, input.simd)};
 }
 
 /*
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input)
 {
     simd = input.simd;
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input)
 {
     simd = input.simd;
@@ -411,28 +411,28 @@ vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input)
 }
 */
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(const vec4_t<float>& input)
 {
     simd = _mm_add_ps(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(const vec4_t<float>& input)
 {
     simd = _mm_sub_ps(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(const vec4_t<float>& input)
 {
     simd = _mm_mul_ps(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 {
     simd = _mm_div_ps(simd, input.simd);
@@ -441,14 +441,14 @@ vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 
 // prefix operations
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator++()
 {
     simd = _mm_add_ps(simd, _mm_set1_ps(1.f));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator--()
 {
     simd = _mm_sub_ps(simd, _mm_set1_ps(1.f));
@@ -457,7 +457,7 @@ vec4_t<float>& vec4_t<float>::operator--()
 
 //postfix operations
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator++(int)
 {
     __m128 ret = simd;
@@ -465,7 +465,7 @@ vec4_t<float> vec4_t<float>::operator++(int)
     return vec4_t<float>{ret};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator--(int)
 {
     __m128 ret = simd;
@@ -475,7 +475,7 @@ vec4_t<float> vec4_t<float>::operator--(int)
 
 //comparisons
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator==(const vec4_t<float>& compare) const
 {
     return
@@ -485,7 +485,7 @@ bool vec4_t<float>::operator==(const vec4_t<float>& compare) const
         v[3] == compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator!=(const vec4_t<float>& compare) const
 {
     return
@@ -495,7 +495,7 @@ bool vec4_t<float>::operator!=(const vec4_t<float>& compare) const
         v[3] != compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator<(const vec4_t<float>& compare) const
 {
     return
@@ -505,7 +505,7 @@ bool vec4_t<float>::operator<(const vec4_t<float>& compare) const
         v[3] < compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator>(const vec4_t<float>& compare) const
 {
     return
@@ -515,7 +515,7 @@ bool vec4_t<float>::operator>(const vec4_t<float>& compare) const
         v[3] > compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator<=(const vec4_t<float>& compare) const
 {
     return
@@ -525,7 +525,7 @@ bool vec4_t<float>::operator<=(const vec4_t<float>& compare) const
         v[3] <= compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 {
     return
@@ -538,59 +538,59 @@ bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 /*-------------------------------------
     Vector-Scalar Math Operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator=(float input)
 {
     simd = _mm_set1_ps(input);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator+(float input) const
 {
     return vec4_t<float>{_mm_add_ps(simd, _mm_set1_ps(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-(float input) const
 {
     return vec4_t<float>{_mm_sub_ps(simd, _mm_set1_ps(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator*(float input) const
 {
     return vec4_t<float>{_mm_mul_ps(simd, _mm_set1_ps(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
     return vec4_t<float>{_mm_div_ps(simd, _mm_set1_ps(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(float input)
 {
     simd = _mm_add_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(float input)
 {
     simd = _mm_sub_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(float input)
 {
     simd = _mm_mul_ps(simd, _mm_set1_ps(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
     simd = _mm_div_ps(simd, _mm_set1_ps(input));
@@ -600,19 +600,19 @@ vec4_t<float>& vec4_t<float>::operator/=(float input)
 /*-------------------------------------
     Non-Member Vector-Scalar operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> operator+(float n, const vec4_t<float>& v)
 {
     return v + n;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> operator-(float n, const vec4_t<float>& v)
 {
     return v - n;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> operator*(float n, const vec4_t<float>& v)
 {
     return v * n;

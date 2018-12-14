@@ -1,4 +1,6 @@
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 namespace ls {
 namespace math {
 
@@ -7,7 +9,7 @@ namespace math {
 /*-------------------------------------
     Vector-Matrix Math Operations (Declared in the 4D Vector header)
 -------------------------------------*/
-template <> inline
+template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
     __m128 row0(_mm_mul_ps(m[0].simd, _mm_set1_ps(v.v[0])));
@@ -28,7 +30,7 @@ vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 /*-------------------------------------
     Vector-Matrix Math Operations (Declared in the 4D Vector header)
 -------------------------------------*/
-inline vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
+inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
 {
     const __m128 s = this->simd;
     __m128 row0(_mm_mul_ps(s, m.m[0].simd));

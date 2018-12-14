@@ -1,4 +1,6 @@
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 
 
 namespace ls
@@ -22,7 +24,7 @@ constexpr scalar_t math::gcd(scalar_t a, scalar_t b) noexcept
     min
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::min(scalar_t a, scalar_t b) noexcept
+constexpr LS_INLINE scalar_t math::min(scalar_t a, scalar_t b) noexcept
 {
     return (a < b) ? a : b;
 }
@@ -33,7 +35,7 @@ constexpr scalar_t math::min(scalar_t a, scalar_t b) noexcept
     min
 -------------------------------------*/
 template<typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums) noexcept
+constexpr LS_INLINE scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums) noexcept
 {
     return math::min<scalar_t>(math::min<scalar_t>(a, b), nums...);
 }
@@ -44,7 +46,7 @@ constexpr scalar_t math::min(const scalar_t& a, const scalar_t& b, const scalars
     mix
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) noexcept
+constexpr LS_INLINE scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) noexcept
 {
     return a + ((b - a) * percent);
 }
@@ -55,7 +57,7 @@ constexpr scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) noexcept
     max
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::max(scalar_t a, scalar_t b) noexcept
+constexpr LS_INLINE scalar_t math::max(scalar_t a, scalar_t b) noexcept
 {
     return (a > b) ? a : b;
 }
@@ -66,7 +68,7 @@ constexpr scalar_t math::max(scalar_t a, scalar_t b) noexcept
     max
 -------------------------------------*/
 template<typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums) noexcept
+constexpr LS_INLINE scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars_t& ... nums) noexcept
 {
     return math::max<scalar_t>(math::max<scalar_t>(a, b), nums...);
 }
@@ -77,7 +79,7 @@ constexpr scalar_t math::max(const scalar_t& a, const scalar_t& b, const scalars
     clamp
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noexcept
+constexpr LS_INLINE scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noexcept
 {
     return (n < minVal) ? minVal : (n > maxVal) ? maxVal : n;
 }
@@ -88,7 +90,7 @@ constexpr scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noe
     floor
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::floor(const floating_t n) noexcept
+constexpr LS_INLINE floating_t math::floor(const floating_t n) noexcept
 {
     return static_cast<floating_t>(static_cast<long long>(n) - (n < floating_t{0}));
 }
@@ -99,7 +101,7 @@ constexpr floating_t math::floor(const floating_t n) noexcept
     ranged-floor
 -------------------------------------*/
 template<typename floating_t, typename int_t, int_t range>
-constexpr int_t math::ranged_floor(const floating_t n) noexcept
+constexpr LS_INLINE int_t math::ranged_floor(const floating_t n) noexcept
 {
     return (int_t)(n + (floating_t)range) - range;
 }
@@ -110,7 +112,7 @@ constexpr int_t math::ranged_floor(const floating_t n) noexcept
     ceil
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::ceil(const floating_t n) noexcept
+constexpr LS_INLINE floating_t math::ceil(const floating_t n) noexcept
 {
     return (floating_t)((long long)n + (n >= floating_t{0} ? floating_t{1} : floating_t{0}));
 }
@@ -121,7 +123,7 @@ constexpr floating_t math::ceil(const floating_t n) noexcept
     ranged-ceil
 -------------------------------------*/
 template<typename floating_t, typename int_t, int_t range>
-constexpr int_t math::ranged_ceil(const floating_t n) noexcept
+constexpr LS_INLINE int_t math::ranged_ceil(const floating_t n) noexcept
 {
     return range - (int_t)((floating_t)range - n);
 }
@@ -132,7 +134,7 @@ constexpr int_t math::ranged_ceil(const floating_t n) noexcept
     round
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::round(const floating_t n) noexcept
+constexpr LS_INLINE floating_t math::round(const floating_t n) noexcept
 {
     return math::floor<floating_t>(n + floating_t{0.5f});
 }
@@ -143,7 +145,7 @@ constexpr floating_t math::round(const floating_t n) noexcept
     fract
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::fract(const floating_t n) noexcept
+constexpr LS_INLINE floating_t math::fract(const floating_t n) noexcept
 {
     return n - math::floor<floating_t>(n);
 }
@@ -154,7 +156,7 @@ constexpr floating_t math::fract(const floating_t n) noexcept
  fmod
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::fmod(const floating_t n1, const floating_t n2) noexcept
+constexpr LS_INLINE floating_t math::fmod(const floating_t n1, const floating_t n2) noexcept
 {
     return (n2 != floating_t{0})
         ? ((n1 < floating_t{0}) != (n2 < floating_t{0}))
@@ -169,7 +171,7 @@ constexpr floating_t math::fmod(const floating_t n1, const floating_t n2) noexce
  fmod_1
 -------------------------------------*/
 template<typename floating_t>
-constexpr floating_t math::fmod_1(const floating_t n) noexcept
+constexpr LS_INLINE floating_t math::fmod_1(const floating_t n) noexcept
 {
     return (n - math::floor<floating_t>(n)) - (floating_t)(n < floating_t{0});
 }
@@ -184,7 +186,7 @@ namespace math
 namespace impl
 {
     template<typename scalar_t>
-    constexpr scalar_t smoothstep_impl(const scalar_t t) noexcept
+    constexpr LS_INLINE scalar_t smoothstep_impl(const scalar_t t) noexcept
     {
         return (scalar_t{3} * t * t * t) - (scalar_t{2} * t * t);
     }
@@ -194,7 +196,7 @@ namespace impl
 
 
 template<typename scalar_t>
-constexpr scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept
 {
     return (x <= a)
            ? scalar_t{0}
@@ -218,7 +220,7 @@ constexpr scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept
     Carmack's original implementation is still the fastest (I blame sunspots).
 -------------------------------------*/
 template<typename scalar_t>
-inline scalar_t math::fast_inv_sqrt(scalar_t input) noexcept
+inline LS_INLINE scalar_t math::fast_inv_sqrt(scalar_t input) noexcept
 {
     const float x = (float)input;
     /*
@@ -267,7 +269,7 @@ inline scalar_t math::fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::v
 
 // Standard Float version
 template<typename scalar_t>
-inline scalar_t math::fast_sqrt(scalar_t input) noexcept
+inline LS_INLINE scalar_t math::fast_sqrt(scalar_t input) noexcept
 {
     return (scalar_t)(1.f / math::fast_inv_sqrt<float>((float)input));
 }
@@ -278,7 +280,7 @@ inline scalar_t math::fast_sqrt(scalar_t input) noexcept
     degToRad
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::deg_to_rad(scalar_t input) noexcept
+constexpr LS_INLINE scalar_t math::deg_to_rad(scalar_t input) noexcept
 {
     return LS_DEG2RAD(input);
 }
@@ -289,7 +291,7 @@ constexpr scalar_t math::deg_to_rad(scalar_t input) noexcept
     radToDeg
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::rad_to_deg(scalar_t input) noexcept
+constexpr LS_INLINE scalar_t math::rad_to_deg(scalar_t input) noexcept
 {
     return LS_RAD2DEG(input);
 }
@@ -300,7 +302,7 @@ constexpr scalar_t math::rad_to_deg(scalar_t input) noexcept
     fast_mod
 -------------------------------------*/
 template <typename integral_t>
-constexpr integral_t math::fast_mod(const integral_t num, const integral_t denom) noexcept
+constexpr LS_INLINE integral_t math::fast_mod(const integral_t num, const integral_t denom) noexcept
 {
     return (num >= denom) ? num%denom : num;
 }
@@ -311,7 +313,7 @@ constexpr integral_t math::fast_mod(const integral_t num, const integral_t denom
     fastLog2
 -------------------------------------*/
 template<typename scalar_t>
-inline scalar_t math::fast_log2(scalar_t n) noexcept
+inline LS_INLINE scalar_t math::fast_log2(scalar_t n) noexcept
 {
     return (scalar_t)math::fast_log2<float>((float)n);
 }
@@ -328,7 +330,7 @@ inline scalar_t math::fast_log2(scalar_t n) noexcept
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 template<>
-inline float math::fast_log2<float>(float n) noexcept
+inline LS_INLINE float math::fast_log2<float>(float n) noexcept
 {
     long* const exp = reinterpret_cast<long*>(&n);
     long x = *exp;
@@ -349,7 +351,7 @@ inline float math::fast_log2<float>(float n) noexcept
     fastLog
 -------------------------------------*/
 template<typename scalar_t>
-inline scalar_t math::fast_log(scalar_t n) noexcept
+inline LS_INLINE scalar_t math::fast_log(scalar_t n) noexcept
 {
     return math::fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
 }
@@ -360,7 +362,7 @@ inline scalar_t math::fast_log(scalar_t n) noexcept
     fastLogN
 -------------------------------------*/
 template<typename scalar_t>
-inline scalar_t math::fast_logN(scalar_t baseN, scalar_t n) noexcept
+inline LS_INLINE scalar_t math::fast_logN(scalar_t baseN, scalar_t n) noexcept
 {
     return math::fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
 }
@@ -370,7 +372,7 @@ inline scalar_t math::fast_logN(scalar_t baseN, scalar_t n) noexcept
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline unsigned math::next_pow2(unsigned n) noexcept
+inline LS_INLINE unsigned math::next_pow2(unsigned n) noexcept
 {
     if (n == 0)
     {
@@ -391,7 +393,7 @@ inline unsigned math::next_pow2(unsigned n) noexcept
 /*-------------------------------------
     nextPow2
 -------------------------------------*/
-inline int math::next_pow2(int n) noexcept
+inline LS_INLINE int math::next_pow2(int n) noexcept
 {
     return (int)math::next_pow2((unsigned)n);
 }
@@ -401,7 +403,7 @@ inline int math::next_pow2(int n) noexcept
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline unsigned math::prev_pow2(unsigned n) noexcept
+inline LS_INLINE unsigned math::prev_pow2(unsigned n) noexcept
 {
     if (n == 0)
     {
@@ -422,7 +424,7 @@ inline unsigned math::prev_pow2(unsigned n) noexcept
 /*-------------------------------------
     prevPow2
 -------------------------------------*/
-inline int math::prev_pow2(int n) noexcept
+inline LS_INLINE int math::prev_pow2(int n) noexcept
 {
     return (int)math::prev_pow2((unsigned)n);
 }
@@ -432,7 +434,7 @@ inline int math::prev_pow2(int n) noexcept
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline unsigned math::nearest_pow2(unsigned n) noexcept
+inline LS_INLINE unsigned math::nearest_pow2(unsigned n) noexcept
 {
     const unsigned pp2 = math::prev_pow2(n);
     const unsigned np2 = math::next_pow2(n);
@@ -447,7 +449,7 @@ inline unsigned math::nearest_pow2(unsigned n) noexcept
 /*-------------------------------------
     nearPow2
 -------------------------------------*/
-inline int math::nearest_pow2(int n) noexcept
+inline LS_INLINE int math::nearest_pow2(int n) noexcept
 {
     return (int)math::nearest_pow2((unsigned)n);
 }
@@ -457,7 +459,7 @@ inline int math::nearest_pow2(int n) noexcept
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::is_pow2(unsigned n) noexcept
+constexpr LS_INLINE bool math::is_pow2(unsigned n) noexcept
 {
     return n && !(n & (n - 1));
 }
@@ -467,7 +469,7 @@ constexpr bool math::is_pow2(unsigned n) noexcept
 /*-------------------------------------
     isPow2
 -------------------------------------*/
-constexpr bool math::is_pow2(int n) noexcept
+constexpr LS_INLINE bool math::is_pow2(int n) noexcept
 {
     return (int)math::is_pow2((unsigned)n);
 }
@@ -503,7 +505,7 @@ namespace impl
 
 
 template <typename scalar_t>
-constexpr scalar_t math::pow(
+constexpr LS_INLINE scalar_t math::pow(
     typename utils::EnableIf<math::IsIntegral<scalar_t>::value, scalar_t>::type x,
     typename utils::EnableIf<math::IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept
 {
@@ -513,7 +515,7 @@ constexpr scalar_t math::pow(
 
 
 template<typename scalar_t>
-constexpr scalar_t math::pow(scalar_t x, scalar_t y) noexcept
+constexpr LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 {
     return math::exp<scalar_t>(math::fast_log<scalar_t>(x) * y);
 }
@@ -524,7 +526,7 @@ constexpr scalar_t math::pow(scalar_t x, scalar_t y) noexcept
     exp
 -------------------------------------*/
 template<typename scalar_t>
-inline scalar_t math::exp(scalar_t x) noexcept
+inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 {
     x = 1.f + x / 256.f;
     x *= x;
@@ -545,7 +547,7 @@ inline scalar_t math::exp(scalar_t x) noexcept
     const_sin
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::const_sin(scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::const_sin(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -562,7 +564,7 @@ constexpr scalar_t math::const_sin(scalar_t x) noexcept
     const_cos
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::const_cos(scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::const_cos(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -579,7 +581,7 @@ constexpr scalar_t math::const_cos(scalar_t x) noexcept
     const_tan
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::const_tan(scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::const_tan(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -596,7 +598,7 @@ constexpr scalar_t math::const_tan(scalar_t x) noexcept
     rcp
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::rcp(const scalar_t& num) noexcept
+constexpr LS_INLINE scalar_t math::rcp(const scalar_t& num) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
     return scalar_t{1} / num;
@@ -608,7 +610,7 @@ constexpr scalar_t math::rcp(const scalar_t& num) noexcept
     sum
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::sum(const scalar_t& num) noexcept
+constexpr LS_INLINE scalar_t math::sum(const scalar_t& num) noexcept
 {
     return num;
 }
@@ -630,7 +632,7 @@ constexpr scalar_t math::sum(const scalar_t& num, const scalars_t& ... nums) noe
     sum_inv
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::sum_inv(const scalar_t& num) noexcept
+constexpr LS_INLINE scalar_t math::sum_inv(const scalar_t& num) noexcept
 {
     return scalar_t{1} / num;
 }
@@ -641,7 +643,7 @@ constexpr scalar_t math::sum_inv(const scalar_t& num) noexcept
     sum_inv
 -------------------------------------*/
 template<typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::sum_inv(const scalar_t& num, const scalars_t& ... nums) noexcept
+constexpr LS_INLINE scalar_t math::sum_inv(const scalar_t& num, const scalars_t& ... nums) noexcept
 {
     return scalar_t{1} / (num + math::sum(nums...));
 }
@@ -652,7 +654,7 @@ constexpr scalar_t math::sum_inv(const scalar_t& num, const scalars_t& ... nums)
     average
 -------------------------------------*/
 template<typename scalar_t>
-constexpr scalar_t math::average() noexcept
+constexpr LS_INLINE scalar_t math::average() noexcept
 {
     return scalar_t(0);
 }
@@ -663,7 +665,7 @@ constexpr scalar_t math::average() noexcept
     average
 -------------------------------------*/
 template<typename scalar_t, typename... scalars_t>
-constexpr scalar_t math::average(const scalar_t& num, const scalars_t& ... nums) noexcept
+constexpr LS_INLINE scalar_t math::average(const scalar_t& num, const scalars_t& ... nums) noexcept
 {
     return math::sum(num, nums...) / scalar_t(sizeof...(scalars_t) + 1);
 }
@@ -690,7 +692,7 @@ constexpr unsigned math::count_set_bits(const scalar_t num) noexcept
     Scale a number from one number range to another.
 -------------------------------------*/
 template<typename in_type, typename out_type>
-constexpr out_type math::scale_num_to_range(
+constexpr LS_INLINE out_type math::scale_num_to_range(
     const in_type num,
     const out_type oldMin,
     const out_type oldMax,
@@ -707,7 +709,7 @@ constexpr out_type math::scale_num_to_range(
     Get a number's sign bit
 -------------------------------------*/
 template <typename data_t>
-constexpr int math::sign_bit(
+constexpr LS_INLINE int math::sign_bit(
     typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
 ) noexcept
 {
@@ -715,7 +717,7 @@ constexpr int math::sign_bit(
 }
 
 template <typename data_t>
-constexpr int math::sign_bit(data_t x) noexcept
+constexpr LS_INLINE int math::sign_bit(data_t x) noexcept
 {
     return math::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
 }

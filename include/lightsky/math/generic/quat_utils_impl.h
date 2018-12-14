@@ -1,4 +1,6 @@
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 namespace ls {
 
 /*-----------------------------------------------------------------------------
@@ -8,7 +10,7 @@ namespace ls {
 /*-------------------------------------
     dot
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 num_t math::dot(const quat_t<num_t>& q1, const quat_t<num_t>& q2) {
     return (q1.q[0] * q2.q[0]) + (q1.q[1] * q2.q[1]) + (q1.q[2] * q2.q[2]) + (q1.q[3] * q2.q[3]);
 }
@@ -16,7 +18,7 @@ num_t math::dot(const quat_t<num_t>& q1, const quat_t<num_t>& q2) {
 /*-------------------------------------
     lengthSquared
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 num_t math::length_squared(const quat_t<num_t>& q) {
     return (q.q[0] * q.q[0]) + (q.q[1] * q.q[1]) + (q.q[2] * q.q[2]) + (q.q[3] * q.q[3]);
 }
@@ -24,7 +26,7 @@ num_t math::length_squared(const quat_t<num_t>& q) {
 /*-------------------------------------
     length
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 num_t math::length(const quat_t<num_t>& q) {
     return (num_t) LS_SQRT(length_squared<num_t>(q));
 }
@@ -32,7 +34,7 @@ num_t math::length(const quat_t<num_t>& q) {
 /*-------------------------------------
     inverse
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::inverse(const quat_t<num_t>& q) {
     const num_t magInv{
         num_t{1.0} / length_squared<num_t>(q)
@@ -48,7 +50,7 @@ math::quat_t<num_t> math::inverse(const quat_t<num_t>& q) {
 /*-------------------------------------
     conjugate
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::quat_t<num_t> math::conjugate(const quat_t<num_t>& q) {
     return quat_t<num_t>{-q.q[0], -q.q[1], -q.q[2], q.q[3]};
 }
@@ -56,7 +58,7 @@ math::quat_t<num_t> math::conjugate(const quat_t<num_t>& q) {
 /*-------------------------------------
     normalize
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::normalize(const quat_t<num_t>& q) {
     const num_t magInv{
         fast_inv_sqrt<num_t>(length_squared<num_t>(q))
@@ -73,7 +75,7 @@ math::quat_t<num_t> math::normalize(const quat_t<num_t>& q) {
 /*-------------------------------------
     Vector rotation using a Quaternion
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::rotate(const vec3_t<num_t>& v, const quat_t<num_t>& q) {
     const vec3_t<num_t> qVec = {q[0], q[1], q[2]};
     const vec3_t<num_t> qCrossV = cross<num_t>(qVec, v);
@@ -87,7 +89,7 @@ math::vec3_t<num_t> math::rotate(const vec3_t<num_t>& v, const quat_t<num_t>& q)
 /*-------------------------------------
     lerp
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::quat_t<num_t> math::lerp(const quat_t<num_t>& q1, const quat_t<num_t>& q2, num_t percent) {
     return quat_t<num_t>{q1 + ((q2 - q1) * percent)};
 }
@@ -95,7 +97,7 @@ math::quat_t<num_t> math::lerp(const quat_t<num_t>& q1, const quat_t<num_t>& q2,
 /*-------------------------------------
     nlerp
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::quat_t<num_t> math::nlerp(const quat_t<num_t>& q1, const quat_t<num_t>& q2, num_t percent) {
     return normalize(lerp<num_t>(q1, q2, percent));
 }
@@ -155,7 +157,7 @@ math::quat_t<num_t> math::look_at(const math::vec3_t<num_t>& target, const math:
 /*-------------------------------------
     quatToMat3
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat3_t<num_t> math::quat_to_mat3(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0] * num_t{2};
     const num_t yy = q.q[1] * q.q[1] * num_t{2};
@@ -177,7 +179,7 @@ math::mat3_t<num_t> math::quat_to_mat3(const quat_t<num_t>& q) {
 /*-------------------------------------
     quatToMat4
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::quat_to_mat4(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0] * num_t{2};
     const num_t yy = q.q[1] * q.q[1] * num_t{2};
@@ -200,7 +202,7 @@ math::mat4_t<num_t> math::quat_to_mat4(const quat_t<num_t>& q) {
 /*-------------------------------------
     matToQuat
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::mat_to_quat(const mat3_t<num_t>& m) {
     num_t s(0);
     num_t trace(m.m[0][0] + m.m[1][1] + m.m[2][2]);
@@ -244,7 +246,7 @@ math::quat_t<num_t> math::mat_to_quat(const mat3_t<num_t>& m) {
 /*-------------------------------------
     matToQuat
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::mat_to_quat(const mat4_t<num_t>& m) {
     num_t s(0);
     num_t trace(m.m[0][0] + m.m[1][1] + m.m[2][2]);
@@ -297,7 +299,7 @@ math::quat_t<num_t> math::mat_to_quat(const mat4_t<num_t>& m) {
 /*-------------------------------------
     getAxisX
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::get_x_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{1} - num_t{2} * (q[1] * q[1] + q[2] * q[2]),
@@ -309,7 +311,7 @@ math::vec3_t<num_t> math::get_x_axis(const math::quat_t<num_t>& q) {
 /*-------------------------------------
     getAxisY
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::get_y_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{2} * (q[0] * q[1] - q[3] * q[2]),
@@ -321,7 +323,7 @@ math::vec3_t<num_t> math::get_y_axis(const math::quat_t<num_t>& q) {
 /*-------------------------------------
     getAxisZ
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::get_z_axis(const math::quat_t<num_t>& q) {
     return math::vec3_t<num_t>{
         num_t{2} * (q[0] * q[2] + q[3] * q[1]),
@@ -333,7 +335,7 @@ math::vec3_t<num_t> math::get_z_axis(const math::quat_t<num_t>& q) {
 /*-------------------------------------
     getAngle
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 num_t math::get_angle(const quat_t<num_t>& q) {
     return num_t{std::acos(q.q[3] * num_t{2})};
 }
@@ -341,7 +343,7 @@ num_t math::get_angle(const quat_t<num_t>& q) {
 /*-------------------------------------
     toEuler
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::to_euler(const quat_t<num_t>& q) {
     const num_t xx = q.q[0] * q.q[0];
     const num_t yy = q.q[1] * q.q[1];
@@ -367,7 +369,7 @@ math::vec3_t<num_t> math::to_euler(const quat_t<num_t>& q) {
 /*-------------------------------------
     fromEuler
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::from_euler(const math::vec3_t<num_t>& angles) {
     const num_t cp = LS_COS(angles.v[0] * num_t{0.5});
     const num_t sp = LS_SIN(angles.v[0] * num_t{0.5});
@@ -389,7 +391,7 @@ math::quat_t<num_t> math::from_euler(const math::vec3_t<num_t>& angles) {
 /*-------------------------------------
     fromEuler
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::from_euler(num_t pitch, num_t yaw, num_t roll) {
     const num_t cp = LS_COS(pitch * num_t{0.5});
     const num_t sp = LS_SIN(pitch * num_t{0.5});
@@ -411,7 +413,7 @@ math::quat_t<num_t> math::from_euler(num_t pitch, num_t yaw, num_t roll) {
 /*-------------------------------------
     toAxisAngle
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 void math::to_axis_angle(const quat_t<num_t>& q, vec3_t<num_t>& outAxis, num_t& outAngle) {
     num_t s = LS_SQRT(num_t{1}
     -(q.q[3] * q.q[3]));
@@ -432,7 +434,7 @@ void math::to_axis_angle(const quat_t<num_t>& q, vec3_t<num_t>& outAxis, num_t& 
 /*-------------------------------------
     toAxisAngle
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::vec4_t<num_t> math::to_axis_angle(const quat_t<num_t>& q) {
     const num_t c = q.q[3];
     num_t s = LS_SQRT(num_t{1}-c * c);
@@ -455,7 +457,7 @@ math::vec4_t<num_t> math::to_axis_angle(const quat_t<num_t>& q) {
 /*-------------------------------------
     fromAxisAngle
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::from_axis_angle(const vec3_t<num_t>& axis, num_t angle) {
     num_t a = angle * num_t{0.5};
     num_t s = LS_SIN(a);
@@ -471,7 +473,7 @@ math::quat_t<num_t> math::from_axis_angle(const vec3_t<num_t>& axis, num_t angle
 /*-------------------------------------
     fromAxisAngle
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::from_axis_angle(const vec4_t<num_t>& v) {
     num_t a = v.v[3] * num_t{0.5};
     num_t s = LS_SIN(a);

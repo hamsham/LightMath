@@ -15,7 +15,7 @@ namespace math
 /*-------------------------------------
     min
 -------------------------------------*/
-inline float min(float a, float b) noexcept
+inline LS_INLINE float min(float a, float b) noexcept
 {
     return _mm_cvtss_f32(_mm_min_ss(_mm_set_ss(a), _mm_set_ss(b)));
 }
@@ -23,7 +23,7 @@ inline float min(float a, float b) noexcept
 /*-------------------------------------
     min
 -------------------------------------*/
-inline float min(float a, float b, float c) noexcept
+inline LS_INLINE float min(float a, float b, float c) noexcept
 {
     return _mm_cvtss_f32(_mm_min_ss(_mm_set_ss(a), _mm_min_ss(_mm_set_ss(b), _mm_set_ss(c))));
 }
@@ -31,7 +31,7 @@ inline float min(float a, float b, float c) noexcept
 /*-------------------------------------
     min
 -------------------------------------*/
-inline float min(float a, float b, float c, float d) noexcept
+inline LS_INLINE float min(float a, float b, float c, float d) noexcept
 {
     const __m128 v = _mm_set_ps(a, b, c, d);
     const __m128 v1 = _mm_shuffle_ps(v, v, 0xB1);
@@ -46,7 +46,7 @@ inline float min(float a, float b, float c, float d) noexcept
 /*-------------------------------------
     max
 -------------------------------------*/
-inline float max(float a, float b) noexcept
+inline LS_INLINE float max(float a, float b) noexcept
 {
     return _mm_cvtss_f32(_mm_max_ss(_mm_set_ss(a), _mm_set_ss(b)));
 }
@@ -54,7 +54,7 @@ inline float max(float a, float b) noexcept
 /*-------------------------------------
     max
 -------------------------------------*/
-inline float max(float a, float b, float c) noexcept
+inline LS_INLINE float max(float a, float b, float c) noexcept
 {
     return _mm_cvtss_f32(_mm_max_ss(_mm_set_ss(a), _mm_max_ss(_mm_set_ss(b), _mm_set_ss(c))));
 }
@@ -62,7 +62,7 @@ inline float max(float a, float b, float c) noexcept
 /*-------------------------------------
     max
 -------------------------------------*/
-inline float max(float a, float b, float c, float d) noexcept
+inline LS_INLINE float max(float a, float b, float c, float d) noexcept
 {
     const __m128 v = _mm_set_ps(a, b, c, d);
     const __m128 v1 = _mm_shuffle_ps(v, v, 0xB1);
@@ -77,7 +77,7 @@ inline float max(float a, float b, float c, float d) noexcept
 /*-------------------------------------
     clamp
 -------------------------------------*/
-inline float clamp(float n, float minVal, float maxVal) noexcept
+inline LS_INLINE float clamp(float n, float minVal, float maxVal) noexcept
 {
     return _mm_cvtss_f32(_mm_max_ss(_mm_min_ss(_mm_set_ss(n), _mm_set_ss(maxVal)), _mm_set_ss(minVal)));
 }
@@ -87,7 +87,7 @@ inline float clamp(float n, float minVal, float maxVal) noexcept
 /*-------------------------------------
     floor
 -------------------------------------*/
-inline float floor(float n) noexcept
+inline LS_INLINE float floor(float n) noexcept
 {
     const __m128 f = _mm_set_ss(n);
     const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
@@ -100,7 +100,7 @@ inline float floor(float n) noexcept
 /*-------------------------------------
     ceil
 -------------------------------------*/
-inline float ceil(float n) noexcept
+inline LS_INLINE float ceil(float n) noexcept
 {
     const __m128 f = _mm_add_ss(_mm_set_ss(n), _mm_set_ss(1.f));
     const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
@@ -113,7 +113,7 @@ inline float ceil(float n) noexcept
 /*-------------------------------------
     round
 -------------------------------------*/
-inline float round(float n) noexcept
+inline LS_INLINE float round(float n) noexcept
 {
     const __m128 f = _mm_add_ss(_mm_set_ss(n), _mm_set_ss(0.5f));
     const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
@@ -126,7 +126,7 @@ inline float round(float n) noexcept
 /*-------------------------------------
  fmod
 -------------------------------------*/
-inline float fmod(const float n1, const float n2) noexcept
+inline LS_INLINE float fmod(const float n1, const float n2) noexcept
 {
     const __m128  num   = _mm_set_ss(n1);
     const __m128  denom = _mm_set_ss(n2);
@@ -142,7 +142,7 @@ inline float fmod(const float n1, const float n2) noexcept
 /*-------------------------------------
  fmod_1
 -------------------------------------*/
-inline float fmod_1(const float n) noexcept
+inline LS_INLINE float fmod_1(const float n) noexcept
 {
     const __m128  num   = _mm_set_ss(n);
     const __m128i i     = _mm_cvttps_epi32(num);
@@ -155,7 +155,7 @@ inline float fmod_1(const float n) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-inline float fast_inv_sqrt(float x) noexcept
+inline LS_INLINE float fast_inv_sqrt(float x) noexcept
 {
     return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 }
@@ -165,7 +165,7 @@ inline float fast_inv_sqrt(float x) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-inline float fast_sqrt(float input) noexcept
+inline LS_INLINE float fast_sqrt(float input) noexcept
 {
     return _mm_cvtss_f32(_mm_rcp_ss(_mm_rsqrt_ss(_mm_set_ss(input))));
 }
@@ -175,7 +175,7 @@ inline float fast_sqrt(float input) noexcept
 /*-------------------------------------
     rcp
 -------------------------------------*/
-inline float rcp(float input) noexcept
+inline LS_INLINE float rcp(float input) noexcept
 {
     return _mm_cvtss_f32(_mm_rcp_ss(_mm_set_ss(input)));
 }
@@ -185,7 +185,7 @@ inline float rcp(float input) noexcept
 /*-------------------------------------
     sum
 -------------------------------------*/
-inline float sum(float num0, float num1, float num2, float num3) noexcept
+inline LS_INLINE float sum(float num0, float num1, float num2, float num3) noexcept
 {
     const __m128 a = _mm_set_ps(num0, num1, num2, num3);
 
@@ -205,7 +205,7 @@ inline float sum(float num0, float num1, float num2, float num3) noexcept
 /*-------------------------------------
     sign_bit
 -------------------------------------*/
-inline int sign_bit(float x) noexcept
+inline LS_INLINE int sign_bit(float x) noexcept
 {
     return _mm_cvtsi128_si32(_mm_castps_si128(_mm_set_ss(x))) >> 31;
 }

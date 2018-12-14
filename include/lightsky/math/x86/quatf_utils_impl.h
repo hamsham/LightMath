@@ -14,7 +14,7 @@ namespace math
 /*-------------------------------------
     4D Dot
 -------------------------------------*/
-inline float dot(const quat_t<float>& q1, const quat_t<float>& q2)
+inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 {
     // horizontal add
     const __m128 a = _mm_mul_ps(_mm_load_ps(q1.q), _mm_load_ps(q2.q));
@@ -34,7 +34,7 @@ inline float dot(const quat_t<float>& q1, const quat_t<float>& q2)
     4D Magnitude
 -------------------------------------*/
 template <>
-inline float length(const quat_t<float>& q)
+inline LS_INLINE float length(const quat_t<float>& q)
 {
     // cache
     const __m128 s = _mm_load_ps(q.q);
@@ -57,7 +57,7 @@ inline float length(const quat_t<float>& q)
     4D Normalize
 -------------------------------------*/
 template <>
-inline math::quat_t<float> normalize(const quat_t<float>& q)
+inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
 {
     // cache
     const __m128 s = _mm_load_ps(q.q);

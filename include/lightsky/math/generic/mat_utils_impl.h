@@ -1,4 +1,6 @@
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 namespace ls {
 
 /*-----------------------------------------------------------------------------
@@ -8,7 +10,7 @@ namespace ls {
 /*-------------------------------------
     2x2 Determinant
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 num_t math::determinant(const mat2_t<num_t>& m) {
     return (m.m[0][0] * m.m[1][1]) - (m.m[0][1] * m.m[1][0]);
 }
@@ -16,7 +18,7 @@ num_t math::determinant(const mat2_t<num_t>& m) {
 /*-------------------------------------
     2x2 Transpose
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat2_t<num_t> math::transpose(const mat2_t<num_t>& m) {
     return mat2_t<num_t>{
         m.m[0][0], m.m[1][0],
@@ -27,7 +29,7 @@ math::mat2_t<num_t> math::transpose(const mat2_t<num_t>& m) {
 /*-------------------------------------
     2x2 Inverse
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat2_t<num_t> math::inverse(const mat2_t<num_t>& m) {
     return mat2_t<num_t>{
         m.m[1][1], -m.m[0][1],
@@ -40,7 +42,7 @@ math::mat2_t<num_t> math::inverse(const mat2_t<num_t>& m) {
 /*-------------------------------------
     2x2 Rotation
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat2_t<num_t> math::rotate(const mat2_t<num_t>& m, num_t angle) {
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
@@ -54,7 +56,7 @@ math::mat2_t<num_t> math::rotate(const mat2_t<num_t>& m, num_t angle) {
 /*-------------------------------------
     2x2 Scaling
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat2_t<num_t> math::scale(const mat2_t<num_t>& m, const vec2_t<num_t>& amount) {
     return mat2_t<num_t>{
         m.m[0][0] * amount.v[0], m.m[0][1],
@@ -69,7 +71,7 @@ math::mat2_t<num_t> math::scale(const mat2_t<num_t>& m, const vec2_t<num_t>& amo
 /*-------------------------------------
     3x3 Determinant
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 num_t math::determinant(const mat3_t<num_t>& m) {
     return
     (m.m[0][0] * m.m[1][1] * m.m[2][2]) +
@@ -83,7 +85,7 @@ num_t math::determinant(const mat3_t<num_t>& m) {
 /*-------------------------------------
     3x3 Inverse
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat3_t<num_t> math::inverse(const mat3_t<num_t>& m) {
     return mat3_t<num_t>{
         (m.m[1][1] * m.m[2][2] - m.m[2][1] * m.m[1][2]),
@@ -103,7 +105,7 @@ math::mat3_t<num_t> math::inverse(const mat3_t<num_t>& m) {
 /*-------------------------------------
     3x3 Transpose
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat3_t<num_t> math::transpose(const mat3_t<num_t>& m) {
     return mat3_t<num_t>{
         m.m[0][0], m.m[1][0], m.m[2][0],
@@ -115,7 +117,7 @@ math::mat3_t<num_t> math::transpose(const mat3_t<num_t>& m) {
 /*-------------------------------------
     3x3 Rotation
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) {
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
@@ -139,7 +141,7 @@ math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& ax
 /*-------------------------------------
     3x3 Scaling
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat3_t<num_t> math::scale(const mat3_t<num_t>& m, const vec3_t<num_t>& scale) {
     return mat3_t<num_t>{
         m.m[0][0] * scale.v[0], m.m[0][1], m.m[0][2],
@@ -151,7 +153,7 @@ math::mat3_t<num_t> math::scale(const mat3_t<num_t>& m, const vec3_t<num_t>& sca
 /*-------------------------------------
     3x3 Translation
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat3_t<num_t> math::translate(const mat3_t<num_t>& m, const vec2_t<num_t>& t) {
     return mat3_t<num_t>{
         m.m[0][0], m.m[0][1], m.m[0][2],
@@ -163,7 +165,7 @@ math::mat3_t<num_t> math::translate(const mat3_t<num_t>& m, const vec2_t<num_t>&
 /*-------------------------------------
     3x3 LookAt
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat3_t<num_t> math::pure_look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
@@ -183,7 +185,7 @@ math::mat3_t<num_t> math::pure_look_at(const vec3_t<num_t>& pos, const vec3_t<nu
 /*-------------------------------------
     4x4 Determinant
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 num_t math::determinant(const mat4_t<num_t>& m) {
     return num_t{
         (m.m[0][3] * m.m[1][2] * m.m[2][1] * m.m[3][0]) -
@@ -222,7 +224,7 @@ num_t math::determinant(const mat4_t<num_t>& m) {
 /*-------------------------------------
     4x4 Inverse
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::inverse(const mat4_t<num_t>& m) {
     // grab a pointer to the internal array in order to reduce the amount of dereferences
     // This helped to shrink the number of assembly instructions.
@@ -285,7 +287,7 @@ math::mat4_t<num_t> math::inverse(const mat4_t<num_t>& m) {
 /*-------------------------------------
     4x4 Transpose
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::transpose(const mat4_t<num_t>& m) {
     return mat4_t<num_t>{
         m.m[0][0], m.m[1][0], m.m[2][0], m.m[3][0],
@@ -298,7 +300,7 @@ math::mat4_t<num_t> math::transpose(const mat4_t<num_t>& m) {
 /*-------------------------------------
     4x4 Rotation
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) {
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
@@ -322,7 +324,7 @@ math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& ax
 /*-------------------------------------
     4x4 Scaling
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat4_t<num_t> math::scale(const mat4_t<num_t>& m, const vec3_t<num_t>& scale) {
     return mat4_t<num_t>{
         m.m[0][0] * scale.v[0], m.m[0][1],              m.m[0][2],              m.m[0][3],
@@ -335,7 +337,7 @@ math::mat4_t<num_t> math::scale(const mat4_t<num_t>& m, const vec3_t<num_t>& sca
 /*-------------------------------------
     4x4 Translation
 -------------------------------------*/
-template <typename num_t> constexpr
+template <typename num_t> constexpr LS_INLINE
 math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>& t) {
     return mat4_t<num_t>{
         m.m[0][0],          m.m[0][1],          m.m[0][2],          m.m[0][3],
@@ -348,7 +350,7 @@ math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>&
 /*-------------------------------------
     4x4 Perspective
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_t zFar) {
     const num_t top = LS_TAN(fov / num_t{2}) * zNear;
     const num_t bottom = -top;
@@ -367,7 +369,7 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
 /*-------------------------------------
     4x4 Infinite Perspective
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zNear) {
     const num_t viewAngle = num_t{1} / LS_TAN(fov / num_t{2});
 
@@ -382,7 +384,7 @@ math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zN
 /*-------------------------------------
     4x4 Ortho
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom) {
     const num_t w = right - left;
     const num_t h = bottom - top;
@@ -398,7 +400,7 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
 /*-------------------------------------
     4x4 Ortho
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom, num_t zNear, num_t zFar) {
     const num_t w = right - left;
     const num_t h = bottom - top;
@@ -415,7 +417,7 @@ math::mat4_t<num_t> math::ortho(num_t left, num_t right, num_t top, num_t bottom
 /*-------------------------------------
     4x4 Frustum
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bottom, num_t zNear, num_t zFar) {
     const num_t w = right - left;
     const num_t h = bottom - top;
@@ -432,7 +434,7 @@ math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bott
 /*-------------------------------------
     4x4 LookAt
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
@@ -449,7 +451,7 @@ math::mat4_t<num_t> math::look_at(const vec3_t<num_t>& pos, const vec3_t<num_t>&
 /*-------------------------------------
  Look From
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t>& target, const vec3_t<num_t>& up) {
     const vec3_t<num_t> zAxis = normalize(pos - target);
     const vec3_t<num_t> xAxis = normalize(cross(up, zAxis));
@@ -466,7 +468,7 @@ math::mat4_t<num_t> math::look_from(const vec3_t<num_t>& pos, const vec3_t<num_t
 /*-------------------------------------
     4x4 Billboard
 -------------------------------------*/
-template <typename num_t> inline
+template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::billboard(const vec3_t<num_t>& pos, const mat4_t<num_t>& viewMat) {
     return mat4_t<num_t>{
         viewMat[0][0], viewMat[1][0], viewMat[2][0], num_t{0},
