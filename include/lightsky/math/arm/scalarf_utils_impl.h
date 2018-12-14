@@ -1,6 +1,8 @@
 
 #include <arm_neon.h>
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 namespace ls
 {
 namespace math
@@ -15,7 +17,7 @@ namespace math
     floor
 -------------------------------------*/
 template<>
-inline float floor(float n) noexcept
+inline LS_INLINE float floor(float n) noexcept
 {
     const float32x4_t f = vdupq_n_f32(n);
     const float32x4_t t = vcvtq_f32_s32(vcvtq_s32_f32(f)); // truncate fraction bits
@@ -31,7 +33,7 @@ inline float floor(float n) noexcept
  fmod
 -------------------------------------*/
 template<>
-inline float fmod(const float n1, const float n2) noexcept
+inline LS_INLINE float fmod(const float n1, const float n2) noexcept
 {
     const float32x4_t  num   = vdupq_n_f32(n1);
     const float32x4_t  denom = vdupq_n_f32(n2);
@@ -50,7 +52,7 @@ inline float fmod(const float n1, const float n2) noexcept
  fmod_1
 -------------------------------------*/
 template<>
-inline float fmod_1(const float n) noexcept
+inline LS_INLINE float fmod_1(const float n) noexcept
 {
     const float32x4_t  num   = vdupq_n_f32(n);
     const int32x4_t    i     = vcvtq_s32_f32(num);
@@ -66,7 +68,7 @@ inline float fmod_1(const float n) noexcept
     fastInvSqrt
 -------------------------------------*/
 template<>
-inline float fast_inv_sqrt<float>(float x) noexcept
+inline LS_INLINE float fast_inv_sqrt<float>(float x) noexcept
 {
     const float32x4_t ret = vrsqrteq_f32(vdupq_n_f32(x));
     return vget_lane_f32(vget_low_f32(ret), 0);
@@ -78,7 +80,7 @@ inline float fast_inv_sqrt<float>(float x) noexcept
     fastInvSqrt
 -------------------------------------*/
 template<>
-inline float fast_sqrt<float>(float x) noexcept
+inline LS_INLINE float fast_sqrt<float>(float x) noexcept
 {
     const float32x4_t ret{vrecpeq_f32(vrsqrteq_f32(vdupq_n_f32(x)))};
     return vget_lane_f32(vget_low_f32(ret), 0);
@@ -89,7 +91,7 @@ inline float fast_sqrt<float>(float x) noexcept
 /*-------------------------------------
     rcp
 -------------------------------------*/
-inline float rcp(float x) noexcept
+inline LS_INLINE float rcp(float x) noexcept
 {
     const float32x4_t scalar = vdupq_n_f32(x);
     const float32x4_t recip = vrecpeq_f32(scalar);
@@ -103,7 +105,7 @@ inline float rcp(float x) noexcept
 /*-------------------------------------
     sum
 -------------------------------------*/
-inline float sum(float num0, float num1, float num2, float num3) noexcept
+inline LS_INLINE float sum(float num0, float num1, float num2, float num3) noexcept
 {
     const float lanes[4] = {num0, num1, num2, num3};
 

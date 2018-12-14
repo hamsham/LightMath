@@ -1,6 +1,8 @@
 
 #include <arm_neon.h>
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 namespace ls
 {
 namespace math
@@ -21,7 +23,7 @@ namespace math
     3D Magnitude
 -------------------------------------*/
 template <>
-inline
+inline LS_INLINE
 float length(const vec3_t<float>& v)
 {
     const float lanes[4] = {v.v[0], v.v[1], v.v[2], 0.f};
@@ -44,7 +46,7 @@ float length(const vec3_t<float>& v)
 /*-------------------------------------
     4D Sum
 -------------------------------------*/
-inline float sum(const vec4_t<float>& v)
+inline LS_INLINE float sum(const vec4_t<float>& v)
 {
     const float32x4_t a = v.simd;
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -55,7 +57,7 @@ inline float sum(const vec4_t<float>& v)
 /*-------------------------------------
     4D Reciprocal Sum
 -------------------------------------*/
-inline float sum_inv(const vec4_t<float>& v)
+inline LS_INLINE float sum_inv(const vec4_t<float>& v)
 {
     const float32x4_t a = v.simd;
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -70,7 +72,7 @@ inline float sum_inv(const vec4_t<float>& v)
 /*-------------------------------------
     4D Dot
 -------------------------------------*/
-inline float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
     const float32x4_t a = vmulq_f32(v1.simd, v2.simd);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -83,7 +85,7 @@ inline float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
     4D Magnitude
 -------------------------------------*/
 template <>
-inline
+inline LS_INLINE
 float length(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
@@ -101,7 +103,7 @@ float length(const vec4_t<float>& v)
     4D Normalize
 -------------------------------------*/
 template <>
-inline
+inline LS_INLINE
 math::vec4_t<float> normalize(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
@@ -117,7 +119,7 @@ math::vec4_t<float> normalize(const vec4_t<float>& v)
 /*-------------------------------------
     4D Min
 -------------------------------------*/
-inline vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
     return math::vec4_t<float>{vminq_f32(v1.simd, v2.simd)};
 }
@@ -125,7 +127,7 @@ inline vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D Max
 -------------------------------------*/
-inline vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
     return math::vec4_t<float>{vmaxq_f32(v1.simd, v2.simd)};
 }
@@ -133,7 +135,7 @@ inline vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D RCP
 -------------------------------------*/
-inline vec4_t<float> rcp(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v)
 {
     const float32x4_t simd  = v.simd;
     const float32x4_t recip = vrecpeq_f32(simd);
@@ -144,7 +146,7 @@ inline vec4_t<float> rcp(const vec4_t<float>& v)
 /*-------------------------------------
     4D Sign Bits
 -------------------------------------*/
-inline int sign_bits(const vec4_t<float>& x) noexcept
+inline LS_INLINE int sign_bits(const vec4_t<float>& x) noexcept
 {
     uint32_t vals[4];
     const uint32x4_t a = vreinterpretq_u32_f32(x.simd);

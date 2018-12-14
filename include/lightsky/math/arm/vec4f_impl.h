@@ -1,6 +1,8 @@
 
 #include <arm_neon.h>
 
+#include "lightsky/setup/Api.h" // LS_INLINE
+
 
 
 namespace ls
@@ -126,35 +128,35 @@ union LS_API alignas(sizeof(float32x4_t)) vec4_t<float>
     Constructors
 -------------------------------------*/
 // Main Constructor
-constexpr vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
     v{inX, inY, inZ, inW}
 {
 }
 
 /*
-constexpr vec4_t<float>::vec4_t() :
+constexpr LS_INLINE vec4_t<float>::vec4_t() :
     v{0.f}
 {
 }
 */
 
-constexpr vec4_t<float>::vec4_t(float n) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(float n) :
     v{n, n, n, n}
 {
 }
 
-constexpr vec4_t<float>::vec4_t(const float32x4_t n) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(const float32x4_t n) :
     simd(n)
 {
 }
 
 /*
-constexpr vec4_t<float>::vec4_t(const vec4_t<float>& v) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(const vec4_t<float>& v) :
     simd(v.simd)
 {
 }
 
-constexpr vec4_t<float>::vec4_t(vec4_t<float>&& v) :
+constexpr LS_INLINE vec4_t<float>::vec4_t(vec4_t<float>&& v) :
     simd(v.simd)
 {
 }
@@ -164,21 +166,21 @@ constexpr vec4_t<float>::vec4_t(vec4_t<float>&& v) :
     Conversions & Casting
 -------------------------------------*/
 template<typename other_t>
-inline vec4_t<float>::operator vec4_t<other_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<other_t>() const
 {
     return vec4_t<other_t>{(other_t)v[0], (other_t)v[1], (other_t)v[2], (other_t)v[3]};
 }
 
 template <>
 template <>
-inline vec4_t<uint8_t>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
     const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
     return vec4_t<float>{vcvtq_f32_u32(vld1q_u32(vals))};
 }
 
 template <>
-inline vec4_t<float>::operator vec4_t<uint8_t>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     union
     {
@@ -194,12 +196,12 @@ inline vec4_t<float>::operator vec4_t<uint8_t>() const
     };
 }
 
-inline const float* vec4_t<float>::operator&() const
+inline LS_INLINE const float* vec4_t<float>::operator&() const
 {
     return v;
 }
 
-inline float* vec4_t<float>::operator&()
+inline LS_INLINE float* vec4_t<float>::operator&()
 {
     return v;
 }
@@ -208,13 +210,13 @@ inline float* vec4_t<float>::operator&()
     Subscripting Operators
 -------------------------------------*/
 template <typename index_t>
-constexpr float vec4_t<float>::operator[](index_t i) const
+constexpr LS_INLINE float vec4_t<float>::operator[](index_t i) const
 {
     return v[i];
 }
 
 template <typename index_t>
-inline float& vec4_t<float>::operator[](index_t i)
+inline LS_INLINE float& vec4_t<float>::operator[](index_t i)
 {
     return v[i];
 }
@@ -222,13 +224,13 @@ inline float& vec4_t<float>::operator[](index_t i)
 /*-------------------------------------
     Vector-Vector Math Operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator+(const vec4_t<float>& input) const
 {
     return vec4_t{vaddq_f32(simd, input.simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-(const vec4_t<float>& input) const
 {
     return vec4_t{vsubq_f32(simd, input.simd)};
@@ -236,19 +238,19 @@ vec4_t<float> vec4_t<float>::operator-(const vec4_t<float>& input) const
 
 //for operations like "vectA = -vectB"
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-() const
 {
     return vec4_t<float>{vnegq_f32(simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator*(const vec4_t<float>& input) const
 {
     return vec4_t{vmulq_f32(simd, input.simd)};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 {
     const float32x4_t scalar = input.simd;
@@ -257,14 +259,14 @@ vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 }
 
 /*
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input)
 {
     simd = input.simd;
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input)
 {
     simd = input.simd;
@@ -272,28 +274,28 @@ vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input)
 }
 */
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(const vec4_t<float>& input)
 {
     simd = vaddq_f32(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(const vec4_t<float>& input)
 {
     simd = vsubq_f32(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(const vec4_t<float>& input)
 {
     simd = vmulq_f32(simd, input.simd);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 {
     const float32x4_t scalar = input.simd;
@@ -304,14 +306,14 @@ vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 
 // prefix operations
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator++()
 {
     simd = vaddq_f32(simd, vdupq_n_f32(1.f));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator--()
 {
     simd = vsubq_f32(simd, vdupq_n_f32(1.f));
@@ -320,7 +322,7 @@ vec4_t<float>& vec4_t<float>::operator--()
 
 //postfix operations
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator++(int)
 {
     float32x4_t ret = simd;
@@ -328,7 +330,7 @@ vec4_t<float> vec4_t<float>::operator++(int)
     return vec4_t<float>{ret};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator--(int)
 {
     float32x4_t ret = simd;
@@ -338,7 +340,7 @@ vec4_t<float> vec4_t<float>::operator--(int)
 
 //comparisons
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator==(const vec4_t<float>& compare) const
 {
     return
@@ -348,7 +350,7 @@ bool vec4_t<float>::operator==(const vec4_t<float>& compare) const
         v[3] == compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator!=(const vec4_t<float>& compare) const
 {
     return
@@ -358,7 +360,7 @@ bool vec4_t<float>::operator!=(const vec4_t<float>& compare) const
         v[3] != compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator<(const vec4_t<float>& compare) const
 {
     return
@@ -368,7 +370,7 @@ bool vec4_t<float>::operator<(const vec4_t<float>& compare) const
         v[3] < compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator>(const vec4_t<float>& compare) const
 {
     return
@@ -378,7 +380,7 @@ bool vec4_t<float>::operator>(const vec4_t<float>& compare) const
         v[3] > compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator<=(const vec4_t<float>& compare) const
 {
     return
@@ -388,7 +390,7 @@ bool vec4_t<float>::operator<=(const vec4_t<float>& compare) const
         v[3] <= compare.v[3];
 }
 
-constexpr
+constexpr LS_INLINE
 bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 {
     return
@@ -401,32 +403,32 @@ bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 /*-------------------------------------
     Vector-Scalar Math Operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator=(float input)
 {
     simd = vdupq_n_f32(input);
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator+(float input) const
 {
     return vec4_t<float>{vaddq_f32(simd, vdupq_n_f32(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-(float input) const
 {
     return vec4_t<float>{vsubq_f32(simd, vdupq_n_f32(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator*(float input) const
 {
     return vec4_t<float>{vmulq_f32(simd, vdupq_n_f32(input))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
     const float32x4_t scalar = vdupq_n_f32(input);
@@ -435,28 +437,28 @@ vec4_t<float> vec4_t<float>::operator/(float input) const
     return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(float input)
 {
     simd = vaddq_f32(simd, vdupq_n_f32(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(float input)
 {
     simd = vsubq_f32(simd, vdupq_n_f32(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(float input)
 {
     simd = vmulq_f32(simd, vdupq_n_f32(input));
     return *this;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
     const float32x4_t scalar = vdupq_n_f32(input);
@@ -470,19 +472,19 @@ vec4_t<float>& vec4_t<float>::operator/=(float input)
 /*-------------------------------------
     Non-Member Vector-Scalar operations
 -------------------------------------*/
-inline
+inline LS_INLINE
 vec4_t<float> operator+(float n, const vec4_t<float>& v)
 {
     return v + n;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> operator-(float n, const vec4_t<float>& v)
 {
     return v - n;
 }
 
-inline
+inline LS_INLINE
 vec4_t<float> operator*(float n, const vec4_t<float>& v)
 {
     return v * n;
