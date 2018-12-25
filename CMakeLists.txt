@@ -66,6 +66,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/x86/vecf_utils_impl.h
 
     include/lightsky/math/arm/mat4f_impl.h
+    include/lightsky/math/arm/matf_utils_impl.h
     include/lightsky/math/arm/quatf_utils_impl.h
     include/lightsky/math/arm/scalarf_utils_impl.h
     include/lightsky/math/arm/vec4f_impl.h

@@ -465,6 +465,8 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/matf_utils_impl.h"
+#elif defined(LS_ARCH_ARM)
+    #include "lightsky/math/arm/matf_utils_impl.h"
 #endif
 
 #endif    /* LS_MATH_MAT_UTILS_H */

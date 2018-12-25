@@ -33,7 +33,7 @@ union LS_API alignas(sizeof(float32x4_t)) vec4_t<float>
 
     constexpr vec4_t(const float32x4_t n);
 
-    constexpr vec4_t(float n);
+    vec4_t(float n);
 
     vec4_t(const vec4_t<float>& input) = default;
 
@@ -134,14 +134,22 @@ constexpr LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float
 }
 
 /*
+inline LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW)
+{
+    const float temp[4] = {inX, inY, inZ, inW};
+    simd = vld1q_f32(temp);
+}
+*/
+
+/*
 constexpr LS_INLINE vec4_t<float>::vec4_t() :
     v{0.f}
 {
 }
 */
 
-constexpr LS_INLINE vec4_t<float>::vec4_t(float n) :
-    v{n, n, n, n}
+inline LS_INLINE vec4_t<float>::vec4_t(float n) :
+    simd{vdupq_n_f32(n)}
 {
 }
 

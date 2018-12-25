@@ -100,6 +100,9 @@ int main() {
     std::cout << "GLM Perspective: " << glmMat << std::endl;
     std::cout << "GLM mat4 * vec4: " << glmMat * glmVec << std::endl;
     std::cout << "GLM vec4 * mat4: " << glmVec * glmMat << std::endl;
+    std::cout << "GLM mat4 * mat4: " << glmMat * glmMat << std::endl;
+    std::cout << "GLM transpose(mat4): " << glm::transpose(glmMat) << std::endl;
+    std::cout << "GLM dot(vec4): " << glm::dot(glmVec, glmVec) << std::endl;
 
     std::cout << std::endl;
 
@@ -108,6 +111,9 @@ int main() {
     std::cout << "ls Perspective: " << lsMat << std::endl;
     std::cout << "ls mat4 * vec4: " << lsMat * lsVec << std::endl;
     std::cout << "ls vec4 * mat4: " << lsVec * lsMat << std::endl;
+    std::cout << "ls mat4 * mat4: " << lsMat * lsMat << std::endl;
+    std::cout << "ls transpose(mat4): " << ls::math::transpose(lsMat) << std::endl;
+    std::cout << "ls dot(vec4): " << ls::math::dot(lsVec, lsVec) << std::endl;
 
     std::cout << std::endl;
 
