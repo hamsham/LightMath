@@ -7,7 +7,7 @@ namespace math {
 
 
 /*-------------------------------------
-    Matrix-Matrix Math Operations (Declared in the 4D Vector header)
+    Matrix-Matrix Math Operations
 -------------------------------------*/
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
