@@ -88,10 +88,7 @@ inline LS_INLINE float clamp(float n, float minVal, float maxVal) noexcept
 -------------------------------------*/
 inline LS_INLINE float floor(float n) noexcept
 {
-    const __m128 f = _mm_set_ss(n);
-    const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
-    const __m128 r = _mm_sub_ps(t, _mm_and_ps(_mm_cmplt_ps(f, t), _mm_set_ss(1.f)));
-    return _mm_cvtss_f32(r);
+    return _mm_cvtss_f32(_mm_floor_ps(_mm_set1_ps(n)));
 }
 
 
@@ -101,10 +98,7 @@ inline LS_INLINE float floor(float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float ceil(float n) noexcept
 {
-    const __m128 f = _mm_add_ss(_mm_set_ss(n), _mm_set_ss(1.f));
-    const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
-    const __m128 r = _mm_sub_ps(t, _mm_and_ps(_mm_cmplt_ps(f, t), _mm_set_ss(1.f)));
-    return _mm_cvtss_f32(r);
+    return _mm_cvtss_f32(_mm_ceil_ps(_mm_set1_ps(n)));
 }
 
 
@@ -114,10 +108,7 @@ inline LS_INLINE float ceil(float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float round(float n) noexcept
 {
-    const __m128 f = _mm_add_ss(_mm_set_ss(n), _mm_set_ss(0.5f));
-    const __m128 t = _mm_cvtepi32_ps(_mm_cvttps_epi32(f)); // truncate fraction bits
-    const __m128 r = _mm_sub_ps(t, _mm_and_ps(_mm_cmplt_ps(f, t), _mm_set_ss(1.f)));
-    return _mm_cvtss_f32(r);
+    return _mm_cvtss_f32(_mm_round_ps(_mm_set1_ps(n), _MM_FROUND_TO_NEAREST_INT));
 }
 
 
