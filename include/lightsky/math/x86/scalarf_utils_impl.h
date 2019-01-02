@@ -1,6 +1,5 @@
 
-#include <emmintrin.h> // SSE2
-#include <xmmintrin.h> // SSE
+#include <immintrin.h> // SSE3
 
 namespace ls
 {

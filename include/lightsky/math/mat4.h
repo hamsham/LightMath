@@ -44,9 +44,9 @@ struct LS_API alignas(sizeof(vec4_t<num_t>)) mat4_t {
     constexpr mat4_t() = default;
     constexpr mat4_t(num_t);
     constexpr mat4_t(const mat3_t<num_t>&);
-    constexpr mat4_t(const mat4_t<num_t>&) = default;
+    constexpr mat4_t(const mat4_t<num_t>&);
     constexpr mat4_t(mat3_t<num_t>&&);
-    constexpr mat4_t(mat4_t<num_t>&&) = default;
+    constexpr mat4_t(mat4_t<num_t>&&);
     constexpr mat4_t(
         const vec4_t<num_t>& x,
         const vec4_t<num_t>& y,
@@ -75,9 +75,9 @@ struct LS_API alignas(sizeof(vec4_t<num_t>)) mat4_t {
     constexpr mat4_t operator+(const mat4_t<num_t>&) const;
     constexpr mat4_t operator-(const mat4_t<num_t>&) const;
     constexpr mat4_t operator-() const;
-    constexpr mat4_t operator*(const mat4_t<num_t>&) const;
-    mat4_t& operator=(const mat4_t<num_t>&) = default;
-    mat4_t& operator=(mat4_t<num_t>&&) = default;
+    inline mat4_t operator*(const mat4_t<num_t>&) const;
+    mat4_t& operator=(const mat4_t<num_t>&);
+    mat4_t& operator=(mat4_t<num_t>&&);
     mat4_t& operator+=(const mat4_t<num_t>&);
     mat4_t& operator-=(const mat4_t<num_t>&);
     mat4_t& operator*=(const mat4_t<num_t>&);

@@ -12,37 +12,41 @@ namespace math {
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
 {
-    const __m128 self[4] = {
-        this->m[0].simd,
-        this->m[1].simd,
-        this->m[2].simd,
-        this->m[3].simd
-    };
-
-    // transpose, then multiply the matrices
-    const __m128 t0 = _mm_unpacklo_ps(n.m[0].simd, n.m[1].simd);
-    const __m128 t1 = _mm_unpacklo_ps(n.m[2].simd, n.m[3].simd);
-    const __m128 t2 = _mm_unpackhi_ps(n.m[0].simd, n.m[1].simd);
-    const __m128 t3 = _mm_unpackhi_ps(n.m[2].simd, n.m[3].simd);
-
-    const __m128 t[4] = {
-        _mm_movelh_ps(t0, t1),
-        _mm_movehl_ps(t1, t0),
-        _mm_movelh_ps(t2, t3),
-        _mm_movehl_ps(t3, t2)
-    };
+    // transpose *this, then perform the multiplication
+    const __m128 trn0 = _mm_unpacklo_ps(this->m[0].simd, this->m[1].simd);
+    const __m128 trn1 = _mm_unpacklo_ps(this->m[2].simd, this->m[3].simd);
+    const __m128 trn2 = _mm_unpackhi_ps(this->m[0].simd, this->m[1].simd);
+    const __m128 trn3 = _mm_unpackhi_ps(this->m[2].simd, this->m[3].simd);
+    const __m128 row0 = _mm_movelh_ps(trn0, trn1);
+    const __m128 row1 = _mm_movehl_ps(trn1, trn0);
+    const __m128 row2 = _mm_movelh_ps(trn2, trn3);
+    const __m128 row3 = _mm_movehl_ps(trn3, trn2);
 
     mat4_t<float> ret;
 
     for (unsigned i = 0; i < 4; ++i)
     {
-        const __m128 ti = t[i];
-        const __m128 row0(_mm_mul_ps(self[0], _mm_shuffle_ps(ti, ti, 0x00)));
-        const __m128 row1(_mm_mul_ps(self[1], _mm_shuffle_ps(ti, ti, 0x55)));
-        const __m128 row2(_mm_mul_ps(self[2], _mm_shuffle_ps(ti, ti, 0xAA)));
-        const __m128 row3(_mm_mul_ps(self[3], _mm_shuffle_ps(ti, ti, 0xFF)));
+        // multiply all rows, then sum them
+        const __m128 s = n.m[i].simd;
 
-        ret.m[i].simd = _mm_add_ps(row0, _mm_add_ps(row1, _mm_add_ps(row2, row3)));
+        const __m128 mul0 = _mm_mul_ps(s, row0);
+        const __m128 mul1 = _mm_mul_ps(s, row1);
+        const __m128 mul2 = _mm_mul_ps(s, row2);
+        const __m128 mul3 = _mm_mul_ps(s, row3);
+
+        // transpose the rows into columns
+        const __m128 col0 = _mm_unpacklo_ps(mul0, mul1);
+        const __m128 col1 = _mm_unpacklo_ps(mul2, mul3);
+        const __m128 col2 = _mm_unpackhi_ps(mul0, mul1);
+        const __m128 col3 = _mm_unpackhi_ps(mul2, mul3);
+
+        // sum the columns
+        const __m128 add0 = _mm_movelh_ps(col0, col1);
+        const __m128 add1 = _mm_movehl_ps(col1, col0);
+        const __m128 add2 = _mm_movelh_ps(col2, col3);
+        const __m128 add3 = _mm_movehl_ps(col3, col2);
+
+        ret[i].simd = _mm_add_ps(_mm_add_ps(_mm_add_ps(add0, add1), add2), add3);
     }
 
     return ret;
@@ -53,35 +57,39 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
 template <>
 inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n)
 {
-    const __m128 self[4] = {
-        this->m[0].simd,
-        this->m[1].simd,
-        this->m[2].simd,
-        this->m[3].simd
-    };
-
-    // transpose, then multiply the matrices
-    const __m128 t0 = _mm_unpacklo_ps(n.m[0].simd, n.m[1].simd);
-    const __m128 t1 = _mm_unpacklo_ps(n.m[2].simd, n.m[3].simd);
-    const __m128 t2 = _mm_unpackhi_ps(n.m[0].simd, n.m[1].simd);
-    const __m128 t3 = _mm_unpackhi_ps(n.m[2].simd, n.m[3].simd);
-
-    const __m128 t[4] = {
-        _mm_movelh_ps(t0, t1),
-        _mm_movehl_ps(t1, t0),
-        _mm_movelh_ps(t2, t3),
-        _mm_movehl_ps(t3, t2)
-    };
+    // transpose *this, then perform the multiplication
+    const __m128 trn0 = _mm_unpacklo_ps(this->m[0].simd, this->m[1].simd);
+    const __m128 trn1 = _mm_unpacklo_ps(this->m[2].simd, this->m[3].simd);
+    const __m128 trn2 = _mm_unpackhi_ps(this->m[0].simd, this->m[1].simd);
+    const __m128 trn3 = _mm_unpackhi_ps(this->m[2].simd, this->m[3].simd);
+    const __m128 row0 = _mm_movelh_ps(trn0, trn1);
+    const __m128 row1 = _mm_movehl_ps(trn1, trn0);
+    const __m128 row2 = _mm_movelh_ps(trn2, trn3);
+    const __m128 row3 = _mm_movehl_ps(trn3, trn2);
 
     for (unsigned i = 0; i < 4; ++i)
     {
-        const __m128 ti = t[i];
-        const __m128 row0(_mm_mul_ps(self[0], _mm_shuffle_ps(ti, ti, 0x00)));
-        const __m128 row1(_mm_mul_ps(self[1], _mm_shuffle_ps(ti, ti, 0x55)));
-        const __m128 row2(_mm_mul_ps(self[2], _mm_shuffle_ps(ti, ti, 0xAA)));
-        const __m128 row3(_mm_mul_ps(self[3], _mm_shuffle_ps(ti, ti, 0xFF)));
+        // multiply all rows, then sum them
+        const __m128 s = n.m[i].simd;
 
-        this->m[i].simd = _mm_add_ps(row0, _mm_add_ps(row1, _mm_add_ps(row2, row3)));
+        const __m128 mul0 = _mm_mul_ps(s, row0);
+        const __m128 mul1 = _mm_mul_ps(s, row1);
+        const __m128 mul2 = _mm_mul_ps(s, row2);
+        const __m128 mul3 = _mm_mul_ps(s, row3);
+
+        // transpose the rows into columns
+        const __m128 col0 = _mm_unpacklo_ps(mul0, mul1);
+        const __m128 col1 = _mm_unpacklo_ps(mul2, mul3);
+        const __m128 col2 = _mm_unpackhi_ps(mul0, mul1);
+        const __m128 col3 = _mm_unpackhi_ps(mul2, mul3);
+
+        // sum the columns
+        const __m128 add0 = _mm_movelh_ps(col0, col1);
+        const __m128 add1 = _mm_movehl_ps(col1, col0);
+        const __m128 add2 = _mm_movelh_ps(col2, col3);
+        const __m128 add3 = _mm_movehl_ps(col3, col2);
+
+        this->m[i].simd = _mm_add_ps(_mm_add_ps(_mm_add_ps(add0, add1), add2), add3);
     }
 
     return *this;
@@ -95,10 +103,10 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
-    __m128 row0(_mm_mul_ps(m[0].simd, _mm_set1_ps(v.v[0])));
-    __m128 row1(_mm_mul_ps(m[1].simd, _mm_set1_ps(v.v[1])));
-    __m128 row2(_mm_mul_ps(m[2].simd, _mm_set1_ps(v.v[2])));
-    __m128 row3(_mm_mul_ps(m[3].simd, _mm_set1_ps(v.v[3])));
+    const __m128 row0(_mm_mul_ps(m[0].simd, _mm_shuffle_ps(v.simd, v.simd, 0x00)));
+    const __m128 row1(_mm_mul_ps(m[1].simd, _mm_shuffle_ps(v.simd, v.simd, 0x55)));
+    const __m128 row2(_mm_mul_ps(m[2].simd, _mm_shuffle_ps(v.simd, v.simd, 0xAA)));
+    const __m128 row3(_mm_mul_ps(m[3].simd, _mm_shuffle_ps(v.simd, v.simd, 0xFF)));
 
     math::vec4_t<float> ret{row0};
     ret.simd = _mm_add_ps(ret.simd, row1);
@@ -122,8 +130,6 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
     __m128 row3(_mm_mul_ps(s, m.m[3].simd));
 
     // transpose, then add
-    //_MM_TRANSPOSE4_PS(row0, row1, row2, row3);
-
     const __m128 t0 = _mm_unpacklo_ps(row0, row1);
     const __m128 t1 = _mm_unpacklo_ps(row2, row3);
     const __m128 t2 = _mm_unpackhi_ps(row0, row1);
