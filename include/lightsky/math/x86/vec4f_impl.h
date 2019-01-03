@@ -176,139 +176,98 @@ template <>
 template <>
 inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
-    //return vec4_t<float>{_mm_cvtpu8_ps(*reinterpret_cast<const __m64*>(v))};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
+    const __m128i mask = _mm_set_epi32(0, 0, 0, 0xFFFFFFFF);
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu8_epi32(_mm_maskload_epi32(reinterpret_cast<const int32_t*>(v), mask)))};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
 {
-    /*
-    union alignas(sizeof(__m128i))
-    {
-        int32_t vec[4];
-        __m128i simd;
-    } values{{v[0], v[1], v[2], v[3]}};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
-    */
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_set_epi32(v[3], v[2], v[1], v[0]))};
+    const __m128i mask = _mm_set_epi32(0, 0, 0, 0xFFFFFFFF);
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepi8_epi32(_mm_maskload_epi32(reinterpret_cast<const int32_t*>(v), mask)))};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<uint16_t>::operator vec4_t<float>() const
 {
-    union alignas(sizeof(__m128i))
-    {
-        uint32_t vec[4];
-        __m128i simd;
-    } values{{v[0], v[1], v[2], v[3]}};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v))))};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<int16_t>::operator vec4_t<float>() const
 {
-    union alignas(sizeof(__m128i))
-    {
-        int32_t vec[4];
-        __m128i simd;
-    } values{{v[0], v[1], v[2], v[3]}};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(&values.simd))};
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepi16_epi32(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v))))};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
 {
-    union alignas(sizeof(__m128i))
-    {
-        const uint32_t* vec;
-        const __m128i* simd;
-    } values{v};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(values.simd))};
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
 {
-    union alignas(sizeof(__m128i))
-    {
-        const int32_t* vec;
-        const __m128i* simd;
-    } values{v};
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_load_si128(values.simd))};
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
 }
 
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
+    const __m128i data = _mm_cvtps_epi32(simd);
+    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, 8, 4, 0);
+
     union
     {
-        const __m128i simd;
-        const uint32_t vec[4];
-    } data{_mm_cvtps_epi32(simd)};
-
-    return vec4_t<uint8_t>{
-        (uint8_t)data.vec[0],
-        (uint8_t)data.vec[1],
-        (uint8_t)data.vec[2],
-        (uint8_t)data.vec[3]
-    };
+        const int32_t i;
+        const vec4_t<uint8_t> v;
+    } ret{_mm_cvtsi128_si32(_mm_shuffle_epi8(data, perms))};
+    return ret.v;
 }
 
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
 {
+    const __m128i data = _mm_cvtps_epi32(simd);
+    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, 8, 4, 0);
+
     union
     {
-        const __m128i simd;
-        const uint32_t vec[4];
-    } data{_mm_cvtps_epi32(simd)};
-
-    return vec4_t<int8_t>{
-        (int8_t)data.vec[0],
-        (int8_t)data.vec[1],
-        (int8_t)data.vec[2],
-        (int8_t)data.vec[3]
-    };
+        const int32_t i;
+        const vec4_t<int8_t> v;
+    } ret{_mm_cvtsi128_si32(_mm_shuffle_epi8(data, perms))};
+    return ret.v;
 }
 
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 {
+    const __m128i data = _mm_packs_epi32(_mm_cvtps_epi32(simd), _mm_setzero_si128());
+
     union
     {
-        const __m128i simd;
-        const uint32_t vec[4];
-    } data{_mm_cvtps_epi32(simd)};
-
-    return vec4_t<uint16_t>{
-        (uint16_t)data.vec[0],
-        (uint16_t)data.vec[1],
-        (uint16_t)data.vec[2],
-        (uint16_t)data.vec[3]
-    };
+        const int64_t i;
+        const vec4_t<uint16_t> v;
+    } ret{_mm_cvtsi128_si64(data)};
+    return ret.v;
 }
 
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
 {
+    const __m128i data = _mm_packs_epi32(_mm_cvtps_epi32(simd), _mm_setzero_si128());
+
     union
     {
-        const __m128i simd;
-        const uint32_t vec[4];
-    } data{_mm_cvtps_epi32(simd)};
-
-    return vec4_t<int16_t>{
-        (int16_t)data.vec[0],
-        (int16_t)data.vec[1],
-        (int16_t)data.vec[2],
-        (int16_t)data.vec[3]
-    };
+        const int64_t i;
+        const vec4_t<int16_t> v;
+    } ret{_mm_cvtsi128_si64(data)};
+    return ret.v;
 }
 
 template <>
