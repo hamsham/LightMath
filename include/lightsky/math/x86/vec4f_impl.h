@@ -176,16 +176,24 @@ template <>
 template <>
 inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
+<<<<<<< HEAD
     const __m128i mask = _mm_set_epi32(0, 0, 0, 0xFFFFFFFF);
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu8_epi32(_mm_maskload_epi32(reinterpret_cast<const int32_t*>(v), mask)))};
+=======
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu8_epi32(_mm_set1_epi32(*reinterpret_cast<const uint32_t*>(v))))};
+>>>>>>> 89ac773576668ac58f678b8f6c4944c151d4e179
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
 {
+<<<<<<< HEAD
     const __m128i mask = _mm_set_epi32(0, 0, 0, 0xFFFFFFFF);
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepi8_epi32(_mm_maskload_epi32(reinterpret_cast<const int32_t*>(v), mask)))};
+=======
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepi8_epi32(_mm_set1_epi32(*reinterpret_cast<const int32_t*>(v))))};
+>>>>>>> 89ac773576668ac58f678b8f6c4944c151d4e179
 }
 
 template <>
