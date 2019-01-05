@@ -7,6 +7,13 @@ project(ls_math_tests CXX)
 
 
 # -------------------------------------
+# 3rd-party libraries
+# -------------------------------------
+include(glmConfig.cmake)
+
+
+
+# -------------------------------------
 # Building and Linking Targets
 # -------------------------------------
 function(LS_MATH_ADD_TARGET target sources)
