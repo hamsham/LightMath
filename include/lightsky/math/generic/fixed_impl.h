@@ -280,7 +280,7 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
     // simply make use of all available bits in a 64-bit number, then remove
     // any excess bits.
     return sizeof(fixed_base_t) > sizeof(int32_t)
-        ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> ls::math::IsSigned<fixed_base_t>::value}
+        ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value}
         : fixed_t{(fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits))};
 }
 
@@ -443,7 +443,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
 {
     if (sizeof(fixed_base_t) > sizeof(int32_t))
     {
-        number = ((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> ls::math::IsSigned<fixed_base_t>::value;
+        number = ((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value;
     }
     else
     {
