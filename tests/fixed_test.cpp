@@ -4,7 +4,7 @@
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec3.h"
 
-#define FixedType ls::math::medp_t
+#define FixedType ls::math::ulong_lowp_t
 
 
 
