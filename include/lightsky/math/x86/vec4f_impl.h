@@ -253,11 +253,20 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 {
     const __m128i data = _mm_packs_epi32(_mm_cvtps_epi32(simd), _mm_setzero_si128());
 
-    union
-    {
-        const int64_t i;
-        const vec4_t<uint16_t> v;
-    } ret{_mm_cvtsi128_si64(data)};
+    // Microsoft's MSVC uses _mm_cvtsi128_si64x instead of _mm_cvtsi128_si64
+    #ifdef LS_COMPILER_MSC
+        union
+            {
+                const int64_t i;
+                const vec4_t<uint16_t> v;
+            } ret{_mm_cvtsi128_si64x(data)};
+    #else
+        union
+        {
+            const int64_t i;
+            const vec4_t<uint16_t> v;
+        } ret{_mm_cvtsi128_si64(data)};
+    #endif
     return ret.v;
 }
 
@@ -266,11 +275,19 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
 {
     const __m128i data = _mm_packs_epi32(_mm_cvtps_epi32(simd), _mm_setzero_si128());
 
+    #ifdef LS_COMPILER_MSC
+    union
+            {
+                const int64_t i;
+                const vec4_t<int16_t> v;
+            } ret{_mm_cvtsi128_si64x(data)};
+    #else
     union
     {
         const int64_t i;
         const vec4_t<int16_t> v;
     } ret{_mm_cvtsi128_si64(data)};
+    #endif
     return ret.v;
 }
 
