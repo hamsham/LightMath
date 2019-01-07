@@ -183,7 +183,7 @@ class LS_API fixed_t final {
 template <class fixed_type>
 constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename fixed_type::base_type n)
 {
-    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{{n << fixed_type::fraction_digits}};
+    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n << fixed_type::fraction_digits};
 }
 
 
@@ -217,13 +217,13 @@ LS_DECLARE_CLASS_TYPE(ulong_medp_t, fixed_t, uint64_t, 32); // 32.32
 LS_DECLARE_CLASS_TYPE(ulong_highp_t, fixed_t, uint64_t, 48); // 16.48
 */
 
-typedef fixed_t<int32_t, 8> lowp_t; // 23.8 (-1 for the sign)
-typedef fixed_t<int32_t, 12> medp_t; // 19.12
-typedef fixed_t<int32_t, 15> highp_t; // 15.16
-typedef fixed_t<int64_t, 15> long_lowp_t; // 48.15
-typedef fixed_t<int64_t, 31> long_medp_t; // 32.31
-typedef fixed_t<int64_t, 47> long_highp_t; // 16.47
-typedef fixed_t<uint32_t, 8> ulowp_t; // 24.8 (-1 for the sign)
+typedef fixed_t<int32_t,  8>  lowp_t; // 23.8 (-1 for the sign)
+typedef fixed_t<int32_t,  12> medp_t; // 19.12
+typedef fixed_t<int32_t,  15> highp_t; // 15.16
+typedef fixed_t<int64_t,  15> long_lowp_t; // 48.15
+typedef fixed_t<int64_t,  31> long_medp_t; // 32.31
+typedef fixed_t<int64_t,  47> long_highp_t; // 16.47
+typedef fixed_t<uint32_t, 8>  ulowp_t; // 24.8 (-1 for the sign)
 typedef fixed_t<uint32_t, 16> umedp_t; // 16.16
 typedef fixed_t<uint32_t, 24> uhighp_t; // 8.24
 typedef fixed_t<uint64_t, 16> ulong_lowp_t; // 48.16

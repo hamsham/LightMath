@@ -75,7 +75,7 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_base_t f) :
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(float f) :
-    number{(fixed_base_t)(f * float(fixed_base_t{1} << num_frac_digits))}
+    number{(fixed_base_t)(f * (float)(fixed_base_t{1} << num_frac_digits))}
 {
 }
 
@@ -87,7 +87,7 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(float f) :
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(double d) :
-    number{(fixed_base_t)(d * double(fixed_base_t{1} << num_frac_digits))}
+    number{(fixed_base_t)(d * (double)(fixed_base_t{1} << num_frac_digits))}
 {
 }
 
@@ -274,7 +274,14 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator*(const fixed_t& f) const
 {
-    return fixed_t{(number * f.number) >> num_frac_digits};
+    // Since 64-bit multiplication will run out of precision, we have two
+    // methods of multiplying. The first will drop a bit from each number to
+    // ensure the result will have enough precision. The second method will
+    // simply make use of all available bits in a 64-bit number, then remove
+    // any excess bits.
+    return sizeof(fixed_base_t) > sizeof(int32_t)
+        ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> 1}
+        : fixed_t{(fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits))};
 }
 
 
@@ -286,7 +293,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
-    return fixed_t{(number << num_frac_digits) / f.number};
+    return fixed_t{(fixed_base_t)(((int64_t)number * ((int64_t)1 << num_frac_digits)) / (int64_t)f.number)};
 }
 
 
@@ -434,7 +441,14 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator*=(const fixed_t& f)
 {
-    number = (number * f.number) >> num_frac_digits;
+    if (sizeof(fixed_base_t) > sizeof(int32_t))
+    {
+        number = ((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> 1;
+    }
+    else
+    {
+        number = (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits));
+    }
     return *this;
 }
 
@@ -447,7 +461,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f)
 {
-    number = (number << num_frac_digits) / f.number;
+    number = (fixed_base_t)(((int64_t)number * ((int64_t)1 << num_frac_digits)) / (int64_t)f.number);
     return *this;
 }
 
@@ -538,7 +552,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::operator float() const
 {
-    return (float)number / (fixed_base_t{1} << num_frac_digits);
+    return (float)number / (float)(fixed_base_t{1} << num_frac_digits);
 }
 
 
@@ -550,7 +564,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::operator double() const
 {
-    return (double)number / (fixed_base_t{1} << num_frac_digits);
+    return (double)number / (double)(fixed_base_t{1} << num_frac_digits);
 }
 
 
