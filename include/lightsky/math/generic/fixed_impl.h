@@ -638,11 +638,11 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
     rcp
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE fixed_t <fixed_base_t, num_frac_digits> rcp(const fixed_t <fixed_base_t, num_frac_digits>& num) noexcept
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> rcp(const fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
     return num.number
-        ? (fixed_t < fixed_base_t, num_frac_digits > {(fixed_base_t)1} / num)
-        : fixed_cast < fixed_t < fixed_base_t, num_frac_digits >> (std::numeric_limits<fixed_base_t>::max());
+        ? (fixed_t<fixed_base_t, num_frac_digits> {(fixed_base_t)1} / num)
+        : fixed_cast<fixed_t<fixed_base_t, num_frac_digits>> (std::numeric_limits<fixed_base_t>::max());
 }
 
 
@@ -651,11 +651,57 @@ constexpr LS_INLINE fixed_t <fixed_base_t, num_frac_digits> rcp(const fixed_t <f
     sign_bit
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE int sign_bit(const fixed_t <fixed_base_t, num_frac_digits>& x) noexcept
+constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     return IsSigned<fixed_base_t>::value
         ? (int)(x.number >> (((sizeof(fixed_base_t) * CHAR_BIT) - 1)) & 0x01)
         : 0;
 }
+
+
+
+/*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    return fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(((uint_fast64_t)0xFFFFFFFFFFFFFFFF >> num_frac_digits) << num_frac_digits)};
+}
+
+
+
+/*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    return floor<fixed_base_t, num_frac_digits>(fixed_t<fixed_base_t, num_frac_digits>{x.number + (0x01 << num_frac_digits)});
+    /*
+    return fixed_t<fixed_base_t, num_frac_digits>{
+        ((x.number >> num_frac_digits) << num_frac_digits) + (((x.number ^ (x.number >> num_frac_digits) << num_frac_digits) > 0) << num_frac_digits)
+    };
+    */
+}
+
+
+
+/*-------------------------------------
+    round
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    /*
+    return fixed_t<fixed_base_t, num_frac_digits>{
+        ((x.number >> num_frac_digits) << num_frac_digits) + (((x.number ^ (x.number >> num_frac_digits) << num_frac_digits) > 0) << num_frac_digits)
+    };
+    */
+    return floor<fixed_base_t, num_frac_digits>(x + (fixed_cast<fixed_t<fixed_base_t, num_frac_digits>>(1) / fixed_cast<fixed_t<fixed_base_t, num_frac_digits>>(18)));
+}
+
+
+
 } //end math namespace
 } //end ls namespace

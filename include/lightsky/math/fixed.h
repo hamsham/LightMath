@@ -245,6 +245,49 @@ struct IsFloat<fixed_t<fixed_base_t, num_frac_digits>> : public utils::TrueType<
 
 
 
+/*-----------------------------------------------------------------------------
+    Fixed-Point Utility Functions
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+    rcp
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t <fixed_base_t, num_frac_digits> rcp(const fixed_t<fixed_base_t, num_frac_digits>& num) noexcept;
+
+
+
+/*-------------------------------------
+    sign_bit
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
+    round
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
 }//end math namespace
 }//end ls namespace
 

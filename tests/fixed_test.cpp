@@ -4,7 +4,7 @@
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec3.h"
 
-#define FixedType ls::math::ulong_lowp_t
+#define FixedType ls::math::long_lowp_t
 
 
 
@@ -40,8 +40,19 @@ int main()
     ls::math::vec3_t<FixedType> vx = (ls::math::vec3_t<FixedType>)v;
     for (unsigned i = 0; i < 3; ++i)
     {
-        std::cout << v[i] << " == " << vx[i] << " && " << vx[i] << std::endl;
+        std::cout << v[i] << " == " << (float)vx[i] << " && " << vx[i] << std::endl;
     }
+
+    std::cout << '\n';
+
+    const FixedType rounding = ls::math::fixed_cast<FixedType>(5) / ls::math::fixed_cast<FixedType>(3);
+    std::cout << rounding << std::endl;
+    std::cout << "Floor: " << vx[0]+rounding << " == " << ls::math::floor(vx[0]+rounding) << std::endl;
+    std::cout << "Ceil:  " << vx[0]+rounding << " == " << ls::math::ceil(vx[0]+rounding) << std::endl;
+    std::cout << "Round: " << vx[0]+rounding << " == " << ls::math::round(vx[0]+rounding) << std::endl;
+
+    FixedType five = FixedType{(FixedType::base_type)(1 << FixedType::fraction_digits) - 1} / ls::math::fixed_cast<FixedType>(1);
+    std::cout << five << ' ' << std::hex  << five.number << std::endl;
 
     return 0;
 }
