@@ -666,7 +666,7 @@ constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(((uint_fast64_t)0xFFFFFFFFFFFFFFFF >> num_frac_digits) << num_frac_digits)};
+    return fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(~0ull << num_frac_digits)};
 }
 
 
@@ -678,11 +678,6 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     return floor<fixed_base_t, num_frac_digits>(fixed_t<fixed_base_t, num_frac_digits>{x.number + (0x01 << num_frac_digits)});
-    /*
-    return fixed_t<fixed_base_t, num_frac_digits>{
-        ((x.number >> num_frac_digits) << num_frac_digits) + (((x.number ^ (x.number >> num_frac_digits) << num_frac_digits) > 0) << num_frac_digits)
-    };
-    */
 }
 
 
@@ -693,12 +688,14 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fi
 template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    /*
-    return fixed_t<fixed_base_t, num_frac_digits>{
-        ((x.number >> num_frac_digits) << num_frac_digits) + (((x.number ^ (x.number >> num_frac_digits) << num_frac_digits) > 0) << num_frac_digits)
-    };
-    */
-    return floor<fixed_base_t, num_frac_digits>(x + (fixed_cast<fixed_t<fixed_base_t, num_frac_digits>>(1) / fixed_cast<fixed_t<fixed_base_t, num_frac_digits>>(18)));
+    constexpr fixed_base_t pointFive = (fixed_base_t)(5 * (0x01 << (num_frac_digits-2)));
+    constexpr fixed_base_t one = (fixed_base_t)(1 << num_frac_digits);
+    const fixed_base_t standard = x.number + pointFive;
+    const fixed_base_t rounded = x.number + one;
+
+    return ((standard >> num_frac_digits) <= (rounded >> num_frac_digits))
+    ? floor<fixed_base_t, num_frac_digits>(x)
+    : ceil<fixed_base_t, num_frac_digits>(x);
 }
 
 

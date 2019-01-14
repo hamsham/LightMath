@@ -11,7 +11,7 @@
 inline std::ostream& operator << (std::ostream& os, const FixedType& fx)
 {
     const FixedType::base_type n = fx.number >> FixedType::fraction_digits;
-    const FixedType::base_type d = fx.number ^ (n << FixedType::fraction_digits);
+    const FixedType::base_type d = fx.number & (FixedType::base_type)(~0ull << FixedType::fraction_digits);
     return os << n << '.' << d;
 }
 
@@ -45,7 +45,7 @@ int main()
 
     std::cout << '\n';
 
-    const FixedType rounding = ls::math::fixed_cast<FixedType>(5) / ls::math::fixed_cast<FixedType>(3);
+    const FixedType rounding = ls::math::fixed_cast<FixedType>(5) / ls::math::fixed_cast<FixedType>(2);
     std::cout << rounding << std::endl;
     std::cout << "Floor: " << vx[0]+rounding << " == " << ls::math::floor(vx[0]+rounding) << std::endl;
     std::cout << "Ceil:  " << vx[0]+rounding << " == " << ls::math::ceil(vx[0]+rounding) << std::endl;
