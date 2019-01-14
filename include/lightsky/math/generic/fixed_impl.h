@@ -293,7 +293,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
-    return fixed_t{(fixed_base_t)(((int64_t)number * ((int64_t)1 << num_frac_digits)) / (int64_t)f.number)};
+    return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
 }
 
 
@@ -461,7 +461,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f)
 {
-    number = (fixed_base_t)(((int64_t)number * ((int64_t)1 << num_frac_digits)) / (int64_t)f.number);
+    number = (fixed_base_t)(((int64_t)number << num_frac_digits) / (int64_t)f.number);
     return *this;
 }
 
