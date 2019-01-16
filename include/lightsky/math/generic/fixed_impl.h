@@ -75,7 +75,7 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_base_t f) :
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(float f) :
-    number{(fixed_base_t)(f * (float)(fixed_base_t{1} << num_frac_digits))}
+    number{(fixed_base_t)(f * (float)((fixed_base_t)1 << num_frac_digits))}
 {
 }
 
@@ -294,6 +294,7 @@ constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
     return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
+    //return fixed_t{(number / f.number) + (fixed_base_t)(((number % f.number) << 1) >= f.number)};
 }
 
 
@@ -677,7 +678,7 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<f
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return floor<fixed_base_t, num_frac_digits>(fixed_t<fixed_base_t, num_frac_digits>{x.number + (0x01 << num_frac_digits)});
+    return floor<fixed_base_t, num_frac_digits>(fixed_t<fixed_base_t, num_frac_digits>{x.number + (fixed_base_t)(0x01ull << num_frac_digits)});
 }
 
 
@@ -688,8 +689,8 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fi
 template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    constexpr fixed_base_t pointFive = (fixed_base_t)(5 * (0x01 << (num_frac_digits-2)));
-    constexpr fixed_base_t one = (fixed_base_t)(1 << num_frac_digits);
+    constexpr fixed_base_t pointFive = (fixed_base_t)(0x05ull * (1ull << (num_frac_digits-1ull)));
+    constexpr fixed_base_t one = (fixed_base_t)(1ull << num_frac_digits);
     const fixed_base_t standard = x.number + pointFive;
     const fixed_base_t rounded = x.number + one;
 

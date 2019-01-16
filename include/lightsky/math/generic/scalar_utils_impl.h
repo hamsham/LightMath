@@ -623,7 +623,7 @@ constexpr LS_INLINE scalar_t math::sum(const scalar_t& num) noexcept
 template<typename scalar_t, typename... scalars_t>
 constexpr scalar_t math::sum(const scalar_t& num, const scalars_t& ... nums) noexcept
 {
-    return num + math::sum(nums...);
+    return num + math::sum<scalars_t...>(nums...);
 }
 
 
@@ -634,7 +634,7 @@ constexpr scalar_t math::sum(const scalar_t& num, const scalars_t& ... nums) noe
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::sum_inv(const scalar_t& num) noexcept
 {
-    return scalar_t{1} / num;
+    return math::rcp<scalar_t>(num);
 }
 
 
@@ -645,7 +645,7 @@ constexpr LS_INLINE scalar_t math::sum_inv(const scalar_t& num) noexcept
 template<typename scalar_t, typename... scalars_t>
 constexpr LS_INLINE scalar_t math::sum_inv(const scalar_t& num, const scalars_t& ... nums) noexcept
 {
-    return scalar_t{1} / (num + math::sum(nums...));
+    return math::rcp<scalar_t>(num + math::sum<scalars_t...>(nums...));
 }
 
 
