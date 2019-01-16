@@ -5,7 +5,6 @@
 #include <climits> // CHAR_BIT
 #include <limits> // std::numeric_limits
 #include <cstdint> // fixed-width types
-#include <utility> // std::move()
 
 #include "lightsky/setup/Api.h"
 #include "lightsky/setup/Macros.h"
@@ -72,53 +71,23 @@ class LS_API fixed_t final {
     constexpr fixed_t(fixed_t&& f);
 
     /**
-     *  @brief Numeric Constructor
-     *
-     *  Constructs a fixed-point number using a plain data type.
-     *
-     *  @param
-     *  An integral type that will be used to construct this object's
-     *  internal data.
-     *
-     *
-     */
-    explicit constexpr fixed_t(fixed_base_t f);
-
-    /**
-     *  @brief Numeric Constructor
-     *
-     *  Constructs a fixed-point number using a plain data type.
-     *
-     *  @param
-     *  An integral type that will be used to construct this object's
-     *  internal data.
-     *
-     *
-     */
-    template <typename integral_t>
-    constexpr fixed_t(typename ls::utils::EnableIf<ls::math::IsIntegral<integral_t>::value, integral_t>::type f);
-
-    /**
      *  @brief Constructor
      *
-     *  This constructor attempts to create a fixed-point value from a
-     *  floating-point decimal value.
+     *  This constructor attempts to create a fixed-point value from an
+     *  integral or floating-point decimal value.
+     *
+     *  Integral values will be converted directly with no interpretation of
+     *  fractions or decimals. Floating-point values will provide a fractional
+     *  and decimal component.
+     *
+     *  To get a fractional and decimal component from an input integer, use
+     *  the fixed_cast() function.
      *
      *  @param
      *  A single-precision floating point number.
      */
-    explicit constexpr fixed_t(float f);
-
-    /**
-     *  @brief Constructor
-     *
-     *  This constructor attempts to create a fixed-point value from a
-     *  floating-point decimal value using double-precision.
-     *
-     *  @param d
-     *  A double precision floating-point number.
-     */
-    explicit constexpr fixed_t(double d);
+    template<typename numeric_t>
+    constexpr fixed_t(numeric_t f);
 
     /**
      *  @brief Destructor
@@ -126,7 +95,7 @@ class LS_API fixed_t final {
      *  Defaulted in order to allow a fixed-precision type to be used in
      *  constexpr expressions.
      */
-    ~fixed_t() = default;
+    //~fixed_t() = default;
 
     inline fixed_t& operator++();
     inline fixed_t& operator--();
@@ -169,30 +138,18 @@ class LS_API fixed_t final {
     inline fixed_t& operator>>=(int n);
     inline fixed_t& operator<<=(int n);
 
+    #if 0
     explicit constexpr operator float() const;
     explicit constexpr operator double() const;
     constexpr operator fixed_base_t() const;
 
-    inline fixed_t& operator=(float f);
-    inline fixed_t& operator=(double d);
-    inline fixed_t& operator=(fixed_base_t f);
+    template<typename numeric_t>
+    inline fixed_t& operator=(typename ls::utils::EnableIf<ls::math::IsIntegral<numeric_t>::value, numeric_t>::type f);
+
+    template<typename numeric_t>
+    inline fixed_t& operator=(numeric_t f);
+    #endif
 };
-
-
-
-template <class fixed_type>
-constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename fixed_type::base_type n)
-{
-    return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n << fixed_type::fraction_digits};
-}
-
-
-
-template <typename fixed_base_t, unsigned num_frac_digits>
-constexpr fixed_base_t fixed_cast(const fixed_t<fixed_base_t, num_frac_digits>& n)
-{
-    return (fixed_base_t)n;
-}
 
 
 
@@ -232,22 +189,32 @@ typedef fixed_t<uint64_t, 48> ulong_highp_t; // 16.48
 
 
 
-/*-------------------------------------
- * Type Specialization
--------------------------------------*/
-/*
-template <>
-template <typename fixed_base_t, unsigned num_frac_digits>
-struct IsFloat<fixed_t<fixed_base_t, num_frac_digits>> : public utils::TrueType<fixed_t<fixed_base_t, num_frac_digits>>
-{
-};
-*/
-
-
-
 /*-----------------------------------------------------------------------------
     Fixed-Point Utility Functions
 -----------------------------------------------------------------------------*/
+/*-------------------------------------
+    Cast to Fixed-Point Representation
+-------------------------------------*/
+template <class fixed_type, typename numeric_t>
+constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const numeric_t n);
+
+
+/*-------------------------------------
+    Cast to Integer
+-------------------------------------*/
+template <typename integral_type, typename fixed_type>
+constexpr integral_type integer_cast(const fixed_type f);
+
+
+
+/*-------------------------------------
+    Cast to Float
+-------------------------------------*/
+template <typename float_type, class fixed_type>
+constexpr float_type float_cast(const fixed_type f);
+
+
+
 /*-------------------------------------
     rcp
 -------------------------------------*/

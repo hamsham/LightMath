@@ -114,7 +114,7 @@ constexpr LS_INLINE int_t math::ranged_floor(const floating_t n) noexcept
 template<typename floating_t>
 constexpr LS_INLINE floating_t math::ceil(const floating_t n) noexcept
 {
-    return (floating_t)((long long)n + (n >= floating_t{0} ? floating_t{1} : floating_t{0}));
+    return (floating_t)((long long)n + (n >= floating_t{0.f} ? floating_t{1.f} : floating_t{0}));
 }
 
 
@@ -188,7 +188,7 @@ namespace impl
     template<typename scalar_t>
     constexpr LS_INLINE scalar_t smoothstep_impl(const scalar_t t) noexcept
     {
-        return (scalar_t{3} * t * t * t) - (scalar_t{2} * t * t);
+        return (scalar_t{3.f} * t * t * t) - (scalar_t{2.f} * t * t);
     }
 } // math::impl namespace
 } // math namespace
@@ -201,7 +201,7 @@ constexpr LS_INLINE scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x
     return (x <= a)
            ? scalar_t{0}
            : (x >= b)
-             ? scalar_t{1}
+             ? scalar_t{1.f}
              : math::impl::smoothstep_impl<scalar_t>(x - a) / (b - a);
 }
 
@@ -271,7 +271,7 @@ inline scalar_t math::fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::v
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::fast_sqrt(scalar_t input) noexcept
 {
-    return (scalar_t)(1.f / math::fast_inv_sqrt<float>((float)input));
+    return (scalar_t)math::rcp(math::fast_inv_sqrt<float>((float)input));
 }
 
 
@@ -482,7 +482,7 @@ constexpr LS_INLINE bool math::is_pow2(int n) noexcept
 template<typename scalar_t>
 constexpr scalar_t math::factorial(scalar_t x) noexcept
 {
-    return (1 < x) ? x * math::factorial(x - 1) : 1;
+    return (scalar_t{1.f} < x) ? x * math::factorial(x - scalar_t{1.f}) : scalar_t{1.f};
 }
 
 
@@ -497,7 +497,7 @@ namespace impl
     template <typename scalar_t>
     constexpr scalar_t powi_impl(scalar_t p, scalar_t y, scalar_t result) noexcept
     {
-        return (y < scalar_t{1}) ? result : math::impl::powi_impl<scalar_t>(p*p, y >> scalar_t{2}, (y & scalar_t{1}) ? (result*p) : result);
+        return (y < scalar_t{1.f}) ? result : math::impl::powi_impl<scalar_t>(p*p, y >> scalar_t{2.f}, (y & scalar_t{1.f}) ? (result*p) : result);
     }
 } // end impl namespace
 } // end math namespace
@@ -528,7 +528,7 @@ constexpr LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 {
-    x = 1.f + x / 256.f;
+    x = scalar_t{1.f} + x / scalar_t{256.f};
     x *= x;
     x *= x;
     x *= x;
@@ -552,10 +552,10 @@ constexpr LS_INLINE scalar_t math::const_sin(scalar_t x) noexcept
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
-           - (x * x * x * (scalar_t{1} / scalar_t{6}))
-           + (x * x * x * x * x * (scalar_t{1} / scalar_t{120}))
-           - (x * x * x * x * x * x * x * (scalar_t{1} / scalar_t{5040}))
-           + (x * x * x * x * x * x * x * x * x * (scalar_t{1} / scalar_t{362880}));
+           - (x * x * x * (scalar_t{1.f} / scalar_t{6.f}))
+           + (x * x * x * x * x * (scalar_t{1.f} / scalar_t{120.f}))
+           - (x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{5040.f}))
+           + (x * x * x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{362880.f}));
 }
 
 
@@ -568,11 +568,11 @@ constexpr LS_INLINE scalar_t math::const_cos(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
-    return scalar_t{1}
-           - (x * x * (scalar_t{1} / scalar_t{2}))
-           + (x * x * x * x * (scalar_t{1} / scalar_t{24}))
-           - (x * x * x * x * x * x * (scalar_t{1} / scalar_t{720}))
-           + (x * x * x * x * x * x * x * x * (scalar_t{1} / scalar_t{40320}));
+    return scalar_t{1.f}
+           - (x * x * (scalar_t{1.f} / scalar_t{2.f}))
+           + (x * x * x * x * (scalar_t{1.f} / scalar_t{24.f}))
+           - (x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{720.f}))
+           + (x * x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{40320.f}));
 }
 
 
@@ -586,10 +586,10 @@ constexpr LS_INLINE scalar_t math::const_tan(scalar_t x) noexcept
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
-           + (x * x * x * (scalar_t{1} / scalar_t{3}))
-           + (x * x * x * x * x * (scalar_t{2} / scalar_t{15}))
-           + (x * x * x * x * x * x * x * (scalar_t{17} / scalar_t{315}))
-           + (x * x * x * x * x * x * x * x * x * (scalar_t{62} / scalar_t{2835}));
+           + (x * x * x * (scalar_t{1.f} / scalar_t{3.f}))
+           + (x * x * x * x * x * (scalar_t{2.f} / scalar_t{15.f}))
+           + (x * x * x * x * x * x * x * (scalar_t{17.f} / scalar_t{315.f}))
+           + (x * x * x * x * x * x * x * x * x * (scalar_t{62.f} / scalar_t{2835.f}));
 }
 
 
@@ -601,7 +601,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::rcp(const scalar_t& num) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return scalar_t{1} / num;
+    return scalar_t{1.f} / num;
 }
 
 
