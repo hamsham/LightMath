@@ -202,5 +202,15 @@ inline LS_INLINE int sign_bit(float x) noexcept
 
 
 
+/*-------------------------------------
+    abs
+-------------------------------------*/
+inline LS_INLINE float abs(float x) noexcept
+{
+    return _mm_cvtss_f32(_mm_and_ps(_mm_set_ss(x), _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF))));
+}
+
+
+
 } // end math namespace
 } // end ls namespace

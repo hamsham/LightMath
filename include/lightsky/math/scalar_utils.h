@@ -672,6 +672,19 @@ constexpr int sign_bit(typename utils::EnableIf<IsIntegral<data_t>::value, data_
 template <typename data_t>
 constexpr int sign_bit(data_t x) noexcept;
 
+/**
+ * @brief Retrieve the absolute value of a number
+ *
+ * @param x
+ *
+ * @return A number without the sign bit set.
+ */
+template <typename data_t>
+constexpr data_t abs(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+
+template <typename data_t>
+constexpr data_t abs(data_t x) noexcept;
+
 
 
 } // end math namespace
