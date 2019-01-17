@@ -41,21 +41,25 @@ int main()
 
     f *= 4.f;
     fx *= ls::math::fixed_cast<FixedType>(4);
-    std::cout << f << " == " << (float)fx << " && " << fx << '\n' << std::endl;
+    std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     f *= 9876.54321f;
     fx *= FixedType(9875.54321f);
-    std::cout << f << " == " << (float)fx << " && " << fx << '\n' << std::endl;
+    std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     f /= LS_PI;
     fx /= FixedType(LS_PI);
-    std::cout << f << " == " << (float)fx << " && " << fx << '\n' << std::endl;
+    std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     ls::math::vec3 v{LS_PI, LS_E, LS_E};
-    ls::math::vec3_t<FixedType> vx = (ls::math::vec3_t<FixedType>)v;
+    ls::math::vec3_t<FixedType> vx = {
+        ls::math::fixed_cast<FixedType>(v[0]),
+        ls::math::fixed_cast<FixedType>(v[1]),
+        ls::math::fixed_cast<FixedType>(v[2])
+    };
     for (unsigned i = 0; i < 3; ++i)
     {
-        std::cout << v[i] << " == " << (float)vx[i] << " && " << vx[i] << std::endl;
+        std::cout << v[i] << " == " << ls::math::float_cast<float>(vx[i]) << " && " << vx[i] << std::endl;
     }
 
     std::cout << '\n';
