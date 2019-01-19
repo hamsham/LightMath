@@ -283,6 +283,42 @@ vec2_t<N> rcp(const vec2_t<N>& v);
 template <typename N> constexpr
 int sign_bits(const vec2_t<N>& x) noexcept;
 
+/**
+ *  @brief floor
+ *
+ *  Calculate the floating-point floor of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded down to the nearest integer.
+ */
+template <typename N> constexpr
+vec2_t<N> floor(const vec2_t<N>& v);
+
+/**
+ *  @brief ceil
+ *
+ *  Calculate the floating-point ceiling of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded up to the nearest integer.
+ */
+template <typename N> constexpr
+vec2_t<N> ceil(const vec2_t<N>& v);
+
+/**
+ *  @brief round
+ *
+ *  Round all floating-point vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded to the nearest integer.
+ */
+template <typename N> constexpr
+vec2_t<N> round(const vec2_t<N>& v);
+
 
 
 /*-----------------------------------------------------------------------------
@@ -555,6 +591,42 @@ vec3_t<N> rcp(const vec3_t<N>& v);
 template <typename N> constexpr
 int sign_bits(const vec3_t<N>& x) noexcept;
 
+/**
+ *  @brief floor
+ *
+ *  Calculate the floating-point floor of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded down to the nearest integer.
+ */
+template <typename N> constexpr
+vec3_t<N> floor(const vec3_t<N>& v);
+
+/**
+ *  @brief ceil
+ *
+ *  Calculate the floating-point ceiling of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded up to the nearest integer.
+ */
+template <typename N> constexpr
+vec3_t<N> ceil(const vec3_t<N>& v);
+
+/**
+ *  @brief round
+ *
+ *  Round all floating-point vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded to the nearest integer.
+ */
+template <typename N> constexpr
+vec3_t<N> round(const vec3_t<N>& v);
+
 
 
 /*-----------------------------------------------------------------------------
@@ -787,6 +859,42 @@ vec4_t<N> rcp(const vec4_t<N>& v);
  */
 template <typename N> constexpr
 int sign_bits(const vec4_t<N>& x) noexcept;
+
+/**
+ *  @brief floor
+ *
+ *  Calculate the floating-point floor of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded down to the nearest integer.
+ */
+template <typename N> constexpr
+vec4_t<N> floor(const vec4_t<N>& v);
+
+/**
+ *  @brief ceil
+ *
+ *  Calculate the floating-point ceiling of all vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded up to the nearest integer.
+ */
+template <typename N> constexpr
+vec4_t<N> ceil(const vec4_t<N>& v);
+
+/**
+ *  @brief round
+ *
+ *  Round all floating-point vector elements.
+ *
+ *  @param v
+ *
+ *  @return A vector with all elements rounded to the nearest integer.
+ */
+template <typename N> constexpr
+vec4_t<N> round(const vec4_t<N>& v);
 
 
 

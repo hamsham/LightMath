@@ -186,6 +186,39 @@ int math::sign_bits(const vec2_t<N>& x) noexcept
     return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1);
 }
 
+/*-------------------------------------
+    2D floor
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::floor(const vec2_t<num_t>& v) {
+    return vec2_t<num_t> {
+        ls::math::floor(v[0]),
+        ls::math::floor(v[1])
+    };
+}
+
+/*-------------------------------------
+    2D ceil
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::ceil(const vec2_t<num_t>& v) {
+    return vec2_t<num_t> {
+        ls::math::ceil(v[0]),
+        ls::math::ceil(v[1])
+    };
+}
+
+/*-------------------------------------
+    2D round
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::round(const vec2_t<num_t>& v) {
+    return vec2_t<num_t> {
+        ls::math::round(v[0]),
+        ls::math::round(v[1])
+    };
+}
+
 
 
 /*-----------------------------------------------------------------------------
@@ -400,6 +433,42 @@ int math::sign_bits(const vec3_t<N>& x) noexcept
     return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1) | (math::sign_bit(x.v[2]) << 2);
 }
 
+/*-------------------------------------
+    3D floor
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::floor(const vec3_t<num_t>& v) {
+    return vec3_t<num_t> {
+        ls::math::floor(v[0]),
+        ls::math::floor(v[1]),
+        ls::math::floor(v[2])
+    };
+}
+
+/*-------------------------------------
+    3D ceil
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::ceil(const vec3_t<num_t>& v) {
+    return vec3_t<num_t> {
+        ls::math::ceil(v[0]),
+        ls::math::ceil(v[1]),
+        ls::math::ceil(v[2])
+    };
+}
+
+/*-------------------------------------
+    3D round
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::round(const vec3_t<num_t>& v) {
+    return vec3_t<num_t> {
+        ls::math::round(v[0]),
+        ls::math::round(v[1]),
+        ls::math::round(v[2])
+    };
+}
+
 
 
 /*-----------------------------------------------------------------------------
@@ -583,6 +652,45 @@ int math::sign_bits(const vec4_t<N>& x) noexcept
         | (math::sign_bit(x.v[1]) << 1)
         | (math::sign_bit(x.v[2]) << 2)
         | (math::sign_bit(x.v[3]) << 3);
+}
+
+/*-------------------------------------
+    4D floor
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::floor(const vec4_t<num_t>& v) {
+    return vec4_t<num_t> {
+        ls::math::round(v[0]),
+        ls::math::round(v[1]),
+        ls::math::round(v[2]),
+        ls::math::round(v[3])
+    };
+}
+
+/*-------------------------------------
+    4D ceil
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::ceil(const vec4_t<num_t>& v) {
+    return vec4_t<num_t> {
+        ls::math::ceil(v[0]),
+        ls::math::ceil(v[1]),
+        ls::math::ceil(v[2]),
+        ls::math::ceil(v[3])
+    };
+}
+
+/*-------------------------------------
+    4D round
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::round(const vec4_t<num_t>& v) {
+    return vec4_t<num_t> {
+        ls::math::round(v[0]),
+        ls::math::round(v[1]),
+        ls::math::round(v[2]),
+        ls::math::round(v[3])
+    };
 }
 
 

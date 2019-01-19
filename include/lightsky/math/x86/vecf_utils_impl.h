@@ -233,6 +233,30 @@ inline LS_INLINE int sign_bits(const vec4_t<float>& x) noexcept
     return _mm_movemask_ps(x.simd);
 }
 
+/*-------------------------------------
+    4D floor
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> floor(const vec4_t<float>& v)
+{
+    return vec4_t<float> {_mm_floor_ps(v.simd)};
+}
+
+/*-------------------------------------
+    4D ceil
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> ceil(const vec4_t<float>& v)
+{
+    return vec4_t<float> {_mm_ceil_ps(v.simd)};
+}
+
+/*-------------------------------------
+    4D round
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
+{
+    return vec4_t<float> {_mm_round_ps(v.simd, _MM_FROUND_TO_NEAREST_INT)};
+}
+
 
 } // end math namespace
 } // end ls namespace
