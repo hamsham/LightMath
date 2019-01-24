@@ -138,11 +138,11 @@ class LS_API fixed_t final {
     inline fixed_t& operator>>=(int n);
     inline fixed_t& operator<<=(int n);
 
-    #if 0
     explicit constexpr operator float() const;
     explicit constexpr operator double() const;
     constexpr operator fixed_base_t() const;
 
+    #if 0
     template<typename numeric_t>
     inline fixed_t& operator=(typename ls::utils::EnableIf<ls::math::IsIntegral<numeric_t>::value, numeric_t>::type f);
 

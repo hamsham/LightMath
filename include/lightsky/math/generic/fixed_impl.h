@@ -510,7 +510,6 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
 
 
 
-#if 0
 /*
  *  Single-Precision floating-point cast.
  */
@@ -518,7 +517,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::operator float() const
 {
-    return (float)number / (float)(1ull << num_frac_digits);
+    return ls::math::float_cast<float>(*this);
 }
 
 
@@ -530,7 +529,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::operator double() const
 {
-    return (double)number / (double)(1ull << num_frac_digits);
+    return ls::math::float_cast<double>(*this);
 }
 
 
@@ -542,11 +541,12 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::operator fixed_base_t() const
 {
-    return (fixed_base_t)((unsigned long long)number >> num_frac_digits);
+    return ls::math::integer_cast<fixed_base_t>(*this);
 }
 
 
 
+#if 0
 /*
  *  Integral Assignment.
  */
@@ -577,14 +577,16 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
 /*-----------------------------------------------------------------------------
     Fixed-Point Utility Functions
 -----------------------------------------------------------------------------*/
+} //end math namespace
+
 /*-------------------------------------
     Cast to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
-constexpr ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename ls::utils::EnableIf<ls::math::IsFloat<numeric_t>::value, numeric_t>::type n)
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const typename utils::EnableIf<math::IsFloat<numeric_t>::value, numeric_t>::type n)
 {
     //return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
-    return ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
+    return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
 }
 
 
@@ -593,11 +595,11 @@ constexpr ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction
     Cast to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
-constexpr ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const numeric_t n)
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const numeric_t n)
 {
-    return ls::math::IsFloat<numeric_t>::value
-        ? ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n}
-        : ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{(typename fixed_type::base_type)((unsigned long long)n << fixed_type::fraction_digits)};
+    return math::IsFloat<numeric_t>::value
+        ? math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n}
+        : math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{(typename fixed_type::base_type)((unsigned long long)n << fixed_type::fraction_digits)};
 }
 
 
@@ -606,7 +608,7 @@ constexpr ls::math::fixed_t<typename fixed_type::base_type, fixed_type::fraction
     Cast to Integer
 -------------------------------------*/
 template <typename integral_type, typename fixed_type>
-constexpr integral_type integer_cast(const fixed_type f)
+constexpr integral_type math::integer_cast(const fixed_type f)
 {
     return (integral_type)((unsigned long long)f.number >> fixed_type::fraction_digits);
 }
@@ -617,7 +619,7 @@ constexpr integral_type integer_cast(const fixed_type f)
     Cast to Float
 -------------------------------------*/
 template <typename float_type, class fixed_type>
-constexpr float_type float_cast(const fixed_type f)
+constexpr float_type math::float_cast(const fixed_type f)
 {
     return (float_type)f.number / (float_type)(1ull << fixed_type::fraction_digits);
 }
@@ -628,11 +630,11 @@ constexpr float_type float_cast(const fixed_type f)
     rcp
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> rcp(const fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
+constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
     return num.number
-        ? (fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(1ull << num_frac_digits)} / num)
-        : fixed_t<fixed_base_t, num_frac_digits>{0x7FFFFFFFFFFFFFFF};
+        ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(1ull << num_frac_digits)} / num)
+        : math::fixed_t<fixed_base_t, num_frac_digits>{0x7FFFFFFFFFFFFFFF};
 }
 
 
@@ -641,9 +643,9 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> rcp(const fixed_t<fix
     sign_bit
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+constexpr LS_INLINE int math::sign_bit(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return IsSigned<fixed_base_t>::value
+    return math::IsSigned<fixed_base_t>::value
         ? (int)(x.number >> (((sizeof(fixed_base_t) * CHAR_BIT) - 1)) & 0x01)
         : 0;
 }
@@ -654,9 +656,9 @@ constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x
     floor
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::floor(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(~0ull << num_frac_digits)};
+    return math::fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(~0ull << num_frac_digits)};
 }
 
 
@@ -665,9 +667,9 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> floor(const fixed_t<f
     floor
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::ceil(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return floor<fixed_base_t, num_frac_digits>(fixed_t<fixed_base_t, num_frac_digits>{x.number + (fixed_base_t)(0x01ull << num_frac_digits)});
+    return math::floor<fixed_base_t, num_frac_digits>(math::fixed_t<fixed_base_t, num_frac_digits>{x.number + (fixed_base_t)(0x01ull << num_frac_digits)});
 }
 
 
@@ -676,7 +678,7 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> ceil(const fixed_t<fi
     round
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+inline LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::round(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     constexpr fixed_base_t pointFive = (fixed_base_t)(0x05ull * (1ull << (num_frac_digits-1ull)));
     constexpr fixed_base_t one = (fixed_base_t)(1ull << num_frac_digits);
@@ -684,11 +686,10 @@ inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixe
     const fixed_base_t rounded = x.number + one;
 
     return ((standard >> num_frac_digits) <= (rounded >> num_frac_digits))
-    ? floor<fixed_base_t, num_frac_digits>(x)
-    : ceil<fixed_base_t, num_frac_digits>(x);
+    ? math::floor<fixed_base_t, num_frac_digits>(x)
+    : math::ceil<fixed_base_t, num_frac_digits>(x);
 }
 
 
 
-} //end math namespace
 } //end ls namespace
