@@ -196,6 +196,9 @@ typedef fixed_t<uint64_t, 48> ulong_highp_t; // 16.48
     Cast to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
+constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const typename ls::utils::EnableIf<IsFloat<numeric_t>::value, numeric_t>::type n);
+
+template <class fixed_type, typename numeric_t>
 constexpr fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> fixed_cast(const numeric_t n);
 
 
