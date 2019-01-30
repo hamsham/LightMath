@@ -22,9 +22,9 @@
     #define LS_INT          int64_t
     #define LS_UINT         uint64_t
 
-    #define LS_ROUND(x)     (std::floor(0.5 + x))
-    #define LS_DEG2RAD(x)   (x * 0.01745329251994329577) // x * (PI / 180)
-    #define LS_RAD2DEG(x)   (x * 57.2957795130823208768) // x * (180 / PI)
+    #define LS_ROUND(x)     (math::floor(0.5 + (x)))
+    #define LS_DEG2RAD(x)   ((x) * 0.01745329251994329577) // x * (PI / 180)
+    #define LS_RAD2DEG(x)   ((x) * 57.2957795130823208768) // x * (180 / PI)
 
     #define LS_PI           3.14159265358979323846
     #define LS_TWO_PI       6.28318530717958647693
@@ -45,9 +45,9 @@
     #define LS_INT          int32_t
     #define LS_UINT         uint32_t
 
-    #define LS_ROUND(x)     (std::floor(0.5f + x))
-    #define LS_DEG2RAD(x)   (x * 0.01745329251994329577f) // x * (PI / 180)
-    #define LS_RAD2DEG(x)   (x * 57.2957795130823208768f) // x * (180 / PI)
+    #define LS_ROUND(x)     (math::floor(0.5f + (x)))
+    #define LS_DEG2RAD(x)   ((x) * 0.01745329251994329577f) // x * (PI / 180)
+    #define LS_RAD2DEG(x)   ((x) * 57.2957795130823208768f) // x * (180 / PI)
 
     #define LS_PI           3.14159265358979323846f
     #define LS_TWO_PI       6.28318530717958647693f
