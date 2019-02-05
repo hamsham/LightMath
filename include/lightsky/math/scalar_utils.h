@@ -359,58 +359,59 @@ template <typename scalar_t>
 inline scalar_t fast_logN(scalar_t baseN, scalar_t) noexcept;
 
 /**
- * @brief nextPow2
+ * @brief next_pow2
  * Find the next (greater) power of two that is closest to the value of a number
  *
  * @param An unsigned integral type
  *
  * @return The next greatest power of two.
  */
-inline unsigned next_pow2(unsigned) noexcept;
+inline uint8_t  next_pow2(uint8_t) noexcept;
+inline uint16_t next_pow2(uint16_t) noexcept;
+inline uint32_t next_pow2(uint32_t) noexcept;
+inline uint64_t next_pow2(uint64_t) noexcept;
 
 /**
- * @brief nextPow2
+ * @brief next_pow2
  * Find the next (greater) power of two that is closest to the value of a number
  *
  * @param A signed integral type
  *
  * @return The next greatest power of two.
  */
-inline int next_pow2(int) noexcept;
+inline int8_t  next_pow2(int8_t) noexcept;
+inline int16_t next_pow2(int16_t) noexcept;
+inline int32_t next_pow2(int32_t) noexcept;
+inline int64_t next_pow2(int64_t) noexcept;
 
 /**
- * @brief prevPow2
+ * @brief prev_pow2
  * Find the previous (lesser) power of two that is closest to the value of a number
  *
  * @param An unsigned integral type
  *
  * @return The next lesser power of two.
  */
-inline unsigned prev_pow2(unsigned) noexcept;
+inline uint8_t  prev_pow2(uint8_t) noexcept;
+inline uint16_t prev_pow2(uint16_t) noexcept;
+inline uint32_t prev_pow2(uint32_t) noexcept;
+inline uint64_t prev_pow2(uint64_t) noexcept;
 
 /**
- * @brief prevPow2
+ * @brief prev_pow2
  * Find the previous (lesser) power of two that is closest to the value of a number
  *
  * @param A signed integral type
  *
  * @return The next lesser power of two.
  */
-inline int prev_pow2(int) noexcept;
+inline int8_t  prev_pow2(int8_t) noexcept;
+inline int16_t prev_pow2(int16_t) noexcept;
+inline int32_t prev_pow2(int32_t) noexcept;
+inline int64_t prev_pow2(int64_t) noexcept;
 
 /**
- * @brief nearPow2
- * Find the closest power of two to a number. This may either be greater than
- * or less than the input number.
- *
- * @param An unsigned integral type
- *
- * @return The closest power of two to a number.
- */
-inline unsigned nearest_pow2(unsigned) noexcept;
-
-/**
- * @brief nearPow2
+ * @brief nearest_pow2
  * Find the closest power of two to a number. This may either be greater than
  * or less than the input number.
  *
@@ -418,29 +419,20 @@ inline unsigned nearest_pow2(unsigned) noexcept;
  *
  * @return The closest power of two to a number.
  */
-inline int nearest_pow2(int) noexcept;
+template <typename data_t>
+inline data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 /**
- * @brief isPow2
+ * @brief is_pow2
  * Determine if a number is a power of two or not.
  *
  * @param A number who's value should be evaluated.
  *
- * @return True if the number is a poiwer of two.
- * False if the number is not a power of two.
+ * @return True if the number is a poiwer of two, false if the number is not a
+ * power of two.
  */
-constexpr bool is_pow2(unsigned) noexcept;
-
-/**
- * @brief isPow2
- * Determine if a number is a power of two or not.
- *
- * @param A number who's value should be evaluated.
- *
- * @return True if the number is a poiwer of two.
- * False if the number is not a power of two.
- */
-constexpr bool is_pow2(int) noexcept;
+template <typename data_t>
+constexpr bool is_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept;
 
 /**
  * @brief factorial

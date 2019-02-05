@@ -370,9 +370,38 @@ inline LS_INLINE scalar_t math::fast_logN(scalar_t baseN, scalar_t n) noexcept
 
 
 /*-------------------------------------
-    nextPow2
+    next_pow2
 -------------------------------------*/
-inline LS_INLINE unsigned math::next_pow2(unsigned n) noexcept
+inline LS_INLINE uint8_t math::next_pow2(uint8_t n) noexcept
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    return ++n;
+}
+
+inline LS_INLINE uint16_t math::next_pow2(uint16_t n) noexcept
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    return ++n;
+}
+
+inline LS_INLINE uint32_t math::next_pow2(uint32_t n) noexcept
 {
     if (n == 0)
     {
@@ -388,22 +417,84 @@ inline LS_INLINE unsigned math::next_pow2(unsigned n) noexcept
     return ++n;
 }
 
-
-
-/*-------------------------------------
-    nextPow2
--------------------------------------*/
-inline LS_INLINE int math::next_pow2(int n) noexcept
+inline LS_INLINE uint64_t math::next_pow2(uint64_t n) noexcept
 {
-    return (int)math::next_pow2((unsigned)n);
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n |= n >> 32;
+    return ++n;
 }
 
 
 
 /*-------------------------------------
-    prevPow2
+    next_pow2
 -------------------------------------*/
-inline LS_INLINE unsigned math::prev_pow2(unsigned n) noexcept
+inline LS_INLINE int8_t math::next_pow2(int8_t n) noexcept
+{
+    return (int8_t)math::next_pow2((uint8_t)n);
+}
+
+inline LS_INLINE int16_t math::next_pow2(int16_t n) noexcept
+{
+    return (int16_t)math::next_pow2((uint16_t)n);
+}
+
+inline LS_INLINE int32_t math::next_pow2(int32_t n) noexcept
+{
+    return (int32_t)math::next_pow2((uint32_t)n);
+}
+
+inline LS_INLINE int64_t math::next_pow2(int64_t n) noexcept
+{
+    return (int64_t)math::next_pow2((uint64_t)n);
+}
+
+
+
+
+/*-------------------------------------
+    prev_pow2
+-------------------------------------*/
+inline LS_INLINE uint8_t math::prev_pow2(uint8_t n) noexcept
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    return n - (n >> 1);
+}
+
+inline LS_INLINE uint16_t math::prev_pow2(uint16_t n) noexcept
+{
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    return n - (n >> 1);
+}
+
+inline LS_INLINE uint32_t math::prev_pow2(uint32_t n) noexcept
 {
     if (n == 0)
     {
@@ -419,27 +510,60 @@ inline LS_INLINE unsigned math::prev_pow2(unsigned n) noexcept
     return n - (n >> 1);
 }
 
-
-
-/*-------------------------------------
-    prevPow2
--------------------------------------*/
-inline LS_INLINE int math::prev_pow2(int n) noexcept
+inline LS_INLINE uint64_t math::prev_pow2(uint64_t n) noexcept
 {
-    return (int)math::prev_pow2((unsigned)n);
+    if (n == 0)
+    {
+        return 0;
+    }
+
+    --n;
+    n |= n >> 1;
+    n |= n >> 2;
+    n |= n >> 4;
+    n |= n >> 8;
+    n |= n >> 16;
+    n |= n >> 32;
+    return n - (n >> 1);
 }
 
 
 
 /*-------------------------------------
-    nearPow2
+    prev_pow2
 -------------------------------------*/
-inline LS_INLINE unsigned math::nearest_pow2(unsigned n) noexcept
+inline LS_INLINE int8_t math::prev_pow2(int8_t n) noexcept
 {
-    const unsigned pp2 = math::prev_pow2(n);
-    const unsigned np2 = math::next_pow2(n);
-    const unsigned lo = n - pp2;
-    const unsigned hi = np2 - n;
+    return (int8_t)math::prev_pow2((uint8_t)n);
+}
+
+inline LS_INLINE int16_t math::prev_pow2(int16_t n) noexcept
+{
+    return (int16_t)math::prev_pow2((uint16_t)n);
+}
+
+inline LS_INLINE int32_t math::prev_pow2(int32_t n) noexcept
+{
+    return (int32_t)math::prev_pow2((uint32_t)n);
+}
+
+inline LS_INLINE int64_t math::prev_pow2(int64_t n) noexcept
+{
+    return (int64_t)math::prev_pow2((uint64_t)n);
+}
+
+
+
+/*-------------------------------------
+    nearest_pow2
+-------------------------------------*/
+template <typename data_t>
+inline LS_INLINE data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
+{
+    const data_t pp2 = math::prev_pow2(n);
+    const data_t np2 = math::next_pow2(n);
+    const data_t lo = n - pp2;
+    const data_t hi = np2 - n;
 
     return lo < hi ? pp2 : np2;
 }
@@ -447,31 +571,12 @@ inline LS_INLINE unsigned math::nearest_pow2(unsigned n) noexcept
 
 
 /*-------------------------------------
-    nearPow2
+    is_pow2
 -------------------------------------*/
-inline LS_INLINE int math::nearest_pow2(int n) noexcept
+template <typename data_t>
+constexpr LS_INLINE bool math::is_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
 {
-    return (int)math::nearest_pow2((unsigned)n);
-}
-
-
-
-/*-------------------------------------
-    isPow2
--------------------------------------*/
-constexpr LS_INLINE bool math::is_pow2(unsigned n) noexcept
-{
-    return n && !(n & (n - 1));
-}
-
-
-
-/*-------------------------------------
-    isPow2
--------------------------------------*/
-constexpr LS_INLINE bool math::is_pow2(int n) noexcept
-{
-    return (int)math::is_pow2((unsigned)n);
+    return n && !(n & (n - (data_t)1));
 }
 
 
@@ -552,10 +657,10 @@ constexpr LS_INLINE scalar_t math::const_sin(scalar_t x) noexcept
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
-           - (x * x * x * (scalar_t{1.f} / scalar_t{6.f}))
-           + (x * x * x * x * x * (scalar_t{1.f} / scalar_t{120.f}))
-           - (x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{5040.f}))
-           + (x * x * x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{362880.f}));
+           - (x * x * x * scalar_t{1.f / 6.f})
+           + (x * x * x * x * x * scalar_t{1.f / 120.f})
+           - (x * x * x * x * x * x * x * scalar_t{1.f / 5040.f})
+           + (x * x * x * x * x * x * x * x * x * scalar_t{1.f / 362880.f});
 }
 
 
@@ -569,10 +674,10 @@ constexpr LS_INLINE scalar_t math::const_cos(scalar_t x) noexcept
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return scalar_t{1.f}
-           - (x * x * (scalar_t{1.f} / scalar_t{2.f}))
-           + (x * x * x * x * (scalar_t{1.f} / scalar_t{24.f}))
-           - (x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{720.f}))
-           + (x * x * x * x * x * x * x * x * (scalar_t{1.f} / scalar_t{40320.f}));
+           - (x * x * scalar_t{1.f / 2.f})
+           + (x * x * x * x * scalar_t{1.f / 24.f})
+           - (x * x * x * x * x * x * scalar_t{1.f / 720.f})
+           + (x * x * x * x * x * x * x * x * scalar_t{1.f / 40320.f});
 }
 
 
@@ -586,10 +691,10 @@ constexpr LS_INLINE scalar_t math::const_tan(scalar_t x) noexcept
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
-           + (x * x * x * (scalar_t{1.f} / scalar_t{3.f}))
-           + (x * x * x * x * x * (scalar_t{2.f} / scalar_t{15.f}))
-           + (x * x * x * x * x * x * x * (scalar_t{17.f} / scalar_t{315.f}))
-           + (x * x * x * x * x * x * x * x * x * (scalar_t{62.f} / scalar_t{2835.f}));
+           + (x * x * x * scalar_t{1.f / 3.f})
+           + (x * x * x * x * x * scalar_t{2.f / 15.f})
+           + (x * x * x * x * x * x * x * scalar_t{17.f / 315.f})
+           + (x * x * x * x * x * x * x * x * x * scalar_t{62.f / 2835.f});
 }
 
 
