@@ -4,7 +4,7 @@
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec3.h"
 
-#define FixedType ls::math::long_lowp_t
+#define FixedType ls::math::long_medp_t
 
 
 
@@ -39,39 +39,31 @@ int main()
 
     std::cout << f << " == " << fx << '\n' << std::endl;
 
-    f *= 4.f;
-    fx *= ls::math::fixed_cast<FixedType>(4);
+    f *= 42.f;
+    fx *= ls::math::fixed_cast<FixedType>((FixedType::base_type)42);
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
-    f *= 9876.54321f;
-    fx *= FixedType(9875.54321f);
+    f *= 123.456789f;
+    fx *= FixedType(123.456789f);
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     f /= LS_PI;
     fx /= FixedType(LS_PI);
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
-    ls::math::vec3 v{LS_PI, LS_E, LS_E};
-    ls::math::vec3_t<FixedType> vx = {
-        ls::math::fixed_cast<FixedType>(v[0]),
-        ls::math::fixed_cast<FixedType>(v[1]),
-        ls::math::fixed_cast<FixedType>(v[2])
-    };
-    for (unsigned i = 0; i < 3; ++i)
-    {
-        std::cout << v[i] << " == " << ls::math::float_cast<float>(vx[i]) << " && " << vx[i] << std::endl;
-    }
+    FixedType pi = FixedType{LS_PI};
 
-    std::cout << '\n';
+    FixedType e = FixedType{LS_E};
 
-    const FixedType rounding = ls::math::fixed_cast<FixedType>(10) / ls::math::fixed_cast<FixedType>(5);
-    std::cout << rounding << std::endl;
-    std::cout << "Floor: " << vx[0]+rounding << " == " << ls::math::floor(vx[0]+rounding) << std::endl;
-    std::cout << "Ceil:  " << vx[0]+rounding << " == " << ls::math::ceil(vx[0]+rounding) << std::endl;
-    std::cout << "Round: " << vx[0]+rounding << " == " << ls::math::round(vx[0]+rounding) << std::endl;
-
-    FixedType five = FixedType{(FixedType::base_type)(1ull << FixedType::fraction_digits) - 1} / ls::math::fixed_cast<FixedType>(1);
-    std::cout << five << ' ' << std::hex  << five.number << std::endl;
+    std::cout << "PI:        " << LS_PI                             << " = " << pi                                           << std::endl;
+    std::cout << "1/PI:      " << ls::math::rcp(LS_PI)              << " = " << ls::math::rcp(FixedType{0.25f})                            << std::endl;
+    std::cout << "E:         " << LS_E                              << " = " << e                                            << std::endl;
+    std::cout << "Floor:     " << e                                 << " = " << ls::math::floor(e)                           << std::endl;
+    std::cout << "Ceil:      " << e                                 << " = " << ls::math::ceil(e)                            << std::endl;
+    std::cout << "Round:     " << e                                 << " = " << ls::math::round(e)                           << std::endl;
+    std::cout << "Sin(PI/6): " << ls::math::const_sin(LS_PI_OVER_6) << " = " << ls::math::const_sin(FixedType{LS_PI_OVER_6}) << std::endl;
+    std::cout << "Cos(PI/6): " << ls::math::const_cos(LS_PI_OVER_6) << " = " << ls::math::const_cos(FixedType{LS_PI_OVER_6}) << std::endl;
+    std::cout << "Tan(PI/6): " << ls::math::const_tan(LS_PI_OVER_6) << " = " << ls::math::const_tan(FixedType{LS_PI_OVER_6}) << std::endl;
 
     return 0;
 }
