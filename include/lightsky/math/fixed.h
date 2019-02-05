@@ -258,6 +258,30 @@ inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixe
 
 
 
+/*-------------------------------------
+    const_sin
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_sin(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
+    const_cos
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_cos(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
+    const_tan
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_tan(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
 }//end math namespace
 }//end ls namespace
 

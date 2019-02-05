@@ -243,7 +243,7 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
     // ensure the result will have enough precision. The second method will
     // simply make use of all available bits in a 64-bit number, then remove
     // any excess bits.
-    return sizeof(fixed_base_t) > sizeof(int32_t)
+    return (sizeof(fixed_base_t) > sizeof(int32_t))
         ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value}
         : fixed_t{(fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits))};
 }
@@ -257,8 +257,14 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
-    return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
+    //return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
     //return fixed_t{(number / f.number) + (fixed_base_t)(((number % f.number) << 1) >= f.number)};
+    return fixed_t{
+        (fixed_base_t)(
+        ((((0xFFFFFFFFFFFFFFFFull >> (64ull-num_frac_digits)) & (uint64_t)number) << (uint64_t)num_frac_digits) / (uint64_t)f.number)
+        |
+        (((uint64_t)number / (uint64_t)f.number) << (uint64_t)num_frac_digits)
+    )};
 }
 
 
@@ -426,7 +432,12 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f)
 {
-    number = (fixed_base_t)(((int64_t)number << num_frac_digits) / (int64_t)f.number);
+    //number = (fixed_base_t)(((int64_t)number << num_frac_digits) / (int64_t)f.number);
+    //return *this;
+    number = ((((0xFFFFFFFFFFFFFFFFull >> (64ull-num_frac_digits)) & (uint64_t)number) << (uint64_t)num_frac_digits) / (uint64_t)f.number)
+    |
+    (((uint64_t)number / (uint64_t)f.number) << (uint64_t)num_frac_digits);
+
     return *this;
 }
 
@@ -632,9 +643,8 @@ constexpr float_type math::float_cast(const fixed_type f)
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
-    return num.number
-        ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(1ull << num_frac_digits)} / num)
-        : math::fixed_t<fixed_base_t, num_frac_digits>{0x7FFFFFFFFFFFFFFF};
+    return (num.number != 0)
+    ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)1ull} / num) : math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)0ull};
 }
 
 
@@ -688,6 +698,68 @@ inline LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::round(const 
     return ((standard >> num_frac_digits) <= (rounded >> num_frac_digits))
     ? math::floor<fixed_base_t, num_frac_digits>(x)
     : math::ceil<fixed_base_t, num_frac_digits>(x);
+}
+
+
+
+/*-------------------------------------
+    const_sin
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_sin(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x3 = x2*x;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x5 = x2*x3;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x7 = x2*x5;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x9 = x2*x7;
+
+    return x
+           - (x3 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 6.f})
+           + (x5 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 120.f})
+           - (x7 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 5040.f})
+           + (x9 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 362880.f});
+}
+
+
+
+/*-------------------------------------
+    const_cos
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_cos(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x4 = x2*x2;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x6 = x2*x4;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x8 = x2*x6;
+
+    return math::fixed_cast<math::fixed_t<fixed_base_t, num_frac_digits>>(1ull)
+           - (x2 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 2.f})
+           + (x4 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 24.f})
+           - (x6 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 720.f})
+           + (x8 * fixed_t<fixed_base_t, num_frac_digits>{1.f / 40320.f});
+}
+
+
+
+/*-------------------------------------
+    const_tan
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_tan(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x3 = x2*x;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x5 = x2*x3;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x7 = x2*x5;
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& x9 = x2*x7;
+
+    return x
+           + (x3 * math::fixed_t<fixed_base_t, num_frac_digits>{1.f / 3.f})
+           + (x5 * math::fixed_t<fixed_base_t, num_frac_digits>{2.f / 15.f})
+           + (x7 * math::fixed_t<fixed_base_t, num_frac_digits>{17.f / 315.f})
+           + (x9 * math::fixed_t<fixed_base_t, num_frac_digits>{62.f / 2835.f});
 }
 
 
