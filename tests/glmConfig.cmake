@@ -34,6 +34,8 @@ find_package(Git REQUIRED)
 # #####################################
 # External build for GLM (for testing only)
 # #####################################
+message("-- Building GLM from source")
+
 #set(GLM_BRANCH "master" CACHE STRING "Git branch or tag for checking out GLM.")
 set(GLM_BRANCH "0.9.9.2" CACHE STRING "Git branch or tag for checking out GLM.")
 mark_as_advanced(GLM_BRANCH)
