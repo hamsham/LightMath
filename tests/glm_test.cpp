@@ -24,76 +24,114 @@
 #include "lightsky/math/quat.h"
 #include "lightsky/math/quat_utils.h"
 
-template <typename vec_t>
-void print_vec_type(std::ostream& ostr, const vec_t& v) {
-    ostr << "{ " << v[0] << ' ' << v[1] << ' ' << v[2] << ' ' << v[3] << " }";
+
+
+template<typename vec_t>
+std::ostream& print_vec4_type(std::ostream& ostr, const vec_t& v)
+{
+    return ostr << "{ " << v[0] << ' ' << v[1] << ' ' << v[2] << ' ' << v[3] << " }";
+}
+
+template<typename vec_t>
+std::ostream& print_vec3_type(std::ostream& ostr, const vec_t& v)
+{
+    return ostr << "{ " << v[0] << ' ' << v[1] << ' ' << v[2] << " }";
 }
 
 
-template <typename mat_t, unsigned r = 4, unsigned c = 4>
-void print_mat_type(std::ostream& ostr, const mat_t& m) {
+template<typename mat_t, unsigned r = 4, unsigned c = 4>
+std::ostream& print_mat_type(std::ostream& ostr, const mat_t& m)
+{
     ostr << '{';
 
-    for (unsigned i = 0; i < r; ++i) {
+    for (unsigned i = 0; i < r; ++i)
+    {
         ostr << " {";
-        for (unsigned j = 0; j < c; ++j) {
+        for (unsigned j = 0; j < c; ++j)
+        {
             ostr << ' ' << m[i][j] << ' ';
         }
 
-        if (i == 3) {
+        if (i == 3)
+        {
             ostr << "} ";
         }
-        else {
+        else
+        {
             ostr << "}, ";
         }
     }
 
-    ostr << "}";
+    return ostr << "}";
 }
 
-std::ostream& operator << (std::ostream& ostr, const glm::vec4& v) {
-    print_vec_type(ostr, v);
-    return ostr;
+
+
+std::ostream& operator<<(std::ostream& ostr, const glm::vec3& v)
+{
+    return print_vec3_type(ostr, v);
 }
 
-template <typename data_t>
-std::ostream& operator << (std::ostream& ostr, const ls::math::vec4_t<data_t>& v) {
-    print_vec_type(ostr, v);
-    return ostr;
+template<typename data_t>
+std::ostream& operator<<(std::ostream& ostr, const ls::math::vec3_t<data_t>& v)
+{
+    return print_vec3_type(ostr, v);
 }
 
-std::ostream& operator << (std::ostream& ostr, const glm::quat& q) {
-    print_vec_type(ostr, q);
-    return ostr;
+std::ostream& operator<<(std::ostream& ostr, const glm::vec4& v)
+{
+    return print_vec4_type(ostr, v);
 }
 
-template <typename data_t>
-std::ostream& operator << (std::ostream& ostr, const ls::math::quat_t<data_t>& q) {
-    print_vec_type(ostr, q);
-    return ostr;
+template<typename data_t>
+std::ostream& operator<<(std::ostream& ostr, const ls::math::vec4_t<data_t>& v)
+{
+    return print_vec4_type(ostr, v);
 }
 
-std::ostream& operator << (std::ostream& ostr, const glm::mat4x4& m) {
-    print_mat_type(ostr, m);
-    return ostr;
+std::ostream& operator<<(std::ostream& ostr, const glm::quat& q)
+{
+    return print_vec4_type(ostr, q);
 }
 
-template <typename data_t>
-std::ostream& operator << (std::ostream& ostr, const ls::math::mat4_t<data_t>& m) {
-    print_mat_type(ostr, m);
-    return ostr;
+template<typename data_t>
+std::ostream& operator<<(std::ostream& ostr, const ls::math::quat_t<data_t>& q)
+{
+    return print_vec4_type(ostr, q);
 }
+
+std::ostream& operator<<(std::ostream& ostr, const glm::mat4x4& m)
+{
+    return print_mat_type(ostr, m);
+}
+
+template<typename data_t>
+std::ostream& operator<<(std::ostream& ostr, const ls::math::mat4_t<data_t>& m)
+{
+    return print_mat_type(ostr, m);
+}
+
+
 
 /*
  *
  */
-int main() {
+int main()
+{
     const float fov = 60.f;
     const float zNear = 0.1f;
     const float zFar = 100.f;
     const float camWidth = 4.f;
     const float camHeight = 3.f;
     const float aspect = camWidth / camHeight;
+
+    const glm::vec3 glmVec3{1.f, 2.f, 3.f};
+    std::cout << "GLM cross(vec3): " << glm::cross(glmVec3, glm::vec3{2.f, -1.f, 3.f}) << std::endl;
+
+    const ls::math::vec3 lsVec3{1.f, 2.f, 3.f};
+    std::cout << "LS cross(vec3): " << ls::math::cross(lsVec3, ls::math::vec3{2.f, -1.f, 3.f}) << std::endl;
+
+    std::cout << std::endl;
 
     const glm::vec4 glmVec{1.f, 2.f, 3.f, 4.f};
     const glm::mat4 glmMat = glm::perspective(ls::math::deg_to_rad(fov), aspect, zNear, zFar); // GLM uses degrees
