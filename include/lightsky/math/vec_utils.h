@@ -319,6 +319,76 @@ vec2_t<N> ceil(const vec2_t<N>& v);
 template <typename N> constexpr
 vec2_t<N> round(const vec2_t<N>& v);
 
+/**
+ * @brief fast_log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec2_t<N> fast_log2(const vec2_t<N>& n) noexcept;
+
+/**
+ * @brief fastLog
+ * Calculate the natural log of a vector
+ *
+ * @param a vector
+ *
+ * @return ln(vec2), using IEEE floating point arithmetic
+ */
+template <typename N>
+inline vec2_t<N> fast_log(const vec2_t<N>&) noexcept;
+
+/**
+ * @brief fast_logN
+ * Calculate the log-base2 of a vector
+ *
+ * @param baseN
+ * The base of the logarithm.
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-baseN of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec2_t<N> fast_logN(const vec2_t<N>& baseN, const vec2_t<N>& n) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate a vector to a given power.
+ *
+ * Powers are calculated component-wise.
+ *
+ * @param x
+ *
+ * @param y
+ *
+ * @return x^y
+ */
+template <typename N>
+constexpr vec2_t<N> pow(
+    const typename utils::EnableIf<IsIntegral<N>::value, vec2_t<N>>::type& x,
+    const typename utils::EnableIf<IsIntegral<N>::value, vec2_t<N>>::type& y) noexcept;
+
+template <typename N>
+inline vec2_t<N> pow(const vec2_t<N>& x, const vec2_t<N>& y) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec2_t<N> exp(vec2_t<N> x) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -627,6 +697,76 @@ vec3_t<N> ceil(const vec3_t<N>& v);
 template <typename N> constexpr
 vec3_t<N> round(const vec3_t<N>& v);
 
+/**
+ * @brief fast_log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec3_t<N> fast_log2(const vec3_t<N>& n) noexcept;
+
+/**
+ * @brief fastLog
+ * Calculate the natural log of a vector
+ *
+ * @param a vector
+ *
+ * @return ln(vec3), using IEEE floating point arithmetic
+ */
+template <typename N>
+inline vec3_t<N> fast_log(const vec3_t<N>&) noexcept;
+
+/**
+ * @brief fast_logN
+ * Calculate the log-base2 of a vector
+ *
+ * @param baseN
+ * The base of the logarithm.
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-baseN of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec3_t<N> fast_logN(const vec3_t<N>& baseN, const vec3_t<N>& n) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate a vector to a given power.
+ *
+ * Powers are calculated component-wise.
+ *
+ * @param x
+ *
+ * @param y
+ *
+ * @return x^y
+ */
+template <typename N>
+constexpr vec3_t<N> pow(
+    const typename utils::EnableIf<IsIntegral<N>::value, vec3_t<N>>::type& x,
+    const typename utils::EnableIf<IsIntegral<N>::value, vec3_t<N>>::type& y) noexcept;
+
+template <typename N>
+inline vec3_t<N> pow(const vec3_t<N>& x, const vec3_t<N>& y) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec3_t<N> exp(vec3_t<N> x) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -895,6 +1035,76 @@ vec4_t<N> ceil(const vec4_t<N>& v);
  */
 template <typename N> constexpr
 vec4_t<N> round(const vec4_t<N>& v);
+
+/**
+ * @brief fast_log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec4_t<N> fast_log2(const vec4_t<N>&) noexcept;
+
+/**
+ * @brief fastLog
+ * Calculate the natural log of a vector
+ *
+ * @param a vector
+ *
+ * @return ln(vec3), using IEEE floating point arithmetic
+ */
+template <typename N>
+inline vec4_t<N> fast_log(const vec4_t<N>&) noexcept;
+
+/**
+ * @brief fast_logN
+ * Calculate the log-base2 of a vector
+ *
+ * @param baseN
+ * The base of the logarithm.
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-baseN of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec4_t<N> fast_logN(const vec4_t<N>& baseN, const vec4_t<N>& n) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate a vector to a given power.
+ *
+ * Powers are calculated component-wise.
+ *
+ * @param x
+ *
+ * @param y
+ *
+ * @return x^y
+ */
+template <typename N>
+constexpr vec4_t<N> pow(
+    const typename utils::EnableIf<IsIntegral<N>::value, vec4_t<N>>::type& x,
+    const typename utils::EnableIf<IsIntegral<N>::value, vec4_t<N>>::type& y) noexcept;
+
+template <typename N>
+inline vec4_t<N> pow(const vec4_t<N>& x, const vec4_t<N>& y) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec4_t<N> exp(vec4_t<N> x) noexcept;
 
 
 

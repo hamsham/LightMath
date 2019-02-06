@@ -221,6 +221,98 @@ math::vec2_t<num_t> math::round(const vec2_t<num_t>& v) {
 
 
 
+/*-------------------------------------
+    fast_log2
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec2_t<num_t> math::fast_log2(const math::vec2_t<num_t>& n) noexcept
+{
+    return math::vec2_t<num_t>{
+        (num_t)math::fast_log2<float>((float)n[0]),
+        (num_t)math::fast_log2<float>((float)n[1])
+    };
+}
+
+
+
+/*-------------------------------------
+    fast_log
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec2_t<num_t> math::fast_log(const math::vec2_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+}
+
+
+
+/*-------------------------------------
+    fast_logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec2_t<num_t> math::fast_logN(const math::vec2_t<num_t>& baseN, const math::vec2_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+}
+
+
+
+/*-------------------------------------
+    pow
+-------------------------------------*/
+namespace math
+{
+    namespace impl
+    {
+        template <typename num_t>
+        constexpr num_t powi_impl(const math::vec2_t<num_t>& p, const math::vec2_t<num_t>& y, const math::vec2_t<num_t>& result) noexcept
+        {
+            return (y < math::vec2_t<num_t>{1}) ? result : math::impl::powi_impl<num_t>(p*p, y >> math::vec2_t<num_t>{2}, (y & math::vec2_t<num_t>{1}) ? (result*p) : result);
+        }
+    } // end impl namespace
+} // end math namespace
+
+
+
+template <typename num_t>
+constexpr LS_INLINE math::vec2_t<num_t> math::pow(
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& x,
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& y) noexcept
+{
+    return math::impl::powi_impl<num_t>(x, y, math::vec2_t<num_t>{1});
+}
+
+
+
+template<typename num_t>
+inline LS_INLINE math::vec2_t<num_t> math::pow(const math::vec2_t<num_t>& x, const math::vec2_t<num_t>& y) noexcept
+{
+    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+}
+
+
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec2_t<num_t> math::exp(math::vec2_t<num_t> x) noexcept
+{
+    x = math::vec2_t<num_t>{1.f} + x / math::vec2_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
 /*-----------------------------------------------------------------------------
     3D Vectors
 -----------------------------------------------------------------------------*/
@@ -471,6 +563,99 @@ math::vec3_t<num_t> math::round(const vec3_t<num_t>& v) {
 
 
 
+/*-------------------------------------
+    fast_log2
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec3_t<num_t> math::fast_log2(const math::vec3_t<num_t>& n) noexcept
+{
+    return math::vec3_t<num_t>{
+        (num_t)math::fast_log2<float>((float)n[0]),
+        (num_t)math::fast_log2<float>((float)n[1]),
+        (num_t)math::fast_log2<float>((float)n[2])
+    };
+}
+
+
+
+/*-------------------------------------
+    fast_log
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec3_t<num_t> math::fast_log(const math::vec3_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+}
+
+
+
+/*-------------------------------------
+    fast_logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec3_t<num_t> math::fast_logN(const math::vec3_t<num_t>& baseN, const math::vec3_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+}
+
+
+
+/*-------------------------------------
+    pow
+-------------------------------------*/
+namespace math
+{
+    namespace impl
+    {
+        template <typename num_t>
+        constexpr num_t powi_impl(const math::vec3_t<num_t>& p, const math::vec3_t<num_t>& y, const math::vec3_t<num_t>& result) noexcept
+        {
+            return (y < math::vec3_t<num_t>{1}) ? result : math::impl::powi_impl<num_t>(p*p, y >> math::vec3_t<num_t>{2}, (y & math::vec3_t<num_t>{1}) ? (result*p) : result);
+        }
+    } // end impl namespace
+} // end math namespace
+
+
+
+template <typename num_t>
+constexpr LS_INLINE math::vec3_t<num_t> math::pow(
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& x,
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& y) noexcept
+{
+    return math::impl::powi_impl<num_t>(x, y, math::vec3_t<num_t>{1});
+}
+
+
+
+template<typename num_t>
+inline LS_INLINE math::vec3_t<num_t> math::pow(const math::vec3_t<num_t>& x, const math::vec3_t<num_t>& y) noexcept
+{
+    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+}
+
+
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec3_t<num_t> math::exp(math::vec3_t<num_t> x) noexcept
+{
+    x = math::vec3_t<num_t>{1.f} + x / math::vec3_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
 /*-----------------------------------------------------------------------------
     4D Vectors
 -----------------------------------------------------------------------------*/
@@ -691,6 +876,100 @@ math::vec4_t<num_t> math::round(const vec4_t<num_t>& v) {
         ls::math::round(v[2]),
         ls::math::round(v[3])
     };
+}
+
+
+
+/*-------------------------------------
+    fast_log2
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec4_t<num_t> math::fast_log2(const math::vec4_t<num_t>& n) noexcept
+{
+    return math::vec4_t<num_t>{
+        (num_t)math::fast_log2<float>((float)n[0]),
+        (num_t)math::fast_log2<float>((float)n[1]),
+        (num_t)math::fast_log2<float>((float)n[2]),
+        (num_t)math::fast_log2<float>((float)n[3])
+    };
+}
+
+
+
+/*-------------------------------------
+    fast_log
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec4_t<num_t> math::fast_log(const math::vec4_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+}
+
+
+
+/*-------------------------------------
+    fast_logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec4_t<num_t> math::fast_logN(const math::vec4_t<num_t>& baseN, const math::vec4_t<num_t>& n) noexcept
+{
+    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+}
+
+
+
+/*-------------------------------------
+    pow
+-------------------------------------*/
+namespace math
+{
+    namespace impl
+    {
+        template <typename num_t>
+        constexpr num_t powi_impl(const math::vec4_t<num_t>& p, const math::vec4_t<num_t>& y, const math::vec4_t<num_t>& result) noexcept
+        {
+            return (y < math::vec4_t<num_t>{1}) ? result : math::impl::powi_impl<num_t>(p*p, y >> math::vec4_t<num_t>{2}, (y & math::vec4_t<num_t>{1}) ? (result*p) : result);
+        }
+    } // end impl namespace
+} // end math namespace
+
+
+
+template <typename num_t>
+constexpr LS_INLINE math::vec4_t<num_t> math::pow(
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& x,
+    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& y) noexcept
+{
+    return math::impl::powi_impl<num_t>(x, y, math::vec4_t<num_t>{1});
+}
+
+
+
+template<typename num_t>
+inline LS_INLINE math::vec4_t<num_t> math::pow(const math::vec4_t<num_t>& x, const math::vec4_t<num_t>& y) noexcept
+{
+    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+}
+
+
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec4_t<num_t> math::exp(math::vec4_t<num_t> x) noexcept
+{
+    x = math::vec4_t<num_t>{1.f} + x / math::vec4_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
 }
 
 

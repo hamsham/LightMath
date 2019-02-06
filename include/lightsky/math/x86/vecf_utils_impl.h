@@ -258,5 +258,86 @@ inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
 }
 
 
+
+/*-------------------------------------
+    fast_log2
+
+    Fast Approximate logarithms
+    This method was found on flipcode:
+        http://www.flipcode.com/archives/Fast_log_Function.shtml
+    Accurate to within 5 decimal places.
+    This method relies on the IEEE floating point specification
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> fast_log2(const vec4_t<float>& n) noexcept
+{
+    __m128 exp = n.simd;
+    __m128i x = _mm_castps_si128(exp);
+
+    const __m128i log2 = _mm_sub_epi32(_mm_and_si128(_mm_srai_epi32(x, 23), _mm_set1_epi32(255)), _mm_set1_epi32(128));
+
+    x = _mm_and_si128(x, _mm_set1_epi32(~(255 << 23)));
+    x = _mm_add_epi32(x, _mm_set1_epi32(127 << 23));
+
+    exp = _mm_castsi128_ps(x);
+    __m128 ret;
+    ret = _mm_add_ps(_mm_mul_ps(_mm_set1_ps(-0.3333333333f), exp), _mm_set1_ps(2.f));
+    ret = _mm_sub_ps(_mm_mul_ps(ret, exp), _mm_set1_ps(0.6666666666f));
+    return vec4_t<float>{_mm_add_ps(ret, _mm_cvtepi32_ps(log2))};
+}
+
+
+
+/*-------------------------------------
+    fast_log
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> fast_log(const vec4_t<float>& n) noexcept
+{
+    const math::vec4_t<float> x = fast_log2(n);
+    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.693147181f))}; // ln( 2 )
+}
+
+
+
+/*-------------------------------------
+    fast_logN
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> fast_logN(const vec4_t<float>& baseN, const vec4_t<float>& n) noexcept
+{
+    const math::vec4_t<float> x = fast_log(n);
+    const math::vec4_t<float> b = fast_log2(baseN);
+    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_rcp_ps(b.simd))};
+}
+
+
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
+{
+    __m128 s = _mm_add_ps(_mm_set1_ps(1.f), _mm_mul_ps(x.simd, _mm_set1_ps(1.f/256.f)));
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+
+    return math::vec4_t<float>{s};
+}
+
+
+
+/*-------------------------------------
+    pow
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& y) noexcept
+{
+    return math::exp(math::fast_log(x) * y);
+}
+
+
 } // end math namespace
 } // end ls namespace
