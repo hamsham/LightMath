@@ -332,16 +332,17 @@ inline LS_INLINE scalar_t math::fast_log2(scalar_t n) noexcept
 template<>
 inline LS_INLINE float math::fast_log2<float>(float n) noexcept
 {
-    long* const exp = reinterpret_cast<long*>(&n);
-    long x = *exp;
+    static_assert(sizeof(float) == sizeof(int32_t), "Need IEEE754 32-bit floats for logarithm calculation.");
+    int32_t* const exp = reinterpret_cast<int32_t*>(&n);
+    int32_t x = *exp;
 
-    const long log2 = ((x >> 23) & 255) - 128;
+    const int32_t log2 = ((x >> 23) & 255) - 128;
 
     x &= ~(255 << 23);
     x += 127 << 23;
 
     *exp = x;
-    const float ret = ((-1.f / 3.f) * n + 2.f) * n - 2.f / 3.f;
+    const float ret = (-0.3333333333f * n + 2.f) * n - 0.6666666666f;
     return ret + log2;
 }
 
@@ -620,7 +621,7 @@ constexpr LS_INLINE scalar_t math::pow(
 
 
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
+inline LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 {
     return math::exp<scalar_t>(math::fast_log<scalar_t>(x) * y);
 }

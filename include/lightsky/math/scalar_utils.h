@@ -464,7 +464,7 @@ constexpr scalar_t pow(
     typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept;
 
 template <typename scalar_t>
-constexpr scalar_t pow(scalar_t x, scalar_t y) noexcept;
+inline scalar_t pow(scalar_t x, scalar_t y) noexcept;
 
 /**
  * @brief pow
