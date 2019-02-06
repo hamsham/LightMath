@@ -336,13 +336,14 @@ inline LS_INLINE float math::fast_log2<float>(float n) noexcept
     int32_t* const exp = reinterpret_cast<int32_t*>(&n);
     int32_t x = *exp;
 
+    // arithmetic right-shift
     const int32_t log2 = ((x >> 23) & 255) - 128;
 
     x &= ~(255 << 23);
     x += 127 << 23;
 
     *exp = x;
-    const float ret = (-0.3333333333f * n + 2.f) * n - 0.6666666666f;
+    const float ret = (((-0.3333333333f * n) + 2.f) * n) - 0.6666666666f;
     return ret + log2;
 }
 
@@ -603,7 +604,7 @@ namespace impl
     template <typename scalar_t>
     constexpr scalar_t powi_impl(scalar_t p, scalar_t y, scalar_t result) noexcept
     {
-        return (y < scalar_t{1.f}) ? result : math::impl::powi_impl<scalar_t>(p*p, y >> scalar_t{2.f}, (y & scalar_t{1.f}) ? (result*p) : result);
+        return (y < scalar_t{1}) ? result : math::impl::powi_impl<scalar_t>(p*p, y >> scalar_t{2}, (y & scalar_t{1}) ? (result*p) : result);
     }
 } // end impl namespace
 } // end math namespace

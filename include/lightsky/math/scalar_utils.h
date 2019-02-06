@@ -351,6 +351,9 @@ inline scalar_t fast_log(scalar_t) noexcept;
  * @brief fastLogBase
  * Calculate the log-base2 of a number
  *
+ * @param baseN
+ * The base of the logarithm.
+ *
  * @param a number
  *
  * @return the log-baseN of a number, using IEEE floating point arithmetic
