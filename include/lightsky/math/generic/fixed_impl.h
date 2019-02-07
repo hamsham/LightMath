@@ -243,9 +243,18 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
     // ensure the result will have enough precision. The second method will
     // simply make use of all available bits in a 64-bit number, then remove
     // any excess bits.
+
+    #if 0
     return (sizeof(fixed_base_t) > sizeof(int32_t))
         ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value}
         : fixed_t{(fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits))};
+    #else
+    return fixed_t{(fixed_base_t)(
+        (((number >> num_frac_digits) * (f.number >> num_frac_digits)) << num_frac_digits) + // integer multiply
+        (((number & fraction_mask)    * (f.number & fraction_mask))    >> num_frac_digits) + // fraction multiply
+        (((number >> num_frac_digits) * (f.number & fraction_mask)) + ((number & fraction_mask) * (f.number >> num_frac_digits))) // mixed multiply
+    )};
+    #endif
 }
 
 
@@ -255,16 +264,10 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
+fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
-    return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
-    //return fixed_t{(number / f.number) + (fixed_base_t)(((number % f.number) << 1) >= f.number)};
-    //return fixed_t{
-    //    (fixed_base_t)(
-    //    ((((0xFFFFFFFFFFFFFFFFull >> (64ull-num_frac_digits)) & (uint64_t)number) << (uint64_t)num_frac_digits) / (uint64_t)f.number)
-    //    |
-    //    (((uint64_t)number / (uint64_t)f.number) << (uint64_t)num_frac_digits)
-    //)};
+    //return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
+    return this->operator*(fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(((0x8000000000000000ull >> (63ull-num_frac_digits)) << num_frac_digits) / (uint64_t)f.number)});
 }
 
 
@@ -412,15 +415,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator*=(const fixed_t& f)
 {
-    if (sizeof(fixed_base_t) > sizeof(int32_t))
-    {
-        number = ((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value;
-    }
-    else
-    {
-        number = (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits));
-    }
-    return *this;
+    return *this = this->operator*(f);
 }
 
 
@@ -432,13 +427,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f)
 {
-    number = (fixed_base_t)(((int64_t)number << num_frac_digits) / (int64_t)f.number);
-
-    //number = ((((0xFFFFFFFFFFFFFFFFull >> (64ull-num_frac_digits)) & (uint64_t)number) << (uint64_t)num_frac_digits) / (uint64_t)f.number)
-    //|
-    //(((uint64_t)number / (uint64_t)f.number) << (uint64_t)num_frac_digits);
-
-    return *this;
+    return *this = this->operator/(f);
 }
 
 
@@ -644,7 +633,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
     return (num.number != 0)
-    ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)1ull} / num) : math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)0ull};
+    ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(0x8000000000000000ull >> (63ull-num_frac_digits))} / num) : math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)0ull};
 }
 
 
@@ -668,7 +657,7 @@ constexpr LS_INLINE int math::sign_bit(const math::fixed_t<fixed_base_t, num_fra
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::floor(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return math::fixed_t<fixed_base_t, num_frac_digits>{x.number & (fixed_base_t)(~0ull << num_frac_digits)};
+    return math::fixed_t<fixed_base_t, num_frac_digits>{x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask};
 }
 
 

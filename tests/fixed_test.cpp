@@ -13,7 +13,7 @@ inline std::ostream& operator << (std::ostream& os, const FixedType& fx)
     const FixedType::base_type n = fx.number >> FixedType::fraction_digits;
     os << n << '.';
 
-    FixedType::base_type d = fx.number ^ (FixedType::base_type)((unsigned long long)n << FixedType::fraction_digits);
+    FixedType::base_type d = fx.number & FixedType::fraction_mask;
 
     if (!d)
     {
@@ -48,8 +48,9 @@ int main()
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     f /= LS_PI;
+    FixedType fx2 = fx * ls::math::rcp<FixedType::base_type, FixedType::fraction_digits>(FixedType(LS_PI));
     fx /= FixedType(LS_PI);
-    std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
+    std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << ' ' << fx2 << '\n' << std::endl;
 
     FixedType pi = FixedType{LS_PI};
 

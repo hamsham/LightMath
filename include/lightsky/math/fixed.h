@@ -33,6 +33,8 @@ class LS_API fixed_t final {
     typedef fixed_base_t base_type;
 
     static constexpr fixed_base_t fraction_digits = num_frac_digits;
+    static constexpr fixed_base_t fraction_mask   = (fixed_base_t)(0xFFFFFFFFFFFFFFFFull >> (((sizeof (fixed_base_t)) * CHAR_BIT)-num_frac_digits));
+    static constexpr fixed_base_t integer_mask    = ~fraction_mask;
 
     /**
      *  @brief number
