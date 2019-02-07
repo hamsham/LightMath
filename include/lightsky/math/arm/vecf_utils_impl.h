@@ -22,9 +22,7 @@ namespace math
 /*-------------------------------------
     3D Magnitude
 -------------------------------------*/
-template <>
-inline LS_INLINE
-float length(const vec3_t<float>& v)
+inline LS_INLINE float length(const vec3_t<float>& v)
 {
     const float lanes[4] = {v.v[0], v.v[1], v.v[2], 0.f};
     const float32x4_t s = vld1q_f32(lanes);
@@ -84,9 +82,7 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-template <>
-inline LS_INLINE
-float length(const vec4_t<float>& v)
+inline LS_INLINE float length(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);
@@ -102,9 +98,7 @@ float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-template <>
-inline LS_INLINE
-math::vec4_t<float> normalize(const vec4_t<float>& v)
+inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);

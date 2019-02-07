@@ -28,9 +28,7 @@ inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-template <>
-inline LS_INLINE
-float length(const quat_t<float>& q)
+inline LS_INLINE float length(const quat_t<float>& q)
 {
     const float32x4_t s = vld1q_f32(q.q);
     const float32x4_t a = vmulq_f32(s, s);
@@ -46,9 +44,7 @@ float length(const quat_t<float>& q)
 /*-------------------------------------
     normalize
 -------------------------------------*/
-template <>
-inline LS_INLINE
-quat_t<float> normalize(const quat_t<float>& q)
+inline LS_INLINE quat_t<float> normalize(const quat_t<float>& q)
 {
     const float32x4_t s = vld1q_f32(q.q);
     const float32x4_t a = vmulq_f32(s, s);

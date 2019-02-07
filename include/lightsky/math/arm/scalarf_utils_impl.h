@@ -16,7 +16,6 @@ namespace math
 /*-------------------------------------
     floor
 -------------------------------------*/
-template<>
 inline LS_INLINE float floor(float n) noexcept
 {
     const float32x4_t f = vdupq_n_f32(n);
@@ -32,7 +31,6 @@ inline LS_INLINE float floor(float n) noexcept
 /*-------------------------------------
  fmod
 -------------------------------------*/
-template<>
 inline LS_INLINE float fmod(const float n1, const float n2) noexcept
 {
     const float32x4_t  num   = vdupq_n_f32(n1);
@@ -51,7 +49,6 @@ inline LS_INLINE float fmod(const float n1, const float n2) noexcept
 /*-------------------------------------
  fmod_1
 -------------------------------------*/
-template<>
 inline LS_INLINE float fmod_1(const float n) noexcept
 {
     const float32x4_t  num   = vdupq_n_f32(n);
@@ -67,8 +64,7 @@ inline LS_INLINE float fmod_1(const float n) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template<>
-inline LS_INLINE float fast_inv_sqrt<float>(float x) noexcept
+inline LS_INLINE float fast_inv_sqrt(float x) noexcept
 {
     const float32x4_t ret = vrsqrteq_f32(vdupq_n_f32(x));
     return vget_lane_f32(vget_low_f32(ret), 0);
@@ -79,8 +75,7 @@ inline LS_INLINE float fast_inv_sqrt<float>(float x) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-template<>
-inline LS_INLINE float fast_sqrt<float>(float x) noexcept
+inline LS_INLINE float fast_sqrt(float x) noexcept
 {
     const float32x4_t ret{vrecpeq_f32(vrsqrteq_f32(vdupq_n_f32(x)))};
     return vget_lane_f32(vget_low_f32(ret), 0);

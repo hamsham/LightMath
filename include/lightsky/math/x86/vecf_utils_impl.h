@@ -18,8 +18,7 @@ namespace math
     3D Vectors
 -----------------------------------------------------------------------------*/
 /*
-template<> inline LS_INLINE
-float dot<float>(const vec3_t<float>& v1, const vec3_t<float>& v2)
+inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2)
 {
     //const __m128i axy = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(v1.v));
     //const __m128  va  = _mm_movelh_ps(_mm_castsi128_ps(axy), _mm_load_ss(&v1.v[2]));
