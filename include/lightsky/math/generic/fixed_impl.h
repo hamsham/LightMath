@@ -692,6 +692,19 @@ inline LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::round(const 
 
 
 /*-------------------------------------
+    fmod_1
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::fmod_1(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+{
+    return math::fixed_t<fixed_base_t, num_frac_digits>{
+        (x.number - (x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask)) - ((fixed_base_t)(x.number < 0) << num_frac_digits)
+    };
+}
+
+
+
+/*-------------------------------------
     const_sin
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>

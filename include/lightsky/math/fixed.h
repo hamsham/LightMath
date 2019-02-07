@@ -261,6 +261,14 @@ inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> round(const fixed_t<fixe
 
 
 /*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fmod_1(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+
+
+
+/*-------------------------------------
     const_sin
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
