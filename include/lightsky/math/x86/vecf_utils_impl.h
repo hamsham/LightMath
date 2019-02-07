@@ -59,7 +59,6 @@ inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float
 /*-------------------------------------
     3D Magnitude
 -------------------------------------*/
-template <>
 inline LS_INLINE float length(const vec3_t<float>& v)
 {
     // cache
@@ -157,7 +156,6 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-template <>
 inline LS_INLINE float length(const vec4_t<float>& v)
 {
     // cache
@@ -180,7 +178,6 @@ inline LS_INLINE float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-template <>
 inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
 {
     // cache

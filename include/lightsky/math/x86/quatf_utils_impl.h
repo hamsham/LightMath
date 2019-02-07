@@ -33,7 +33,6 @@ inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-template <>
 inline LS_INLINE float length(const quat_t<float>& q)
 {
     // cache
@@ -56,7 +55,6 @@ inline LS_INLINE float length(const quat_t<float>& q)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-template <>
 inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
 {
     // cache

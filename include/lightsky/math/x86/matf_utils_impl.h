@@ -23,8 +23,7 @@ namespace math
 /*-------------------------------------
     4x4 Transpose
 -------------------------------------*/
-template <> inline LS_INLINE
-mat4_t<float> transpose<float>(const mat4_t<float>& m)
+inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
     const __m128 t0 = _mm_unpacklo_ps(m.m[0].simd, m.m[1].simd);
     const __m128 t1 = _mm_unpacklo_ps(m.m[2].simd, m.m[3].simd);
