@@ -283,5 +283,42 @@ inline LS_INLINE float exp(float x) noexcept
 
 
 
+/*-------------------------------------
+    exp
+-------------------------------------*/
+inline LS_INLINE float pow(float x, float y) noexcept
+{
+    __m128 expx = _mm_set_ss(x);
+    __m128i b = _mm_castps_si128(expx);
+
+    const __m128i log2 = _mm_sub_epi32(_mm_and_si128(_mm_srai_epi32(b, 23), _mm_set1_epi32(255)), _mm_set1_epi32(128));
+
+    b = _mm_and_si128(b, _mm_set1_epi32(~(255 << 23)));
+    b = _mm_add_epi32(b, _mm_set1_epi32(127 << 23));
+
+    expx = _mm_castsi128_ps(b);
+
+    __m128 l2 = _mm_add_ss(_mm_mul_ss(_mm_set_ss(-0.3333333333f), expx), _mm_set_ss(2.f));
+    l2 = _mm_sub_ss(_mm_mul_ss(l2, expx), _mm_set_ss(0.6666666666f));
+    l2 = _mm_add_ss(l2, _mm_cvtepi32_ps(log2));
+
+    __m128 ln = _mm_mul_ss(l2, _mm_set_ss(0.693147181f)); // ln( 2 )
+
+    __m128 expy = _mm_mul_ps(ln, _mm_set_ss(y));
+    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(expy, _mm_set_ss(1.f/256.f)));
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+
+    return _mm_cvtss_f32(s);
+}
+
+
+
 } // end math namespace
 } // end ls namespace
