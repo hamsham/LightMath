@@ -834,11 +834,25 @@ constexpr LS_INLINE int math::sign_bit(data_t x) noexcept
 /*-------------------------------------
     Absolute Value
 -------------------------------------*/
+namespace math
+{
+    namespace impl
+    {
+        template <typename data_t>
+        constexpr LS_INLINE data_t abs(data_t x, data_t mask) noexcept
+        {
+            return (x^mask) - mask;
+        }
+    }
+}
+
+
 template <typename data_t>
 constexpr LS_INLINE data_t math::abs(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x) noexcept
 {
-    return math::IsUnsigned<data_t>::value ? x : (data_t)((long long)x ^ (data_t)0x8000000000000000ll);
+    return math::IsUnsigned<data_t>::value ? x : math::impl::abs<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
 }
+
 
 template <typename data_t>
 constexpr LS_INLINE data_t math::abs(data_t x) noexcept
