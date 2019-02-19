@@ -28,6 +28,7 @@ constexpr LS_INLINE vec4_t<num_t>::vec4_t(num_t n) :
 {
 }
 
+/*
 template <typename num_t>
 constexpr LS_INLINE vec4_t<num_t>::vec4_t(const vec4_t<num_t>& v) :
     v{v.v[0], v.v[1], v.v[2], v.v[3]}
@@ -39,6 +40,7 @@ constexpr LS_INLINE vec4_t<num_t>::vec4_t(vec4_t<num_t>&& v) :
     v{v.v[0], v.v[1], v.v[2], v.v[3]}
 {
 }
+*/
 
 /*-------------------------------------
     Conversions & Casting
@@ -129,6 +131,7 @@ vec4_t<num_t> vec4_t<num_t>::operator/(const vec4_t<num_t>& input) const {
     };
 }
 
+/*
 template <typename num_t> inline LS_INLINE
 vec4_t<num_t>& vec4_t<num_t>::operator=(const vec4_t<num_t>& input) {
     v[0] = input.v[0];
@@ -146,6 +149,7 @@ vec4_t<num_t>& vec4_t<num_t>::operator=(vec4_t<num_t>&& input) {
     v[3] = input.v[3];
     return *this;
 }
+*/
 
 template <typename num_t> inline LS_INLINE
 vec4_t<num_t>& vec4_t<num_t>::operator+=(const vec4_t<num_t>& input) {

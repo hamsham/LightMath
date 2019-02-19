@@ -10,12 +10,14 @@ namespace math
 /*
  *  Constructor
  */
+/*
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t() :
     number{}
 {
 }
+*/
 
 
 
@@ -23,24 +25,28 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t() :
  *  Copy Constructor
  *
  */
+/*
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(const fixed_t& f) :
     number{f.number}
 {
 }
+*/
 
 
 
 /*
  *  Move Constructor
  */
+/*
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_t&& f) :
     number{f.number}
 {
 }
+*/
 
 
 

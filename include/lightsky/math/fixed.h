@@ -48,7 +48,7 @@ class LS_API fixed_t final {
      *  @brief Constructors
      *  Initializes all data.
      */
-    constexpr fixed_t();
+    constexpr fixed_t() = default;
 
     /**
      *  @brief Copy Constructor
@@ -60,7 +60,7 @@ class LS_API fixed_t final {
      *  precision and bit-count.
      *
      */
-    constexpr fixed_t(const fixed_t& f);
+    constexpr fixed_t(const fixed_t& f) = default;
 
     /**
      *  @brief Move Constructor
@@ -70,7 +70,7 @@ class LS_API fixed_t final {
      *  @param f
      *  A fixed-point number of the same type as *this.
      */
-    constexpr fixed_t(fixed_t&& f);
+    constexpr fixed_t(fixed_t&& f) = default;
 
     /**
      *  @brief Constructor
@@ -97,7 +97,7 @@ class LS_API fixed_t final {
      *  Defaulted in order to allow a fixed-precision type to be used in
      *  constexpr expressions.
      */
-    //~fixed_t() = default;
+    ~fixed_t() = default;
 
     inline fixed_t& operator++();
     inline fixed_t& operator--();
