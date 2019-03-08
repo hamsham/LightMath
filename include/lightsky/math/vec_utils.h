@@ -1108,6 +1108,200 @@ inline vec4_t<N> exp(vec4_t<N> x) noexcept;
 
 
 
+/*-----------------------------------------------------------------------------
+    Vector Casting
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+    Casts to 2D Vectors
+-------------------------------------*/
+/**
+ * @brief Perform a truncating cast from a 3D vector to a 2D vector.
+ *
+ * @param v
+ * A 3D Vector of type N.
+ *
+ * @return A 2D Vector containing the X and Y elements of v.
+ */
+template <typename N>
+constexpr vec2_t<N> vec2_cast(const vec3_t<N>& v) noexcept;
+
+/**
+ * @brief Perform a truncating cast from a 4D vector to a 2D vector.
+ *
+ * @param v
+ * A 4D Vector of type N.
+ *
+ * @return A 2D Vector containing the X and Y elements of v.
+ */
+template <typename N>
+constexpr vec2_t<N> vec2_cast(const vec4_t<N>& v) noexcept;
+
+
+
+/*-------------------------------------
+    Casts to 3D Vectors
+-------------------------------------*/
+/**
+ * @brief Perform a concatenating cast of a 2D vector and scalar into a 3D
+ * vector.
+ *
+ * @param v
+ * A 2D vector of type N to be used for the X/Y components of the output
+ * vector.
+ *
+ * @param s
+ * A scalar which will construct the Z-component of the output vector.
+ *
+ * @return A 3D vector containing the X/Y elements of v and Z component from
+ * an input scalar.
+ */
+template <typename N>
+constexpr vec3_t<N> vec3_cast(const vec2_t<N>& v, const N& s) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of a 2D vector and scalar into a 3D
+ * vector.
+ *
+ * @param s
+ * A scalar which will construct the X-component of the output vector.
+ *
+ * @param v
+ * A 2D vector of type N to be used for the Y/Z components of the output
+ * vector.
+ *
+ * @return A 3D vector containing the X component from an input scalar and Y/Z
+ * from the elements of v.
+ */
+template <typename N>
+constexpr vec3_t<N> vec3_cast(const N& s, const vec2_t<N>& v) noexcept;
+
+/**
+ * @brief Perform a truncating cast from a 4D vector to a 3D vector.
+ *
+ * @param v
+ * A 4D Vector of type N.
+ *
+ * @return A 3D Vector containing the X, Y, and Z elements of v.
+ */
+template <typename N>
+constexpr vec3_t<N> vec3_cast(const vec4_t<N>& v) noexcept;
+
+
+
+/*-------------------------------------
+    Casts to 4D Vectors
+-------------------------------------*/
+/**
+ * @brief Perform a concatenating cast of a 2D vector and two scalars into a
+ * 4D vector.
+ *
+ * @param v
+ * A 2D vector of type N to be used for the X/Y components of the output
+ * vector.
+ *
+ * @param s0
+ * A scalar which will construct the Z-component of the output vector.
+ *
+ * @param s1
+ * A scalar which will construct the W-component of the output vector.
+ *
+ * @return A 4D vector containing the X/Y elements of v and Z, W components
+ * from two input scalars.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const vec2_t<N>& v, const N& s0, const N& s1) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of a 2D vector and two scalars into a
+ * 4D vector.
+ *
+ * @param s0
+ * A scalar which will construct the X-component of the output vector.
+ *
+ * @param v
+ * A 2D vector of type N to be used for the Y/Z components of the output
+ * vector.
+ *
+ * @param s1
+ * A scalar which will construct the W-component of the output vector.
+ *
+ * @return A 4D vector containing the X component from an input scalar, Y/Z
+ * from the elements of v, and W component from another scalar.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const N& s0, const vec2_t<N>& v, const N& s1) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of a 2D vector and two scalars into a
+ * 4D vector.
+ *
+ * @param s0
+ * A scalar which will construct the X-component of the output vector.
+ *
+ * @param s1
+ * A scalar which will construct the Y-component of the output vector.
+ *
+ * @param v
+ * A 2D vector of type N to be used for the Z/W components of the output
+ * vector.
+ *
+ * @return A 4D vector containing the X/Y component from two input scalars,
+ * and Z/W from the elements of v.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const N& s0, const N& s1, const vec2_t<N>& v) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of two 2D vectors into a 4D vector.
+ *
+ * @param v0
+ * A 2D vector which will construct the X/Y components of the output vector.
+ *
+ * @param v1
+ * A 2D  which will construct the Z/W component of the output vector.
+ *
+ * @return A 4D vector containing the X/Y component from one 2D vector and Z/W
+ * components from the other 2D vector.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const vec2_t<N>& v0, const vec2_t<N>& v1) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of a 3D vector and scalar into a 4D
+ * vector.
+ *
+ * @param v
+ * A 3D vector of type N to be used for the X/Y/Z components of the output
+ * vector.
+ *
+ * @param s
+ * A scalar which will construct the W-component of the output vector.
+ *
+ * @return A 4D vector containing the X/Y/Z elements of v and W component from
+ * an input scalar.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const vec3_t<N>& v, const N& s) noexcept;
+
+/**
+ * @brief Perform a concatenating cast of a scalar and 3D vector into a 4D
+ * vector.
+ *
+ * @param s
+ * A scalar which will construct the X-component of the output vector.
+ *
+ * @param v
+ * A 3D vector of type N to be used for the Y/Z/W components of the output
+ * vector.
+ *
+ * @return A 4D vector containing the X component from an input scalar and
+ * Y/Z/W components from the elements of v.
+ */
+template <typename N>
+constexpr vec4_t<N> vec4_cast(const N& s, const vec3_t<N>& v) noexcept;
+
+
+
 } // end math namespace
 } // end ls namespace
 

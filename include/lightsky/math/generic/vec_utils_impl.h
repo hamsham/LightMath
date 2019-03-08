@@ -974,4 +974,128 @@ inline LS_INLINE math::vec4_t<num_t> math::exp(math::vec4_t<num_t> x) noexcept
 
 
 
+/*-----------------------------------------------------------------------------
+    Vector Casting
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+    2D Vector from 3D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec2_t<N> math::vec2_cast(const math::vec3_t<N>& v) noexcept
+{
+    return math::vec2_t<N>{v[0], v[1]};
+}
+
+
+
+/*-------------------------------------
+    2D Vector from 4D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec2_t<N> math::vec2_cast(const math::vec4_t<N>& v) noexcept
+{
+    return math::vec2_t<N>{v[0], v[1]};
+}
+
+
+
+/*-------------------------------------
+    3D Vector from 2D & Scalar
+-------------------------------------*/
+template <typename N>
+constexpr math::vec3_t<N> math::vec3_cast(const math::vec2_t<N>& v, const N& s) noexcept
+{
+    return math::vec3_t<N>{v[0], v[1], s};
+}
+
+
+
+/*-------------------------------------
+    3D Vector from Scalar & 2D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec3_t<N> math::vec3_cast(const N& s, const math::vec2_t<N>& v) noexcept
+{
+    return math::vec3_t<N>{s, v[0], v[1]};
+}
+
+
+
+/*-------------------------------------
+    3D Vector from 4D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec3_t<N> math::vec3_cast(const math::vec4_t<N>& v) noexcept
+{
+    return math::vec3_t<N>{v[0], v[1], v[2]};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from 2D & Scalars
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v, const N& s0, const N& s1) noexcept
+{
+    return math::vec4_t<N>{v[0], v[1], s0, s1};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from Scalar, 2D, & Scalar
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const math::vec2_t<N>& v, const N& s1) noexcept
+{
+    return math::vec4_t<N>{s0, v[0], v[1], s1};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from Scalars & 2D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const N& s1, const math::vec2_t<N>& v) noexcept
+{
+    return math::vec4_t<N>{s0, s1, v[0], v[1]};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from 2D Vectors
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v0, const math::vec2_t<N>& v1) noexcept
+{
+    return math::vec4_t<N>{v0[0], v0[1], v1[0], v1[1]};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from 3D & Scalar
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const math::vec3_t<N>& v, const N& s) noexcept
+{
+    return math::vec4_t<N>{v[0], v[1], v[2], s};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from Scalar & 3D
+-------------------------------------*/
+template <typename N>
+constexpr math::vec4_t<N> math::vec4_cast(const N& s, const math::vec3_t<N>& v) noexcept
+{
+    return math::vec4_t<N>{s, v[0], v[1], v[2]};
+}
+
+
+
 } // end ls namespace
