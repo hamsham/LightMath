@@ -173,6 +173,9 @@ constexpr LS_INLINE vec4_t<float>::vec4_t(vec4_t<float>&& v) :
 /*-------------------------------------
     Conversions & Casting
 -------------------------------------*/
+/*-------------------------------------
+    Convert to 4D float
+-------------------------------------*/
 template<typename other_t>
 inline LS_INLINE vec4_t<float>::operator vec4_t<other_t>() const
 {
@@ -181,29 +184,104 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<other_t>() const
 
 template <>
 template <>
+inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
+{
+    alignas(sizeof(int32_t)*4) const int32_t vals[4] = {v[0], v[1], v[2], v[3]};
+    return vec4_t<float>{vcvtq_f32_s32(vld1q_s32(vals))};
+}
+
+template <>
+template <>
 inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
-    const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
+    alignas(sizeof(uint32_t)*4) const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
     return vec4_t<float>{vcvtq_f32_u32(vld1q_u32(vals))};
 }
 
 template <>
+template <>
+inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
+{
+    vec4_t<float> ret;
+    vst1q_f32(ret.v, vcvtq_f32_s32(vld1q_s32(v)));
+    return ret;
+}
+
+template <>
+template <>
+inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
+{
+    vec4_t<float> ret;
+    vst1q_f32(ret.v, vcvtq_f32_u32(vld1q_u32(v)));
+    return ret;
+}
+
+/*-------------------------------------
+    Convert to Other 4D Types
+-------------------------------------*/
+template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
-    union
-    {
-        const int32x4_t simd;
-        const int32_t vec[4];
-    } data{vcvtq_s32_f32(simd)};
-
+    uint32_t data[4];
+    vst1q_u32(data, vcvtq_u32_f32(vld1q_f32(v)));
+    
     return vec4_t<uint8_t>{
-        (uint8_t)data.vec[0],
-        (uint8_t)data.vec[1],
-        (uint8_t)data.vec[2],
-        (uint8_t)data.vec[3]
+        (uint8_t)data[0],
+        (uint8_t)data[1],
+        (uint8_t)data[2],
+        (uint8_t)data[3]
     };
 }
 
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
+{
+    int32_t data[4];
+    vst1q_s32(data, vcvtq_s32_f32(vld1q_f32(v)));
+    
+    return vec4_t<int8_t>{
+        (int8_t)data[0],
+        (int8_t)data[1],
+        (int8_t)data[2],
+        (int8_t)data[3]
+    };
+}
+
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
+{
+    vec4_t<uint16_t> ret;
+    vst1_u16(ret.v, vmovn_u32(vcvtq_u32_f32(vld1q_f32(v))));
+    return ret;
+}
+
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
+{
+    vec4_t<int16_t> ret;
+    vst1_s16(ret.v, vmovn_s32(vcvtq_s32_f32(vld1q_f32(v))));
+    return ret;
+}
+
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
+{
+    vec4_t<int32_t> ret;
+    vst1q_s32(ret.v, vcvtq_s32_f32(vld1q_f32(v)));
+    return ret;
+}
+
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
+{
+    vec4_t<uint32_t> ret;
+    vst1q_u32(ret.v, vcvtq_u32_f32(vld1q_f32(v)));
+    return ret;
+}
+
+/*-------------------------------------
+    Cast to a float pointer
+-------------------------------------*/
 inline LS_INLINE const float* vec4_t<float>::operator&() const
 {
     return v;

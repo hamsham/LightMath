@@ -84,7 +84,7 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 -------------------------------------*/
 inline LS_INLINE float length(const vec4_t<float>& v)
 {
-    const float32x4_t s = v.simd;
+    const float32x4_t s = vld1q_f32(&v);
     const float32x4_t a = vmulq_f32(s, s);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
     const float32x2_t c = vpadd_f32(b, b);
