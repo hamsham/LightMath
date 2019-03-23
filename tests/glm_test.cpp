@@ -105,10 +105,21 @@ std::ostream& operator<<(std::ostream& ostr, const glm::mat4x4& m)
     return print_mat_type(ostr, m);
 }
 
+std::ostream& operator<<(std::ostream& ostr, const glm::mat3x3& m)
+{
+    return print_mat_type<glm::mat3x3, 3, 3>(ostr, m);
+}
+
 template<typename data_t>
 std::ostream& operator<<(std::ostream& ostr, const ls::math::mat4_t<data_t>& m)
 {
     return print_mat_type(ostr, m);
+}
+
+template<typename data_t>
+std::ostream& operator<<(std::ostream& ostr, const ls::math::mat3_t<data_t>& m)
+{
+    return print_mat_type<ls::math::mat3_t<data_t>, 3, 3>(ostr, m);
 }
 
 
@@ -140,6 +151,10 @@ int main()
     std::cout << "GLM vec4 * mat4: " << glmVec * glmMat << std::endl;
     std::cout << "GLM mat4 * mat4: " << glmMat * glmMat << std::endl;
     std::cout << "GLM transpose(mat4): " << glm::transpose(glmMat) << std::endl;
+    std::cout << "GLM determinant(mat4): " << glm::determinant(glmMat) << std::endl;
+    std::cout << "GLM inverse(mat4): " << glm::inverse(glmMat) << std::endl;
+    std::cout << "GLM determinant(mat3): " << glm::determinant(glm::mat3{glmMat}) << std::endl;
+    std::cout << "GLM inverse(mat3): " << glm::inverse(glm::mat3{glmMat}) << std::endl;
     std::cout << "GLM dot(vec4): " << glm::dot(glmVec, glmVec) << std::endl;
 
     std::cout << std::endl;
@@ -151,6 +166,10 @@ int main()
     std::cout << "ls vec4 * mat4: " << lsVec * lsMat << std::endl;
     std::cout << "ls mat4 * mat4: " << lsMat * lsMat << std::endl;
     std::cout << "ls transpose(mat4): " << ls::math::transpose(lsMat) << std::endl;
+    std::cout << "ls determinant(mat4): " << ls::math::determinant(lsMat) << std::endl;
+    std::cout << "ls inverse(mat4): " << ls::math::inverse(lsMat) << std::endl;
+    std::cout << "ls determinant(mat3): " << ls::math::determinant(ls::math::mat3{lsMat}) << std::endl;
+    std::cout << "ls inverse(mat3): " << ls::math::inverse(ls::math::mat3{lsMat}) << std::endl;
     std::cout << "ls dot(vec4): " << ls::math::dot(lsVec, lsVec) << std::endl;
 
     std::cout << std::endl;

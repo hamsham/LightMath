@@ -233,8 +233,8 @@ inline LS_INLINE float fast_log2(float n) noexcept
 
     exp = _mm_castsi128_ps(x);
     __m128 ret;
-    ret = _mm_add_ss(_mm_mul_ss(_mm_set_ss(-0.3333333333f), exp), _mm_set_ss(2.f));
-    ret = _mm_sub_ss(_mm_mul_ss(ret, exp), _mm_set_ss(0.6666666666f));
+    ret = _mm_add_ss(_mm_mul_ss(_mm_set_ss(-0.333333333333f), exp), _mm_set_ss(2.f));
+    ret = _mm_sub_ss(_mm_mul_ss(ret, exp), _mm_set_ss(0.666666666666f));
     return _mm_cvtss_f32(_mm_add_ss(ret, _mm_cvtepi32_ps(log2)));
 }
 
@@ -246,7 +246,7 @@ inline LS_INLINE float fast_log2(float n) noexcept
 inline LS_INLINE float fast_log(float n) noexcept
 {
     const float x = fast_log2(n);
-    return _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.693147181f))); // ln( 2 )
+    return _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.69314718056f))); // ln( 2 )
 }
 
 
