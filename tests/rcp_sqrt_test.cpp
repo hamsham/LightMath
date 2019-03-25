@@ -8,8 +8,8 @@ int main()
 {
     for (unsigned i = 1; i <= 100; ++i)
     {
-        const float baseImpl = std::log((float)i);
-        const float testImpl = ls::math::fast_log<float>((float)i);
+        const float baseImpl = 1.f / std::sqrt((float)i);
+        const float testImpl = ls::math::fast_inv_sqrt<float>((float)i);
         const float errAbs = ls::math::abs(baseImpl - testImpl);
         const float errRel = 100.f * (errAbs / ls::math::abs(baseImpl));
 

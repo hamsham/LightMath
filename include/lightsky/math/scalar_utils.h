@@ -645,7 +645,7 @@ constexpr unsigned count_set_bits(const scalar_t num) noexcept;
  * another.
  */
 template <typename in_type, typename out_type>
-constexpr out_type scale_num_to_range(
+constexpr out_type scale_to_range(
     const in_type num,
     const out_type oldMin = std::numeric_limits<in_type>::min(),
     const out_type oldMax = std::numeric_limits<in_type>::max(),

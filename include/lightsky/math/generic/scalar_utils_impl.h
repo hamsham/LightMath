@@ -343,7 +343,7 @@ inline LS_INLINE float math::fast_log2<float>(float n) noexcept
     x += 127 << 23;
 
     *exp = x;
-    const float ret = (((-0.3333333333f * n) + 2.f) * n) - 0.6666666666f;
+    const float ret = (((-0.333333333333f * n) + 2.f) * n) - 0.666666666666f;
     return ret + log2;
 }
 
@@ -355,7 +355,7 @@ inline LS_INLINE float math::fast_log2<float>(float n) noexcept
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::fast_log(scalar_t n) noexcept
 {
-    return math::fast_log2<scalar_t>(n) * 0.693147181f; // ln( 2 )
+    return math::fast_log2<scalar_t>(n) * 0.69314718056f; // ln( 2 )
 }
 
 
@@ -799,7 +799,7 @@ constexpr unsigned math::count_set_bits(const scalar_t num) noexcept
     Scale a number from one number range to another.
 -------------------------------------*/
 template<typename in_type, typename out_type>
-constexpr LS_INLINE out_type math::scale_num_to_range(
+constexpr LS_INLINE out_type math::scale_to_range(
     const in_type num,
     const out_type oldMin,
     const out_type oldMax,
