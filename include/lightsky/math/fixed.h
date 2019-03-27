@@ -229,10 +229,10 @@ constexpr LS_INLINE fixed_t <fixed_base_t, num_frac_digits> rcp(const fixed_t<fi
 
 
 /*-------------------------------------
-    sign_bit
+    sign
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE int sign_bit(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+constexpr LS_INLINE int sign_mask(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
 
 
 
@@ -269,26 +269,26 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fmod_1(const fixed_t<
 
 
 /*-------------------------------------
-    const_sin
+    sin
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_sin(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> sin(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
 
 
 
 /*-------------------------------------
-    const_cos
+    cos
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_cos(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> cos(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
 
 
 
 /*-------------------------------------
-    const_tan
+    tan
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> const_tan(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> tan(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
 
 
 

@@ -281,7 +281,19 @@ vec2_t<N> rcp(const vec2_t<N>& v);
  * the signs are set.
  */
 template <typename N> constexpr
-int sign_bits(const vec2_t<N>& x) noexcept;
+int sign_mask(const vec2_t<N>& x) noexcept;
+
+/**
+ * @brief Retrieve the component-wise signs of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of component of the return value if the sign
+ * within x are set.
+ */
+template <typename N> constexpr
+vec2_t<N> sign(const vec2_t<N>& x) noexcept;
 
 /**
  *  @brief floor
@@ -320,7 +332,7 @@ template <typename N> constexpr
 vec2_t<N> round(const vec2_t<N>& v);
 
 /**
- * @brief fast_log2
+ * @brief log2
  * Calculate the log-base2 of a vector
  *
  * @param a vector
@@ -329,7 +341,7 @@ vec2_t<N> round(const vec2_t<N>& v);
  * arithmetic
  */
 template <typename N>
-inline vec2_t<N> fast_log2(const vec2_t<N>& n) noexcept;
+inline vec2_t<N> log2(const vec2_t<N>& n) noexcept;
 
 /**
  * @brief fastLog
@@ -340,10 +352,22 @@ inline vec2_t<N> fast_log2(const vec2_t<N>& n) noexcept;
  * @return ln(vec2), using IEEE floating point arithmetic
  */
 template <typename N>
-inline vec2_t<N> fast_log(const vec2_t<N>&) noexcept;
+inline vec2_t<N> log(const vec2_t<N>&) noexcept;
 
 /**
- * @brief fast_logN
+ * @brief log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec2_t<N> log10(const vec2_t<N>&) noexcept;
+
+/**
+ * @brief logN
  * Calculate the log-base2 of a vector
  *
  * @param baseN
@@ -355,7 +379,7 @@ inline vec2_t<N> fast_log(const vec2_t<N>&) noexcept;
  * arithmetic
  */
 template <typename N>
-inline vec2_t<N> fast_logN(const vec2_t<N>& baseN, const vec2_t<N>& n) noexcept;
+inline vec2_t<N> logN(const vec2_t<N>& baseN, const vec2_t<N>& n) noexcept;
 
 /**
  * @brief pow
@@ -388,6 +412,18 @@ inline vec2_t<N> pow(const vec2_t<N>& x, const vec2_t<N>& y) noexcept;
  */
 template <typename N>
 inline vec2_t<N> exp(vec2_t<N> x) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec2_t<N> exp2(vec2_t<N> x) noexcept;
 
 
 
@@ -659,7 +695,19 @@ vec3_t<N> rcp(const vec3_t<N>& v);
  * the signs are set.
  */
 template <typename N> constexpr
-int sign_bits(const vec3_t<N>& x) noexcept;
+int sign_mask(const vec3_t<N>& x) noexcept;
+
+/**
+ * @brief Retrieve the component-wise signs of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of component of the return value if the sign
+ * within x are set.
+ */
+template <typename N> constexpr
+vec3_t<N> sign(const vec3_t<N>& x) noexcept;
 
 /**
  *  @brief floor
@@ -698,7 +746,7 @@ template <typename N> constexpr
 vec3_t<N> round(const vec3_t<N>& v);
 
 /**
- * @brief fast_log2
+ * @brief log2
  * Calculate the log-base2 of a vector
  *
  * @param a vector
@@ -707,7 +755,7 @@ vec3_t<N> round(const vec3_t<N>& v);
  * arithmetic
  */
 template <typename N>
-inline vec3_t<N> fast_log2(const vec3_t<N>& n) noexcept;
+inline vec3_t<N> log2(const vec3_t<N>& n) noexcept;
 
 /**
  * @brief fastLog
@@ -718,10 +766,22 @@ inline vec3_t<N> fast_log2(const vec3_t<N>& n) noexcept;
  * @return ln(vec3), using IEEE floating point arithmetic
  */
 template <typename N>
-inline vec3_t<N> fast_log(const vec3_t<N>&) noexcept;
+inline vec3_t<N> log(const vec3_t<N>&) noexcept;
 
 /**
- * @brief fast_logN
+ * @brief log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec3_t<N> log10(const vec3_t<N>&) noexcept;
+
+/**
+ * @brief logN
  * Calculate the log-base2 of a vector
  *
  * @param baseN
@@ -733,7 +793,7 @@ inline vec3_t<N> fast_log(const vec3_t<N>&) noexcept;
  * arithmetic
  */
 template <typename N>
-inline vec3_t<N> fast_logN(const vec3_t<N>& baseN, const vec3_t<N>& n) noexcept;
+inline vec3_t<N> logN(const vec3_t<N>& baseN, const vec3_t<N>& n) noexcept;
 
 /**
  * @brief pow
@@ -766,6 +826,18 @@ inline vec3_t<N> pow(const vec3_t<N>& x, const vec3_t<N>& y) noexcept;
  */
 template <typename N>
 inline vec3_t<N> exp(vec3_t<N> x) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec3_t<N> exp2(vec3_t<N> x) noexcept;
 
 
 
@@ -998,7 +1070,19 @@ vec4_t<N> rcp(const vec4_t<N>& v);
  * the signs are set.
  */
 template <typename N> constexpr
-int sign_bits(const vec4_t<N>& x) noexcept;
+int sign_mask(const vec4_t<N>& x) noexcept;
+
+/**
+ * @brief Retrieve the component-wise signs of a vector type.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns A value of 1 in each of component of the return value if the sign
+ * within x are set.
+ */
+template <typename N> constexpr
+vec4_t<N> sign(const vec4_t<N>& x) noexcept;
 
 /**
  *  @brief floor
@@ -1037,7 +1121,7 @@ template <typename N> constexpr
 vec4_t<N> round(const vec4_t<N>& v);
 
 /**
- * @brief fast_log2
+ * @brief log2
  * Calculate the log-base2 of a vector
  *
  * @param a vector
@@ -1046,7 +1130,7 @@ vec4_t<N> round(const vec4_t<N>& v);
  * arithmetic
  */
 template <typename N>
-inline vec4_t<N> fast_log2(const vec4_t<N>&) noexcept;
+inline vec4_t<N> log2(const vec4_t<N>&) noexcept;
 
 /**
  * @brief fastLog
@@ -1057,10 +1141,22 @@ inline vec4_t<N> fast_log2(const vec4_t<N>&) noexcept;
  * @return ln(vec3), using IEEE floating point arithmetic
  */
 template <typename N>
-inline vec4_t<N> fast_log(const vec4_t<N>&) noexcept;
+inline vec4_t<N> log(const vec4_t<N>&) noexcept;
 
 /**
- * @brief fast_logN
+ * @brief log2
+ * Calculate the log-base2 of a vector
+ *
+ * @param a vector
+ *
+ * @return A vector with the log-base2 of a number, using IEEE floating point
+ * arithmetic
+ */
+template <typename N>
+inline vec4_t<N> log10(const vec4_t<N>&) noexcept;
+
+/**
+ * @brief logN
  * Calculate the log-base2 of a vector
  *
  * @param baseN
@@ -1072,7 +1168,7 @@ inline vec4_t<N> fast_log(const vec4_t<N>&) noexcept;
  * arithmetic
  */
 template <typename N>
-inline vec4_t<N> fast_logN(const vec4_t<N>& baseN, const vec4_t<N>& n) noexcept;
+inline vec4_t<N> logN(const vec4_t<N>& baseN, const vec4_t<N>& n) noexcept;
 
 /**
  * @brief pow
@@ -1105,6 +1201,18 @@ inline vec4_t<N> pow(const vec4_t<N>& x, const vec4_t<N>& y) noexcept;
  */
 template <typename N>
 inline vec4_t<N> exp(vec4_t<N> x) noexcept;
+
+/**
+ * @brief pow
+ * Evaluate the exponentiation of e^x.
+ *
+ * @param x
+ * The power X to which e will be raised by, per vector component.
+ *
+ * @return E, raised to the power x.
+ */
+template <typename N>
+inline vec4_t<N> exp2(vec4_t<N> x) noexcept;
 
 
 

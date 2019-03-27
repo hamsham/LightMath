@@ -62,9 +62,9 @@ int main()
     std::cout << "Floor:     " << e                                 << " = " << ls::math::floor(e)                           << std::endl;
     std::cout << "Ceil:      " << e                                 << " = " << ls::math::ceil(e)                            << std::endl;
     std::cout << "Round:     " << e                                 << " = " << ls::math::round(e)                           << std::endl;
-    std::cout << "Sin(PI/6): " << ls::math::const_sin(LS_PI_OVER_6) << " = " << ls::math::const_sin(FixedType{LS_PI_OVER_6}) << std::endl;
-    std::cout << "Cos(PI/6): " << ls::math::const_cos(LS_PI_OVER_6) << " = " << ls::math::const_cos(FixedType{LS_PI_OVER_6}) << std::endl;
-    std::cout << "Tan(PI/6): " << ls::math::const_tan(LS_PI_OVER_6) << " = " << ls::math::const_tan(FixedType{LS_PI_OVER_6}) << std::endl;
+    std::cout << "Sin(PI/6): " << ls::math::sin(LS_PI_OVER_6) << " = " << ls::math::sin(FixedType{LS_PI_OVER_6}) << std::endl;
+    std::cout << "Cos(PI/6): " << ls::math::cos(LS_PI_OVER_6) << " = " << ls::math::cos(FixedType{LS_PI_OVER_6}) << std::endl;
+    std::cout << "Tan(PI/6): " << ls::math::tan(LS_PI_OVER_6) << " = " << ls::math::tan(FixedType{LS_PI_OVER_6}) << std::endl;
 
     return 0;
 }

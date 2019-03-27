@@ -64,7 +64,7 @@ inline LS_INLINE float fmod_1(const float n) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-inline LS_INLINE float fast_inv_sqrt(float x) noexcept
+inline LS_INLINE float inversesqrt(float x) noexcept
 {
     const float32x4_t ret = vrsqrteq_f32(vdupq_n_f32(x));
     return vget_lane_f32(vget_low_f32(ret), 0);

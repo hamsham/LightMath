@@ -224,9 +224,17 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v)
 /*-------------------------------------
     4D Sign Bits
 -------------------------------------*/
-inline LS_INLINE int sign_bits(const vec4_t<float>& x) noexcept
+inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
     return _mm_movemask_ps(x.simd);
+}
+
+/*-------------------------------------
+    sign
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> sign(const vec4_t<float>& x) noexcept
+{
+    return vec4_t<float>{_mm_and_ps(_mm_cmplt_ps(x.simd, _mm_setzero_ps()), _mm_set1_ps(1.f))};
 }
 
 /*-------------------------------------
@@ -256,7 +264,7 @@ inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
 
 
 /*-------------------------------------
-    fast_log2
+    log2
 
     Fast Approximate logarithms
     This method was found on flipcode:
@@ -264,7 +272,7 @@ inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
     Accurate to within 5 decimal places.
     This method relies on the IEEE floating point specification
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> fast_log2(const vec4_t<float>& n) noexcept
+inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
 {
     __m128 exp = n.simd;
     __m128i x = _mm_castps_si128(exp);
@@ -276,31 +284,42 @@ inline LS_INLINE vec4_t<float> fast_log2(const vec4_t<float>& n) noexcept
 
     exp = _mm_castsi128_ps(x);
     __m128 ret;
-    ret = _mm_add_ps(_mm_mul_ps(_mm_set1_ps(-0.3333333333f), exp), _mm_set1_ps(2.f));
-    ret = _mm_sub_ps(_mm_mul_ps(ret, exp), _mm_set1_ps(0.6666666666f));
+    ret = _mm_add_ps(_mm_mul_ps(_mm_set1_ps(-0.333333333333f), exp), _mm_set1_ps(2.f));
+    ret = _mm_sub_ps(_mm_mul_ps(ret, exp), _mm_set1_ps(0.666666666666f));
     return vec4_t<float>{_mm_add_ps(ret, _mm_cvtepi32_ps(log2))};
 }
 
 
 
 /*-------------------------------------
-    fast_log
+    log
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> fast_log(const vec4_t<float>& n) noexcept
+inline LS_INLINE vec4_t<float> log(const vec4_t<float>& n) noexcept
 {
-    const math::vec4_t<float> x = fast_log2(n);
-    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.693147181f))}; // ln( 2 )
+    const math::vec4_t<float> x = log2(n);
+    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.69314718056f))}; // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fast_logN
+    log
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> fast_logN(const vec4_t<float>& baseN, const vec4_t<float>& n) noexcept
+inline LS_INLINE vec4_t<float> log10(const vec4_t<float>& n) noexcept
 {
-    const math::vec4_t<float> x = fast_log(n);
-    const math::vec4_t<float> b = fast_log2(baseN);
+    const math::vec4_t<float> x = log2(n);
+    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.3010299956639812f))}; // log2( 10 )
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> logN(const vec4_t<float>& baseN, const vec4_t<float>& n) noexcept
+{
+    const math::vec4_t<float> x = log(n);
+    const math::vec4_t<float> b = log2(baseN);
     return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_rcp_ps(b.simd))};
 }
 
@@ -327,11 +346,31 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 
 
 /*-------------------------------------
+    exp
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
+{
+    __m128 s = _mm_add_ps(_mm_set1_ps(1.f), _mm_mul_ps(x.simd, _mm_set1_ps(0.002707606174f)));
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+
+    return math::vec4_t<float>{s};
+}
+
+
+
+/*-------------------------------------
     pow
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& y) noexcept
 {
-    return math::exp(math::fast_log(x) * y);
+    return math::exp(math::log(x) * y);
 }
 
 

@@ -145,7 +145,7 @@ inline LS_INLINE float fmod_1(const float n) noexcept
 /*-------------------------------------
     fastInvSqrt
 -------------------------------------*/
-inline LS_INLINE float fast_inv_sqrt(float x) noexcept
+inline LS_INLINE float inversesqrt(float x) noexcept
 {
     return _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(x)));
 }
@@ -193,11 +193,21 @@ inline LS_INLINE float sum(float num0, float num1, float num2, float num3) noexc
 
 
 /*-------------------------------------
-    sign_bit
+    sign_mask
 -------------------------------------*/
-inline LS_INLINE int sign_bit(float x) noexcept
+inline LS_INLINE int sign_mask(float x) noexcept
 {
     return _mm_cvtsi128_si32(_mm_castps_si128(_mm_set_ss(x))) >> 31;
+}
+
+
+
+/*-------------------------------------
+    sign
+-------------------------------------*/
+inline LS_INLINE float sign(float x) noexcept
+{
+    return _mm_cvtss_f32(_mm_and_ps(_mm_cmplt_ps(_mm_set1_ps(x), _mm_setzero_ps()), _mm_set1_ps(1.f)));
 }
 
 
@@ -213,7 +223,7 @@ inline LS_INLINE float abs(float x) noexcept
 
 
 /*-------------------------------------
-    fast_log2
+    log2
 
     Fast Approximate logarithms
     This method was found on flipcode:
@@ -221,7 +231,7 @@ inline LS_INLINE float abs(float x) noexcept
     Accurate to within 5 decimal places.
     This method relies on the IEEE floating point specification
 -------------------------------------*/
-inline LS_INLINE float fast_log2(float n) noexcept
+inline LS_INLINE float log2(float n) noexcept
 {
     __m128 exp = _mm_set_ss(n);
     __m128i x = _mm_castps_si128(exp);
@@ -241,23 +251,34 @@ inline LS_INLINE float fast_log2(float n) noexcept
 
 
 /*-------------------------------------
-    fast_log
+    log
 -------------------------------------*/
-inline LS_INLINE float fast_log(float n) noexcept
+inline LS_INLINE float log(float n) noexcept
 {
-    const float x = fast_log2(n);
+    const float x = log2(n);
     return _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.69314718056f))); // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fast_logN
+    log10
 -------------------------------------*/
-inline LS_INLINE float fast_logN(float baseN, float n) noexcept
+inline LS_INLINE float log10(float n) noexcept
 {
-    const float x = fast_log(n);
-    const float b = fast_log2(baseN);
+    const float x = log2(n);
+    return _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.3010299956639812f))); // ln( 2 )
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+inline LS_INLINE float logN(float baseN, float n) noexcept
+{
+    const float x = log(n);
+    const float b = log2(baseN);
     return _mm_cvtss_f32(_mm_mul_ps(_mm_set_ss(x), _mm_rcp_ps(_mm_set_ss(b))));
 }
 
@@ -269,6 +290,26 @@ inline LS_INLINE float fast_logN(float baseN, float n) noexcept
 inline LS_INLINE float exp(float x) noexcept
 {
     __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.f/256.f)));
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+
+    return _mm_cvtss_f32(s);
+}
+
+
+
+/*-------------------------------------
+    exp
+-------------------------------------*/
+inline LS_INLINE float exp2(float x) noexcept
+{
+    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.002707606174f)));
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);

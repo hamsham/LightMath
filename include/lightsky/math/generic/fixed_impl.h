@@ -645,10 +645,10 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const
 
 
 /*-------------------------------------
-    sign_bit
+    sign
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE int math::sign_bit(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+constexpr LS_INLINE int math::sign_mask(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     return math::IsSigned<fixed_base_t>::value
         ? (int)(x.number >> (((sizeof(fixed_base_t) * CHAR_BIT) - 1)) & 0x01)
@@ -711,10 +711,10 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::fmod_1(co
 
 
 /*-------------------------------------
-    const_sin
+    sin
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_sin(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::sin(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x3 = x2*x;
@@ -732,10 +732,10 @@ inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_
 
 
 /*-------------------------------------
-    const_cos
+    cos
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_cos(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::cos(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x4 = x2*x2;
@@ -752,10 +752,10 @@ inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_
 
 
 /*-------------------------------------
-    const_tan
+    tan
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::const_tan(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
+inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::tan(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x2 = x*x;
     const math::fixed_t<fixed_base_t, num_frac_digits>&& x3 = x2*x;

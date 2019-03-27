@@ -273,30 +273,29 @@ inline scalar_t fast_sqrt(scalar_t) noexcept;
  * @return The inverse square root (1/sqrt(x)) of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fast_inv_sqrt(scalar_t) noexcept;
+inline scalar_t inversesqrt(scalar_t) noexcept;
 
 /**
- * @brief degToRad
- * Convert a number from degrees to radians.
+ * @brief Convert a number from degrees to radians. This function can be run at
+ * compile-time.
  *
  * @param the value of an angle, in degrees.
  *
  * @return the value of an angle, in radians.
  */
 template <typename scalar_t>
-constexpr scalar_t deg_to_rad(scalar_t) noexcept;
+constexpr scalar_t radians(scalar_t degrees) noexcept;
 
 /**
- * @brief radToDeg
- * Convert a number from radians to degrees.
- * This function can be run at compile-time.
+ * @brief Convert a number from radians to degrees. This function can be run at
+ * compile-time.
  *
  * @param the value of an angle, in radians.
  *
  * @return the value of an angle, in degrees.
  */
 template <typename scalar_t>
-constexpr scalar_t rad_to_deg(scalar_t) noexcept;
+constexpr scalar_t degrees(scalar_t radians) noexcept;
 
 /**
  * @brief Compute the modulus of num%denom only when necessary.
@@ -315,7 +314,7 @@ template <typename integral_t>
 constexpr integral_t fast_mod(const integral_t num, const integral_t denom) noexcept;
 
 /**
- * @brief fastLog2
+ * @brief log2
  * Calculate the log-base2 of a number
  *
  * @param a number
@@ -323,10 +322,10 @@ constexpr integral_t fast_mod(const integral_t num, const integral_t denom) noex
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_log2(scalar_t) noexcept;
+inline scalar_t log2(scalar_t n) noexcept;
 
 /**
- * @brief fastLog2
+ * @brief log2
  * Calculate the log-base2 of a number
  *
  * @param a number
@@ -334,10 +333,10 @@ inline scalar_t fast_log2(scalar_t) noexcept;
  * @return the log-base2 of a number, using IEEE floating point arithmetic
  */
 template <>
-inline float fast_log2<float>(float) noexcept;
+inline float log2<float>(float) noexcept;
 
 /**
- * @brief fastLog
+ * @brief log
  * Calculate the natural log of a number
  *
  * @param a number
@@ -345,10 +344,32 @@ inline float fast_log2<float>(float) noexcept;
  * @return ln(x), using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_log(scalar_t) noexcept;
+inline scalar_t log(scalar_t) noexcept;
 
 /**
- * @brief fastLogBase
+ * @brief log10
+ * Calculate the log-base2 of a number
+ *
+ * @param a number
+ *
+ * @return the log-base-10 of a number, using IEEE floating point arithmetic
+ */
+template <typename scalar_t>
+inline scalar_t log10(scalar_t) noexcept;
+
+/**
+ * @brief log10
+ * Calculate the log-base2 of a number
+ *
+ * @param a number
+ *
+ * @return the log-base-10 of a number, using IEEE floating point arithmetic
+ */
+template <>
+inline float log10<float>(float) noexcept;
+
+/**
+ * @brief logN
  * Calculate the log-base2 of a number
  *
  * @param baseN
@@ -359,7 +380,7 @@ inline scalar_t fast_log(scalar_t) noexcept;
  * @return the log-baseN of a number, using IEEE floating point arithmetic
  */
 template <typename scalar_t>
-inline scalar_t fast_logN(scalar_t baseN, scalar_t) noexcept;
+inline scalar_t logN(scalar_t baseN, scalar_t) noexcept;
 
 /**
  * @brief next_pow2
@@ -470,7 +491,7 @@ template <typename scalar_t>
 inline scalar_t pow(scalar_t x, scalar_t y) noexcept;
 
 /**
- * @brief pow
+ * @brief exp
  * Evaluate the exponentiation of e^x.
  *
  * @param x
@@ -481,8 +502,21 @@ inline scalar_t pow(scalar_t x, scalar_t y) noexcept;
 template <typename scalar_t>
 inline scalar_t exp(scalar_t x) noexcept;
 
+
 /**
- * @brief const_sin
+ * @brief exp2
+ * Evaluate the exponentiation of 2^x.
+ *
+ * @param x
+ * The power X to which 2 will be raised by.
+ *
+ * @return 2, raised to the power x.
+ */
+template <typename scalar_t>
+inline scalar_t exp2(scalar_t x) noexcept;
+
+/**
+ * @brief sin
  * Evaluate the sine of an angle at compile-time.
  *
  * @param An angle, in radians, who's sine value is to be calculated.
@@ -490,10 +524,10 @@ inline scalar_t exp(scalar_t x) noexcept;
  * @return The sine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_sin(scalar_t) noexcept;
+constexpr scalar_t sin(scalar_t) noexcept;
 
 /**
- * @brief const_cos
+ * @brief cos
  * Evaluate the cosine of an angle at compile-time.
  *
  * @param An angle, in radians, who's cosine value is to be calculated.
@@ -501,10 +535,10 @@ constexpr scalar_t const_sin(scalar_t) noexcept;
  * @return The cosine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_cos(scalar_t) noexcept;
+constexpr scalar_t cos(scalar_t) noexcept;
 
 /**
- * @brief const_tan
+ * @brief tan
  * Evaluate the tangent of an angle at compile-time.
  *
  * @param An angle, in radians, who's tangent value is to be calculated.
@@ -512,7 +546,7 @@ constexpr scalar_t const_cos(scalar_t) noexcept;
  * @return The tangent of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t const_tan(scalar_t) noexcept;
+constexpr scalar_t tan(scalar_t) noexcept;
 
 /**
  * @brief rcp
@@ -662,10 +696,24 @@ constexpr out_type scale_to_range(
  * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
  */
 template <typename data_t>
-constexpr int sign_bit(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+constexpr int sign_mask(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 template <typename data_t>
-constexpr int sign_bit(data_t x) noexcept;
+constexpr int sign_mask(data_t x) noexcept;
+
+/**
+ * @brief Determine if the sign-bit is set.
+ *
+ * @param x
+ * The number to be queried.
+ *
+ * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
+ */
+template <typename data_t>
+constexpr data_t sign(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+
+template <typename data_t>
+constexpr data_t sign(data_t x) noexcept;
 
 /**
  * @brief Retrieve the absolute value of a number

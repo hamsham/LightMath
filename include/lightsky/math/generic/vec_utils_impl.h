@@ -45,9 +45,9 @@ num_t math::cross(const vec2_t<num_t>& v1, const vec2_t<num_t>& v2) {
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::vec2_t<num_t> math::normalize(const vec2_t<num_t>& v) {
-    //return v * fast_inv_sqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
     const math::vec2_t<num_t>&& temp = v * v;
-    return v * fast_inv_sqrt<num_t>(math::sum<num_t>(temp));
+    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -181,9 +181,21 @@ math::vec2_t<num_t> math::rcp(const vec2_t<num_t>& v) {
     2D Sign Bits
 -------------------------------------*/
 template <typename N> constexpr LS_INLINE
-int math::sign_bits(const vec2_t<N>& x) noexcept
+int math::sign_mask(const vec2_t<N>& x) noexcept
 {
-    return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1);
+    return math::sign_mask(x.v[0]) | (math::sign_mask(x.v[1]) << 1);
+}
+
+/*-------------------------------------
+    2D Signs
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec2_t<N> math::sign(const vec2_t<N>& x) noexcept
+{
+    return vec2_t<N>{
+        math::sign(x.v[0]),
+        math::sign(x.v[1])
+    };
 }
 
 /*-------------------------------------
@@ -222,37 +234,48 @@ math::vec2_t<num_t> math::round(const vec2_t<num_t>& v) {
 
 
 /*-------------------------------------
-    fast_log2
+    log2
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec2_t<num_t> math::fast_log2(const math::vec2_t<num_t>& n) noexcept
+math::vec2_t<num_t> math::log2(const math::vec2_t<num_t>& n) noexcept
 {
     return math::vec2_t<num_t>{
-        (num_t)math::fast_log2<float>((float)n[0]),
-        (num_t)math::fast_log2<float>((float)n[1])
+        (num_t)math::log2<float>((float)n[0]),
+        (num_t)math::log2<float>((float)n[1])
     };
 }
 
 
 
 /*-------------------------------------
-    fast_log
+    log
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec2_t<num_t> math::fast_log(const math::vec2_t<num_t>& n) noexcept
+math::vec2_t<num_t> math::log(const math::vec2_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+    return math::log2<num_t>(n) * 0.693147181f; // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fast_logN
+    log10
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec2_t<num_t> math::fast_logN(const math::vec2_t<num_t>& baseN, const math::vec2_t<num_t>& n) noexcept
+math::vec2_t<num_t> math::log10(const math::vec2_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+    return math::log2<num_t>(n) * 0.3010299956639812f; // 1.0 / log2( 10 )
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec2_t<num_t> math::logN(const math::vec2_t<num_t>& baseN, const math::vec2_t<num_t>& n) noexcept
+{
+    return math::log2<num_t>(n) / log2<num_t>(baseN);
 }
 
 
@@ -287,7 +310,7 @@ constexpr LS_INLINE math::vec2_t<num_t> math::pow(
 template<typename num_t>
 inline LS_INLINE math::vec2_t<num_t> math::pow(const math::vec2_t<num_t>& x, const math::vec2_t<num_t>& y) noexcept
 {
-    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+    return math::exp<num_t>(math::log<num_t>(x) * y);
 }
 
 
@@ -299,6 +322,27 @@ template<typename num_t>
 inline LS_INLINE math::vec2_t<num_t> math::exp(math::vec2_t<num_t> x) noexcept
 {
     x = math::vec2_t<num_t>{1.f} + x / math::vec2_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
+/*-------------------------------------
+    exp2
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec2_t<num_t> math::exp2(math::vec2_t<num_t> x) noexcept
+{
+    x = math::vec2_t<num_t>{1.f} + x * math::vec2_t<num_t>{num_t{0.002707606174}}; // ln(2)/256
     x *= x;
     x *= x;
     x *= x;
@@ -357,9 +401,9 @@ math::vec3_t<num_t> math::cross(const vec3_t<num_t>& v1, const vec3_t<num_t>& v2
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::normalize(const vec3_t<num_t>& v) {
-    //return v * fast_inv_sqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
     const math::vec3_t<num_t>&& temp = v * v;
-    return v * fast_inv_sqrt<num_t>(math::sum<num_t>(temp));
+    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
 
 }
 
@@ -520,9 +564,22 @@ math::vec3_t<num_t> math::rcp(const vec3_t<num_t>& v) {
     3D Sign Bits
 -------------------------------------*/
 template <typename N> constexpr LS_INLINE
-int math::sign_bits(const vec3_t<N>& x) noexcept
+int math::sign_mask(const vec3_t<N>& x) noexcept
 {
-    return math::sign_bit(x.v[0]) | (math::sign_bit(x.v[1]) << 1) | (math::sign_bit(x.v[2]) << 2);
+    return math::sign_mask(x.v[0]) | (math::sign_mask(x.v[1]) << 1) | (math::sign_mask(x.v[2]) << 2);
+}
+
+/*-------------------------------------
+    3D Signs
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec3_t<N> math::sign(const vec3_t<N>& x) noexcept
+{
+    return vec3_t<N>{
+        math::sign(x.v[0]),
+        math::sign(x.v[1]),
+        math::sign(x.v[2])
+    };
 }
 
 /*-------------------------------------
@@ -564,38 +621,49 @@ math::vec3_t<num_t> math::round(const vec3_t<num_t>& v) {
 
 
 /*-------------------------------------
-    fast_log2
+    log2
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec3_t<num_t> math::fast_log2(const math::vec3_t<num_t>& n) noexcept
+math::vec3_t<num_t> math::log2(const math::vec3_t<num_t>& n) noexcept
 {
     return math::vec3_t<num_t>{
-        (num_t)math::fast_log2<float>((float)n[0]),
-        (num_t)math::fast_log2<float>((float)n[1]),
-        (num_t)math::fast_log2<float>((float)n[2])
+        (num_t)math::log2<float>((float)n[0]),
+        (num_t)math::log2<float>((float)n[1]),
+        (num_t)math::log2<float>((float)n[2])
     };
 }
 
 
 
 /*-------------------------------------
-    fast_log
+    log
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec3_t<num_t> math::fast_log(const math::vec3_t<num_t>& n) noexcept
+math::vec3_t<num_t> math::log(const math::vec3_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+    return math::log2<num_t>(n) * 0.693147181f; // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fast_logN
+    log10
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec3_t<num_t> math::fast_logN(const math::vec3_t<num_t>& baseN, const math::vec3_t<num_t>& n) noexcept
+math::vec3_t<num_t> math::log10(const math::vec3_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+    return math::log2<num_t>(n) * 0.3010299956639812f; // 1.0 / log2( 10 )
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec3_t<num_t> math::logN(const math::vec3_t<num_t>& baseN, const math::vec3_t<num_t>& n) noexcept
+{
+    return math::log2<num_t>(n) / log2<num_t>(baseN);
 }
 
 
@@ -630,7 +698,7 @@ constexpr LS_INLINE math::vec3_t<num_t> math::pow(
 template<typename num_t>
 inline LS_INLINE math::vec3_t<num_t> math::pow(const math::vec3_t<num_t>& x, const math::vec3_t<num_t>& y) noexcept
 {
-    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+    return math::exp<num_t>(math::log<num_t>(x) * y);
 }
 
 
@@ -642,6 +710,27 @@ template<typename num_t>
 inline LS_INLINE math::vec3_t<num_t> math::exp(math::vec3_t<num_t> x) noexcept
 {
     x = math::vec3_t<num_t>{1.f} + x / math::vec3_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
+/*-------------------------------------
+    exp2
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec3_t<num_t> math::exp2(math::vec3_t<num_t> x) noexcept
+{
+    x = math::vec2_t<num_t>{1.f} + x * math::vec3_t<num_t>{num_t{0.002707606174}}; // ln(2)/256
     x *= x;
     x *= x;
     x *= x;
@@ -701,9 +790,9 @@ math::vec4_t<num_t> math::cross(const vec4_t<num_t>& v1, const vec4_t<num_t>& v2
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::vec4_t<num_t> math::normalize(const vec4_t<num_t>& v) {
-    //return v * fast_inv_sqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
     const math::vec4_t<num_t>&& temp = v * v;
-    return v * fast_inv_sqrt<num_t>(math::sum<num_t>(temp));
+    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -831,12 +920,26 @@ math::vec4_t<num_t> math::rcp(const vec4_t<num_t>& v) {
     4D Sign Bits
 -------------------------------------*/
 template <typename N> constexpr LS_INLINE
-int math::sign_bits(const vec4_t<N>& x) noexcept
+int math::sign_mask(const vec4_t<N>& x) noexcept
 {
-    return math::sign_bit(x.v[0])
-        | (math::sign_bit(x.v[1]) << 1)
-        | (math::sign_bit(x.v[2]) << 2)
-        | (math::sign_bit(x.v[3]) << 3);
+    return math::sign_mask(x.v[0])
+        | (math::sign_mask(x.v[1]) << 1)
+        | (math::sign_mask(x.v[2]) << 2)
+        | (math::sign_mask(x.v[3]) << 3);
+}
+
+/*-------------------------------------
+    4D Signs
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec4_t<N> math::sign(const vec4_t<N>& x) noexcept
+{
+    return vec4_t<N>{
+        math::sign(x.v[0]),
+        math::sign(x.v[1]),
+        math::sign(x.v[2]),
+        math::sign(x.v[3])
+    };
 }
 
 /*-------------------------------------
@@ -881,39 +984,50 @@ math::vec4_t<num_t> math::round(const vec4_t<num_t>& v) {
 
 
 /*-------------------------------------
-    fast_log2
+    log2
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec4_t<num_t> math::fast_log2(const math::vec4_t<num_t>& n) noexcept
+math::vec4_t<num_t> math::log2(const math::vec4_t<num_t>& n) noexcept
 {
     return math::vec4_t<num_t>{
-        (num_t)math::fast_log2<float>((float)n[0]),
-        (num_t)math::fast_log2<float>((float)n[1]),
-        (num_t)math::fast_log2<float>((float)n[2]),
-        (num_t)math::fast_log2<float>((float)n[3])
+        (num_t)math::log2<float>((float)n[0]),
+        (num_t)math::log2<float>((float)n[1]),
+        (num_t)math::log2<float>((float)n[2]),
+        (num_t)math::log2<float>((float)n[3])
     };
 }
 
 
 
 /*-------------------------------------
-    fast_log
+    log
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec4_t<num_t> math::fast_log(const math::vec4_t<num_t>& n) noexcept
+math::vec4_t<num_t> math::log(const math::vec4_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) * 0.693147181f; // ln( 2 )
+    return math::log2<num_t>(n) * 0.69314718056f; // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fast_logN
+    log10
 -------------------------------------*/
 template<typename num_t> inline LS_INLINE
-math::vec4_t<num_t> math::fast_logN(const math::vec4_t<num_t>& baseN, const math::vec4_t<num_t>& n) noexcept
+math::vec4_t<num_t> math::log10(const math::vec4_t<num_t>& n) noexcept
 {
-    return math::fast_log2<num_t>(n) / fast_log2<num_t>(baseN);
+    return math::log2<num_t>(n) * 0.3010299956639812f; // 1.0 / log2( 10 )
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+template<typename num_t> inline LS_INLINE
+math::vec4_t<num_t> math::logN(const math::vec4_t<num_t>& baseN, const math::vec4_t<num_t>& n) noexcept
+{
+    return math::log2<num_t>(n) / log2<num_t>(baseN);
 }
 
 
@@ -948,7 +1062,7 @@ constexpr LS_INLINE math::vec4_t<num_t> math::pow(
 template<typename num_t>
 inline LS_INLINE math::vec4_t<num_t> math::pow(const math::vec4_t<num_t>& x, const math::vec4_t<num_t>& y) noexcept
 {
-    return math::exp<num_t>(math::fast_log<num_t>(x) * y);
+    return math::exp<num_t>(math::log<num_t>(x) * y);
 }
 
 
@@ -960,6 +1074,27 @@ template<typename num_t>
 inline LS_INLINE math::vec4_t<num_t> math::exp(math::vec4_t<num_t> x) noexcept
 {
     x = math::vec4_t<num_t>{1.f} + x / math::vec4_t<num_t>{256.f};
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
+/*-------------------------------------
+    exp2
+-------------------------------------*/
+template<typename num_t>
+inline LS_INLINE math::vec4_t<num_t> math::exp2(math::vec4_t<num_t> x) noexcept
+{
+    x = math::vec4_t<num_t>{1.f} + x * math::vec4_t<num_t>{num_t{0.002707606174}}; // ln(2)/256
     x *= x;
     x *= x;
     x *= x;

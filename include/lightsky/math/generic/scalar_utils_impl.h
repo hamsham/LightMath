@@ -220,7 +220,7 @@ constexpr LS_INLINE scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x
     Carmack's original implementation is still the fastest (I blame sunspots).
 -------------------------------------*/
 template<typename scalar_t>
-inline LS_INLINE scalar_t math::fast_inv_sqrt(scalar_t input) noexcept
+inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
 {
     const float x = (float)input;
     /*
@@ -271,29 +271,29 @@ inline scalar_t math::fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::v
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::fast_sqrt(scalar_t input) noexcept
 {
-    return (scalar_t)math::rcp(math::fast_inv_sqrt<float>((float)input));
+    return (scalar_t)math::rcp(math::inversesqrt<float>((float)input));
 }
 
 
 
 /*-------------------------------------
-    degToRad
+    to radians
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::deg_to_rad(scalar_t input) noexcept
+constexpr LS_INLINE scalar_t math::radians(scalar_t degrees) noexcept
 {
-    return LS_DEG2RAD(input);
+    return scalar_t{0.01745329251994329577f} * degrees;
 }
 
 
 
 /*-------------------------------------
-    radToDeg
+    to degrees
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::rad_to_deg(scalar_t input) noexcept
+constexpr LS_INLINE scalar_t math::degrees(scalar_t radians) noexcept
 {
-    return LS_RAD2DEG(input);
+    return scalar_t{57.2957795130823208768f} * radians;
 }
 
 
@@ -310,18 +310,18 @@ constexpr LS_INLINE integral_t math::fast_mod(const integral_t num, const integr
 
 
 /*-------------------------------------
-    fastLog2
+    log2
 -------------------------------------*/
 template<typename scalar_t>
-inline LS_INLINE scalar_t math::fast_log2(scalar_t n) noexcept
+inline LS_INLINE scalar_t math::log2(scalar_t n) noexcept
 {
-    return (scalar_t)math::fast_log2<float>((float)n);
+    return (scalar_t)math::log2<float>((float)n);
 }
 
 
 
 /*-------------------------------------
-    fastLog2
+    log2
 
     Fast Approximate logarithms
     This method was found on flipcode:
@@ -330,7 +330,7 @@ inline LS_INLINE scalar_t math::fast_log2(scalar_t n) noexcept
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 template<>
-inline LS_INLINE float math::fast_log2<float>(float n) noexcept
+inline LS_INLINE float math::log2<float>(float n) noexcept
 {
     static_assert(sizeof(float) == sizeof(int32_t), "Need IEEE754 32-bit floats for logarithm calculation.");
     int32_t* const exp = reinterpret_cast<int32_t*>(&n);
@@ -350,23 +350,45 @@ inline LS_INLINE float math::fast_log2<float>(float n) noexcept
 
 
 /*-------------------------------------
-    fastLog
+    log
 -------------------------------------*/
 template<typename scalar_t>
-inline LS_INLINE scalar_t math::fast_log(scalar_t n) noexcept
+inline LS_INLINE scalar_t math::log(scalar_t n) noexcept
 {
-    return math::fast_log2<scalar_t>(n) * 0.69314718056f; // ln( 2 )
+    return math::log2<scalar_t>(n) * 0.69314718056f; // ln( 2 )
 }
 
 
 
 /*-------------------------------------
-    fastLogN
+    log10
 -------------------------------------*/
 template<typename scalar_t>
-inline LS_INLINE scalar_t math::fast_logN(scalar_t baseN, scalar_t n) noexcept
+inline LS_INLINE scalar_t math::log10(scalar_t n) noexcept
 {
-    return math::fast_log2<scalar_t>(n) / fast_log2<scalar_t>(baseN);
+    return (scalar_t)math::log10<float>((float)n);
+}
+
+
+
+/*-------------------------------------
+    log10
+-------------------------------------*/
+template<>
+inline LS_INLINE float math::log10<float>(float n) noexcept
+{
+    return math::log2<float>(n) * 0.3010299956639812f; // 1.0/log2(10)
+}
+
+
+
+/*-------------------------------------
+    logN
+-------------------------------------*/
+template<typename scalar_t>
+inline LS_INLINE scalar_t math::logN(scalar_t baseN, scalar_t n) noexcept
+{
+    return math::log2<scalar_t>(n) / log2<scalar_t>(baseN);
 }
 
 
@@ -624,7 +646,7 @@ constexpr LS_INLINE scalar_t math::pow(
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 {
-    return math::exp<scalar_t>(math::fast_log<scalar_t>(x) * y);
+    return math::exp<scalar_t>(math::log<scalar_t>(x) * y);
 }
 
 
@@ -651,10 +673,31 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 
 
 /*-------------------------------------
-    const_sin
+    exp2
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::const_sin(scalar_t x) noexcept
+inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
+{
+    x = scalar_t{1.f} + x * scalar_t{0.002707606174}; // ln(2)/256
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
+    return x;
+}
+
+
+
+/*-------------------------------------
+    sin
+-------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -668,10 +711,10 @@ constexpr LS_INLINE scalar_t math::const_sin(scalar_t x) noexcept
 
 
 /*-------------------------------------
-    const_cos
+    cos
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::const_cos(scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -685,10 +728,10 @@ constexpr LS_INLINE scalar_t math::const_cos(scalar_t x) noexcept
 
 
 /*-------------------------------------
-    const_tan
+    tan
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::const_tan(scalar_t x) noexcept
+constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 {
     static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
@@ -816,7 +859,7 @@ constexpr LS_INLINE out_type math::scale_to_range(
     Get a number's sign bit
 -------------------------------------*/
 template <typename data_t>
-constexpr LS_INLINE int math::sign_bit(
+constexpr LS_INLINE int math::sign_mask(
     typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
 ) noexcept
 {
@@ -824,9 +867,28 @@ constexpr LS_INLINE int math::sign_bit(
 }
 
 template <typename data_t>
-constexpr LS_INLINE int math::sign_bit(data_t x) noexcept
+constexpr LS_INLINE int math::sign_mask(data_t x) noexcept
 {
     return math::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
+}
+
+
+
+/*-------------------------------------
+    Determine if the sign-bit is set
+-------------------------------------*/
+template <typename data_t>
+constexpr LS_INLINE data_t math::sign(
+    typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
+) noexcept
+{
+    return math::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+}
+
+template <typename data_t>
+constexpr LS_INLINE data_t math::sign(data_t x) noexcept
+{
+    return (math::IsSigned<data_t>::value  && (x < data_t{0})) ? data_t{1} : data_t{0};
 }
 
 

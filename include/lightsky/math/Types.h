@@ -22,7 +22,9 @@
     #define LS_INT          int64_t
     #define LS_UINT         uint64_t
 
-    #define LS_ROUND(x)     (math::floor(0.5 + (x)))
+    #define LS_ROUND(x)     (std::round((x)))
+    #define LS_CEIL(x)      (std::ceil((x)))
+    #define LS_FLOOR(x)     (std::floor((x)))
     #define LS_DEG2RAD(x)   ((x) * 0.01745329251994329577) // x * (PI / 180)
     #define LS_RAD2DEG(x)   ((x) * 57.2957795130823208768) // x * (180 / PI)
 
@@ -36,16 +38,24 @@
     #define LS_E            2.71828182845904523536
     #define LS_EPSILON      1.0e-9
 
-    #define LS_SIN(x)       sin(x)
-    #define LS_COS(x)       cos(x)
-    #define LS_TAN(x)       tan(x)
-    #define LS_SQRT(x)      sqrt(x)
+    #define LS_LOG(x)       std::log((x))
+    #define LS_LOG2(x)      std::log2((x))
+    #define LS_LOG10(x)     std::log10((x))
+    #define LS_EXP(x)       std::exp((x))
+    #define LS_EXP2(x)      std::exp2((x))
+    #define LS_POW(x, y)    std::pow((x), (y))
+    #define LS_SIN(x)       std::sin((x))
+    #define LS_COS(x)       std::cos((x))
+    #define LS_TAN(x)       std::tan((x))
+    #define LS_SQRT(x)      std::fast_sqrt((x))
 #else /* LS_MATH_HIGH_PREC */
     #define LS_FLOAT        float
     #define LS_INT          int32_t
     #define LS_UINT         uint32_t
 
-    #define LS_ROUND(x)     (math::floor(0.5f + (x)))
+    #define LS_ROUND(x)     (ls::math::round((x)))
+    #define LS_CEIL(x)      (ls::math::ceil((x)))
+    #define LS_FLOOR(x)     (ls::math::floor((x)))
     #define LS_DEG2RAD(x)   ((x) * 0.01745329251994329577f) // x * (PI / 180)
     #define LS_RAD2DEG(x)   ((x) * 57.2957795130823208768f) // x * (180 / PI)
 
@@ -59,10 +69,16 @@
     #define LS_E            2.71828182845904523536f
     #define LS_EPSILON      1.0e-6f
 
-    #define LS_SIN(x)       sinf(x)
-    #define LS_COS(x)       cosf(x)
-    #define LS_TAN(x)       tanf(x)
-    #define LS_SQRT(x)      ls::math::fast_sqrt(x)
+    #define LS_LOG(x)       ls::math::log((x))
+    #define LS_LOG2(x)      ls::math::log2((x))
+    #define LS_LOG10(x)     ls::math::log10((x))
+    #define LS_EXP(x)       ls::math::exp((x))
+    #define LS_EXP2(x)      ls::math::exp2((x))
+    #define LS_POW(x, y)    ls::math::pow((x), (y))
+    #define LS_SIN(x)       ls::math::sin((x))
+    #define LS_COS(x)       ls::math::cos((x))
+    #define LS_TAN(x)       ls::math::tan((x))
+    #define LS_SQRT(x)      ls::math::fast_sqrt((x))
 #endif /* LS_MATH_HIGH_PREC */
 
 

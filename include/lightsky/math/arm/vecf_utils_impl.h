@@ -140,7 +140,7 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v)
 /*-------------------------------------
     4D Sign Bits
 -------------------------------------*/
-inline LS_INLINE int sign_bits(const vec4_t<float>& x) noexcept
+inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
     uint32_t vals[4];
     const uint32x4_t a = vreinterpretq_u32_f32(x.simd);

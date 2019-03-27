@@ -61,7 +61,7 @@ math::quat_t<num_t> math::conjugate(const quat_t<num_t>& q) {
 template <typename num_t> inline LS_INLINE
 math::quat_t<num_t> math::normalize(const quat_t<num_t>& q) {
     const num_t magInv{
-        fast_inv_sqrt<num_t>(length_squared<num_t>(q))
+        inversesqrt<num_t>(length_squared<num_t>(q))
     };
 
     return quat_t<num_t>{

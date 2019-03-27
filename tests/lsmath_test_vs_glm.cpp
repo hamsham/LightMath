@@ -145,7 +145,7 @@ int main()
     std::cout << std::endl;
 
     const glm::vec4 glmVec{1.f, 2.f, 3.f, 4.f};
-    const glm::mat4 glmMat = glm::perspective(ls::math::deg_to_rad(fov), aspect, zNear, zFar); // GLM uses degrees
+    const glm::mat4 glmMat = glm::perspective(ls::math::radians(fov), aspect, zNear, zFar); // GLM uses degrees
     std::cout << "GLM Perspective: " << glmMat << std::endl;
     std::cout << "GLM mat4 * vec4: " << glmMat * glmVec << std::endl;
     std::cout << "GLM vec4 * mat4: " << glmVec * glmMat << std::endl;
@@ -160,7 +160,7 @@ int main()
     std::cout << std::endl;
 
     const ls::math::vec4 lsVec{1.f, 2.f, 3.f, 4.f};
-    const ls::math::mat4 lsMat = ls::math::perspective(ls::math::deg_to_rad(fov), aspect, zNear, zFar);
+    const ls::math::mat4 lsMat = ls::math::perspective(ls::math::radians(fov), aspect, zNear, zFar);
     std::cout << "ls Perspective: " << lsMat << std::endl;
     std::cout << "ls mat4 * vec4: " << lsMat * lsVec << std::endl;
     std::cout << "ls vec4 * mat4: " << lsVec * lsMat << std::endl;
