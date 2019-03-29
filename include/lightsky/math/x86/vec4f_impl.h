@@ -351,7 +351,8 @@ vec4_t<float> vec4_t<float>::operator-(const vec4_t<float>& input) const
 inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator-() const
 {
-    return vec4_t<float>{_mm_sub_ps(_mm_setzero_ps(), simd)};
+    //return vec4_t<float>{_mm_sub_ps(_mm_setzero_ps(), simd)};
+    return vec4_t{_mm_xor_ps(_mm_castsi128_ps(_mm_set1_epi32(0x80000000)), simd)};
 }
 
 inline LS_INLINE
