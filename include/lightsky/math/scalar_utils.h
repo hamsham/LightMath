@@ -388,7 +388,7 @@ inline scalar_t logN(scalar_t baseN, scalar_t) noexcept;
  *
  * @param An unsigned integral type
  *
- * @return The next greatest power of two.
+ * @return The current or next greatest power of two.
  */
 inline uint8_t  next_pow2(uint8_t) noexcept;
 inline uint16_t next_pow2(uint16_t) noexcept;
@@ -401,7 +401,7 @@ inline uint64_t next_pow2(uint64_t) noexcept;
  *
  * @param A signed integral type
  *
- * @return The next greatest power of two.
+ * @return The current or next greatest power of two.
  */
 inline int8_t  next_pow2(int8_t) noexcept;
 inline int16_t next_pow2(int16_t) noexcept;
@@ -414,7 +414,7 @@ inline int64_t next_pow2(int64_t) noexcept;
  *
  * @param An unsigned integral type
  *
- * @return The next lesser power of two.
+ * @return The previous power of two.
  */
 inline uint8_t  prev_pow2(uint8_t) noexcept;
 inline uint16_t prev_pow2(uint16_t) noexcept;
@@ -423,11 +423,12 @@ inline uint64_t prev_pow2(uint64_t) noexcept;
 
 /**
  * @brief prev_pow2
- * Find the previous (lesser) power of two that is closest to the value of a number
+ * Find the previous (lesser) power of two that is closest to the value of a
+ * number.
  *
  * @param A signed integral type
  *
- * @return The next lesser power of two.
+ * @return The previous power of two.
  */
 inline int8_t  prev_pow2(int8_t) noexcept;
 inline int16_t prev_pow2(int16_t) noexcept;
@@ -441,7 +442,7 @@ inline int64_t prev_pow2(int64_t) noexcept;
  *
  * @param A signed integral type
  *
- * @return The closest power of two to a number.
+ * @return The current or closest power of two to a number.
  */
 template <typename data_t>
 inline data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type) noexcept;

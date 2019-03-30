@@ -582,7 +582,7 @@ inline LS_INLINE int64_t math::prev_pow2(int64_t n) noexcept
     nearest_pow2
 -------------------------------------*/
 template <typename data_t>
-inline LS_INLINE data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
+inline LS_INLINE data_t math::nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
 {
     const data_t pp2 = math::prev_pow2(n);
     const data_t np2 = math::next_pow2(n);
@@ -600,7 +600,7 @@ inline LS_INLINE data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<d
 template <typename data_t>
 constexpr LS_INLINE bool math::is_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
 {
-    return n && !(n & (n - (data_t)1));
+    return (n != 0) && !(n & (n - (data_t)1));
 }
 
 
