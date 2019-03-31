@@ -216,7 +216,13 @@ template <>
 template <>
 inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
 {
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
+    //return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
+    __m128i v0 = _mm_lddqu_si128(reinterpret_cast<const __m128i*>(v));
+    __m128i v2 = _mm_srli_epi32(v0, 1);
+    __m128i v1 = _mm_and_si128(v0, _mm_set1_epi32(1));
+    __m128 v2f = _mm_cvtepi32_ps(v2);
+    __m128 v1f = _mm_cvtepi32_ps(v1);
+    return _mm_add_ps(_mm_add_ps(v2f, v2f), v1f);
 }
 
 template <>
@@ -230,7 +236,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, 8, 4, 0);
+    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 8, 4, 0);
 
     union
     {
@@ -244,7 +250,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, 8, 4, 0);
+    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 8, 4, 0);
 
     union
     {
@@ -258,13 +264,12 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 14, 12, 10, 8, 6, 4, 2, 0);
 
     union
     {
         const __m128i i;
         const vec4_t<uint16_t> v;
-    } ret{_mm_shuffle_epi8(data, perms)};
+    } ret{_mm_packus_epi32(data, _mm_setzero_si128())};
     return ret.v;
 }
 
@@ -272,13 +277,12 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, 14, 12, 10, 8, 6, 4, 2, 0);
 
     union
     {
         const __m128i i;
         const vec4_t<int16_t> v;
-    } ret{_mm_shuffle_epi8(data, perms)};
+    } ret{_mm_packs_epi32(data, _mm_setzero_si128())};
     return ret.v;
 }
 
