@@ -729,6 +729,40 @@ constexpr data_t abs(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>
 template <typename data_t>
 constexpr data_t abs(data_t x) noexcept;
 
+/**
+ * @brief Perform a fused multiply-and-add calculation
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be added to 'x*m'.
+ *
+ * @return (x*m)+a
+ */
+template <typename data_t>
+constexpr data_t fmadd(data_t x, data_t m, data_t a) noexcept;
+
+/**
+ * @brief Perform a fused multiply-and-subtract calculation
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be subtracted from 'x*m'.
+ *
+ * @return (x*m)-a
+ */
+template <typename data_t>
+constexpr data_t fmsub(data_t x, data_t m, data_t a) noexcept;
+
 
 
 } // end math namespace

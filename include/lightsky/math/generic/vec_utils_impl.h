@@ -357,6 +357,28 @@ inline LS_INLINE math::vec2_t<num_t> math::exp2(math::vec2_t<num_t> x) noexcept
 
 
 
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec2_t<num_t> math::fmadd(const vec2_t<num_t>& x, const vec2_t<num_t>& m, const vec2_t<num_t>& a) noexcept
+{
+    return (x*m)+a;
+}
+
+
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec2_t<num_t> math::fmsub(const vec2_t<num_t>& x, const vec2_t<num_t>& m, const vec2_t<num_t>& a) noexcept
+{
+    return (x*m)-a;
+}
+
+
+
 /*-----------------------------------------------------------------------------
     3D Vectors
 -----------------------------------------------------------------------------*/
@@ -745,6 +767,28 @@ inline LS_INLINE math::vec3_t<num_t> math::exp2(math::vec3_t<num_t> x) noexcept
 
 
 
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec3_t<num_t> math::fmadd(const vec3_t<num_t>& x, const vec3_t<num_t>& m, const vec3_t<num_t>& a) noexcept
+{
+    return (x*m)+a;
+}
+
+
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec3_t<num_t> math::fmsub(const vec3_t<num_t>& x, const vec3_t<num_t>& m, const vec3_t<num_t>& a) noexcept
+{
+    return (x*m)-a;
+}
+
+
+
 /*-----------------------------------------------------------------------------
     4D Vectors
 -----------------------------------------------------------------------------*/
@@ -1105,6 +1149,28 @@ inline LS_INLINE math::vec4_t<num_t> math::exp2(math::vec4_t<num_t> x) noexcept
     x *= x;
 
     return x;
+}
+
+
+
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec4_t<num_t> math::fmadd(const vec4_t<num_t>& x, const vec4_t<num_t>& m, const vec4_t<num_t>& a) noexcept
+{
+    return (x*m)+a;
+}
+
+
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+template <typename num_t>
+constexpr LS_INLINE math::vec4_t<num_t> math::fmsub(const vec4_t<num_t>& x, const vec4_t<num_t>& m, const vec4_t<num_t>& a) noexcept
+{
+    return (x*m)-a;
 }
 
 

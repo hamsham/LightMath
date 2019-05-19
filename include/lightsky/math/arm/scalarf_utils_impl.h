@@ -114,5 +114,37 @@ inline LS_INLINE float sum(float num0, float num1, float num2, float num3) noexc
 
 
 
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+inline LS_INLINE float fmadd(float x, float m, float a) noexcept
+{
+    #if defined(LS_ARCH_AARCH64)
+    const float32x4_t result = vfmaq_f32(vdupq_n_f32(a), vdupq_n_f32(m), vdupq_n_f32(x));
+    #else
+    const float32x4_t result = vaddq_f32(vmulq_f32(vld1q_f32(x), vld1q_f32(m)), vld1q_f32(a));
+    #endif
+
+    return vget_lane_f32(vget_low_f32(result, 0);
+}
+
+
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+inline LS_INLINE float fmsub(float x, float m, float a) noexcept
+{
+    #if defined(LS_ARCH_AARCH64)
+    const float32x4_t result = vfmaq_f32(vdupq_n_f32(a), vdupq_n_f32(m), vdupq_n_f32(x));
+    #else
+    const float32x4_t result = vsubq_f32(vmulq_f32(vld1q_f32(x), vld1q_f32(m)), vld1q_f32(a));
+    #endif
+
+    return vget_lane_f32(vget_low_f32(result, 0);
+}
+
+
+
 } // end math namespace
 } // end ls namespace

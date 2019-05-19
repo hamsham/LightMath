@@ -425,6 +425,40 @@ inline vec2_t<N> exp(vec2_t<N> x) noexcept;
 template <typename N>
 inline vec2_t<N> exp2(vec2_t<N> x) noexcept;
 
+/**
+ * @brief Perform a fused multiply-and-add calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be added to 'x*m'.
+ *
+ * @return (x*m)+a
+ */
+template <typename N>
+constexpr vec2_t<N> fmadd(const vec2_t<N>& x, const vec2_t<N>& m, const vec2_t<N>& a) noexcept;
+
+/**
+ * @brief Perform a fused multiply-and-sub calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be subtracted from 'x*m'.
+ *
+ * @return (x*m)-a
+ */
+template <typename N>
+constexpr vec2_t<N> fmsub(const vec2_t<N>& x, const vec2_t<N>& m, const vec2_t<N>& a) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -839,6 +873,40 @@ inline vec3_t<N> exp(vec3_t<N> x) noexcept;
 template <typename N>
 inline vec3_t<N> exp2(vec3_t<N> x) noexcept;
 
+/**
+ * @brief Perform a fused multiply-and-add calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be added to 'x*m'.
+ *
+ * @return (x*m)+a
+ */
+template <typename N>
+constexpr vec3_t<N> fmadd(const vec3_t<N>& x, const vec3_t<N>& m, const vec3_t<N>& a) noexcept;
+
+/**
+ * @brief Perform a fused multiply-and-sub calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be subtracted from 'x*m'.
+ *
+ * @return (x*m)-a
+ */
+template <typename N>
+constexpr vec3_t<N> fmsub(const vec3_t<N>& x, const vec3_t<N>& m, const vec3_t<N>& a) noexcept;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -1213,6 +1281,40 @@ inline vec4_t<N> exp(vec4_t<N> x) noexcept;
  */
 template <typename N>
 inline vec4_t<N> exp2(vec4_t<N> x) noexcept;
+
+/**
+ * @brief Perform a fused multiply-and-add calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be added to 'x*m'.
+ *
+ * @return (x*m)+a
+ */
+template <typename N>
+constexpr vec4_t<N> fmadd(const vec4_t<N>& x, const vec4_t<N>& m, const vec4_t<N>& a) noexcept;
+
+/**
+ * @brief Perform a fused multiply-and-sub calculation on a vector.
+ *
+ * @param x
+ * An initial operand.
+ *
+ * @param m
+ * A number which will be multiplied against 'x'.
+ *
+ * @param a
+ * The final operand which will be subtracted from 'x*m'.
+ *
+ * @return (x*m)-a
+ */
+template <typename N>
+constexpr vec4_t<N> fmsub(const vec4_t<N>& x, const vec4_t<N>& m, const vec4_t<N>& a) noexcept;
 
 
 

@@ -361,5 +361,25 @@ inline LS_INLINE float pow(float x, float y) noexcept
 
 
 
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+inline LS_INLINE float fmadd(float x, float m, float a) noexcept
+{
+    return _mm_cvtss_f32(_mm_fmadd_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+}
+
+
+
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+inline LS_INLINE float fmsub(float x, float m, float a) noexcept
+{
+    return _mm_cvtss_f32(_mm_fmsub_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+}
+
+
+
 } // end math namespace
 } // end ls namespace

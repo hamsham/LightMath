@@ -149,6 +149,30 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
     return ((a[3] >> 28) & 8) | ((a[2] >> 29) & 4) | ((a[1] >> 30) & 2) | ((a[0] >> 31) & 1);
 }
 
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
+{
+    #if defined(LS_ARCH_AARCH64)
+    return return vec4_t<float>{vfmaq_f32(a, m, x)};
+    #else
+    return return vec4_t<float>{vaddq_f32(vmulq_f32(x, m), a)};
+    #endif
+}
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
+{
+    #if defined(LS_ARCH_AARCH64)
+    return return vec4_t<float>{vfmsq_f32(a, m, x)};
+    #else
+    return return vec4_t<float>{vsubq_f32(vmulq_f32(x, m), a)};
+    #endif
+}
+
 
 
 } // end math namespace

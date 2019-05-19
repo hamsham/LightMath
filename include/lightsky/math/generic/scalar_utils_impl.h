@@ -908,18 +908,38 @@ namespace math
     }
 }
 
-
 template <typename data_t>
 constexpr LS_INLINE data_t math::abs(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x) noexcept
 {
     return math::IsUnsigned<data_t>::value ? x : math::impl::abs<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
 }
 
-
 template <typename data_t>
 constexpr LS_INLINE data_t math::abs(data_t x) noexcept
 {
     return (x >= 0.f) ? x : -x;
+}
+
+
+
+/*-------------------------------------
+    FMA
+-------------------------------------*/
+template <typename data_t>
+constexpr LS_INLINE data_t math::fmadd(data_t x, data_t m, data_t a) noexcept
+{
+    return (x*m)+a;
+}
+
+
+
+/*-------------------------------------
+    FMS
+-------------------------------------*/
+template <typename data_t>
+constexpr LS_INLINE data_t math::fmsub(data_t x, data_t m, data_t a) noexcept
+{
+    return (x*m)-a;
 }
 
 
