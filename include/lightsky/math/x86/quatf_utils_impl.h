@@ -72,7 +72,7 @@ inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
     const __m128 e = _mm_add_ps(c, d);
 
     // normalization
-    quat_t<float> ret;
+    alignas(sizeof(__m128)) quat_t<float> ret;
     _mm_store_ps(ret.q, _mm_mul_ps(s, _mm_rsqrt_ps(e)));
     return ret;
 }
