@@ -16,6 +16,20 @@ namespace math {
     2x2 Matrices
 -----------------------------------------------------------------------------*/
 /**
+ *  @brief Compute the outer-product of two vectors.
+ *
+ *  @param v1
+ *  A constant reference to a vector.
+ *
+ *  @param v2
+ *  A constant reference to a vector.
+ *
+ *  @return A matrix containing the outer-product of v1 & v2.
+ */
+template <typename N> constexpr
+mat2_t<N> outer(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
+
+/**
  *  @brief determinant
  *  Retrieve the determinate for a 2x2 matrix.
  *
@@ -25,7 +39,7 @@ namespace math {
  *  @return A scalar of type N, which contains the determinate of a 2x2 matrix.
  */
 template <typename N> constexpr
-N determinant(const mat2_t<N>& m);
+N determinant(const mat2_t<N>& m) noexcept;
 
 /**
  *  @brief transpose
@@ -37,7 +51,7 @@ N determinant(const mat2_t<N>& m);
  *  @return the transposition of a matrix.
  */
 template <typename N> constexpr
-mat2_t<N> transpose(const mat2_t<N>& m);
+mat2_t<N> transpose(const mat2_t<N>& m) noexcept;
 
 /**
  *  @brief inverse
@@ -50,7 +64,25 @@ mat2_t<N> transpose(const mat2_t<N>& m);
  *  The inverse of matrix m.
  */
 template <typename N> constexpr
-mat2_t<N> inverse(const mat2_t<N>& m);
+mat2_t<N> inverse(const mat2_t<N>& m) noexcept;
+
+/**
+ *  @brief Component-wise multiplication of two matrices
+ *
+ *  mat_comp_mul() performs a component-wise multiplication of two matrices,
+ *  yielding a result matrix where each component, result[i][j] is computed as
+ *  the scalar product of x[i][j] and y[i][j].
+ *
+ *  @param m1
+ *  A constant reference to a matrix.
+ *
+ *  @param m2
+ *  A constant reference to a matrix.
+ *
+ *  @return a matrix containing the component-wise multiplication of m1 and m2.
+ */
+template <typename N> constexpr
+mat2_t<N> mat_comp_mul(const mat2_t<N>& m1, const mat2_t<N>& m2) noexcept;
 
 /**
  *  @brief rotate
@@ -66,7 +98,7 @@ mat2_t<N> inverse(const mat2_t<N>& m);
  *  A the rotation of m by a number of radians.
  */
 template <typename N> inline
-mat2_t<N> rotate(const mat2_t<N>& m, N radians);
+mat2_t<N> rotate(const mat2_t<N>& m, N radians) noexcept;
 
 /**
  *  @brief scale
@@ -80,11 +112,25 @@ mat2_t<N> rotate(const mat2_t<N>& m, N radians);
  *  the amount of scaling along each axis of matrix m.
  */
 template <typename N> constexpr
-mat2_t<N> scale(const mat2_t<N>& m, const vec2_t<N>& amount);
+mat2_t<N> scale(const mat2_t<N>& m, const vec2_t<N>& amount) noexcept;
 
 /*-----------------------------------------------------------------------------
     3x3 Matrices
 -----------------------------------------------------------------------------*/
+/**
+ *  @brief Compute the outer-product of two vectors.
+ *
+ *  @param v1
+ *  A constant reference to a vector.
+ *
+ *  @param v2
+ *  A constant reference to a vector.
+ *
+ *  @return A matrix containing the outer-product of v1 & v2.
+ */
+template <typename N> constexpr
+mat3_t<N> outer(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
+
 /**
  *  @brief determinant
  *  Retrieve the determinate for a 3x3 matrix.
@@ -95,7 +141,7 @@ mat2_t<N> scale(const mat2_t<N>& m, const vec2_t<N>& amount);
  *  @return A scalar of type N, which contains the determinate of a 3x3 matrix.
  */
 template <typename N> constexpr
-N determinant(const mat3_t<N>& m);
+N determinant(const mat3_t<N>& m) noexcept;
 
 /**
  *  @brief transpose
@@ -107,13 +153,31 @@ N determinant(const mat3_t<N>& m);
  *  @return the transposition of a matrix.
  */
 template <typename N> constexpr
-mat3_t<N> transpose(const mat3_t<N>& m);
+mat3_t<N> transpose(const mat3_t<N>& m) noexcept;
 
 /**
  *  @brief inverse
  */
 template <typename N> constexpr
-mat3_t<N> inverse(const mat3_t<N>& m);
+mat3_t<N> inverse(const mat3_t<N>& m) noexcept;
+
+/**
+ *  @brief Component-wise multiplication of two matrices
+ *
+ *  mat_comp_mul() performs a component-wise multiplication of two matrices,
+ *  yielding a result matrix where each component, result[i][j] is computed as
+ *  the scalar product of x[i][j] and y[i][j].
+ *
+ *  @param m1
+ *  A constant reference to a matrix.
+ *
+ *  @param m2
+ *  A constant reference to a matrix.
+ *
+ *  @return a matrix containing the component-wise multiplication of m1 and m2.
+ */
+template <typename N> constexpr
+mat3_t<N> mat_comp_mul(const mat3_t<N>& m1, const mat3_t<N>& m2) noexcept;
 
 /**
  *  @brief rotate
@@ -132,7 +196,7 @@ mat3_t<N> inverse(const mat3_t<N>& m);
  *  A the rotation of m by a number of radians.
  */
 template <typename N> inline
-mat3_t<N> rotate(const mat3_t<N>& m, const vec3_t<N>& axis, N radians);
+mat3_t<N> rotate(const mat3_t<N>& m, const vec3_t<N>& axis, N radians) noexcept;
 
 /**
  *  @brief scale
@@ -146,7 +210,7 @@ mat3_t<N> rotate(const mat3_t<N>& m, const vec3_t<N>& axis, N radians);
  *  the amount of scaling along each axis of matrix m.
  */
 template <typename N> constexpr
-mat3_t<N> scale(const mat3_t<N>& m, const vec3_t<N>& amount);
+mat3_t<N> scale(const mat3_t<N>& m, const vec3_t<N>& amount) noexcept;
 
 /**
  *  @brief translate
@@ -162,7 +226,7 @@ mat3_t<N> scale(const mat3_t<N>& m, const vec3_t<N>& amount);
  *  @return a 3x3 matrix that has been translated.
  */
 template <typename N> constexpr
-mat3_t<N> translate(const mat3_t<N>& m, const vec2_t<N>& amount);
+mat3_t<N> translate(const mat3_t<N>& m, const vec2_t<N>& amount) noexcept;
 
 /**
  *  @brief Look at a position in 3D space, but only return a pure rotation
@@ -182,11 +246,25 @@ mat3_t<N> translate(const mat3_t<N>& m, const vec2_t<N>& amount);
  *  target in 3D space.
  */
 template <typename N> inline
-mat3_t<N> pure_look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat3_t<N> pure_look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up) noexcept;
 
 /*-----------------------------------------------------------------------------
     4x4 Matrices
 -----------------------------------------------------------------------------*/
+/**
+ *  @brief Compute the outer-product of two vectors.
+ *
+ *  @param v1
+ *  A constant reference to a vector.
+ *
+ *  @param v2
+ *  A constant reference to a vector.
+ *
+ *  @return A matrix containing the outer-product of v1 & v2.
+ */
+template <typename N> constexpr
+mat4_t<N> outer(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
+
 /**
  *  @brief determinant
  *  Retrieve the determinate for a 4x4 matrix.
@@ -197,7 +275,7 @@ mat3_t<N> pure_look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3
  *  @return A scalar of type N, which contains the determinate of a 4x4 matrix.
  */
 template <typename N> constexpr
-N determinant(const mat4_t<N>& m);
+N determinant(const mat4_t<N>& m) noexcept;
 
 /**
  *  @brief transpose
@@ -209,13 +287,31 @@ N determinant(const mat4_t<N>& m);
  *  @return the transposition of a matrix.
  */
 template <typename N> inline
-mat4_t<N> transpose(const mat4_t<N>& m);
+mat4_t<N> transpose(const mat4_t<N>& m) noexcept;
 
 /**
  *  @brief inverse
  */
 template <typename N> inline
-mat4_t<N> inverse(const mat4_t<N>& m);
+mat4_t<N> inverse(const mat4_t<N>& m) noexcept;
+
+/**
+ *  @brief Component-wise multiplication of two matrices
+ *
+ *  mat_comp_mul() performs a component-wise multiplication of two matrices,
+ *  yielding a result matrix where each component, result[i][j] is computed as
+ *  the scalar product of x[i][j] and y[i][j].
+ *
+ *  @param m1
+ *  A constant reference to a matrix.
+ *
+ *  @param m2
+ *  A constant reference to a matrix.
+ *
+ *  @return a matrix containing the component-wise multiplication of m1 and m2.
+ */
+template <typename N> constexpr
+mat4_t<N> mat_comp_mul(const mat4_t<N>& m1, const mat4_t<N>& m2) noexcept;
 
 /**
  *  @brief rotate
@@ -234,7 +330,7 @@ mat4_t<N> inverse(const mat4_t<N>& m);
  *  A the rotation of m by a number of radians.
  */
 template <typename N> inline
-mat4_t<N> rotate(const mat4_t<N>& m, const vec3_t<N>& axis, N radians);
+mat4_t<N> rotate(const mat4_t<N>& m, const vec3_t<N>& axis, N radians) noexcept;
 
 /**
  *  @brief scale
@@ -248,7 +344,7 @@ mat4_t<N> rotate(const mat4_t<N>& m, const vec3_t<N>& axis, N radians);
  *  the amount of scaling along each axis of matrix m.
  */
 template <typename N> constexpr
-mat4_t<N> scale(const mat4_t<N>& m, const vec3_t<N>& amount);
+mat4_t<N> scale(const mat4_t<N>& m, const vec3_t<N>& amount) noexcept;
 
 /**
  *  @brief translate
@@ -264,7 +360,7 @@ mat4_t<N> scale(const mat4_t<N>& m, const vec3_t<N>& amount);
  *  @return a 4x4 matrix that has been translated.
  */
 template <typename N> constexpr
-mat4_t<N> translate(const mat4_t<N>& m, const vec3_t<N>& amount);
+mat4_t<N> translate(const mat4_t<N>& m, const vec3_t<N>& amount) noexcept;
 
 /**
  *  @brief perspective
@@ -290,7 +386,7 @@ mat4_t<N> translate(const mat4_t<N>& m, const vec3_t<N>& amount);
  *  plane through multiplication.
  */
 template <typename N> inline
-mat4_t<N> perspective(N fov, N aspect, N zNear, N zFar);
+mat4_t<N> perspective(N fov, N aspect, N zNear, N zFar) noexcept;
 
 /**
  *  @brief infinitePerspective
@@ -313,7 +409,7 @@ mat4_t<N> perspective(N fov, N aspect, N zNear, N zFar);
  *  A 4x4 perspective-projection matrix with no far plane.
  */
 template <typename N> inline
-mat4_t<N> infinite_perspective(N fov, N aspect, N zNear);
+mat4_t<N> infinite_perspective(N fov, N aspect, N zNear) noexcept;
 
 /**
  *  @brief ortho
@@ -337,7 +433,7 @@ mat4_t<N> infinite_perspective(N fov, N aspect, N zNear);
  *  projected into a 2D representation without distance-scaling.
  */
 template <typename N> inline
-mat4_t<N> ortho(N left, N right, N top, N bottom);
+mat4_t<N> ortho(N left, N right, N top, N bottom) noexcept;
 
 /**
  *  @brief ortho
@@ -369,7 +465,7 @@ mat4_t<N> ortho(N left, N right, N top, N bottom);
  *  projected into a 2D representation without distance-scaling.
  */
 template <typename N> inline
-mat4_t<N> ortho(N left, N right, N top, N bottom, N zNear, N zFar);
+mat4_t<N> ortho(N left, N right, N top, N bottom, N zNear, N zFar) noexcept;
 
 /**
  *  @brief frustum
@@ -399,7 +495,7 @@ mat4_t<N> ortho(N left, N right, N top, N bottom, N zNear, N zFar);
  *  plane.
  */
 template <typename N> inline
-mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar);
+mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar) noexcept;
 
 /**
  *  @brief lookAt
@@ -419,7 +515,7 @@ mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar);
  *  target in 3D space.
  */
 template <typename N> inline
-mat4_t<N> look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat4_t<N> look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up) noexcept;
 
 /**
  *  @brief Look at a target from a specific position in 3D space.
@@ -438,7 +534,7 @@ mat4_t<N> look_at(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>
  *  target in 3D space.
  */
 template <typename N> inline
-mat4_t<N> look_from(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up);
+mat4_t<N> look_from(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<N>& up) noexcept;
 
 /**
  *  @brief billboard
@@ -456,7 +552,7 @@ mat4_t<N> look_from(const vec3_t<N>& pos, const vec3_t<N>& target, const vec3_t<
  *  camera's view matrix in 3D space.
  */
 template <typename N> inline
-mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix);
+mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix) noexcept;
 
 } // end math namespace
 } // end ls namespace

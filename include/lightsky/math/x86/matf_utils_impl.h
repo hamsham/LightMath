@@ -119,9 +119,31 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
     4x4 Matrices
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
+    4x4 Outer Product
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
+{
+    mat4_t<float> ret;
+
+    const __m128 a = _mm_permute_ps(v1.simd, 0x00);
+    const __m128 b = _mm_permute_ps(v1.simd, 0x55);
+    const __m128 c = _mm_permute_ps(v1.simd, 0xAA);
+    const __m128 d = _mm_permute_ps(v1.simd, 0xFF);
+    const __m128 v = v2.simd;
+
+    ret.m[0].simd = _mm_mul_ps(a, v);
+    ret.m[1].simd = _mm_mul_ps(b, v);
+    ret.m[2].simd = _mm_mul_ps(c, v);
+    ret.m[3].simd = _mm_mul_ps(d, v);
+
+    return ret;
+}
+
+/*-------------------------------------
     4x4 Determinant
 -------------------------------------*/
-inline LS_INLINE float determinant(const mat4_t<float>& m4x4) {
+inline LS_INLINE float determinant(const mat4_t<float>& m4x4) noexcept
+{
     const float* const m = &m4x4.m[0];
 
     const __m128 m0 = _mm_loadu_ps(m+0);
@@ -176,6 +198,23 @@ inline LS_INLINE float determinant(const mat4_t<float>& m4x4) {
     const __m128 swap = _mm_add_ps(temp, _mm_shuffle_ps(temp, temp,  0xB1));
     const __m128 sum  = _mm_add_ps(swap, _mm_shuffle_ps(swap, swap, 0x0F));
     return _mm_cvtss_f32(sum);
+}
+
+
+
+/*-------------------------------------
+    4x4 Component-wise multiplication
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_t<float>& m2) noexcept
+{
+    mat4_t<float> result;
+
+    result.m[0].simd = _mm_mul_ps(m1.m[0].simd, m2.m[0].simd);
+    result.m[1].simd = _mm_mul_ps(m1.m[1].simd, m2.m[1].simd);
+    result.m[2].simd = _mm_mul_ps(m1.m[2].simd, m2.m[2].simd);
+    result.m[3].simd = _mm_mul_ps(m1.m[3].simd, m2.m[3].simd);
+
+    return result;
 }
 
 
