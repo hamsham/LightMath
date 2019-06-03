@@ -156,6 +156,7 @@ int main()
     std::cout << "GLM determinant(mat3): " << glm::determinant(glm::mat3{glmMat}) << std::endl;
     std::cout << "GLM inverse(mat3): " << glm::inverse(glm::mat3{glmMat}) << std::endl;
     std::cout << "GLM dot(vec4): " << glm::dot(glmVec, glmVec) << std::endl;
+    std::cout << "GLM outer(vec4): " << glm::outerProduct(glmVec, glmVec) << std::endl;
 
     std::cout << std::endl;
 
@@ -171,6 +172,7 @@ int main()
     std::cout << "ls determinant(mat3): " << ls::math::determinant(ls::math::mat3{lsMat}) << std::endl;
     std::cout << "ls inverse(mat3): " << ls::math::inverse(ls::math::mat3{lsMat}) << std::endl;
     std::cout << "ls dot(vec4): " << ls::math::dot(lsVec, lsVec) << std::endl;
+    std::cout << "ls outer(vec4): " << ls::math::outer(lsVec, lsVec) << std::endl;
 
     std::cout << std::endl;
 
