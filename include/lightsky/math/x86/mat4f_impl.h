@@ -108,12 +108,13 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
-    math::vec4_t<float> ret{_mm_mul_ps(m[0].simd, _mm_shuffle_ps(v.simd, v.simd, 0x00))};
-    ret.simd = _mm_fmadd_ps(m[1].simd, _mm_shuffle_ps(v.simd, v.simd, 0x55), ret.simd);
-    ret.simd = _mm_fmadd_ps(m[2].simd, _mm_shuffle_ps(v.simd, v.simd, 0xAA), ret.simd);
-    ret.simd = _mm_fmadd_ps(m[3].simd, _mm_shuffle_ps(v.simd, v.simd, 0xFF), ret.simd);
+    __m128 x = _mm_load_ps(v.v);
+    __m128 v0 = _mm_mul_ps(_mm_load_ps(m[0].v), _mm_shuffle_ps(x, x, 0x00));
+    __m128 v1 = _mm_mul_ps(_mm_load_ps(m[1].v), _mm_shuffle_ps(x, x, 0x55));
+    __m128 v2 = _mm_mul_ps(_mm_load_ps(m[2].v), _mm_shuffle_ps(x, x, 0xAA));
+    __m128 v3 = _mm_mul_ps(_mm_load_ps(m[3].v), _mm_shuffle_ps(x, x, 0xFF));
 
-    return ret;
+    return math::vec4_t<float>{_mm_add_ps(v3, _mm_add_ps(v2, _mm_add_ps(v1, v0)))};
 }
 
 
@@ -139,11 +140,12 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
     return vec4_t<float>{_mm_add_ps(_mm_add_ps(_mm_add_ps(col0, col1), col2), col3)};
     */
 
-    const __m128 s = this->simd;
-    __m128 row0(_mm_mul_ps(s, m.m[0].simd));
-    __m128 row1(_mm_mul_ps(s, m.m[1].simd));
-    __m128 row2(_mm_mul_ps(s, m.m[2].simd));
-    __m128 row3(_mm_mul_ps(s, m.m[3].simd));
+    const __m128 s = _mm_load_ps(v);
+
+    __m128 row0 = _mm_mul_ps(s, _mm_load_ps(m.m[0].v));
+    __m128 row1 = _mm_mul_ps(s, _mm_load_ps(m.m[1].v));
+    __m128 row2 = _mm_mul_ps(s, _mm_load_ps(m.m[2].v));
+    __m128 row3 = _mm_mul_ps(s, _mm_load_ps(m.m[3].v));
 
     // transpose, then add
     const __m128 t0 = _mm_unpacklo_ps(row0, row1);
