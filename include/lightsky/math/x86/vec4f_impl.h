@@ -28,7 +28,7 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
     __m128 simd;
 
     // Main Constructor
-    constexpr vec4_t(float inX, float inY, float inZ, float inW);
+    vec4_t(float inX, float inY, float inZ, float inW);
 
     // Delegated Constructors
     vec4_t() = default;
@@ -69,9 +69,9 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
 
     vec4_t operator/(const vec4_t<float>&) const;
 
-    vec4_t& operator=(const vec4_t<float>&) = default;
+    vec4_t& operator=(const vec4_t<float>&) noexcept;
 
-    vec4_t& operator=(vec4_t<float>&&) = default;
+    vec4_t& operator=(vec4_t<float>&&) noexcept;
 
     vec4_t& operator+=(const vec4_t<float>&);
 
@@ -132,11 +132,11 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
     Constructors
 -------------------------------------*/
 // Main Constructor
-constexpr LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
-    //simd(_mm_setr_ps(inX, inY, inZ, inW))
-    //simd(_mm_set_ps(inW, inZ, inY, inX))
-    simd{inX, inY, inZ, inW}
+inline LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
+    simd(_mm_set_ps(inW, inZ, inY, inX))
+    //simd{inX, inY, inZ, inW}
 {
+    //_mm_storeu_ps(v, _mm_set_ps(inW, inZ, inY, inX));
 }
 
 /*
@@ -150,11 +150,13 @@ inline LS_INLINE vec4_t<float>::vec4_t(float n) :
     simd(_mm_set1_ps(n))
     //v{n, n, n, n}
 {
+    //_mm_storeu_ps(v, _mm_set1_ps(n));
 }
 
 constexpr LS_INLINE vec4_t<float>::vec4_t(const __m128 n) :
     simd(n)
 {
+    //_mm_storeu_ps(v, n);
 }
 
 /*
@@ -371,47 +373,47 @@ vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
     return vec4_t{_mm_div_ps(simd, input.simd)};
 }
 
-/*
 inline LS_INLINE
-vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input)
+vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input) noexcept
 {
-    simd = input.simd;
+    _mm_storeu_ps(v, input.simd);
+    //_mm_storeu_ps(v, input.simd);
     return *this;
 }
 
 inline LS_INLINE
-vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input)
+vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input) noexcept
 {
-    simd = input.simd;
+    _mm_storeu_ps(v, input.simd);
+    //_mm_storeu_ps(v, input.simd);
     return *this;
 }
-*/
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(const vec4_t<float>& input)
 {
-    simd = _mm_add_ps(simd, input.simd);
+    _mm_storeu_ps(v, _mm_add_ps(simd, input.simd));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(const vec4_t<float>& input)
 {
-    simd = _mm_sub_ps(simd, input.simd);
+    _mm_storeu_ps(v, _mm_sub_ps(simd, input.simd));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(const vec4_t<float>& input)
 {
-    simd = _mm_mul_ps(simd, input.simd);
+    _mm_storeu_ps(v, _mm_mul_ps(simd, input.simd));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 {
-    simd = _mm_div_ps(simd, input.simd);
+    _mm_storeu_ps(v, _mm_div_ps(simd, input.simd));
     return *this;
 }
 
@@ -420,14 +422,14 @@ vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator++()
 {
-    simd = _mm_add_ps(simd, _mm_set1_ps(1.f));
+    _mm_storeu_ps(v, _mm_add_ps(simd, _mm_set1_ps(1.f)));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator--()
 {
-    simd = _mm_sub_ps(simd, _mm_set1_ps(1.f));
+    _mm_storeu_ps(v, _mm_sub_ps(simd, _mm_set1_ps(1.f)));
     return *this;
 }
 
@@ -437,7 +439,7 @@ inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator++(int)
 {
     __m128 ret = simd;
-    simd = _mm_add_ps(simd, _mm_set1_ps(1.f));
+    _mm_storeu_ps(v, _mm_add_ps(simd, _mm_set1_ps(1.f)));
     return vec4_t<float>{ret};
 }
 
@@ -445,7 +447,7 @@ inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator--(int)
 {
     __m128 ret = simd;
-    simd = _mm_sub_ps(simd, _mm_set1_ps(1.f));
+    _mm_storeu_ps(v, _mm_sub_ps(simd, _mm_set1_ps(1.f)));
     return vec4_t<float>{ret};
 }
 
@@ -517,7 +519,7 @@ bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator=(float input)
 {
-    simd = _mm_set1_ps(input);
+    _mm_storeu_ps(v, _mm_set1_ps(input));
     return *this;
 }
 
@@ -548,28 +550,28 @@ vec4_t<float> vec4_t<float>::operator/(float input) const
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(float input)
 {
-    simd = _mm_add_ps(simd, _mm_set1_ps(input));
+    _mm_storeu_ps(v, _mm_add_ps(simd, _mm_set1_ps(input)));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator-=(float input)
 {
-    simd = _mm_sub_ps(simd, _mm_set1_ps(input));
+    _mm_storeu_ps(v, _mm_sub_ps(simd, _mm_set1_ps(input)));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(float input)
 {
-    simd = _mm_mul_ps(simd, _mm_set1_ps(input));
+    _mm_storeu_ps(v, _mm_mul_ps(simd, _mm_set1_ps(input)));
     return *this;
 }
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
-    simd = _mm_div_ps(simd, _mm_set1_ps(input));
+    _mm_storeu_ps(v, _mm_div_ps(simd, _mm_set1_ps(input)));
     return *this;
 }
 
