@@ -289,15 +289,25 @@ inline LS_INLINE float logN(float baseN, float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float exp(float x) noexcept
 {
-    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.f/256.f)));
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
+    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.f/65536.f)));
+
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
 
     return _mm_cvtss_f32(s);
 }
@@ -346,15 +356,23 @@ inline LS_INLINE float pow(float x, float y) noexcept
     __m128 ln = _mm_mul_ss(l2, _mm_set_ss(0.693147181f)); // ln( 2 )
 
     __m128 expy = _mm_mul_ps(ln, _mm_set_ss(y));
-    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(expy, _mm_set_ss(1.f/256.f)));
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
-    s = _mm_mul_ps(s, s);
+    __m128 s = _mm_add_ss(_mm_set_ss(1.f), _mm_mul_ss(expy, _mm_set_ss(1.f/16384.f)));
+
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
+    s = _mm_mul_ss(s, s);
 
     return _mm_cvtss_f32(s);
 }

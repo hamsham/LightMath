@@ -355,9 +355,16 @@ inline LS_INLINE vec4_t<float> logN(const vec4_t<float>& baseN, const vec4_t<flo
 inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 {
     #if 1
-    __m128 s = _mm_fmadd_ps(x.simd, _mm_set1_ps(1.f/256.f), _mm_set1_ps(1.f));
+    __m128 s = _mm_fmadd_ps(x.simd, _mm_set1_ps(1.f/16384.f), _mm_set1_ps(1.f));
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+    s = _mm_mul_ps(s, s);
+
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);

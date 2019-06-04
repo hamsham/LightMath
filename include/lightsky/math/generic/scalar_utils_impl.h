@@ -657,9 +657,17 @@ inline LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 {
-    x = scalar_t{1.f} + x / scalar_t{256.f};
+    x = scalar_t{1.f} + x / scalar_t{16384.f};
+
     x *= x;
     x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+    x *= x;
+
     x *= x;
     x *= x;
     x *= x;
