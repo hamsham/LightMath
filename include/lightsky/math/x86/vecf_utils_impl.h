@@ -32,7 +32,7 @@ inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2)
     //const __m128 d = _mm_hadd_ps(c, c);
     //const __m128 e = _mm_hadd_ps(d, d);
     //return _mm_cvtss_f32(e);
-    const math::vec4_t<float> ret{_mm_mul_ps(va, vb)};
+    const vec4_t<float> ret{_mm_mul_ps(va, vb)};
     return ret[0] + ret[1] + ret[2];
 }
 */
@@ -177,7 +177,7 @@ inline LS_INLINE float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 {
     // cache
     const __m128 s = v.simd;
@@ -198,11 +198,35 @@ inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
 }
 
 /*-------------------------------------
+    4D Reflect
+-------------------------------------*/
+template <typename num_t>
+inline LS_INLINE vec4_t<float> reflect(const vec4_t<float>& v, const vec4_t<float>& norm) {
+    //return v - vec4_t<num_t>{2} * dot(v, norm) * norm;
+    // horizontal add
+    const __m128 vs = v.simd;
+    const __m128 ns = norm.simd;
+
+    const __m128 a = _mm_mul_ps(vs, ns);
+
+    // swap the words of each vector
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
+    const __m128 c = _mm_add_ps(a, b);
+
+    // swap each half of the vector
+    const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
+    const __m128 dp = _mm_add_ps(c, d);
+
+    const __m128 reflection = _mm_mul_ps(_mm_mul_ps(_mm_set1_ps(2.f), dp), ns);
+    return vec4_t<float>{_mm_sub_ps(vs, reflection)};
+}
+
+/*-------------------------------------
     4D Min
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
-    return math::vec4_t<float>{_mm_min_ps(v1.simd, v2.simd)};
+    return vec4_t<float>{_mm_min_ps(v1.simd, v2.simd)};
 }
 
 /*-------------------------------------
@@ -210,7 +234,7 @@ inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>&
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
-    return math::vec4_t<float>{_mm_max_ps(v1.simd, v2.simd)};
+    return vec4_t<float>{_mm_max_ps(v1.simd, v2.simd)};
 }
 
 /*-------------------------------------
@@ -296,8 +320,8 @@ inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log(const vec4_t<float>& n) noexcept
 {
-    const math::vec4_t<float> x = log2(n);
-    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.69314718056f))}; // ln( 2 )
+    const vec4_t<float> x = log2(n);
+    return vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.69314718056f))}; // ln( 2 )
 }
 
 
@@ -307,8 +331,8 @@ inline LS_INLINE vec4_t<float> log(const vec4_t<float>& n) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log10(const vec4_t<float>& n) noexcept
 {
-    const math::vec4_t<float> x = log2(n);
-    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.3010299956639812f))}; // log2( 10 )
+    const vec4_t<float> x = log2(n);
+    return vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.3010299956639812f))}; // log2( 10 )
 }
 
 
@@ -318,9 +342,9 @@ inline LS_INLINE vec4_t<float> log10(const vec4_t<float>& n) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> logN(const vec4_t<float>& baseN, const vec4_t<float>& n) noexcept
 {
-    const math::vec4_t<float> x = log(n);
-    const math::vec4_t<float> b = log2(baseN);
-    return math::vec4_t<float>{_mm_mul_ps(x.simd, _mm_rcp_ps(b.simd))};
+    const vec4_t<float> x = log(n);
+    const vec4_t<float> b = log2(baseN);
+    return vec4_t<float>{_mm_mul_ps(x.simd, _mm_rcp_ps(b.simd))};
 }
 
 
@@ -341,7 +365,7 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);
 
-    return math::vec4_t<float>{s};
+    return vec4_t<float>{s};
     #else
     __m128 t, f, e, p, r;
     __m128i i, j;
@@ -362,7 +386,7 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
     p = _mm_add_ps (p, c2);              /* p = (c0 * f + c1) * f + c2 ~= 2^f */
     j = _mm_slli_epi32 (i, 23);          /* i << 23 */
     r = _mm_castsi128_ps (_mm_add_epi32 (j, _mm_castps_si128 (p))); /* r = p * 2^i*/
-    return math::vec4_t<float>{r};
+    return vec4_t<float>{r};
     #endif
 }
 
@@ -383,7 +407,7 @@ inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
     s = _mm_mul_ps(s, s);
     s = _mm_mul_ps(s, s);
 
-    return math::vec4_t<float>{s};
+    return vec4_t<float>{s};
 }
 
 
@@ -393,7 +417,7 @@ inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& y) noexcept
 {
-    return math::exp(math::log(x) * y);
+    return exp(log(x) * y);
 }
 
 
@@ -403,7 +427,7 @@ inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& 
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
-    return math::vec4_t<float>{_mm_fmadd_ps(x.simd, m.simd, a.simd)};
+    return vec4_t<float>{_mm_fmadd_ps(x.simd, m.simd, a.simd)};
 }
 
 
@@ -413,7 +437,7 @@ inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
-    return math::vec4_t<float>{_mm_fmsub_ps(x.simd, m.simd, a.simd)};
+    return vec4_t<float>{_mm_fmsub_ps(x.simd, m.simd, a.simd)};
 }
 
 

@@ -148,12 +148,15 @@ math::vec2_t<num_t> math::project(const vec2_t<num_t>& v1, const vec2_t<num_t>& 
 /*-------------------------------------
     2D Reflection
 -------------------------------------*/
-template <typename num_t> inline LS_INLINE
+template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::reflect(const vec2_t<num_t>& v, const vec2_t<num_t>& norm) {
+    /*
     const math::vec2_t<num_t>&& nv = math::normalize<num_t>(v);
 
     const math::vec2_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
     return bounce - nv;
+    */
+    return v - math::vec2_t<num_t>{2} * math::dot(v, norm) * norm;
 }
 
 /*-------------------------------------
@@ -551,13 +554,14 @@ math::vec3_t<num_t> math::project(const vec3_t<num_t>& v1, const vec3_t<num_t>& 
 /*-------------------------------------
     3D Reflect
 -------------------------------------*/
-template <typename num_t> inline LS_INLINE
+template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::reflect(const vec3_t<num_t>& v, const vec3_t<num_t>& norm) {
-    const math::vec3_t<num_t>&& nv = math::normalize(v);
-
-    const math::vec3_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t{2});
-
+    /*
+    const math::vec4_t<num_t>&& nv = math::normalize(v);
+    const math::vec4_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
     return bounce - nv;
+    */
+    return v - math::vec3_t<num_t>{2} * math::dot(v, norm) * norm;
 }
 
 /*-------------------------------------
@@ -930,11 +934,14 @@ math::vec4_t<num_t> math::project(const vec4_t<num_t>& v1, const vec4_t<num_t>& 
 /*-------------------------------------
     4D Reflect
 -------------------------------------*/
-template <typename num_t> inline LS_INLINE
+template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::reflect(const vec4_t<num_t>& v, const vec4_t<num_t>& norm) {
+    /*
     const math::vec4_t<num_t>&& nv = math::normalize(v);
     const math::vec4_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
     return bounce - nv;
+    */
+    return v - math::vec4_t<num_t>{2} * math::dot(v, norm) * norm;
 }
 
 /*-------------------------------------

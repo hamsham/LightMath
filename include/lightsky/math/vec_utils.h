@@ -244,7 +244,7 @@ vec2_t<N> project(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  @return
  *  The reflection of v around the normal vector 'norm'.
  */
-template <typename N> inline
+template <typename N> constexpr
 vec2_t<N> reflect(const vec2_t<N>& v, const vec2_t<N>& norm);
 
 /**
@@ -692,7 +692,7 @@ vec3_t<N> project(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  @return
  *  The reflection of v around the normal vector 'norm'.
  */
-template <typename N> inline
+template <typename N> constexpr
 vec3_t<N> reflect(const vec3_t<N>& v1, const vec3_t<N>& norm);
 
 /**
@@ -1101,7 +1101,7 @@ vec4_t<N> project(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  @return
  *  The reflection of v around the normal vector 'norm'.
  */
-template <typename N> inline
+template <typename N> constexpr
 vec4_t<N> reflect(const vec4_t<N>& v1, const vec4_t<N>& norm);
 
 /**
