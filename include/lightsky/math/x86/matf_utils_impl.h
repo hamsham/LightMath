@@ -224,10 +224,15 @@ inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
-    const __m128 t0 = _mm_unpacklo_ps(m.m[0].simd, m.m[1].simd);
-    const __m128 t1 = _mm_unpacklo_ps(m.m[2].simd, m.m[3].simd);
-    const __m128 t2 = _mm_unpackhi_ps(m.m[0].simd, m.m[1].simd);
-    const __m128 t3 = _mm_unpackhi_ps(m.m[2].simd, m.m[3].simd);
+    const __m128 m0 = _mm_load_ps(m.m[0].v);
+    const __m128 m1 = _mm_load_ps(m.m[1].v);
+    const __m128 m2 = _mm_load_ps(m.m[2].v);
+    const __m128 m3 = _mm_load_ps(m.m[3].v);
+
+    const __m128 t0 = _mm_unpacklo_ps(m0, m1);
+    const __m128 t1 = _mm_unpacklo_ps(m2, m3);
+    const __m128 t2 = _mm_unpackhi_ps(m0, m1);
+    const __m128 t3 = _mm_unpackhi_ps(m2, m3);
 
     return mat4_t<float>{
         vec4_t<float>{_mm_movelh_ps(t0, t1)},
