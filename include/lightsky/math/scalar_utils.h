@@ -232,6 +232,24 @@ template <typename floating_t>
 constexpr floating_t fmod_1(const floating_t n) noexcept;
 
 /**
+ * @brief step
+ * Generate a step function by comparing two values.
+ *
+ * step() generates a step function by comparing x to edge. For the return
+ * value, 0.0 is returned if x < edge, and 1.0 is returned otherwise.
+ *
+ * @param edge
+ * Specifies the location of the edge of the step function.
+ *
+ * @param x
+ * Specify the value to be used to generate the step function.
+ *
+ * @return A step function between two values.
+ */
+template <typename floating_t>
+constexpr floating_t step(floating_t edge, floating_t x) noexcept;
+
+/**
  * @brief smoothstep
  * Perform a smooth interpolation of a number along the sub-sequence [a, b].
  *

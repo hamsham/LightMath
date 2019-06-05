@@ -179,6 +179,17 @@ constexpr LS_INLINE floating_t math::fmod_1(const floating_t n) noexcept
 
 
 /*-------------------------------------
+ step
+-------------------------------------*/
+template<typename floating_t>
+constexpr LS_INLINE floating_t math::step(const floating_t edge, const floating_t x) noexcept
+{
+    return x < edge ? floating_t{0} : floating_t{1};
+}
+
+
+
+/*-------------------------------------
     smoothstep
 -------------------------------------*/
 namespace math
