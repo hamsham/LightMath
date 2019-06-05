@@ -243,8 +243,8 @@ constexpr floating_t fmod_1(const floating_t n) noexcept;
  *
  * @return The smooth linear interpolation of x in between the interval a and b.
  */
-template <typename scalar_t>
-constexpr scalar_t smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept;
+template <typename floating_t>
+constexpr floating_t smoothstep(floating_t a, floating_t b, floating_t x) noexcept;
 
 /**
  * @brief fastSqrt

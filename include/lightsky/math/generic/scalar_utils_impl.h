@@ -188,21 +188,17 @@ namespace impl
     template<typename scalar_t>
     constexpr LS_INLINE scalar_t smoothstep_impl(const scalar_t t) noexcept
     {
-        return (scalar_t{3.f} * t * t * t) - (scalar_t{2.f} * t * t);
+        return t * t * (scalar_t{3.0} - scalar_t{2.0} * t);
     }
 } // math::impl namespace
 } // math namespace
 
 
 
-template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::smoothstep(scalar_t a, scalar_t b, scalar_t x) noexcept
+template<typename floating_t>
+constexpr LS_INLINE floating_t math::smoothstep(floating_t a, floating_t b, floating_t x) noexcept
 {
-    return (x <= a)
-           ? scalar_t{0}
-           : (x >= b)
-             ? scalar_t{1.f}
-             : math::impl::smoothstep_impl<scalar_t>(x - a) / (b - a);
+    return math::impl::smoothstep_impl<floating_t>(math::clamp<floating_t>((x - a) / (b - a), floating_t{0}, floating_t{1}));
 }
 
 
