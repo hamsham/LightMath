@@ -221,6 +221,14 @@ constexpr float_type float_cast(const fixed_type f);
 
 
 /*-------------------------------------
+    abs
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t <fixed_base_t, num_frac_digits> abs(const fixed_t<fixed_base_t, num_frac_digits>& num) noexcept;
+
+
+
+/*-------------------------------------
     rcp
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>

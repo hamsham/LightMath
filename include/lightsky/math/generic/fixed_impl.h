@@ -633,6 +633,32 @@ constexpr float_type math::float_cast(const fixed_type f)
 
 
 /*-------------------------------------
+    abs
+-------------------------------------*/
+namespace fixed_impl
+{
+    template <typename data_t>
+    constexpr LS_INLINE data_t abs_mask(data_t x, data_t mask) noexcept
+    {
+        return (x^mask) - mask;
+    }
+
+    template <typename data_t>
+    constexpr LS_INLINE data_t abs_shift(data_t x) noexcept
+    {
+        return math::IsUnsigned<data_t>::value ? x : fixed_impl::abs_mask<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
+    }
+}
+
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::abs(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
+{
+    return (num.number >= 0) ? num : math::fixed_t<fixed_base_t, num_frac_digits>{fixed_impl::abs_shift<fixed_base_t>(num.number)};
+}
+
+
+
+/*-------------------------------------
     rcp
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
