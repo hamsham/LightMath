@@ -381,10 +381,10 @@ template<typename num_t>
 constexpr LS_INLINE mat4_t<num_t> mat4_t<num_t>::operator+(const vec4_t <num_t>& input) const
 {
     return mat4_t<num_t>{
-        m[0] + input.v[0],
-        m[1] + input.v[1],
-        m[2] + input.v[2],
-        m[3] + input.v[3]
+        m[0] + input,
+        m[1] + input,
+        m[2] + input,
+        m[3] + input
     };
 }
 
@@ -392,10 +392,10 @@ template<typename num_t>
 constexpr LS_INLINE mat4_t<num_t> mat4_t<num_t>::operator-(const vec4_t <num_t>& input) const
 {
     return mat4_t<num_t>{
-        m[0] - input.v[0],
-        m[1] - input.v[1],
-        m[2] - input.v[2],
-        m[3] - input.v[3]
+        m[0] - input,
+        m[1] - input,
+        m[2] - input,
+        m[3] - input
     };
 }
 
