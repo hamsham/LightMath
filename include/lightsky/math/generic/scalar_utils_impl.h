@@ -664,6 +664,7 @@ inline LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 {
+    /*
     x = scalar_t{1.f} + x / scalar_t{16384.f};
 
     x *= x;
@@ -683,6 +684,19 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
     x *= x;
 
     return x;
+    */
+    float   p      = 1.442695040f * x;
+    float   offset = (p < 0.f) ? 1.f : 0.f;
+    float   clipp  = (p < -126.f) ? -126.f : p;
+    int32_t w      = (int32_t)clipp;
+    float   z      = clipp - w + offset;
+
+    union {
+        uint32_t i;
+        float f;
+    } const v = {(uint32_t)((1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
+
+    return v.f;
 }
 
 
@@ -693,6 +707,7 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
 {
+    /*
     x = scalar_t{1.f} + x * scalar_t{0.002707606174}; // ln(2)/256
     x *= x;
     x *= x;
@@ -704,6 +719,19 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
     x *= x;
 
     return x;
+    */
+    float   p      = 0.30102999566398f * x;
+    float   offset = (p < 0.f) ? 1.f : 0.f;
+    float   clipp  = (p < -126.f) ? -126.f : p;
+    int32_t w      = (int32_t)clipp;
+    float   z      = clipp - w + offset;
+
+    union {
+        uint32_t i;
+        float f;
+    } const v = {(uint32_t)((1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
+
+    return v.f;
 }
 
 
