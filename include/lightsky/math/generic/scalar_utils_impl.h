@@ -330,16 +330,16 @@ inline LS_INLINE scalar_t math::log2(scalar_t n) noexcept
 /*-------------------------------------
     log2
 
-    Fast Approximate logarithms
-    This method was found on flipcode:
-        http://www.flipcode.com/archives/Fast_log_Function.shtml
-    Accurate to within 5 decimal places.
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 template<>
 inline LS_INLINE float math::log2<float>(float n) noexcept
 {
     static_assert(sizeof(float) == sizeof(int32_t), "Need IEEE754 32-bit floats for logarithm calculation.");
+
+    #if 0
     int32_t* const exp = reinterpret_cast<int32_t*>(&n);
     int32_t x = *exp;
 
@@ -352,6 +352,17 @@ inline LS_INLINE float math::log2<float>(float n) noexcept
     *exp = x;
     const float ret = (((-0.333333333333f * n) + 2.f) * n) - 0.666666666666f;
     return ret + log2;
+    #else
+    union { float f; uint32_t i; } vx = { n };
+    union { uint32_t i; float f; } mx = { (vx.i & 0x007FFFFFu) | 0x3f000000u };
+
+    float y = (float)vx.i;
+    y *= 1.1920928955078125e-7f;
+
+    return ((y - 124.22551499f)
+           - (1.498030302f * mx.f))
+           - (1.72587999f / (0.3520887068f + mx.f));
+    #endif
 }
 
 
@@ -653,13 +664,17 @@ constexpr LS_INLINE scalar_t math::pow(
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::pow(scalar_t x, scalar_t y) noexcept
 {
-    return math::exp<scalar_t>(math::log<scalar_t>(x) * y);
+    return math::exp2<scalar_t>(math::log2<scalar_t>(x) * y);
 }
 
 
 
 /*-------------------------------------
     exp
+
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
@@ -685,7 +700,7 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 
     return x;
     */
-    float   p      = 1.442695040f * x;
+    float   p      = 1.442695040f * x; // x * 1/ln(2)
     float   offset = (p < 0.f) ? 1.f : 0.f;
     float   clipp  = (p < -126.f) ? -126.f : p;
     int32_t w      = (int32_t)clipp;
@@ -703,6 +718,10 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
 
 /*-------------------------------------
     exp2
+
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
@@ -720,7 +739,7 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
 
     return x;
     */
-    float   p      = 0.30102999566398f * x;
+    float   p      = x;
     float   offset = (p < 0.f) ? 1.f : 0.f;
     float   clipp  = (p < -126.f) ? -126.f : p;
     int32_t w      = (int32_t)clipp;

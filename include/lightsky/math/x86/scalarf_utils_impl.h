@@ -225,38 +225,45 @@ inline LS_INLINE float abs(float x) noexcept
 /*-------------------------------------
     log2
 
-    Fast Approximate logarithms
-    This method was found on flipcode:
-        http://www.flipcode.com/archives/Fast_log_Function.shtml
-    Accurate to within 5 decimal places.
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE float log2(float n) noexcept
 {
-    __m128 exp = _mm_set_ss(n);
-    __m128i x = _mm_castps_si128(exp);
+    const __m128  vx  = _mm_set_ss(n);
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
+    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), _mm_castsi128_ps(mxf));
+    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
+    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
+    const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
 
-    const __m128i log2 = _mm_sub_epi32(_mm_and_si128(_mm_srai_epi32(x, 23), _mm_set1_epi32(255)), _mm_set1_epi32(128));
-
-    x = _mm_and_si128(x, _mm_set1_epi32(~(255 << 23)));
-    x = _mm_add_epi32(x, _mm_set1_epi32(127 << 23));
-
-    exp = _mm_castsi128_ps(x);
-    __m128 ret;
-    ret = _mm_add_ss(_mm_mul_ss(_mm_set_ss(-0.333333333333f), exp), _mm_set_ss(2.f));
-    ret = _mm_sub_ss(_mm_mul_ss(ret, exp), _mm_set_ss(0.666666666666f));
-    return _mm_cvtss_f32(_mm_add_ss(ret, _mm_cvtepi32_ps(log2)));
+    return _mm_cvtss_f32(_mm_sub_ss(_mm_sub_ss(d, c), b));
 }
 
 
 
 /*-------------------------------------
     log
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE float log(float n) noexcept
 {
-    const float x = log2(n);
-    return _mm_cvtss_f32(_mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.69314718056f))); // ln( 2 )
+    const __m128  vx  = _mm_set_ss(n);
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
+    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), _mm_castsi128_ps(mxf));
+    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
+    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
+    const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
+    const __m128  ln2 = _mm_set_ss(0.69314718056f);
+
+    return _mm_cvtss_f32(_mm_mul_ss(ln2, _mm_sub_ss(_mm_sub_ss(d, c), b)));
 }
 
 
@@ -286,6 +293,10 @@ inline LS_INLINE float logN(float baseN, float n) noexcept
 
 /*-------------------------------------
     exp
+
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE float exp(float x) noexcept
 {
@@ -313,7 +324,7 @@ inline LS_INLINE float exp(float x) noexcept
     return _mm_cvtss_f32(s);
     */
 
-    __m128 p = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.442695040f));
+    __m128 p = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.442695040f)); // x * 1/ln(2)
     __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
     __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
     __m128 lt126 = _mm_cmplt_ss(p, _mm_set_ss(-126.f));
@@ -337,11 +348,15 @@ inline LS_INLINE float exp(float x) noexcept
 
 
 /*-------------------------------------
-    exp
+    exp2
+
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE float exp2(float x) noexcept
 {
-    __m128 p = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(0.30102999566398f));
+    __m128 p = _mm_set_ss(x);
     __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
     __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
     __m128 lt126 = _mm_cmplt_ss(p, _mm_set_ss(-126.f));
@@ -407,7 +422,7 @@ inline LS_INLINE float pow(float x, float y) noexcept
 
     return _mm_cvtss_f32(s);
     */
-    return exp(log(x) * y);
+    return exp2(log2(x) * y);
 }
 
 

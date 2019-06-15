@@ -290,14 +290,13 @@ inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
 /*-------------------------------------
     log2
 
-    Fast Approximate logarithms
-    This method was found on flipcode:
-        http://www.flipcode.com/archives/Fast_log_Function.shtml
-    Accurate to within 5 decimal places.
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
     This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
 {
+    #if 0
     __m128 exp = n.simd;
     __m128i x = _mm_castps_si128(exp);
 
@@ -311,23 +310,48 @@ inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
     ret = _mm_fmadd_ps(_mm_set1_ps(-0.333333333333f), exp, _mm_set1_ps(2.f));
     ret = _mm_fmsub_ps(ret, exp, _mm_set1_ps(0.666666666666f));
     return vec4_t<float>{_mm_add_ps(ret, _mm_cvtepi32_ps(log2))};
+    #else
+    const __m128  vx  = n.simd;
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  y   = _mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
+    const __m128  a   = _mm_add_ps(_mm_set1_ps(0.3520887068f), _mm_castsi128_ps(mxf));
+    const __m128  b   = _mm_div_ps(_mm_set1_ps(1.72587999f), a);
+    const __m128  c   = _mm_mul_ps(_mm_set1_ps(1.498030302f), mxf);
+    const __m128  d   = _mm_sub_ps(y, _mm_set1_ps(124.22551499f));
+
+    return vec4_t<float>{_mm_sub_ps(_mm_sub_ps(d, c), b)};
+    #endif
 }
 
 
 
 /*-------------------------------------
     log
+
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log(const vec4_t<float>& n) noexcept
 {
-    const vec4_t<float> x = log2(n);
-    return vec4_t<float>{_mm_mul_ps(x.simd, _mm_set1_ps(0.69314718056f))}; // ln( 2 )
+    const __m128  vx  = n.simd;
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  y   = _mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
+    const __m128  a   = _mm_add_ps(_mm_set1_ps(0.3520887068f), _mm_castsi128_ps(mxf));
+    const __m128  b   = _mm_div_ps(_mm_set1_ps(1.72587999f), a);
+    const __m128  c   = _mm_mul_ps(_mm_set1_ps(1.498030302f), mxf);
+    const __m128  d   = _mm_sub_ps(y, _mm_set1_ps(124.22551499f));
+    const __m128  ln2 = _mm_set1_ps(0.69314718056f);
+
+    return vec4_t<float>{_mm_mul_ps(ln2, _mm_sub_ps(_mm_sub_ps(d, c), b))};
 }
 
 
 
 /*-------------------------------------
-    log
+    log10
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log10(const vec4_t<float>& n) noexcept
 {
@@ -351,6 +375,9 @@ inline LS_INLINE vec4_t<float> logN(const vec4_t<float>& baseN, const vec4_t<flo
 
 /*-------------------------------------
     exp
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 {
@@ -374,7 +401,7 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 
     return vec4_t<float>{s};
     #else
-    __m128 p = _mm_mul_ps(x.simd, _mm_set1_ps(1.442695040f));
+    __m128 p = _mm_mul_ps(x.simd, _mm_set1_ps(1.442695040f)); // x * 1/ln(2)
     __m128 ltzero = _mm_cmplt_ps(p, _mm_setzero_ps());
     __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
     __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
@@ -399,11 +426,14 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 
 
 /*-------------------------------------
-    exp
+    exp2
+    Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
+        http://www.machinedlearnings.com/2011/06/fast-approximate-logarithm-exponential.html
+    This method relies on the IEEE floating point specification
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
 {
-    __m128 p = _mm_mul_ps(x.simd, _mm_set1_ps(0.30102999566398f));
+    __m128 p = x.simd;
     __m128 ltzero = _mm_cmplt_ps(p, _mm_setzero_ps());
     __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
     __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
@@ -431,7 +461,7 @@ inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& y) noexcept
 {
-    return exp(log(x) * y);
+    return exp2(log2(x) * y);
 }
 
 
