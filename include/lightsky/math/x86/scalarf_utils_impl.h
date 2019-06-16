@@ -223,6 +223,27 @@ inline LS_INLINE float abs(float x) noexcept
 
 
 /*-------------------------------------
+    smoothstep
+-------------------------------------*/
+inline LS_INLINE float smoothstep(float a, float b, float x) noexcept
+{
+    const __m128 xv = _mm_set_ss(x);
+    const __m128 bv = _mm_set_ss(b);
+    const __m128 av = _mm_set_ss(a);
+
+    const __m128 s0 = _mm_sub_ss(xv, av);
+    const __m128 s1 = _mm_sub_ss(bv, av);
+    const __m128 s2 = _mm_div_ss(s0, s1);
+
+    const __m128 s3 = _mm_min_ss(_mm_max_ss(s2, _mm_setzero_ps()), _mm_set_ss(1.f));
+    const __m128 s4 = _mm_sub_ss(_mm_set_ss(3.f), _mm_mul_ss(_mm_set_ss(2.f), s3));
+    const __m128 s5 = _mm_mul_ss(s3, _mm_mul_ss(s3, s4));
+    return _mm_cvtss_f32(s5);
+}
+
+
+
+/*-------------------------------------
     log2
 
     Method derived from "Fast Approximate Logarithm, Exponential, Power, and Inverse Root"
@@ -231,14 +252,14 @@ inline LS_INLINE float abs(float x) noexcept
 -------------------------------------*/
 inline LS_INLINE float log2(float n) noexcept
 {
-    const __m128  vx  = _mm_set_ss(n);
-    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
-    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), _mm_castsi128_ps(mxf));
-    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
-    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
     const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
+    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), mxf);
+    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
+    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
 
     return _mm_cvtss_f32(_mm_sub_ss(_mm_sub_ss(d, c), b));
 }
@@ -253,14 +274,14 @@ inline LS_INLINE float log2(float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float log(float n) noexcept
 {
-    const __m128  vx  = _mm_set_ss(n);
-    const __m128i mx  = _mm_or_si128(_mm_and_si128(_mm_castps_si128(vx), _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vx));
-    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), _mm_castsi128_ps(mxf));
-    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
-    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
     const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
+    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), mxf);
+    const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
+    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
     const __m128  ln2 = _mm_set_ss(0.69314718056f);
 
     return _mm_cvtss_f32(_mm_mul_ss(ln2, _mm_sub_ss(_mm_sub_ss(d, c), b)));
@@ -324,6 +345,7 @@ inline LS_INLINE float exp(float x) noexcept
     return _mm_cvtss_f32(s);
     */
 
+    #ifdef LS_MATH_HIGH_PREC
     __m128 p = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.442695040f)); // x * 1/ln(2)
     __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
     __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
@@ -332,10 +354,10 @@ inline LS_INLINE float exp(float x) noexcept
     __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
     __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
 
+    const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
+    const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
     const __m128 a = _mm_sub_ss(_mm_set_ss(4.84252568f), z);
     const __m128 b = _mm_div_ss(_mm_set_ss(27.7280233f), a);
-    const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
-    const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
 
     const __m128 e = _mm_add_ss(b, d);
     const __m128 f = _mm_sub_ss(e, c);
@@ -343,6 +365,15 @@ inline LS_INLINE float exp(float x) noexcept
     const __m128i v = _mm_cvtps_epi32(_mm_mul_ss(_mm_set_ss((float)(1 << 23)), f));
 
     return _mm_cvtss_f32(_mm_castsi128_ps(v));
+    #else
+    const __m128 p      = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.442695040f)); // x * 1/ln(2)
+    const __m128 lt126  = _mm_cmplt_ps(p, _mm_set_ss(-126.f));
+    const __m128 clipp  = _mm_or_ps(_mm_andnot_ps (lt126, p), _mm_and_ps(lt126, _mm_set_ss(-126.f)));
+    const __m128 clipp2 = _mm_add_ps(clipp, _mm_set_ss(126.94269504f));
+    const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set_ss((float)(1 << 23)), clipp2));
+
+    return _mm_cvtss_f32(_mm_castsi128_ps(v));
+    #endif
 }
 
 
@@ -356,18 +387,19 @@ inline LS_INLINE float exp(float x) noexcept
 -------------------------------------*/
 inline LS_INLINE float exp2(float x) noexcept
 {
+    #ifdef LS_MATH_HIGH_PREC
     __m128 p = _mm_set_ss(x);
-    __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
+    __m128 ltzero = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(p), 31);
     __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
     __m128 lt126 = _mm_cmplt_ss(p, _mm_set_ss(-126.f));
     __m128 clipp = _mm_or_ps(_mm_and_ps(lt126, _mm_set_ss(-126.f)), _mm_andnot_ps(lt126, p));
     __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
     __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
 
+    const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
+    const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
     const __m128 a = _mm_sub_ss(_mm_set_ss(4.84252568f), z);
     const __m128 b = _mm_div_ss(_mm_set_ss(27.7280233f), a);
-    const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
-    const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
 
     const __m128 e = _mm_add_ss(b, d);
     const __m128 f = _mm_sub_ss(e, c);
@@ -375,6 +407,16 @@ inline LS_INLINE float exp2(float x) noexcept
     const __m128i v = _mm_cvtps_epi32(_mm_mul_ss(_mm_set_ss((float)(1 << 23)), f));
 
     return _mm_cvtss_f32(_mm_castsi128_ps(v));
+
+    #else
+    const __m128 p      = _mm_set_ss(x);
+    const __m128 lt126  = _mm_cmplt_ps (p, _mm_set_ss(-126.f));
+    const __m128 clipp  = _mm_or_ps(_mm_andnot_ps(lt126, p), _mm_and_ps(lt126, _mm_set_ss(-126.f)));
+    const __m128 clipp2 = _mm_add_ps(clipp, _mm_set_ss(126.94269504f));
+    const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set_ss((float)(1 << 23)), clipp2));
+
+    return _mm_cvtss_f32(_mm_castsi128_ps(v));
+    #endif
 }
 
 
