@@ -17,7 +17,7 @@ namespace math
 inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 {
     // horizontal add
-    const __m128 a = _mm_mul_ps(_mm_load_ps(q1.q), _mm_load_ps(q2.q));
+    const __m128 a = _mm_mul_ps(_mm_loadu_ps(q1.q), _mm_loadu_ps(q2.q));
 
     // swap the words of each vector
     const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
@@ -36,7 +36,7 @@ inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 inline LS_INLINE float length(const quat_t<float>& q)
 {
     // cache
-    const __m128 s = _mm_load_ps(q.q);
+    const __m128 s = _mm_loadu_ps(q.q);
 
     // horizontal add
     const __m128 a = _mm_mul_ps(s, s);
@@ -58,7 +58,7 @@ inline LS_INLINE float length(const quat_t<float>& q)
 inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
 {
     // cache
-    const __m128 s = _mm_load_ps(q.q);
+    const __m128 s = _mm_loadu_ps(q.q);
 
     // horizontal add
     const __m128 a = _mm_mul_ps(s, s);
