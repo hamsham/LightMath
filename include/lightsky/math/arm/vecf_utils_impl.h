@@ -155,21 +155,21 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-    return return vec4_t<float>{vfmaq_f32(a, m, x)};
+    return vec4_t<float>{vfmaq_f32(a.simd, m.simd, x.simd)};
     #else
-    return return vec4_t<float>{vaddq_f32(vmulq_f32(x, m), a)};
+    return vec4_t<float>{vaddq_f32(vmulq_f32(x.simd, m.simd), a.simd)};
     #endif
 }
 
 /*-------------------------------------
     FMS
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
+inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-    return return vec4_t<float>{vfmsq_f32(a, m, x)};
+    return vec4_t<float>{vfmsq_f32(a.simd, m.simd, x.simd)};
     #else
-    return return vec4_t<float>{vsubq_f32(vmulq_f32(x, m), a)};
+    return vec4_t<float>{vsubq_f32(vmulq_f32(x.simd, m.simd), a.simd)};
     #endif
 }
 

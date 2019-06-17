@@ -125,7 +125,7 @@ inline LS_INLINE float fmadd(float x, float m, float a) noexcept
     const float32x4_t result = vaddq_f32(vmulq_f32(vld1q_f32(x), vld1q_f32(m)), vld1q_f32(a));
     #endif
 
-    return vget_lane_f32(vget_low_f32(result, 0);
+    return vget_lane_f32(vget_low_f32(result), 0);
 }
 
 
@@ -141,7 +141,7 @@ inline LS_INLINE float fmsub(float x, float m, float a) noexcept
     const float32x4_t result = vsubq_f32(vmulq_f32(vld1q_f32(x), vld1q_f32(m)), vld1q_f32(a));
     #endif
 
-    return vget_lane_f32(vget_low_f32(result, 0);
+    return vget_lane_f32(vget_low_f32(result), 0);
 }
 
 
