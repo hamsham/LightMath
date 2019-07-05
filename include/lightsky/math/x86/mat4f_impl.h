@@ -140,12 +140,20 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
     return vec4_t<float>{_mm_add_ps(_mm_add_ps(_mm_add_ps(col0, col1), col2), col3)};
     */
 
+    /*
     const __m128 s = _mm_load_ps(v);
 
     __m128 row0 = _mm_mul_ps(s, _mm_load_ps(m.m[0].v));
     __m128 row1 = _mm_mul_ps(s, _mm_load_ps(m.m[1].v));
     __m128 row2 = _mm_mul_ps(s, _mm_load_ps(m.m[2].v));
     __m128 row3 = _mm_mul_ps(s, _mm_load_ps(m.m[3].v));
+    */
+    const __m128 s = this->simd;
+
+    __m128 row0 = _mm_mul_ps(s, m.m[0].simd);
+    __m128 row1 = _mm_mul_ps(s, m.m[1].simd);
+    __m128 row2 = _mm_mul_ps(s, m.m[2].simd);
+    __m128 row3 = _mm_mul_ps(s, m.m[3].simd);
 
     // transpose, then add
     const __m128 t0 = _mm_unpacklo_ps(row0, row1);
