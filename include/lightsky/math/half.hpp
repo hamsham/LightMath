@@ -42,7 +42,7 @@ struct alignas(sizeof(uint16_t)) Half
 
     Half& operator=(const Half& h) noexcept = default;
     Half& operator=(Half&& h) noexcept = default;
-    
+
     Half& operator=(const float f) noexcept;
     operator float() const noexcept;
 
