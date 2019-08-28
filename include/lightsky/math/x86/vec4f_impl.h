@@ -235,6 +235,13 @@ inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
 }
 
 template <>
+template <>
+inline LS_INLINE vec4_t<Half>::operator vec4_t<float>() const
+{
+    return vec4_t<float>{_mm_cvtph_ps(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v)))};
+}
+
+template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
@@ -310,6 +317,16 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
     } data{_mm_cvtps_epi32(simd)};
 
     return data.vec;
+}
+
+template <>
+inline LS_INLINE vec4_t<float>::operator vec4_t<Half>() const
+{
+    const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
+    vec4_t<Half> ret;
+    _mm_storel_pi(reinterpret_cast<__m64*>(ret.v), data);
+
+    return ret;
 }
 
 inline LS_INLINE const float* vec4_t<float>::operator&() const

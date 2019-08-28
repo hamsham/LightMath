@@ -29,6 +29,7 @@ set(LS_MATH_SOURCES
 
 set(LS_MATH_HEADERS
     include/lightsky/math/fixed.h
+    include/lightsky/math/half.hpp
     include/lightsky/math/mat2.h
     include/lightsky/math/mat3.h
     include/lightsky/math/mat4.h
@@ -45,6 +46,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/vec_utils.h
 
     include/lightsky/math/generic/fixed_impl.h
+    include/lightsky/math/generic/half_impl.hpp
     include/lightsky/math/generic/mat2_impl.h
     include/lightsky/math/generic/mat3_impl.h
     include/lightsky/math/generic/mat4_impl.h
@@ -58,6 +60,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/vec4_impl.h
     include/lightsky/math/generic/vec_utils_impl.h
 
+    include/lightsky/math/x86/half_impl.hpp
     include/lightsky/math/x86/mat4f_impl.h
     include/lightsky/math/x86/matf_utils_impl.h
     include/lightsky/math/x86/quatf_utils_impl.h
@@ -65,13 +68,13 @@ set(LS_MATH_HEADERS
     include/lightsky/math/x86/vec4f_impl.h
     include/lightsky/math/x86/vecf_utils_impl.h
 
+    include/lightsky/math/arm/half_impl.hpp
     include/lightsky/math/arm/mat4f_impl.h
     include/lightsky/math/arm/matf_utils_impl.h
     include/lightsky/math/arm/quatf_utils_impl.h
     include/lightsky/math/arm/scalarf_utils_impl.h
     include/lightsky/math/arm/vec4f_impl.h
-    include/lightsky/math/arm/vecf_utils_impl.h
-)
+    include/lightsky/math/arm/vecf_utils_impl.h)
 
 
 
@@ -84,7 +87,7 @@ if (BUILD_SHARED_LIBS)
     add_definitions(-DLS_BUILD_SHARED -DLS_SHARED)
     set(LS_LIB_TYPE SHARED)
 else()
-    set(LS_LIB_TYPE STATIC)
+    set(LS_LIB_TYPE STATIC include/lightsky/math/generic/half_impl.hpp include/lightsky/math/x86/half_impl.hpp)
 endif()
 
 add_library(${OUTPUT_NAME} ${LS_LIB_TYPE} ${LS_MATH_SOURCES} ${LS_MATH_HEADERS})
