@@ -105,7 +105,7 @@ namespace math
 /*
  * Prefix Increment
  */
-inline Half& LS_INLINE Half::operator++() noexcept
+inline LS_INLINE Half& Half::operator++() noexcept
 {
     return *this = ((float)*this) + 1.f;
 }
@@ -113,7 +113,7 @@ inline Half& LS_INLINE Half::operator++() noexcept
 /*
  * Prefix Decrement
  */
-inline Half& LS_INLINE Half::operator--() noexcept
+inline LS_INLINE Half& Half::operator--() noexcept
 {
     return *this = ((float)*this) - 1.f;
 }
@@ -121,7 +121,7 @@ inline Half& LS_INLINE Half::operator--() noexcept
 /*
  * Postfix Increment
  */
-inline Half LS_INLINE Half::operator++(int) noexcept
+inline LS_INLINE Half Half::operator++(int) noexcept
 {
     const Half ret = *this;
     *this = ((float)*this) + 1.f;
@@ -131,7 +131,7 @@ inline Half LS_INLINE Half::operator++(int) noexcept
 /*
  * Postfix Decrement
  */
-inline Half LS_INLINE Half::operator--(int) noexcept
+inline LS_INLINE Half Half::operator--(int) noexcept
 {
     const Half ret = *this;
     *this = ((float)*this) - 1.f;
@@ -141,7 +141,7 @@ inline Half LS_INLINE Half::operator--(int) noexcept
 /*
  * Logical NOT
  */
-constexpr bool LS_INLINE Half::operator!() const noexcept
+constexpr LS_INLINE bool Half::operator!() const noexcept
 {
     return !this->bits;
 }
@@ -149,7 +149,7 @@ constexpr bool LS_INLINE Half::operator!() const noexcept
 /*
  * Logical Equals
  */
-constexpr bool LS_INLINE Half::operator==(const Half& f) const noexcept
+constexpr LS_INLINE bool Half::operator==(const Half& f) const noexcept
 {
     return this->bits == f.bits;
 }
@@ -157,7 +157,7 @@ constexpr bool LS_INLINE Half::operator==(const Half& f) const noexcept
 /*
  * Logical NEQ
  */
-constexpr bool LS_INLINE Half::operator!=(const Half& f) const noexcept
+constexpr LS_INLINE bool Half::operator!=(const Half& f) const noexcept
 {
     return this->bits != f.bits;
 }
@@ -165,7 +165,7 @@ constexpr bool LS_INLINE Half::operator!=(const Half& f) const noexcept
 /*
  * Greater-Than or Equals
  */
-inline bool LS_INLINE Half::operator>=(const Half& f) const noexcept
+inline LS_INLINE bool Half::operator>=(const Half& f) const noexcept
 {
     return (float)*this >= (float)f;
 }
@@ -173,7 +173,7 @@ inline bool LS_INLINE Half::operator>=(const Half& f) const noexcept
 /*
  * Less-Than or Equals
  */
-inline bool LS_INLINE Half::operator<=(const Half& f) const noexcept
+inline LS_INLINE bool Half::operator<=(const Half& f) const noexcept
 {
     return (float)*this <= (float)f;
 }
@@ -181,7 +181,7 @@ inline bool LS_INLINE Half::operator<=(const Half& f) const noexcept
 /*
  * Greater-Than
  */
-inline bool LS_INLINE Half::operator>(const Half& f) const noexcept
+inline LS_INLINE bool Half::operator>(const Half& f) const noexcept
 {
     return (float)*this > (float)f;
 }
@@ -189,7 +189,7 @@ inline bool LS_INLINE Half::operator>(const Half& f) const noexcept
 /*
  * Less-Than
  */
-inline bool LS_INLINE Half::operator<(const Half& f) const noexcept
+inline LS_INLINE bool Half::operator<(const Half& f) const noexcept
 {
     return (float)*this < (float)f;
 }
@@ -197,7 +197,7 @@ inline bool LS_INLINE Half::operator<(const Half& f) const noexcept
 /*
  * Addition
  */
-inline Half LS_INLINE Half::operator+(const Half& f) const noexcept
+inline LS_INLINE Half Half::operator+(const Half& f) const noexcept
 {
     return Half{(float)*this + (float)f};
 }
@@ -205,7 +205,7 @@ inline Half LS_INLINE Half::operator+(const Half& f) const noexcept
 /*
  * Subtraction
  */
-inline Half LS_INLINE Half::operator-(const Half& f) const noexcept
+inline LS_INLINE Half Half::operator-(const Half& f) const noexcept
 {
     return Half{(float)*this - (float)f};
 }
@@ -213,7 +213,7 @@ inline Half LS_INLINE Half::operator-(const Half& f) const noexcept
 /*
  * Negation
  */
-inline Half LS_INLINE Half::operator-() const noexcept
+inline LS_INLINE Half Half::operator-() const noexcept
 {
     return Half{-(float)*this};
 }
@@ -221,7 +221,7 @@ inline Half LS_INLINE Half::operator-() const noexcept
 /*
  * Multiplication
  */
-inline Half LS_INLINE Half::operator*(const Half& f) const noexcept
+inline LS_INLINE Half Half::operator*(const Half& f) const noexcept
 {
     return Half{(float)*this * (float)f};
 }
@@ -229,7 +229,7 @@ inline Half LS_INLINE Half::operator*(const Half& f) const noexcept
 /*
  * Division
  */
-inline Half LS_INLINE Half::operator/(const Half& f) const noexcept
+inline LS_INLINE Half Half::operator/(const Half& f) const noexcept
 {
     return Half{(float)*this / (float)f};
 }
@@ -237,7 +237,7 @@ inline Half LS_INLINE Half::operator/(const Half& f) const noexcept
 /*
  *  Addition
  */
-inline Half& LS_INLINE Half::operator+=(const Half& f) noexcept
+inline LS_INLINE Half& Half::operator+=(const Half& f) noexcept
 {
     return *this = (float)*this + (float)f;
 }
@@ -245,7 +245,7 @@ inline Half& LS_INLINE Half::operator+=(const Half& f) noexcept
 /*
  * Subtraction
  */
-inline Half& LS_INLINE Half::operator-=(const Half& f) noexcept
+inline LS_INLINE Half& Half::operator-=(const Half& f) noexcept
 {
     return *this = (float)*this - (float)f;
 }
@@ -253,7 +253,7 @@ inline Half& LS_INLINE Half::operator-=(const Half& f) noexcept
 /*
  * Multiplication
  */
-inline Half& LS_INLINE Half::operator*=(const Half& f) noexcept
+inline LS_INLINE Half& Half::operator*=(const Half& f) noexcept
 {
     return *this = (float)*this * (float)f;
 }
@@ -261,7 +261,7 @@ inline Half& LS_INLINE Half::operator*=(const Half& f) noexcept
 /*
  * Division
  */
-inline Half& LS_INLINE Half::operator/=(const Half& f) noexcept
+inline LS_INLINE Half& Half::operator/=(const Half& f) noexcept
 {
     return *this = (float)*this / (float)f;
 }

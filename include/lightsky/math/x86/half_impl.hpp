@@ -11,7 +11,7 @@ namespace math
 /*-------------------------------------
  * Construct from a float
 -------------------------------------*/
-inline LS_IMPERATIVE Half::Half(const float f) noexcept :
+inline LS_INLINE Half::Half(const float f) noexcept :
     #ifdef LS_OS_OSX
         bits{(uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set1_ps(f), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC))}
     #else
@@ -24,7 +24,7 @@ inline LS_IMPERATIVE Half::Half(const float f) noexcept :
 /*-------------------------------------
  * Convert from a float
 -------------------------------------*/
-inline Half& LS_IMPERATIVE Half::operator=(const float f) noexcept
+inline LS_INLINE Half& Half::operator=(const float f) noexcept
 {
     #ifdef LS_OS_OSX
         bits = (uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set1_ps(f), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC));
@@ -39,7 +39,7 @@ inline Half& LS_IMPERATIVE Half::operator=(const float f) noexcept
 /*-------------------------------------
  * Cast to a float
 -------------------------------------*/
-inline LS_IMPERATIVE Half::operator float() const noexcept
+inline LS_INLINE Half::operator float() const noexcept
 {
     return _cvtsh_ss(bits);
 }

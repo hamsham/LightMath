@@ -9,7 +9,7 @@ namespace math
 /*-------------------------------------
  * Construct from a float
 -------------------------------------*/
-inline LS_IMPERATIVE Half::Half(const float f) noexcept
+inline LS_INLINE Half::Half(const float f) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
         float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(value));
@@ -32,7 +32,7 @@ inline LS_IMPERATIVE Half::Half(const float f) noexcept
 /*-------------------------------------
  * Convert from a float
 -------------------------------------*/
-inline Half& LS_IMPERATIVE Half::operator=(const float f) noexcept
+inline LS_INLINE Half& Half::operator=(const float f) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
         float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(value));
@@ -57,7 +57,7 @@ inline Half& LS_IMPERATIVE Half::operator=(const float f) noexcept
 /*-------------------------------------
  * Cast to a float
 -------------------------------------*/
-inline LS_IMPERATIVE operator Half::float() const noexcept
+inline LS_INLINE operator Half::float() const noexcept
 {
     #if defined(HAVE_AARCH64_SIMD)
         float32x4_t temp = vcvt_f32_f16(vreinterpret_f16_u16(vdup_n_u16(value)));
