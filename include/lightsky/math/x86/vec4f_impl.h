@@ -234,12 +234,14 @@ inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
     return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
 }
 
+#if !defined(LS_COMPILER_MSC)
 template <>
 template <>
 inline LS_INLINE vec4_t<Half>::operator vec4_t<float>() const
 {
     return vec4_t<float>{_mm_cvtph_ps(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v)))};
 }
+#endif
 
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
@@ -319,6 +321,7 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
     return data.vec;
 }
 
+#if !defined(LS_COMPILER_MSC)
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<Half>() const
 {
@@ -328,6 +331,7 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<Half>() const
 
     return ret;
 }
+#endif
 
 inline LS_INLINE const float* vec4_t<float>::operator&() const
 {
