@@ -8,6 +8,9 @@
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 #if defined(LS_ARCH_X86)
+    #if defined(LS_COMPILER_MSC) // :-/
+        #include <emmintrin.h>
+    #endif
     #include <immintrin.h>
 #elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
     #include <arm_neon.h>
@@ -82,7 +85,7 @@ struct alignas(sizeof(uint16_t)) Half
 /*-----------------------------------------------------------------------------
  * Platform-specific methods needed for inlining
 -----------------------------------------------------------------------------*/
-#ifdef LS_ARCH_X86
+#if defined(LS_ARCH_X86)
     #include "lightsky/math/x86/half_impl.hpp"
 #elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
     #include "lightsky/math/arm/half_impl.hpp"
