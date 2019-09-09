@@ -21,6 +21,7 @@ function(LS_MATH_ADD_TARGET target sources)
     target_link_libraries(${target} lsmath lsutils)
 endfunction(LS_MATH_ADD_TARGET)
 
+LS_MATH_ADD_TARGET(lsmath_test_bits     lsmath_test_bits.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_exp      lsmath_test_exp.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_exp2     lsmath_test_exp2.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_fixed    lsmath_test_fixed.cpp)

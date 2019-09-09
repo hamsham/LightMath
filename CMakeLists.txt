@@ -28,6 +28,7 @@ set(LS_MATH_SOURCES
 )
 
 set(LS_MATH_HEADERS
+    include/lightsky/math/bits.hpp
     include/lightsky/math/fixed.h
     include/lightsky/math/half.hpp
     include/lightsky/math/mat2.h
@@ -45,6 +46,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/vec4.h
     include/lightsky/math/vec_utils.h
 
+    include/lightsky/math/generic/bits_impl.h
     include/lightsky/math/generic/fixed_impl.h
     include/lightsky/math/generic/half_impl.hpp
     include/lightsky/math/generic/mat2_impl.h
@@ -60,6 +62,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/vec4_impl.h
     include/lightsky/math/generic/vec_utils_impl.h
 
+    include/lightsky/math/x86/bits_impl.h
     include/lightsky/math/x86/half_impl.hpp
     include/lightsky/math/x86/mat4f_impl.h
     include/lightsky/math/x86/matf_utils_impl.h
