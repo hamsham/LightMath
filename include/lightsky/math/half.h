@@ -83,7 +83,7 @@ struct alignas(sizeof(uint16_t)) Half
  * Platform-specific methods needed for inlining
 -----------------------------------------------------------------------------*/
 #if defined(LS_ARCH_X86) && !defined(LS_COMPILER_MSC) // :-(
-    #include "lightsky/math/x86/half_impl.hpp"
+    #include "lightsky/math/x86/half_impl.h"
 #elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
     #include "lightsky/math/arm/half_impl.hpp"
 #else

@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "lightsky/math/bits.hpp"
+#include "lightsky/math/bits.h"
 
 
 int main()
