@@ -3,8 +3,11 @@
 #include <climits> // CHAR_BIT
 
 #include "lightsky/setup/Api.h"
-
 #include "lightsky/setup/Compiler.h" // GCC has finally surprised me, there's no rotate intrinsics
+
+#ifdef LS_COMPILER_GNU
+    #include <x86intrin.h>
+#endif
 
 namespace ls
 {
