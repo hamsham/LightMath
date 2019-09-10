@@ -7,6 +7,8 @@
 
 #ifdef LS_COMPILER_GNU
     #include <x86intrin.h>
+#elif defined(LS_COMPILER_MSC)
+    #include <intrin.h>
 #endif
 
 namespace ls
@@ -22,7 +24,7 @@ namespace ls
 -------------------------------------*/
 inline LS_INLINE int32_t math::popcnt_i32(int32_t n) noexcept
 {
-    return _popcnt32(n);
+    return (int32_t)_mm_popcnt_u32((uint32_t)n);
 }
 
 
@@ -42,7 +44,7 @@ inline LS_INLINE uint32_t math::popcnt_u32(uint32_t n) noexcept
 -------------------------------------*/
 inline LS_INLINE int64_t math::popcnt_i64(int64_t n) noexcept
 {
-    return (int64_t)_mm_popcnt_u64(n);
+    return (int64_t)_mm_popcnt_u64((uint64_t)n);
 }
 
 
