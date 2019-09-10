@@ -284,12 +284,12 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 -------------------------------------*/
 inline LS_INLINE const float* vec4_t<float>::operator&() const
 {
-    return v;
+    return reinterpret_cast<const float*>(this);
 }
 
 inline LS_INLINE float* vec4_t<float>::operator&()
 {
-    return v;
+    return reinterpret_cast<float*>(this);
 }
 
 /*-------------------------------------
