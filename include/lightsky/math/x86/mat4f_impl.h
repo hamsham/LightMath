@@ -12,48 +12,53 @@ namespace math {
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
 {
-    const float* const tm = reinterpret_cast<const float*>(this);
-    const __m128 col0 = _mm_loadu_ps(tm+0);
-    const __m128 col1 = _mm_loadu_ps(tm+4);
-    const __m128 col2 = _mm_loadu_ps(tm+8);
-    const __m128 col3 = _mm_loadu_ps(tm+12);
+    const __m128i* const tm = reinterpret_cast<const __m128i*>(this);
+    const __m128 col0 = _mm_castsi128_ps(_mm_lddqu_si128(tm+0));
+    const __m128 col1 = _mm_castsi128_ps(_mm_lddqu_si128(tm+1));
+    const __m128 col2 = _mm_castsi128_ps(_mm_lddqu_si128(tm+2));
+    const __m128 col3 = _mm_castsi128_ps(_mm_lddqu_si128(tm+3));
 
-    const float* const nm = reinterpret_cast<const float*>(n.m);
+    const __m128i* const nm = reinterpret_cast<const __m128i*>(&n);
+    __m128 r0;
+    __m128 r1;
+    __m128 r2;
+    __m128 r3;
 
-    __m128 r0 = _mm_mul_ps(col0, _mm_broadcast_ss(nm+0));
-    __m128 r1 = _mm_mul_ps(col0, _mm_broadcast_ss(nm+4));
-    __m128 r2 = _mm_mul_ps(col0, _mm_broadcast_ss(nm+8));
-    __m128 r3 = _mm_mul_ps(col0, _mm_broadcast_ss(nm+12));
-    
+    __m128 temp;
     {
-        r0 = _mm_fmadd_ps(col1, _mm_broadcast_ss(nm+1), r0);
-        r0 = _mm_fmadd_ps(col2, _mm_broadcast_ss(nm+2), r0);
-        r0 = _mm_fmadd_ps(col3, _mm_broadcast_ss(nm+3), r0);
+        temp = _mm_castsi128_ps(_mm_lddqu_si128(nm+0));
+        r0 = _mm_mul_ps(col0,   _mm_permute_ps(temp, 0x00));
+        r0 = _mm_fmadd_ps(col1, _mm_permute_ps(temp, 0x55), r0);
+        r0 = _mm_fmadd_ps(col2, _mm_permute_ps(temp, 0xAA), r0);
+        r0 = _mm_fmadd_ps(col3, _mm_permute_ps(temp, 0xFF), r0);
     }
-
     {
-        r1 = _mm_fmadd_ps(col1, _mm_broadcast_ss(nm+5), r1);
-        r1 = _mm_fmadd_ps(col2, _mm_broadcast_ss(nm+6), r1);
-        r1 = _mm_fmadd_ps(col3, _mm_broadcast_ss(nm+7), r1);
+        temp = _mm_castsi128_ps(_mm_lddqu_si128(nm+1));
+        r1 = _mm_mul_ps(col0,   _mm_permute_ps(temp, 0x00));
+        r1 = _mm_fmadd_ps(col1, _mm_permute_ps(temp, 0x55), r1);
+        r1 = _mm_fmadd_ps(col2, _mm_permute_ps(temp, 0xAA), r1);
+        r1 = _mm_fmadd_ps(col3, _mm_permute_ps(temp, 0xFF), r1);
     }
-
     {
-        r2 = _mm_fmadd_ps(col1, _mm_broadcast_ss(nm+9), r2);
-        r2 = _mm_fmadd_ps(col2, _mm_broadcast_ss(nm+10), r2);
-        r2 = _mm_fmadd_ps(col3, _mm_broadcast_ss(nm+11), r2);
+        temp = _mm_castsi128_ps(_mm_lddqu_si128(nm+2));
+        r2 = _mm_mul_ps(col0,   _mm_permute_ps(temp, 0x00));
+        r2 = _mm_fmadd_ps(col1, _mm_permute_ps(temp, 0x55), r2);
+        r2 = _mm_fmadd_ps(col2, _mm_permute_ps(temp, 0xAA), r2);
+        r2 = _mm_fmadd_ps(col3, _mm_permute_ps(temp, 0xFF), r2);
     }
-
     {
-        r3 = _mm_fmadd_ps(col1, _mm_broadcast_ss(nm+13), r3);
-        r3 = _mm_fmadd_ps(col2, _mm_broadcast_ss(nm+14), r3);
-        r3 = _mm_fmadd_ps(col3, _mm_broadcast_ss(nm+15), r3);
+        temp = _mm_castsi128_ps(_mm_lddqu_si128(nm+3));
+        r3 = _mm_mul_ps(col0,   _mm_permute_ps(temp, 0x00));
+        r3 = _mm_fmadd_ps(col1, _mm_permute_ps(temp, 0x55), r3);
+        r3 = _mm_fmadd_ps(col2, _mm_permute_ps(temp, 0xAA), r3);
+        r3 = _mm_fmadd_ps(col3, _mm_permute_ps(temp, 0xFF), r3);
     }
 
     return mat4_t<float>{
         {r0},
         {r1},
         {r2},
-        {r3},
+        {r3}
     };
 }
 
@@ -73,11 +78,11 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
     const __m128 row3 = _mm_movehl_ps(trn3, trn2);
 
     // multiply all rows, then sum them
-    const float* nm = reinterpret_cast<const float*>(&n);
-    const __m128 s0 = _mm_loadu_ps(nm+0);
-    const __m128 s1 = _mm_loadu_ps(nm+4);
-    const __m128 s2 = _mm_loadu_ps(nm+8);
-    const __m128 s3 = _mm_loadu_ps(nm+12);
+    const __m128i* nm = reinterpret_cast<const __m128i*>(&n);
+    const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(nm+0));
+    const __m128 s1 = _mm_castsi128_ps(_mm_lddqu_si128(nm+1));
+    const __m128 s2 = _mm_castsi128_ps(_mm_lddqu_si128(nm+2));
+    const __m128 s3 = _mm_castsi128_ps(_mm_lddqu_si128(nm+3));
 
     _mm_storeu_ps(reinterpret_cast<float*>(m+0), _mm_fmadd_ps(s0, row3, _mm_fmadd_ps(s0, row2, _mm_fmadd_ps(s0, row1, _mm_mul_ps(s0, row0)))));
     _mm_storeu_ps(reinterpret_cast<float*>(m+1), _mm_fmadd_ps(s1, row3, _mm_fmadd_ps(s1, row2, _mm_fmadd_ps(s1, row1, _mm_mul_ps(s1, row0)))));
@@ -95,11 +100,13 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
-    const float* x = &v;
-    __m128 v0 = _mm_mul_ps(_mm_loadu_ps(&m[0]), _mm_broadcast_ss(x+0));
-    __m128 v1 = _mm_fmadd_ps(_mm_loadu_ps(&m[1]), _mm_broadcast_ss(x+1), v0);
-    __m128 v2 = _mm_fmadd_ps(_mm_loadu_ps(&m[2]), _mm_broadcast_ss(x+2), v1);
-    __m128 v3 = _mm_fmadd_ps(_mm_loadu_ps(&m[3]), _mm_broadcast_ss(x+3), v2);
+    const __m128i* pM = reinterpret_cast<const __m128i*>(this);
+    const __m128 x = _mm_loadu_ps(&v);
+
+    __m128 v0 = _mm_mul_ps(  _mm_castsi128_ps(_mm_lddqu_si128(pM+0)), _mm_permute_ps(x, 0x00));
+    __m128 v1 = _mm_fmadd_ps(_mm_castsi128_ps(_mm_lddqu_si128(pM+1)), _mm_permute_ps(x, 0x55), v0);
+    __m128 v2 = _mm_fmadd_ps(_mm_castsi128_ps(_mm_lddqu_si128(pM+2)), _mm_permute_ps(x, 0xAA), v1);
+    __m128 v3 = _mm_fmadd_ps(_mm_castsi128_ps(_mm_lddqu_si128(pM+3)), _mm_permute_ps(x, 0xFF), v2);
 
     return math::vec4_t<float>{v3};
 }
