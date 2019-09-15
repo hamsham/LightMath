@@ -12,7 +12,7 @@ namespace math
 inline LS_INLINE Half::Half(const float f) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-        float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(value));
+        float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(f));
         bits = vreinterpret_u16_f16(temp)[0];
     #elif defined(LS_ARCH_ARM)
         union
@@ -20,7 +20,7 @@ inline LS_INLINE Half::Half(const float f) noexcept
             __fp16 f;
             uint16_t i;
         } temp;
-        temp.f = (__fp16)value;
+        temp.f = (__fp16)f;
         bits = temp.i;
     #else
         #error "Unknown ARM platform."
@@ -35,7 +35,7 @@ inline LS_INLINE Half::Half(const float f) noexcept
 inline LS_INLINE Half& Half::operator=(const float f) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-        float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(value));
+        float16x4_t temp = vcvt_f16_f32(vdupq_n_f32(f));
         bits = vreinterpret_u16_f16(temp)[0];
     #elif defined(LS_ARCH_ARM)
         union
@@ -43,7 +43,7 @@ inline LS_INLINE Half& Half::operator=(const float f) noexcept
             __fp16 f;
             uint16_t i;
         } temp;
-        temp.f = (__fp16)value;
+        temp.f = (__fp16)f;
         bits = temp.i;
     #else
         #error "Unknown ARM platform."
@@ -57,17 +57,17 @@ inline LS_INLINE Half& Half::operator=(const float f) noexcept
 /*-------------------------------------
  * Cast to a float
 -------------------------------------*/
-inline LS_INLINE operator Half::float() const noexcept
+inline LS_INLINE Half::operator float() const noexcept
 {
-    #if defined(HAVE_AARCH64_SIMD)
-        float32x4_t temp = vcvt_f32_f16(vreinterpret_f16_u16(vdup_n_u16(value)));
+    #if defined(LS_ARCH_AARCH64)
+        float32x4_t temp = vcvt_f32_f16(vreinterpret_f16_u16(vdup_n_u16(bits)));
         return temp[0];
-    #elif defined(HAVE_ARM_SIMD)
+    #elif defined(LS_ARCH_ARM)
         union
         {
             uint16_t i;
             __fp16 f;
-        } temp{value};
+        } temp{bits};
         return (float)temp.f;
     #else
         #error "Unknown ARM platform."
