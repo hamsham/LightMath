@@ -13,6 +13,8 @@
     #include <arm_neon.h>
 #endif
 
+#include "lightsky/math/Types.h"
+
 namespace ls
 {
 namespace math
@@ -70,6 +72,29 @@ struct alignas(sizeof(uint16_t)) Half
     inline Half& operator-=(const Half& f) noexcept;
     inline Half& operator*=(const Half& f) noexcept;
     inline Half& operator/=(const Half& f) noexcept;
+};
+
+
+
+/*----------------------------------------------------------------------------
+ * Type Information
+----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Integral Determination
+-------------------------------------*/
+template <>
+struct IsIntegral<Half> : public utils::FalseType<Half>
+{
+};
+
+
+
+/*-------------------------------------
+ * Float Determination
+-------------------------------------*/
+template <>
+struct IsFloat<Half> : public utils::TrueType<Half>
+{
 };
 
 
