@@ -123,18 +123,15 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
-    mat4_t<float> ret;
+    const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
+    const __m128 s1 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v2)));
 
-    const __m128 a = _mm_permute_ps(v1.simd, 0x00);
-    const __m128 b = _mm_permute_ps(v1.simd, 0x55);
-    const __m128 c = _mm_permute_ps(v1.simd, 0xAA);
-    const __m128 d = _mm_permute_ps(v1.simd, 0xFF);
-    const __m128 v = v2.simd;
+    alignas(sizeof(__m128)) mat4_t<float> ret;
 
-    ret.m[0].simd = _mm_mul_ps(a, v);
-    ret.m[1].simd = _mm_mul_ps(b, v);
-    ret.m[2].simd = _mm_mul_ps(c, v);
-    ret.m[3].simd = _mm_mul_ps(d, v);
+    _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(s0, 0x00), s1));
+    _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(s0, 0x55), s1));
+    _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(s0, 0xAA), s1));
+    _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(s0, 0xFF), s1));
 
     return ret;
 }

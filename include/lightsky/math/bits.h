@@ -5,6 +5,7 @@
 #include <cstdint> // fixed-width types
 
 #include "lightsky/setup/Arch.h"
+#include "lightsky/setup/Compiler.h"
 
 
 
@@ -284,7 +285,7 @@ uint64_t rrotate_u64(uint64_t n, uint64_t count) noexcept;
 
 
 
-#ifdef LS_ARCH_X86
+#if defined(LS_ARCH_X86) && !defined(LS_COMPILER_MSC)
     #include "lightsky/math/x86/bits_impl.h"
 #else
     #include "lightsky/math/generic/bits_impl.h"
