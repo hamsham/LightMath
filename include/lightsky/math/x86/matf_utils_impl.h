@@ -44,7 +44,7 @@ inline LS_INLINE mat2_t<float> inverse(const mat2_t<float>& m2x2) noexcept
 -------------------------------------*/
 inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
 {
-    const float* const m = &m3x3.m[0];
+    const float* const m = reinterpret_cast<const float*>(&m3x3);
 
     const __m128 col0 = _mm_set_ps(0.f, m[4], m[5], m[3]);
     const __m128 col1 = _mm_set_ps(0.f, m[8], m[6], m[7]);
@@ -52,16 +52,13 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
     const __m128 col3 = _mm_set_ps(0.f, m[7], m[8], m[6]);
     const __m128 col4 = _mm_set_ps(0.f, m[0], m[1], m[2]);
 
-    const __m128 mul0 = _mm_mul_ps(col0, col1);
-    const __m128 mul1 = _mm_mul_ps(col2, col3);
-
-    const __m128 sub0 = _mm_sub_ps(mul0, mul1);
+    const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
     const __m128 mul2 = _mm_mul_ps(sub0, col4);
 
     // horizontal add: swap the words of each vector, add, then swap each
     // half of the vectors and perform a final add.
-    const __m128 swap = _mm_add_ps(mul2, _mm_shuffle_ps(mul2, mul2,  0xB1));
-    const __m128 sum  = _mm_add_ps(swap, _mm_shuffle_ps(swap, swap, 0x0F));
+    const __m128 swap = _mm_add_ps(mul2, _mm_permute_ps(mul2, 0xB1));
+    const __m128 sum  = _mm_add_ps(swap, _mm_permute_ps(swap, 0x0F));
 
     return _mm_cvtss_f32(sum);
 }

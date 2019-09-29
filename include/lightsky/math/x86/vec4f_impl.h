@@ -28,7 +28,7 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
     __m128 simd;
 
     // Main Constructor
-    vec4_t(float inX, float inY, float inZ, float inW);
+    constexpr vec4_t(float inX, float inY, float inZ, float inW);
 
     // Delegated Constructors
     vec4_t() = default;
@@ -132,8 +132,9 @@ union LS_API alignas(sizeof(__m128)) vec4_t<float>
     Constructors
 -------------------------------------*/
 // Main Constructor
-inline LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
-    simd(_mm_set_ps(inW, inZ, inY, inX))
+constexpr LS_INLINE vec4_t<float>::vec4_t(float inX, float inY, float inZ, float inW) :
+    v{inX, inY, inZ, inW}
+    //simd(_mm_set_ps(inW, inZ, inY, inX))
     //simd{inX, inY, inZ, inW}
 {
     //_mm_storeu_ps(v, _mm_set_ps(inW, inZ, inY, inX));
@@ -397,8 +398,7 @@ vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input) noexcept
 {
-    _mm_storeu_ps(v, input.simd);
-    //_mm_storeu_ps(v, input.simd);
+       _mm_storeu_ps(v, input.simd);
     return *this;
 }
 
@@ -406,7 +406,6 @@ inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input) noexcept
 {
     _mm_storeu_ps(v, input.simd);
-    //_mm_storeu_ps(v, input.simd);
     return *this;
 }
 
