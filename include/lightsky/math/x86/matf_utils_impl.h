@@ -46,11 +46,36 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
 {
     const float* const m = reinterpret_cast<const float*>(&m3x3);
 
-    const __m128 col0 = _mm_set_ps(0.f, m[4], m[5], m[3]);
-    const __m128 col1 = _mm_set_ps(0.f, m[8], m[6], m[7]);
-    const __m128 col2 = _mm_set_ps(0.f, m[5], m[3], m[4]);
-    const __m128 col3 = _mm_set_ps(0.f, m[7], m[8], m[6]);
-    const __m128 col4 = _mm_set_ps(0.f, m[0], m[1], m[2]);
+    #if 0 // Load-city
+        const __m128 col0 = _mm_set_ps(0.f, m[4], m[5], m[3]);
+        const __m128 col1 = _mm_set_ps(0.f, m[8], m[6], m[7]);
+        const __m128 col2 = _mm_set_ps(0.f, m[5], m[3], m[4]);
+        const __m128 col3 = _mm_set_ps(0.f, m[7], m[8], m[6]);
+        const __m128 col4 = _mm_set_ps(0.f, m[0], m[1], m[2]);
+
+    #elif 0 // 5 gathered loads, not great
+        const __m128i mask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        const __m128 col0 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 4, 5, 3), mask, 4);
+        const __m128 col1 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 8, 6, 7), mask, 4);
+        const __m128 col2 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 5, 3, 4), mask, 4);
+        const __m128 col3 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 7, 8, 6), mask, 4);
+        const __m128 col4 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 0, 1, 2), mask, 4);
+
+    #else // 3 loads, 4 shuffles
+        const __m128i loadMask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+        const __m128 row0 = _mm_maskload_ps(m+0, loadMask);
+        const __m128 row1 = _mm_maskload_ps(m+3, loadMask);
+        const __m128 row2 = _mm_maskload_ps(m+6, loadMask);
+
+        constexpr int shuffleMask120 = 0xC9; // indices: <base> + (3, 0, 2, 1): 11001001
+        constexpr int shuffleMask201 = 0xD2; // indices: <base> + (3, 1, 0, 2): 11010010
+
+        const __m128 col0 = _mm_permute_ps(row1, shuffleMask120);
+        const __m128 col1 = _mm_permute_ps(row2, shuffleMask201);
+        const __m128 col2 = _mm_permute_ps(row1, shuffleMask201);
+        const __m128 col3 = _mm_permute_ps(row2, shuffleMask120);
+        const __m128 col4 = row0;
+    #endif
 
     const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
     const __m128 mul2 = _mm_mul_ps(sub0, col4);
