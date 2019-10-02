@@ -62,19 +62,18 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
         const __m128 col4 = _mm_mask_i32gather_ps(_mm_setzero_ps(), m, _mm_set_epi32(0, 0, 1, 2), mask, 4);
 
     #else // 3 loads, 4 shuffles
-        const __m128i loadMask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
-        const __m128 row0 = _mm_maskload_ps(m+0, loadMask);
-        const __m128 row1 = _mm_maskload_ps(m+3, loadMask);
-        const __m128 row2 = _mm_maskload_ps(m+6, loadMask);
-
         constexpr int shuffleMask120 = 0xC9; // indices: <base> + (3, 0, 2, 1): 11001001
         constexpr int shuffleMask201 = 0xD2; // indices: <base> + (3, 1, 0, 2): 11010010
+        const __m128i loadMask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
+
+        const __m128 row1 = _mm_maskload_ps(m+3, loadMask);
+        const __m128 row2 = _mm_maskload_ps(m+6, loadMask);
 
         const __m128 col0 = _mm_permute_ps(row1, shuffleMask120);
         const __m128 col1 = _mm_permute_ps(row2, shuffleMask201);
         const __m128 col2 = _mm_permute_ps(row1, shuffleMask201);
         const __m128 col3 = _mm_permute_ps(row2, shuffleMask120);
-        const __m128 col4 = row0;
+        const __m128 col4 = _mm_maskload_ps(m, loadMask);
     #endif
 
     const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
@@ -145,17 +144,33 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
-    const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
-    const __m128 s1 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v2)));
+    #if 1
+        const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
+        const __m128 s1 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v2)));
 
-    alignas(sizeof(__m128)) mat4_t<float> ret;
+        alignas(sizeof(__m128)) mat4_t<float> ret;
 
-    _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(s0, 0x00), s1));
-    _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(s0, 0x55), s1));
-    _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(s0, 0xAA), s1));
-    _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(s0, 0xFF), s1));
+        _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(s0, 0x00), s1));
+        _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(s0, 0x55), s1));
+        _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(s0, 0xAA), s1));
+        _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(s0, 0xFF), s1));
 
-    return ret;
+        return ret;
+    #else
+        const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
+        const __m256 s001 = _mm256_set_m128(_mm_permute_ps(s0, 0x00), _mm_permute_ps(s0, 0x55));
+        const __m256 s023 = _mm256_set_m128(_mm_permute_ps(s0, 0xAA), _mm_permute_ps(s0, 0xFF));
+
+        const __m256 s1 = _mm256_loadu2_m128(&v2, &v2);
+
+        alignas(sizeof(__m256)) mat4_t<float> ret;
+        float* pOut = reinterpret_cast<float*>(&ret);
+
+        _mm256_store_ps(pOut+0, _mm256_mul_ps(s001, s1));
+        _mm256_store_ps(pOut+8, _mm256_mul_ps(s023, s1));
+
+        return ret;
+    #endif
 }
 
 /*-------------------------------------
