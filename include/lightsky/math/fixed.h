@@ -24,7 +24,7 @@ namespace math {
  *  In it's current state, it's prone to overflows.
 -----------------------------------------------------------------------------*/
 template <typename fixed_base_t, unsigned num_frac_digits>
-class LS_API fixed_t final {
+class fixed_t final {
 
     static_assert(num_frac_digits < (sizeof (fixed_base_t)) * CHAR_BIT, "Fixed-Point object has too much precision.");
     static_assert(num_frac_digits != 0, "Fixed-Point object has no precision.");

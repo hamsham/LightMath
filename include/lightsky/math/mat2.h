@@ -24,7 +24,7 @@ namespace math {
  *      1[0-1] = YX  YY
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) mat2_t {
+struct alignas(sizeof(num_t)) mat2_t {
     // data
     vec2_t<num_t> m[2];
 

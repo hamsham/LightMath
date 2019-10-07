@@ -25,7 +25,7 @@ namespace math {
  *      3 = W   (real component)
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) quat_t {
+struct alignas(sizeof(num_t)) quat_t {
     // data
     num_t q[4];
 

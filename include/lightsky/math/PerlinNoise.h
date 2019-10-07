@@ -29,7 +29,7 @@ namespace math {
  * http://flafla2.github.io/2014/08/09/perlinnoise.html
  */
 template <typename num_t = float>
-class LS_API PerlinNoise {
+class PerlinNoise {
   private:
     /**
      * Pointer to a pseudo-random number generator that will be used to

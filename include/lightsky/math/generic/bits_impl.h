@@ -4,6 +4,10 @@
 #include "lightsky/setup/Api.h"
 #include "lightsky/setup/Compiler.h"
 
+#ifdef LS_COMPILER_MSC
+    #include <intrin.h>
+#endif
+
 namespace ls
 {
 
@@ -140,8 +144,8 @@ inline LS_INLINE int64_t math::clz_i64(int64_t n) noexcept
     #if defined(LS_COMPILER_GNU)
         return __builtin_clzll((unsigned long long)n);
     #elif defined(LS_COMPILER_MSC)
-        unsigned long long ret;
-        if (_BitScanReverse64(&ret, (unsigned long long)n))
+        unsigned long ret;
+        if (_BitScanReverse64(&ret, (unsigned long)n))
         {
             return 31ll - (int64_t)ret;
         }
@@ -167,7 +171,7 @@ inline LS_INLINE uint64_t math::clz_u64(uint64_t n) noexcept
     #if defined(LS_COMPILER_GNU)
         return __builtin_clzll(n);
     #elif defined(LS_COMPILER_MSC)
-        unsigned long long ret;
+        unsigned long ret;
         if (_BitScanReverse64(&ret, n))
         {
             return 63ull - ret;
@@ -248,8 +252,8 @@ inline LS_INLINE int64_t math::ctz_i64(int64_t n) noexcept
     #if defined(LS_COMPILER_GNU)
         return __builtin_ctzll(n);
     #elif defined(LS_COMPILER_MSC)
-        unsigned long long ret;
-        if (_BitScanForward64(&ret, (unsigned long long)n))
+        unsigned long ret;
+        if (_BitScanForward64(&ret, (unsigned long)n))
         {
             return (int64_t)ret;
         }
@@ -275,8 +279,8 @@ inline LS_INLINE uint64_t math::ctz_u64(uint64_t n) noexcept
     #if defined(LS_COMPILER_GNU)
         return __builtin_ctzll(n);
     #elif defined(LS_COMPILER_MSC)
-        unsigned long long ret;
-        if (_BitScanForward(&ret, (unsigned long long)n))
+        unsigned long ret;
+        if (_BitScanForward(&ret, (unsigned long)n))
         {
             return ret;
         }

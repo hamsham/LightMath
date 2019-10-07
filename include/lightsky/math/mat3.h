@@ -28,7 +28,7 @@ struct mat4_t;
  *      2[0-2] = ZX  ZY  ZZ
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) mat3_t {
+struct alignas(sizeof(num_t)) mat3_t {
     // data
     vec3_t<num_t> m[3];
 

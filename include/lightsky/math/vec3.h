@@ -28,7 +28,7 @@ struct mat3_t;
  *      2 = Z
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(num_t)) vec3_t
+struct alignas(sizeof(num_t)) vec3_t
 {
     typedef num_t value_type;
     static constexpr unsigned num_components() noexcept { return 3; }

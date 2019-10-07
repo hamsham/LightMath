@@ -28,7 +28,7 @@ namespace math {
  *      3[0-3] = WX  WY  WZ  WW
 -----------------------------------------------------------------------------*/
 template <typename num_t>
-struct LS_API alignas(sizeof(vec4_t<num_t>)) mat4_t {
+struct alignas(sizeof(vec4_t<num_t>)) mat4_t {
     // data
     vec4_t<num_t> m[4];
 
