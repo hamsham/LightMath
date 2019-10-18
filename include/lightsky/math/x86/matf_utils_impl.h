@@ -144,30 +144,25 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
-    #if 1
-        const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
-        const __m128 s1 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v2)));
+    #if 0
+        const __m256 s0 = _mm256_loadu2_m128(&v1, &v1);
+        const __m256 s1 = _mm256_loadu2_m128(&v2, &v2);
 
-        alignas(sizeof(__m128)) mat4_t<float> ret;
+        const __m256 s001 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000100000001, 0x0000000100000001, 0x0000000000000000, 0x0000000000000000));
+        const __m256 s023 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000300000003, 0x0000000300000003, 0x0000000200000002, 0x0000000200000002));
 
-        _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(s0, 0x00), s1));
-        _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(s0, 0x55), s1));
-        _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(s0, 0xAA), s1));
-        _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(s0, 0xFF), s1));
+        alignas(sizeof(__m256)) mat4_t<float> ret;
+        _mm256_store_ps(&ret[0], _mm256_mul_ps(s1, s001));
+        _mm256_store_ps(&ret[2], _mm256_mul_ps(s1, s023));
 
         return ret;
     #else
-        const __m128 s0 = _mm_castsi128_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(&v1)));
-        const __m256 s001 = _mm256_set_m128(_mm_permute_ps(s0, 0x00), _mm_permute_ps(s0, 0x55));
-        const __m256 s023 = _mm256_set_m128(_mm_permute_ps(s0, 0xAA), _mm_permute_ps(s0, 0xFF));
+        alignas(sizeof(__m128)) mat4_t<float> ret;
 
-        const __m256 s1 = _mm256_loadu2_m128(&v2, &v2);
-
-        alignas(sizeof(__m256)) mat4_t<float> ret;
-        float* pOut = reinterpret_cast<float*>(&ret);
-
-        _mm256_store_ps(pOut+0, _mm256_mul_ps(s001, s1));
-        _mm256_store_ps(pOut+8, _mm256_mul_ps(s023, s1));
+        _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd));
+        _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd));
+        _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd));
+        _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xFF), v2.simd));
 
         return ret;
     #endif
@@ -258,22 +253,42 @@ inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
-    const __m128 m0 = _mm_loadu_ps(&m[0]);
-    const __m128 m1 = _mm_loadu_ps(&m[1]);
-    const __m128 m2 = _mm_loadu_ps(&m[2]);
-    const __m128 m3 = _mm_loadu_ps(&m[3]);
+    #if 1
+        const __m128 m0 = _mm_loadu_ps(&m[0]);
+        const __m128 m1 = _mm_loadu_ps(&m[1]);
+        const __m128 m2 = _mm_loadu_ps(&m[2]);
+        const __m128 m3 = _mm_loadu_ps(&m[3]);
 
-    const __m128 t0 = _mm_unpacklo_ps(m0, m1);
-    const __m128 t1 = _mm_unpacklo_ps(m2, m3);
-    const __m128 t2 = _mm_unpackhi_ps(m0, m1);
-    const __m128 t3 = _mm_unpackhi_ps(m2, m3);
+        const __m128 t0 = _mm_unpacklo_ps(m0, m1);
+        const __m128 t1 = _mm_unpacklo_ps(m2, m3);
+        const __m128 t2 = _mm_unpackhi_ps(m0, m1);
+        const __m128 t3 = _mm_unpackhi_ps(m2, m3);
 
-    return mat4_t<float>{
-        vec4_t<float>{_mm_movelh_ps(t0, t1)},
-        vec4_t<float>{_mm_movehl_ps(t1, t0)},
-        vec4_t<float>{_mm_movelh_ps(t2, t3)},
-        vec4_t<float>{_mm_movehl_ps(t3, t2)}
-    };
+        return mat4_t<float>{
+            vec4_t<float>{_mm_movelh_ps(t0, t1)},
+            vec4_t<float>{_mm_movehl_ps(t1, t0)},
+            vec4_t<float>{_mm_movelh_ps(t2, t3)},
+            vec4_t<float>{_mm_movehl_ps(t3, t2)}
+        };
+    #else
+        const __m256 row02 = _mm256_loadu2_m128(&m[2], &m[0]);
+        const __m256 row13 = _mm256_loadu2_m128(&m[3], &m[1]);
+
+        const __m256 tl = _mm256_unpacklo_ps(row02, row13);
+        const __m256 th = _mm256_unpackhi_ps(row02, row13);
+
+        const __m256 out02 = _mm256_shuffle_ps(tl, th, 0x44);
+        const __m256 out13 = _mm256_shuffle_ps(tl, th, 0xEE);
+
+        alignas(sizeof(__m256)) mat4_t<float> ret;
+
+        _mm_store_ps(&ret[0], _mm256_extractf128_ps(out02, 0));
+        _mm_store_ps(&ret[1], _mm256_extractf128_ps(out13, 0));
+        _mm_store_ps(&ret[2], _mm256_extractf128_ps(out02, 1));
+        _mm_store_ps(&ret[3], _mm256_extractf128_ps(out13, 1));
+
+        return ret;
+    #endif
 }
 
 
