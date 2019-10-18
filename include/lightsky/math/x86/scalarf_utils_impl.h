@@ -254,12 +254,11 @@ inline LS_INLINE float log2(float n) noexcept
 {
     const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
     const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
-    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
-    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), mxf);
+    const __m128  d   = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+    const __m128  a   = _mm_rcp_ss(_mm_add_ss(_mm_set_ss(0.3520887068f), mxf));
     const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
-    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
+    const __m128  b   = _mm_mul_ss(_mm_set_ss(1.72587999f), a);
 
     return _mm_cvtss_f32(_mm_sub_ss(_mm_sub_ss(d, c), b));
 }
@@ -276,12 +275,11 @@ inline LS_INLINE float log(float n) noexcept
 {
     const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
     const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
-    const __m128  y   = _mm_mul_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  d   = _mm_sub_ss(y, _mm_set_ss(124.22551499f));
-    const __m128  a   = _mm_add_ss(_mm_set_ss(0.3520887068f), mxf);
+    const __m128  d   = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+    const __m128  a   = _mm_rcp_ss(_mm_add_ss(_mm_set_ss(0.3520887068f), mxf));
     const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
-    const __m128  b   = _mm_div_ss(_mm_set_ss(1.72587999f), a);
+    const __m128  b   = _mm_mul_ss(_mm_set_ss(1.72587999f), a);
     const __m128  ln2 = _mm_set_ss(0.69314718056f);
 
     return _mm_cvtss_f32(_mm_mul_ss(ln2, _mm_sub_ss(_mm_sub_ss(d, c), b)));
