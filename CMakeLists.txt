@@ -96,7 +96,7 @@ endif()
 add_library(${OUTPUT_NAME} ${LS_LIB_TYPE} ${LS_MATH_SOURCES} ${LS_MATH_HEADERS})
 
 # Dependencies
-target_link_libraries(${OUTPUT_NAME} lssetup lsutils)
+target_link_libraries(${OUTPUT_NAME} LightSky::Utils LightSky::Setup)
 
 
 
@@ -104,11 +104,21 @@ target_link_libraries(${OUTPUT_NAME} lssetup lsutils)
 # Library Installation Setup
 # -------------------------------------
 install(TARGETS ${OUTPUT_NAME}
+    EXPORT LightMath
     RUNTIME DESTINATION bin
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
 )
 install(DIRECTORY include/lightsky/math DESTINATION include/lightsky)
+
+install(EXPORT LightMath
+    FILE LightMath.cmake
+    NAMESPACE LightSky::
+    DESTINATION lib/cmake/LightSky
+)
+
+export(EXPORT LightMath NAMESPACE LightSky::)
+add_library(LightSky::Math ALIAS lsmath)
 
 
 
@@ -120,3 +130,4 @@ option(LS_BUILD_MATH_TESTS "Build tests for the LightMath library." ON)
 if(LS_BUILD_MATH_TESTS)
     add_subdirectory(tests)
 endif()
+

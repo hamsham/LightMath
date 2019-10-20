@@ -18,7 +18,7 @@ include(glmConfig.cmake)
 # -------------------------------------
 function(LS_MATH_ADD_TARGET target sources)
     add_executable(${target} ${sources} ${ARGN})
-    target_link_libraries(${target} lsmath lsutils)
+    target_link_libraries(${target} LightSky::Math LightSky::Utils LightSky::Setup)
 endfunction(LS_MATH_ADD_TARGET)
 
 LS_MATH_ADD_TARGET(lsmath_test_bits     lsmath_test_bits.cpp)

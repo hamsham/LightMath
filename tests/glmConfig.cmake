@@ -78,9 +78,11 @@ ExternalProject_Add(
     CMAKE_ARGS
         ${GLM_BUILD_FLAGS}
     BUILD_COMMAND
-        ${CMAKE_COMMAND} -E chdir ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build ${CMAKE_COMMAND} --build . --config ${CMAKE_CFG_INTDIR}
+        ${CMAKE_COMMAND} --build ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build --config ${CMAKE_CFG_INTDIR}
     INSTALL_DIR
         ${EXTERNAL_PROJECT_PREFIX}
     INSTALL_COMMAND
-        ${CMAKE_COMMAND} -E chdir ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build ${CMAKE_COMMAND} --build . --config ${CMAKE_CFG_INTDIR} --target install
+        ${CMAKE_COMMAND} --build ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build --config ${CMAKE_CFG_INTDIR} --target install
 )
+
+set_target_properties(Glm PROPERTIES EXCLUDE_FROM_ALL TRUE)
