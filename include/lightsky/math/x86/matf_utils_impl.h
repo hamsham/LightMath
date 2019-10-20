@@ -145,8 +145,8 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     #if 0
-        const __m256 s0 = _mm256_loadu2_m128(&v1, &v1);
-        const __m256 s1 = _mm256_loadu2_m128(&v2, &v2);
+        const __m256 s0 = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(&v1));
+        const __m256 s1 = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(&v2));
 
         const __m256 s001 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000100000001, 0x0000000100000001, 0x0000000000000000, 0x0000000000000000));
         const __m256 s023 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000300000003, 0x0000000300000003, 0x0000000200000002, 0x0000000200000002));
@@ -159,9 +159,9 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
     #else
         alignas(sizeof(__m128)) mat4_t<float> ret;
 
-        _mm_store_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd));
-        _mm_store_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd));
-        _mm_store_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd));
+        _mm_stream_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd));
+        _mm_stream_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd));
+        _mm_stream_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd));
         _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xFF), v2.simd));
 
         return ret;
@@ -253,6 +253,7 @@ inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
+
     #if 1
         const __m128 m0 = _mm_loadu_ps(&m[0]);
         const __m128 m1 = _mm_loadu_ps(&m[1]);
@@ -265,29 +266,44 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
         const __m128 t3 = _mm_unpackhi_ps(m2, m3);
 
         return mat4_t<float>{
-            vec4_t<float>{_mm_movelh_ps(t0, t1)},
-            vec4_t<float>{_mm_movehl_ps(t1, t0)},
-            vec4_t<float>{_mm_movelh_ps(t2, t3)},
-            vec4_t<float>{_mm_movehl_ps(t3, t2)}
+            vec4_t<float>{_mm_shuffle_ps(t0, t1, 0x44)},
+            vec4_t<float>{_mm_shuffle_ps(t0, t1, 0xEE)},
+            vec4_t<float>{_mm_shuffle_ps(t2, t3, 0x44)},
+            vec4_t<float>{_mm_shuffle_ps(t2, t3, 0xEE)}
         };
     #else
         const __m256 row02 = _mm256_loadu2_m128(&m[2], &m[0]);
         const __m256 row13 = _mm256_loadu2_m128(&m[3], &m[1]);
 
-        const __m256 tl = _mm256_unpacklo_ps(row02, row13);
-        const __m256 th = _mm256_unpackhi_ps(row02, row13);
+        const __m256 ml = _mm256_unpacklo_ps(row02, row13);
+        const __m256 mh = _mm256_unpackhi_ps(row02, row13);
 
-        const __m256 out02 = _mm256_shuffle_ps(tl, th, 0x44);
-        const __m256 out13 = _mm256_shuffle_ps(tl, th, 0xEE);
+        const __m256 nl = _mm256_shuffle_ps(ml, mh, 0x44);
+        const __m256 nh = _mm256_shuffle_ps(ml, mh, 0xEE);
 
-        alignas(sizeof(__m256)) mat4_t<float> ret;
+        const __m256i out01 = _mm256_castps_si256(_mm256_shuffle_ps(nl, nh, 0x44));
+        const __m256i out23 = _mm256_castps_si256(_mm256_shuffle_ps(nl, nh, 0xEE));
 
-        _mm_store_ps(&ret[0], _mm256_extractf128_ps(out02, 0));
-        _mm_store_ps(&ret[1], _mm256_extractf128_ps(out13, 0));
-        _mm_store_ps(&ret[2], _mm256_extractf128_ps(out02, 1));
-        _mm_store_ps(&ret[3], _mm256_extractf128_ps(out13, 1));
+        #if 1
+            alignas(sizeof(__m256)) mat4_t<float> ret;
 
-        return ret;
+            _mm256_store_ps(&ret[0], _mm256_castsi256_ps(_mm256_permute4x64_epi64(out01, 0xD8)));
+            _mm256_store_ps(&ret[2], _mm256_castsi256_ps(_mm256_permute4x64_epi64(out23, 0xD8)));
+
+            return ret;
+        #else
+            const __m128 t0 = _mm256_extractf128_ps(out01, 0);
+            const __m128 t1 = _mm256_extractf128_ps(out01, 1);
+            const __m128 t2 = _mm256_extractf128_ps(out23, 0);
+            const __m128 t3 = _mm256_extractf128_ps(out23, 1);
+
+            return mat4_t<float>{
+                vec4_t<float>{_mm_shuffle_ps(t0, t1, 0x44)},
+                vec4_t<float>{_mm_shuffle_ps(t2, t3, 0x44)},
+                vec4_t<float>{_mm_shuffle_ps(t0, t1, 0xEE)},
+                vec4_t<float>{_mm_shuffle_ps(t1, t3, 0xEE)}
+            };
+        #endif
     #endif
 }
 
