@@ -66,14 +66,14 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
         constexpr int shuffleMask201 = 0xD2; // indices: <base> + (3, 1, 0, 2): 11010010
         const __m128i loadMask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
 
+        const __m128 col4 = _mm_maskload_ps(m,   loadMask);
         const __m128 row1 = _mm_maskload_ps(m+3, loadMask);
         const __m128 row2 = _mm_maskload_ps(m+6, loadMask);
 
         const __m128 col0 = _mm_permute_ps(row1, shuffleMask120);
-        const __m128 col1 = _mm_permute_ps(row2, shuffleMask201);
         const __m128 col2 = _mm_permute_ps(row1, shuffleMask201);
+        const __m128 col1 = _mm_permute_ps(row2, shuffleMask201);
         const __m128 col3 = _mm_permute_ps(row2, shuffleMask120);
-        const __m128 col4 = _mm_maskload_ps(m, loadMask);
     #endif
 
     const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
@@ -145,17 +145,21 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     #if 0
-        const __m256 s0 = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(&v1));
-        const __m256 s1 = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(&v2));
+        const __m256 s0 = _mm256_set_m128(v1.simd, v1.simd);
+        const __m256 s1 = _mm256_set_m128(v2.simd, v2.simd);
 
         const __m256 s001 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000100000001, 0x0000000100000001, 0x0000000000000000, 0x0000000000000000));
         const __m256 s023 = _mm256_permutevar_ps(s0, _mm256_set_epi64x(0x0000000300000003, 0x0000000300000003, 0x0000000200000002, 0x0000000200000002));
 
-        alignas(sizeof(__m256)) mat4_t<float> ret;
-        _mm256_store_ps(&ret[0], _mm256_mul_ps(s1, s001));
-        _mm256_store_ps(&ret[2], _mm256_mul_ps(s1, s023));
+        union
+        {
+            __m256 v[2];
+            mat4_t<float> m;
+        } ret;
+        ret.v[0] = _mm256_mul_ps(s1, s001);
+        ret.v[1] = _mm256_mul_ps(s1, s023);
 
-        return ret;
+        return ret.m;
     #else
         alignas(sizeof(__m128)) mat4_t<float> ret;
 

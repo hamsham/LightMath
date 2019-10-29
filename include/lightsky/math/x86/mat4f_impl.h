@@ -20,9 +20,9 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         const __m256 col2 = _mm256_broadcast_ps(tm+2);
         const __m256 col3 = _mm256_broadcast_ps(tm+3);
 
-        const float* const nm = reinterpret_cast<const float*>(&n);
-        const __m256 temp0 = _mm256_loadu2_m128(nm+4, nm+0);
-        const __m256 temp1 = _mm256_loadu2_m128(nm+12, nm+8);
+        //const float* const nm = reinterpret_cast<const float*>(&n);
+        const __m256 temp0 = _mm256_set_m128(n[1].simd, n[0].simd);
+        const __m256 temp1 = _mm256_set_m128(n[3].simd, n[2].simd);
         __m256 r01;
         __m256 r23;
 
@@ -165,8 +165,10 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
     #else
         const __m256 s = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(v));
 
-        const __m256 row02 = _mm256_mul_ps(s, _mm256_loadu2_m128(&m[2], &m[0]));
-        const __m256 row13 = _mm256_mul_ps(s, _mm256_loadu2_m128(&m[3], &m[1]));
+        const __m256 m0 = _mm256_set_m128(m[1].simd, m[0].simd);
+        const __m256 m1 = _mm256_set_m128(m[3].simd, m[2].simd);
+        const __m256 row02 = _mm256_mul_ps(s, m0);
+        const __m256 row13 = _mm256_mul_ps(s, m1);
 
         const __m256 ml = _mm256_unpacklo_ps(row02, row13);
         const __m256 mh = _mm256_unpackhi_ps(row02, row13);
