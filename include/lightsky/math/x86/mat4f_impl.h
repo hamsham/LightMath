@@ -21,8 +21,8 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         const __m256 col3 = _mm256_broadcast_ps(tm+3);
 
         //const float* const nm = reinterpret_cast<const float*>(&n);
-        const __m256 temp0 = _mm256_set_m128(n[1].simd, n[0].simd);
-        const __m256 temp1 = _mm256_set_m128(n[3].simd, n[2].simd);
+        const __m256 temp0 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[0].simd), n[1].simd, 1);
+        const __m256 temp1 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[2].simd), n[3].simd, 1);
         __m256 r01;
         __m256 r23;
 
