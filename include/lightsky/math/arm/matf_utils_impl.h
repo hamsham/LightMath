@@ -34,6 +34,7 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
     // b|f|d|h
     // i|m|k|o
     // j|n|l|p
+    /*
     const float32x4x2_t aecg_bfdh = vtrnq_f32(m.m[0].simd, m.m[1].simd);
     const float32x4x2_t imko_jnlp = vtrnq_f32(m.m[2].simd, m.m[3].simd);
 
@@ -47,6 +48,13 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
         {vcombine_f32(vget_high_f32(aecg_bfdh.val[0]), vget_high_f32(imko_jnlp.val[0]))},
         {vcombine_f32(vget_high_f32(aecg_bfdh.val[1]), vget_high_f32(imko_jnlp.val[1]))}
     };
+    */
+    union
+    {
+        float32x4x4_t t;
+        mat4_t<float> m;
+    } ret{vld4q_f32(&m[0])};
+    return ret.m;
 }
 
 

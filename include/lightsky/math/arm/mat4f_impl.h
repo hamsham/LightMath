@@ -124,6 +124,18 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
 {
+    const mat4_t<float> temp0{
+        {vmulq_f32(this->simd, m[0].simd)},
+        {vmulq_f32(this->simd, m[1].simd)},
+        {vmulq_f32(this->simd, m[2].simd)},
+        {vmulq_f32(this->simd, m[3].simd)}
+    };
+
+    const float32x4x4_t temp1 = vld4q_f32(&temp0[0]);
+    
+    return vec4_t<float>{vaddq_f32(temp1.val[3], vaddq_f32(temp1.val[2], vaddq_f32(temp1.val[1], temp1.val[0])))};
+    
+    /*
     const float32x4_t aq = vmulq_f32(m[0].simd, simd);
     const float32x4_t bq = vmulq_f32(m[1].simd, simd);
     const float32x4_t cq = vmulq_f32(m[2].simd, simd);
@@ -140,6 +152,7 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
         vget_lane_f32(vpadd_f32(cd, cd), 0),
         vget_lane_f32(vpadd_f32(dd, dd), 0)
     };
+    */
 }
 
 
