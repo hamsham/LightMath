@@ -186,7 +186,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
 {
-    alignas(sizeof(int32_t)*4) const int32_t vals[4] = {v[0], v[1], v[2], v[3]};
+    const int32_t vals[4] = {v[0], v[1], v[2], v[3]};
     return vec4_t<float>{vcvtq_f32_s32(vld1q_s32(vals))};
 }
 
@@ -194,7 +194,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
-    alignas(sizeof(uint32_t)*4) const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
+    const uint32_t vals[4] = {v[0], v[1], v[2], v[3]};
     return vec4_t<float>{vcvtq_f32_u32(vld1q_u32(vals))};
 }
 
