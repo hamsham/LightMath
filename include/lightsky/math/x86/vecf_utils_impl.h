@@ -198,9 +198,18 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 }
 
 /*-------------------------------------
+    4D Mix
+-------------------------------------*/
+inline  LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+{
+    const __m128 p = _mm_set1_ps(percent);
+    const __m128 v = _mm_sub_ps(v2.simd, v1.simd);
+    return vec4_t<float>{_mm_fmadd_ps(v, p, v1.simd)};
+}
+
+/*-------------------------------------
     4D Reflect
 -------------------------------------*/
-template <typename num_t>
 inline LS_INLINE vec4_t<float> reflect(const vec4_t<float>& v, const vec4_t<float>& norm) {
     //return v - vec4_t<num_t>{2} * dot(v, norm) * norm;
     // horizontal add

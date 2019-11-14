@@ -25,7 +25,6 @@
 #include "lightsky/math/Types.h"
 #include "lightsky/math/scalar_utils.h"
 
-#include "lightsky/math/Types.h"
 #include "lightsky/math/vec2.h"
 #include "lightsky/math/vec3.h"
 #include "lightsky/math/vec4.h"
