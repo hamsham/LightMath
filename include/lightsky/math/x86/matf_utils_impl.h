@@ -46,7 +46,7 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
 {
     const float* const m = reinterpret_cast<const float*>(&m3x3);
 
-    #if 0 // Load-city
+    #if 1 // Load-city, but works if m3x3 is currently in registers
         const __m128 col0 = _mm_set_ps(0.f, m[4], m[5], m[3]);
         const __m128 col1 = _mm_set_ps(0.f, m[8], m[6], m[7]);
         const __m128 col2 = _mm_set_ps(0.f, m[5], m[3], m[4]);
@@ -161,14 +161,12 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 
         return ret.m;
     #else
-        alignas(sizeof(__m128)) mat4_t<float> ret;
-
-        _mm_stream_ps(&ret[0], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd));
-        _mm_stream_ps(&ret[1], _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd));
-        _mm_stream_ps(&ret[2], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd));
-        _mm_store_ps(&ret[3], _mm_mul_ps(_mm_permute_ps(v1.simd, 0xFF), v2.simd));
-
-        return ret;
+        return mat4_t<float>{
+            _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd),
+            _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd),
+            _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd),
+            _mm_mul_ps(_mm_permute_ps(v1.simd, 0xFF), v2.simd)
+        };
     #endif
 }
 
