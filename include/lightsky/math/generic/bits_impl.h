@@ -143,7 +143,7 @@ inline LS_INLINE int64_t math::clz_i64(int64_t n) noexcept
 {
     #if defined(LS_COMPILER_GNU)
         return __builtin_clzll((unsigned long long)n);
-    #elif defined(LS_COMPILER_MSC)
+    #elif defined(LS_COMPILER_MSC) && defined(LS_ARCH_X86) && LS_ARCH_X86 == 64
         unsigned long ret;
         if (_BitScanReverse64(&ret, (unsigned long)n))
         {
