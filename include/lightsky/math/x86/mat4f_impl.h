@@ -29,17 +29,14 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         alignas(sizeof(__m256)) mat4_t<float> ret;
 
         r01 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp0, 0x00));
-        r23 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp1, 0x00));
-
         r01 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp0, 0x55), r01);
-        r23 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp1, 0x55), r23);
-
         r01 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp0, 0xAA), r01);
-        r23 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp1, 0xAA), r23);
-
         r01 = _mm256_fmadd_ps(col3, _mm256_permute_ps(temp0, 0xFF), r01);
         _mm256_store_ps(reinterpret_cast<float*>(&ret), r01);
 
+        r23 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp1, 0x00));
+        r23 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp1, 0x55), r23);
+        r23 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp1, 0xAA), r23);
         r23 = _mm256_fmadd_ps(col3, _mm256_permute_ps(temp1, 0xFF), r23);
         _mm256_store_ps(reinterpret_cast<float*>(&ret)+8, r23);
 
