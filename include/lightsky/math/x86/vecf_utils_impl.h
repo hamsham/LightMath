@@ -200,7 +200,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 /*-------------------------------------
     4D Mix
 -------------------------------------*/
-inline  LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
 {
     const __m128 p = _mm_set1_ps(percent);
     const __m128 v = _mm_sub_ps(v2.simd, v1.simd);

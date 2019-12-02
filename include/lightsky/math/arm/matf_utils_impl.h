@@ -16,6 +16,29 @@ namespace math
 /*-----------------------------------------------------------------------------
     3x3 Matrices
 -----------------------------------------------------------------------------*/
+/*-------------------------------------
+    3x3 Determinant
+-------------------------------------*/
+inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
+{
+    const float* const m = reinterpret_cast<const float*>(&m3x3);
+
+    const float32x4_t col0{0.f, m[4], m[5], m[3]};
+    const float32x4_t col1{0.f, m[8], m[6], m[7]};
+    const float32x4_t col2{0.f, m[5], m[3], m[4]};
+    const float32x4_t col3{0.f, m[7], m[8], m[6]};
+    const float32x4_t col4{0.f, m[0], m[1], m[2]};
+
+    const float32x4_t sub0 = vsubq_f32(vmulq_f32(col1, col0), vmulq_f32(col2, col3));
+    const float32x4_t mul2 = vmulq_f32(sub0, col4);
+
+    // horizontal add: swap the words of each vector, add, then swap each
+    // half of the vectors and perform a final add.
+    const float32x2_t swap = vadd_f32(vget_high_f32(mul2), vget_low_f32(mul2));
+    const float32x2_t sum = vpadd_f32(swap, swap);
+
+    return vget_lane_f32(sum, 0);
+}
 
 /*-----------------------------------------------------------------------------
     4x4 Matrices
@@ -26,10 +49,10 @@ namespace math
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     return mat4_t<float>{
-        vmulq_f32(vdupq_n_f32(v1[0]), v2.simd),
-        vmulq_f32(vdupq_n_f32(v1[1]), v2.simd),
-        vmulq_f32(vdupq_n_f32(v1[2]), v2.simd),
-        vmulq_f32(vdupq_n_f32(v1[3]), v2.simd)
+        vmulq_n_f32(v2.simd, v1[0]),
+        vmulq_n_f32(v2.simd, v1[1]),
+        vmulq_n_f32(v2.simd, v1[2]),
+        vmulq_n_f32(v2.simd, v1[3])
     };
 }
 

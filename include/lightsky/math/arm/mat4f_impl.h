@@ -14,25 +14,25 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
 {
     alignas(sizeof(float32x4_t)) mat4_t<float> ret;
 
-    ret[0].simd = vmulq_f32(             this->m[0].simd, vdupq_n_f32(n[0][0]));
-    ret[0].simd = vmlaq_f32(ret[0].simd, this->m[1].simd, vdupq_n_f32(n[0][1]));
-    ret[0].simd = vmlaq_f32(ret[0].simd, this->m[2].simd, vdupq_n_f32(n[0][2]));
-    ret[0].simd = vmlaq_f32(ret[0].simd, this->m[3].simd, vdupq_n_f32(n[0][3]));
+    ret[0].simd = vmulq_n_f32(             this->m[0].simd, n[0][0]);
+    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[1].simd, n[0][1]);
+    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[2].simd, n[0][2]);
+    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[3].simd, n[0][3]);
 
-    ret[1].simd = vmulq_f32(             this->m[0].simd, vdupq_n_f32(n[1][0]));
-    ret[1].simd = vmlaq_f32(ret[1].simd, this->m[1].simd, vdupq_n_f32(n[1][1]));
-    ret[1].simd = vmlaq_f32(ret[1].simd, this->m[2].simd, vdupq_n_f32(n[1][2]));
-    ret[1].simd = vmlaq_f32(ret[1].simd, this->m[3].simd, vdupq_n_f32(n[1][3]));
+    ret[1].simd = vmulq_n_f32(             this->m[0].simd, n[1][0]);
+    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[1].simd, n[1][1]);
+    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[2].simd, n[1][2]);
+    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[3].simd, n[1][3]);
 
-    ret[2].simd = vmulq_f32(             this->m[0].simd, vdupq_n_f32(n[2][0]));
-    ret[2].simd = vmlaq_f32(ret[2].simd, this->m[1].simd, vdupq_n_f32(n[2][1]));
-    ret[2].simd = vmlaq_f32(ret[2].simd, this->m[2].simd, vdupq_n_f32(n[2][2]));
-    ret[2].simd = vmlaq_f32(ret[2].simd, this->m[3].simd, vdupq_n_f32(n[2][3]));
+    ret[2].simd = vmulq_n_f32(             this->m[0].simd, n[2][0]);
+    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[1].simd, n[2][1]);
+    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[2].simd, n[2][2]);
+    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[3].simd, n[2][3]);
 
-    ret[3].simd = vmulq_f32(             this->m[0].simd, vdupq_n_f32(n[3][0]));
-    ret[3].simd = vmlaq_f32(ret[3].simd, this->m[1].simd, vdupq_n_f32(n[3][1]));
-    ret[3].simd = vmlaq_f32(ret[3].simd, this->m[2].simd, vdupq_n_f32(n[3][2]));
-    ret[3].simd = vmlaq_f32(ret[3].simd, this->m[3].simd, vdupq_n_f32(n[3][3]));
+    ret[3].simd = vmulq_n_f32(             this->m[0].simd, n[3][0]);
+    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[1].simd, n[3][1]);
+    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[2].simd, n[3][2]);
+    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[3].simd, n[3][3]);
 
     return ret;
 }

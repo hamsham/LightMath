@@ -111,6 +111,16 @@ inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
 }
 
 /*-------------------------------------
+    4D Mix
+-------------------------------------*/
+inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+{
+    const float32x4_t p = vdupq_n_f32(percent);
+    const float32x4_t v = vsubq_f32(v2.simd, v1.simd);
+    return vec4_t<float>{vmlaq_f32(v1.simd, v, p)};
+}
+
+/*-------------------------------------
     4D Min
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
