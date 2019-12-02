@@ -21,6 +21,19 @@ namespace math
     4x4 Matrices
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
+    4x4 Outer Product
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
+{
+    return mat4_t<float>{
+        vmulq_f32(vdupq_n_f32(v1[0]), v2.simd),
+        vmulq_f32(vdupq_n_f32(v1[1]), v2.simd),
+        vmulq_f32(vdupq_n_f32(v1[2]), v2.simd),
+        vmulq_f32(vdupq_n_f32(v1[3]), v2.simd)
+    };
+}
+
+/*-------------------------------------
     4x4 Transpose
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
