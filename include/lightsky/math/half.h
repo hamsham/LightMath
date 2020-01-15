@@ -4,16 +4,15 @@
 
 #include <cstdint> // uint16_t
 
-#include "lightsky/setup/Arch.h" // LS_ARCH_X86, LS_ARCH_ARM, LS_ARCH_AARCH64
 #include "lightsky/setup/Api.h" // LS_INLINE
+#include "lightsky/setup/Arch.h" // LS_ARCH_X86, LS_ARCH_ARM, LS_ARCH_AARCH64
+#include "lightsky/setup/Types.h"
 
 #if defined(LS_ARCH_X86)
     #include <immintrin.h>
 #elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
     #include <arm_neon.h>
 #endif
-
-#include "lightsky/math/Types.h"
 
 namespace ls
 {
@@ -76,14 +75,20 @@ struct alignas(sizeof(uint16_t)) Half
 
 
 
+} // end math namespace
+
+
+
 /*----------------------------------------------------------------------------
  * Type Information
 ----------------------------------------------------------------------------*/
+namespace setup
+{
 /*-------------------------------------
  * Integral Determination
 -------------------------------------*/
 template <>
-struct IsIntegral<Half> : public utils::FalseType<Half>
+struct IsIntegral<ls::math::Half> : public ls::setup::FalseType<ls::math::Half>
 {
 };
 
@@ -93,13 +98,13 @@ struct IsIntegral<Half> : public utils::FalseType<Half>
  * Float Determination
 -------------------------------------*/
 template <>
-struct IsFloat<Half> : public utils::TrueType<Half>
+struct IsFloat<ls::math::Half> : public ls::setup::TrueType<ls::math::Half>
 {
 };
 
 
 
-} // end math namespace
+} // end setup namespace
 } // end ls namespace
 
 

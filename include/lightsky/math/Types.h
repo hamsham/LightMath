@@ -12,12 +12,13 @@
 #include <cmath>
 #include <cstdint>
 
-#include "lightsky/utils/Types.hpp"
+
 
 /*
  * Floating Point Values & Precision
  */
 #ifdef LS_MATH_HIGH_PREC
+
     #define LS_FLOAT        double
     #define LS_INT          int64_t
     #define LS_UINT         uint64_t
@@ -48,7 +49,9 @@
     #define LS_COS(x)       std::cos((x))
     #define LS_TAN(x)       std::tan((x))
     #define LS_SQRT(x)      std::fast_sqrt((x))
+
 #else /* LS_MATH_HIGH_PREC */
+
     #define LS_FLOAT        float
     #define LS_INT          int32_t
     #define LS_UINT         uint32_t
@@ -79,181 +82,9 @@
     #define LS_COS(x)       ls::math::cos((x))
     #define LS_TAN(x)       ls::math::tan((x))
     #define LS_SQRT(x)      ls::math::fast_sqrt((x))
+
 #endif /* LS_MATH_HIGH_PREC */
 
 
-
-namespace ls
-{
-namespace math
-{
-
-
-
-/*-----------------------------------------------------------------------------
- * Replacement for std::is_integral
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * General Case
--------------------------------------*/
-template <typename data_t>
-struct IsIntegral : public utils::TrueType<data_t>
-{
-};
-
-
-
-/*-------------------------------------
- * Float Specialization
--------------------------------------*/
-template <>
-struct IsIntegral<float> : public utils::FalseType<float>
-{
-};
-
-
-
-/*-------------------------------------
- * Double Specialization
--------------------------------------*/
-template <>
-struct IsIntegral<double> : public utils::FalseType<double>
-{
-};
-
-
-
-/*-------------------------------------
- * Long Double Specialization
--------------------------------------*/
-template <>
-struct IsIntegral<long double> : public utils::FalseType<long double>
-{
-};
-
-
-
-/*-----------------------------------------------------------------------------
- * Replacement for std::is_floating_point
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * General Case
--------------------------------------*/
-template <typename data_t>
-struct IsFloat : public utils::FalseType<data_t>
-{
-};
-
-
-
-/*-------------------------------------
- * Float Specialization
--------------------------------------*/
-template <>
-struct IsFloat<float> : public utils::TrueType<float>
-{
-};
-
-
-
-/*-------------------------------------
- * Double Specialization
--------------------------------------*/
-template <>
-struct IsFloat<double> : public utils::TrueType<double>
-{
-};
-
-
-
-/*-------------------------------------
- * Long Double Specialization
--------------------------------------*/
-template <>
-struct IsFloat<long double> : public utils::TrueType<long double>
-{
-};
-
-
-
-/*-----------------------------------------------------------------------------
- * Replacement for std::is_signed
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * General Implementation
--------------------------------------*/
-template <typename data_t>
-struct IsSigned : public utils::TrueType<data_t>
-{
-};
-
-
-
-/*-------------------------------------
- * Unsigned Specializations
--------------------------------------*/
-template <>
-struct IsSigned<unsigned char> : public utils::FalseType<unsigned char>
-{
-};
-
-
-
-template <>
-struct IsSigned<unsigned short> : public utils::FalseType<unsigned short>
-{
-};
-
-
-
-template <>
-struct IsSigned<unsigned int> : public utils::FalseType<unsigned int>
-{
-};
-
-
-
-template <>
-struct IsSigned<unsigned long> : public utils::FalseType<unsigned long>
-{
-};
-
-
-
-template <>
-struct IsSigned<unsigned long long> : public utils::FalseType<unsigned long long>
-{
-};
-
-
-
-/*-----------------------------------------------------------------------------
- * Replacement for std::is_unsigned
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * General Implementation
--------------------------------------*/
-template <typename data_t>
-struct IsUnsigned
-{
-    typedef data_t value_type;
-
-    static constexpr bool value = !IsSigned<data_t>::value;
-
-    constexpr explicit operator bool() const noexcept
-    {
-        return value;
-    }
-
-    constexpr bool operator() () const noexcept
-    {
-        return value;
-    }
-};
-
-
-
-} // end math namespace
-} // end ls namespace
 
 #endif /* LS_MATH_TYPES_H */

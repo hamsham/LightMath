@@ -302,8 +302,8 @@ namespace math
 
 template <typename num_t>
 constexpr LS_INLINE math::vec2_t<num_t> math::pow(
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& x,
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& y) noexcept
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec2_t<num_t>>::type& y) noexcept
 {
     return math::impl::powi_impl<num_t>(x, y, math::vec2_t<num_t>{1});
 }
@@ -713,8 +713,8 @@ namespace math
 
 template <typename num_t>
 constexpr LS_INLINE math::vec3_t<num_t> math::pow(
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& x,
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& y) noexcept
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec3_t<num_t>>::type& y) noexcept
 {
     return math::impl::powi_impl<num_t>(x, y, math::vec3_t<num_t>{1});
 }
@@ -1102,8 +1102,8 @@ namespace math
 
 template <typename num_t>
 constexpr LS_INLINE math::vec4_t<num_t> math::pow(
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& x,
-    const typename utils::EnableIf<math::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& y) noexcept
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<num_t>::value, math::vec4_t<num_t>>::type& y) noexcept
 {
     return math::impl::powi_impl<num_t>(x, y, math::vec4_t<num_t>{1});
 }

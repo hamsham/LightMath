@@ -258,7 +258,7 @@ inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
 -------------------------------------*/
 // Nearest truncated integral closest to the actual square root.
 template<typename scalar_t>
-inline scalar_t math::fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type x) noexcept
+inline scalar_t math::fast_sqrt(typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type x) noexcept
 {
 
     // Return 0 if the input digit is less than 1.
@@ -600,7 +600,7 @@ inline LS_INLINE int64_t math::prev_pow2(int64_t n) noexcept
     nearest_pow2
 -------------------------------------*/
 template <typename data_t>
-inline LS_INLINE data_t math::nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
+inline LS_INLINE data_t math::nearest_pow2(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type n) noexcept
 {
     const data_t pp2 = math::prev_pow2(n);
     const data_t np2 = math::next_pow2(n);
@@ -616,7 +616,7 @@ inline LS_INLINE data_t math::nearest_pow2(typename utils::EnableIf<math::IsInte
     is_pow2
 -------------------------------------*/
 template <typename data_t>
-constexpr LS_INLINE bool math::is_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept
+constexpr LS_INLINE bool math::is_pow2(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type n) noexcept
 {
     return (n != 0) && !(n & (n - (data_t)1));
 }
@@ -653,8 +653,8 @@ namespace impl
 
 template <typename scalar_t>
 constexpr LS_INLINE scalar_t math::pow(
-    typename utils::EnableIf<math::IsIntegral<scalar_t>::value, scalar_t>::type x,
-    typename utils::EnableIf<math::IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept
+    typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type x,
+    typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept
 {
     return math::impl::powi_impl<scalar_t>(x, y, 1);
 }
@@ -761,7 +761,7 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 {
-    static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
            - (x * x * x * scalar_t{1.f / 6.f})
@@ -778,7 +778,7 @@ constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
-    static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return scalar_t{1.f}
            - (x * x * scalar_t{1.f / 2.f})
@@ -795,7 +795,7 @@ constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 {
-    static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
 
     return x
            + (x * x * x * scalar_t{1.f / 3.f})
@@ -812,7 +812,7 @@ constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::rcp(const scalar_t& num) noexcept
 {
-    static_assert(math::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
     return scalar_t{1.f} / num;
 }
 
@@ -922,16 +922,16 @@ constexpr LS_INLINE out_type math::scale_to_range(
 -------------------------------------*/
 template <typename data_t>
 constexpr LS_INLINE int math::sign_mask(
-    typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
+    typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type x
 ) noexcept
 {
-    return math::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+    return setup::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
 }
 
 template <typename data_t>
 constexpr LS_INLINE int math::sign_mask(data_t x) noexcept
 {
-    return math::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
+    return setup::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
 }
 
 
@@ -941,16 +941,16 @@ constexpr LS_INLINE int math::sign_mask(data_t x) noexcept
 -------------------------------------*/
 template <typename data_t>
 constexpr LS_INLINE data_t math::sign(
-    typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x
+    typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type x
 ) noexcept
 {
-    return math::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+    return setup::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
 }
 
 template <typename data_t>
 constexpr LS_INLINE data_t math::sign(data_t x) noexcept
 {
-    return (math::IsSigned<data_t>::value  && (x < data_t{0})) ? data_t{1} : data_t{0};
+    return (setup::IsSigned<data_t>::value  && (x < data_t{0})) ? data_t{1} : data_t{0};
 }
 
 
@@ -971,9 +971,9 @@ namespace math
 }
 
 template <typename data_t>
-constexpr LS_INLINE data_t math::abs(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type x) noexcept
+constexpr LS_INLINE data_t math::abs(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type x) noexcept
 {
-    return math::IsUnsigned<data_t>::value ? x : math::impl::abs<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
+    return setup::IsUnsigned<data_t>::value ? x : math::impl::abs<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
 }
 
 template <typename data_t>

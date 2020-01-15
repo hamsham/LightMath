@@ -12,6 +12,7 @@
 #include <limits> // std::numeric_limits
 
 #include "lightsky/setup/Arch.h"
+#include "lightsky/setup/Types.h"
 
 #include "lightsky/math/Types.h"
 
@@ -275,7 +276,7 @@ constexpr floating_t smoothstep(floating_t a, floating_t b, floating_t x) noexce
  * @return The square root of the input number.
  */
 template <typename scalar_t>
-inline scalar_t fast_sqrt(typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type) noexcept;
+inline scalar_t fast_sqrt(typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type) noexcept;
 
 template <typename scalar_t>
 inline scalar_t fast_sqrt(scalar_t) noexcept;
@@ -463,7 +464,7 @@ inline int64_t prev_pow2(int64_t) noexcept;
  * @return The current or closest power of two to a number.
  */
 template <typename data_t>
-inline data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type) noexcept;
+inline data_t nearest_pow2(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 /**
  * @brief is_pow2
@@ -475,7 +476,7 @@ inline data_t nearest_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::va
  * power of two.
  */
 template <typename data_t>
-constexpr bool is_pow2(typename utils::EnableIf<math::IsIntegral<data_t>::value, data_t>::type n) noexcept;
+constexpr bool is_pow2(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type n) noexcept;
 
 /**
  * @brief factorial
@@ -503,8 +504,8 @@ constexpr scalar_t factorial(scalar_t) noexcept;
  */
 template <typename scalar_t>
 constexpr scalar_t pow(
-    typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type x,
-    typename utils::EnableIf<IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept;
+    typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type x,
+    typename setup::EnableIf<setup::IsIntegral<scalar_t>::value, scalar_t>::type y) noexcept;
 
 template <typename scalar_t>
 inline scalar_t pow(scalar_t x, scalar_t y) noexcept;
@@ -715,7 +716,7 @@ constexpr out_type scale_to_range(
  * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
  */
 template <typename data_t>
-constexpr int sign_mask(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+constexpr int sign_mask(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 template <typename data_t>
 constexpr int sign_mask(data_t x) noexcept;
@@ -729,7 +730,7 @@ constexpr int sign_mask(data_t x) noexcept;
  * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
  */
 template <typename data_t>
-constexpr data_t sign(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+constexpr data_t sign(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 template <typename data_t>
 constexpr data_t sign(data_t x) noexcept;
@@ -742,7 +743,7 @@ constexpr data_t sign(data_t x) noexcept;
  * @return A number without the sign bit set.
  */
 template <typename data_t>
-constexpr data_t abs(typename utils::EnableIf<IsIntegral<data_t>::value, data_t>::type) noexcept;
+constexpr data_t abs(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type) noexcept;
 
 template <typename data_t>
 constexpr data_t abs(data_t x) noexcept;

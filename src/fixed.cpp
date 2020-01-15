@@ -1,5 +1,4 @@
 
-#include "lightsky/math/Types.h"
 #include "lightsky/math/fixed.h"
 
 namespace ls {

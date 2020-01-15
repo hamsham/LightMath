@@ -57,7 +57,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 template<typename numeric_t>
 constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits>::fixed_t(numeric_t f) :
-    number{(fixed_base_t)(ls::math::IsFloat<numeric_t>::value ? (f * (numeric_t)(1ull << num_frac_digits)) : f)}
+    number{(fixed_base_t)(setup::IsFloat<numeric_t>::value ? (f * (numeric_t)(1ull << num_frac_digits)) : f)}
 {
 }
 
@@ -589,7 +589,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
     Cast to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
-constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const typename utils::EnableIf<math::IsFloat<numeric_t>::value, numeric_t>::type n)
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const typename setup::EnableIf<setup::IsFloat<numeric_t>::value, numeric_t>::type n)
 {
     //return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
     return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
@@ -603,7 +603,7 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
 template <class fixed_type, typename numeric_t>
 constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const numeric_t n)
 {
-    return math::IsFloat<numeric_t>::value
+    return setup::IsFloat<numeric_t>::value
         ? math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n}
         : math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{(typename fixed_type::base_type)((unsigned long long)n << fixed_type::fraction_digits)};
 }
@@ -646,7 +646,7 @@ namespace fixed_impl
     template <typename data_t>
     constexpr LS_INLINE data_t abs_shift(data_t x) noexcept
     {
-        return math::IsUnsigned<data_t>::value ? x : fixed_impl::abs_mask<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
+        return setup::IsUnsigned<data_t>::value ? x : fixed_impl::abs_mask<data_t>(x, x >> ((sizeof(data_t)*CHAR_BIT)-(data_t)1));
     }
 }
 
@@ -676,7 +676,7 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE int math::sign_mask(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return math::IsSigned<fixed_base_t>::value
+    return setup::IsSigned<fixed_base_t>::value
         ? (int)(x.number >> (((sizeof(fixed_base_t) * CHAR_BIT) - 1)) & 0x01)
         : 0;
 }

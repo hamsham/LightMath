@@ -10,6 +10,7 @@
 
 #include "lightsky/setup/Arch.h"
 #include "lightsky/setup/Compiler.h"
+#include "lightsky/setup/Types.h"
 
  // MSVC defines its own min/max functions.
 #ifdef LS_COMPILER_MSC
@@ -22,7 +23,6 @@
     #endif /* max */
 #endif /* LS_COMPILER_MSC */
 
-#include "lightsky/math/Types.h"
 #include "lightsky/math/scalar_utils.h"
 
 #include "lightsky/math/vec2.h"
@@ -394,8 +394,8 @@ inline vec2_t<N> logN(const vec2_t<N>& baseN, const vec2_t<N>& n) noexcept;
  */
 template <typename N>
 constexpr vec2_t<N> pow(
-    const typename utils::EnableIf<IsIntegral<N>::value, vec2_t<N>>::type& x,
-    const typename utils::EnableIf<IsIntegral<N>::value, vec2_t<N>>::type& y) noexcept;
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec2_t<N>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec2_t<N>>::type& y) noexcept;
 
 template <typename N>
 inline vec2_t<N> pow(const vec2_t<N>& x, const vec2_t<N>& y) noexcept;
@@ -842,8 +842,8 @@ inline vec3_t<N> logN(const vec3_t<N>& baseN, const vec3_t<N>& n) noexcept;
  */
 template <typename N>
 constexpr vec3_t<N> pow(
-    const typename utils::EnableIf<IsIntegral<N>::value, vec3_t<N>>::type& x,
-    const typename utils::EnableIf<IsIntegral<N>::value, vec3_t<N>>::type& y) noexcept;
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec3_t<N>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec3_t<N>>::type& y) noexcept;
 
 template <typename N>
 inline vec3_t<N> pow(const vec3_t<N>& x, const vec3_t<N>& y) noexcept;
@@ -1251,8 +1251,8 @@ inline vec4_t<N> logN(const vec4_t<N>& baseN, const vec4_t<N>& n) noexcept;
  */
 template <typename N>
 constexpr vec4_t<N> pow(
-    const typename utils::EnableIf<IsIntegral<N>::value, vec4_t<N>>::type& x,
-    const typename utils::EnableIf<IsIntegral<N>::value, vec4_t<N>>::type& y) noexcept;
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec4_t<N>>::type& x,
+    const typename setup::EnableIf<setup::IsIntegral<N>::value, vec4_t<N>>::type& y) noexcept;
 
 template <typename N>
 inline vec4_t<N> pow(const vec4_t<N>& x, const vec4_t<N>& y) noexcept;

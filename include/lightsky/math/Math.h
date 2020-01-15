@@ -16,8 +16,6 @@
  * variables, so this might make readability slightly difficult at first.
  */
 
-#include "lightsky/math/Types.h"
-
 #include "lightsky/math/bits.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/half.h"
