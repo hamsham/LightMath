@@ -244,23 +244,11 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator*(const fixed_t& f) const
 {
-    // Since 64-bit multiplication will run out of precision, we have two
-    // methods of multiplying. The first will drop a bit from each number to
-    // ensure the result will have enough precision. The second method will
-    // simply make use of all available bits in a 64-bit number, then remove
-    // any excess bits.
-
-    #if 0
-    return (sizeof(fixed_base_t) > sizeof(int32_t))
-        ? fixed_t{((number >> (num_frac_digits >> 1)) * (f.number >> (num_frac_digits >> 1))) >> (fixed_base_t)ls::math::IsSigned<fixed_base_t>::value}
-        : fixed_t{(fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << num_frac_digits))};
-    #else
     return fixed_t{(fixed_base_t)(
-        (((number >> num_frac_digits) * (f.number >> num_frac_digits)) << num_frac_digits) + // integer multiply
-        (((number & fraction_mask)    * (f.number & fraction_mask))    >> num_frac_digits) + // fraction multiply
-        (((number >> num_frac_digits) * (f.number & fraction_mask)) + ((number & fraction_mask) * (f.number >> num_frac_digits))) // mixed multiply
+        (((size_t)(number >> num_frac_digits) * (size_t)(f.number >> num_frac_digits)) << (size_t)num_frac_digits) + // integer multiply
+        (((size_t)(number & fraction_mask)    * (size_t)(f.number & fraction_mask))    >> (size_t)num_frac_digits) + // fraction multiply
+        (((size_t)(number >> num_frac_digits) * (size_t)(f.number & fraction_mask)) + ((size_t)(number & fraction_mask) * (size_t)(f.number >> num_frac_digits))) // mixed multiply
     )};
-    #endif
 }
 
 

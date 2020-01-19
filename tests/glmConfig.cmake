@@ -10,7 +10,7 @@ set(EXTERNAL_PROJECT_PREFIX "${CMAKE_CURRENT_BINARY_DIR}/external" CACHE STRING 
 mark_as_advanced(EXTERNAL_PROJECT_PREFIX)
 
 # Include directory for 3rd-party libraries
-include_directories(BEFORE SYSTEM ${EXTERNAL_PROJECT_PREFIX}/include)
+#include_directories(BEFORE SYSTEM ${EXTERNAL_PROJECT_PREFIX}/include)
 
 
 
@@ -36,12 +36,14 @@ find_package(Git REQUIRED)
 # #####################################
 message("-- Building GLM from source")
 
-#set(GLM_BRANCH "master" CACHE STRING "Git branch or tag for checking out GLM.")
-set(GLM_BRANCH "0.9.9.2" CACHE STRING "Git branch or tag for checking out GLM.")
+set(GLM_BRANCH "master" CACHE STRING "Git branch or tag for checking out GLM.")
+#set(GLM_BRANCH "0.9.9.2" CACHE STRING "Git branch or tag for checking out GLM.")
 mark_as_advanced(GLM_BRANCH)
 
 # Configure build options
 set(GLM_BUILD_FLAGS
+    -DBUILD_SHARED_LIBS:BOOL=FALSE
+    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
@@ -72,17 +74,23 @@ ExternalProject_Add(
     UPDATE_COMMAND
         ${GIT_EXECUTABLE} fetch
     CMAKE_COMMAND
-        ${CMAKE_COMMAND}
+        #${CMAKE_COMMAND}
+        ""
     CMAKE_CACHE_ARGS
-        ${GLM_BUILD_FLAGS}
+        #${GLM_BUILD_FLAGS}
+        ""
     CMAKE_ARGS
-        ${GLM_BUILD_FLAGS}
+        #${GLM_BUILD_FLAGS}
+        ""
     BUILD_COMMAND
-        ${CMAKE_COMMAND} --build ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build --config ${CMAKE_CFG_INTDIR}
+        #${CMAKE_COMMAND} --build . --config ${CMAKE_CFG_INTDIR}
+        ""
     INSTALL_DIR
-        ${EXTERNAL_PROJECT_PREFIX}
+        #${EXTERNAL_PROJECT_PREFIX}
+        ""
     INSTALL_COMMAND
-        ${CMAKE_COMMAND} --build ${EXTERNAL_PROJECT_PREFIX}/src/Glm-build --config ${CMAKE_CFG_INTDIR} --target install
+        #${CMAKE_COMMAND} --build . --config ${CMAKE_CFG_INTDIR} --target install
+        ${CMAKE_COMMAND} -E copy_directory ${EXTERNAL_PROJECT_PREFIX}/src/Glm/glm ${EXTERNAL_PROJECT_PREFIX}/include/glm
 )
 
 set_target_properties(Glm PROPERTIES EXCLUDE_FROM_ALL TRUE)

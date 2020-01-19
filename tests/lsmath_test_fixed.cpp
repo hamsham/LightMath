@@ -57,7 +57,7 @@ int main()
     FixedType e = FixedType{LS_E};
 
     std::cout << "PI:        " << LS_PI                             << " = " << pi                                           << std::endl;
-    std::cout << "1/PI:      " << ls::math::rcp(LS_PI)              << " = " << ls::math::rcp(FixedType{0.25f})                            << std::endl;
+    std::cout << "1/PI:      " << ls::math::rcp(LS_PI)              << " = " << ls::math::rcp(FixedType{LS_PI})              << std::endl;
     std::cout << "E:         " << LS_E                              << " = " << e                                            << std::endl;
     std::cout << "Floor:     " << e                                 << " = " << ls::math::floor(e)                           << std::endl;
     std::cout << "Ceil:      " << e                                 << " = " << ls::math::ceil(e)                            << std::endl;
