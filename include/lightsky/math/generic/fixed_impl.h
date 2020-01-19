@@ -245,9 +245,9 @@ constexpr LS_INLINE
 fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator*(const fixed_t& f) const
 {
     return fixed_t{(fixed_base_t)(
-        (((size_t)(number >> num_frac_digits) * (size_t)(f.number >> num_frac_digits)) << (size_t)num_frac_digits) + // integer multiply
-        (((size_t)(number & fraction_mask)    * (size_t)(f.number & fraction_mask))    >> (size_t)num_frac_digits) + // fraction multiply
-        (((size_t)(number >> num_frac_digits) * (size_t)(f.number & fraction_mask)) + ((size_t)(number & fraction_mask) * (size_t)(f.number >> num_frac_digits))) // mixed multiply
+        (((uint64_t)(number >> num_frac_digits) * (uint64_t)(f.number >> num_frac_digits)) << (uint64_t)num_frac_digits) + // integer multiply
+        (((uint64_t)(number & fraction_mask)    * (uint64_t)(f.number & fraction_mask))    >> (uint64_t)num_frac_digits) + // fraction multiply
+        (((uint64_t)(number >> num_frac_digits) * (uint64_t)(f.number & fraction_mask)) + ((uint64_t)(number & fraction_mask) * (uint64_t)(f.number >> num_frac_digits))) // mixed multiply
     )};
 }
 
@@ -261,7 +261,7 @@ constexpr LS_INLINE
 fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
 {
     //return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
-    return this->operator*(fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(((0x8000000000000000ull >> (63ull-num_frac_digits)) << num_frac_digits) / (uint64_t)f.number)});
+    return this->operator*(fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(((0x8000000000000000ull >> (63ull-(uint64_t)num_frac_digits)) << (uint64_t)num_frac_digits) / (uint64_t)f.number)});
 }
 
 
