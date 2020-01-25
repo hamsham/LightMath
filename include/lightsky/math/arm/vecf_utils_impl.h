@@ -98,7 +98,7 @@ inline LS_INLINE float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);
@@ -113,7 +113,7 @@ inline LS_INLINE math::vec4_t<float> normalize(const vec4_t<float>& v)
 /*-------------------------------------
     4D Mix
 -------------------------------------*/
-inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
 {
     const float32x4_t p = vdupq_n_f32(percent);
     const float32x4_t v = vsubq_f32(v2.simd, v1.simd);
@@ -125,7 +125,7 @@ inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<f
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
-    return math::vec4_t<float>{vminq_f32(v1.simd, v2.simd)};
+    return vec4_t<float>{vminq_f32(v1.simd, v2.simd)};
 }
 
 /*-------------------------------------
@@ -133,7 +133,16 @@ inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>&
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
 {
-    return math::vec4_t<float>{vmaxq_f32(v1.simd, v2.simd)};
+    return vec4_t<float>{vmaxq_f32(v1.simd, v2.simd)};
+}
+
+/*-------------------------------------
+    4D Step
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v)
+{
+    const uint32x4_t cmpVal = vcltq_f32(v.simd, edge.simd);
+    return vec4_t<float>{vbslq_f32(cmpVal, vdupq_n_f32(0.f), vdupq_n_f32(1.f))};
 }
 
 /*-------------------------------------
@@ -157,6 +166,14 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
     vst1q_u32(vals, a);
 
     return ((a[3] >> 28) & 8) | ((a[2] >> 29) & 4) | ((a[1] >> 30) & 2) | ((a[0] >> 31) & 1);
+}
+
+/*-------------------------------------
+    4D abs
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v)
+{
+    return vec4_t<float>{vabsq_f32(v.simd)};
 }
 
 /*-------------------------------------
