@@ -14,11 +14,13 @@ constexpr LS_INLINE vec2_t<num_t>::vec2_t(num_t inX, num_t inY) :
 {
 }
 
+/*
 template <typename num_t>
 constexpr LS_INLINE vec2_t<num_t>::vec2_t() :
     v{num_t(0), num_t(0)}
 {
 }
+*/
 
 template <typename num_t>
 constexpr LS_INLINE vec2_t<num_t>::vec2_t(num_t n) :
@@ -26,6 +28,7 @@ constexpr LS_INLINE vec2_t<num_t>::vec2_t(num_t n) :
 {
 }
 
+/*
 template <typename num_t>
 constexpr LS_INLINE vec2_t<num_t>::vec2_t(const vec2_t<num_t>& v) :
     v{v.v[0], v.v[1]}
@@ -37,6 +40,7 @@ constexpr LS_INLINE vec2_t<num_t>::vec2_t(vec2_t<num_t>&& v) :
     v{v.v[0], v.v[1]}
 {
 }
+*/
 
 /*-------------------------------------
     Conversions & Casting
@@ -121,6 +125,7 @@ vec2_t<num_t>& vec2_t<num_t>::operator+=(const vec2_t<num_t>& input) {
     return *this;
 }
 
+/*
 template <typename num_t> inline LS_INLINE
 vec2_t<num_t>& vec2_t<num_t>::operator=(const vec2_t<num_t>& input) {
     v[0] = input.v[0];
@@ -134,6 +139,7 @@ vec2_t<num_t>& vec2_t<num_t>::operator=(vec2_t<num_t>&& input) {
     v[1] = input.v[1];
     return *this;
 }
+*/
 
 template <typename num_t> inline LS_INLINE
 vec2_t<num_t>& vec2_t<num_t>::operator-=(const vec2_t<num_t>& input) {

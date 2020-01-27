@@ -39,10 +39,10 @@ struct alignas(sizeof(num_t)) vec2_t
     constexpr vec2_t(num_t inX, num_t inY);
 
     // Delegated Constructors
-    constexpr vec2_t();
+    constexpr vec2_t() = default;
     constexpr vec2_t(num_t n);
-    constexpr vec2_t(const vec2_t<num_t>& input);
-    constexpr vec2_t(vec2_t<num_t>&& input);
+    constexpr vec2_t(const vec2_t<num_t>& input) = default;
+    constexpr vec2_t(vec2_t<num_t>&& input) = default;
 
     ~vec2_t() = default;
 
@@ -66,8 +66,8 @@ struct alignas(sizeof(num_t)) vec2_t
     constexpr vec2_t operator-() const;
     constexpr vec2_t operator*(const vec2_t<num_t>&) const;
     constexpr vec2_t operator/(const vec2_t<num_t>&) const;
-    vec2_t& operator=(const vec2_t<num_t>&);
-    vec2_t& operator=(vec2_t<num_t>&&);
+    vec2_t& operator=(const vec2_t<num_t>&) = default;
+    vec2_t& operator=(vec2_t<num_t>&&) = default;
     vec2_t& operator+=(const vec2_t<num_t>&);
     vec2_t& operator-=(const vec2_t<num_t>&);
     vec2_t& operator*=(const vec2_t<num_t>&);
