@@ -22,7 +22,7 @@ namespace math
 /*-------------------------------------
     3D Magnitude
 -------------------------------------*/
-inline LS_INLINE float length(const vec3_t<float>& v)
+inline LS_INLINE float length(const vec3_t<float>& v) noexcept
 {
     const float lanes[4] = {v.v[0], v.v[1], v.v[2], 0.f};
     const float32x4_t s = vld1q_f32(lanes);
@@ -44,7 +44,7 @@ inline LS_INLINE float length(const vec3_t<float>& v)
 /*-------------------------------------
     4D Sum
 -------------------------------------*/
-inline LS_INLINE float sum(const vec4_t<float>& v)
+inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 {
     const float32x4_t a = v.simd;
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -55,7 +55,7 @@ inline LS_INLINE float sum(const vec4_t<float>& v)
 /*-------------------------------------
     4D Reciprocal Sum
 -------------------------------------*/
-inline LS_INLINE float sum_inv(const vec4_t<float>& v)
+inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 {
     const float32x4_t a = v.simd;
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -70,7 +70,7 @@ inline LS_INLINE float sum_inv(const vec4_t<float>& v)
 /*-------------------------------------
     4D Dot
 -------------------------------------*/
-inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     const float32x4_t a = vmulq_f32(v1.simd, v2.simd);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -82,7 +82,7 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-inline LS_INLINE float length(const vec4_t<float>& v)
+inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 {
     const float32x4_t s = vld1q_f32(&v);
     const float32x4_t a = vmulq_f32(s, s);
@@ -98,7 +98,7 @@ inline LS_INLINE float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 {
     const float32x4_t s = v.simd;
     const float32x4_t a = vmulq_f32(s, s);
@@ -113,7 +113,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 /*-------------------------------------
     4D Mix
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent) noexcept
 {
     const float32x4_t p = vdupq_n_f32(percent);
     const float32x4_t v = vsubq_f32(v2.simd, v1.simd);
@@ -123,7 +123,7 @@ inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>&
 /*-------------------------------------
     4D Min
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     return vec4_t<float>{vminq_f32(v1.simd, v2.simd)};
 }
@@ -131,7 +131,7 @@ inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>&
 /*-------------------------------------
     4D Max
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     return vec4_t<float>{vmaxq_f32(v1.simd, v2.simd)};
 }
@@ -139,7 +139,7 @@ inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>&
 /*-------------------------------------
     4D Clamp
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals)
+inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals) noexcept
 {
     return vec4_t<float>{vminq_f32(maxVals.simd, vmaxq_f32(v.simd, minVals.simd))};
 }
@@ -147,7 +147,7 @@ inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>
 /*-------------------------------------
     4D Step
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v) noexcept
 {
     const uint32x4_t cmpVal = vcltq_f32(v.simd, edge.simd);
     return vec4_t<float>{vbslq_f32(cmpVal, vdupq_n_f32(0.f), vdupq_n_f32(1.f))};
@@ -156,7 +156,7 @@ inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<floa
 /*-------------------------------------
     4D RCP
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 {
     const float32x4_t simd  = v.simd;
     const float32x4_t recip = vrecpeq_f32(simd);
@@ -179,7 +179,7 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 /*-------------------------------------
     4D abs
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v) noexcept
 {
     return vec4_t<float>{vabsq_f32(v.simd)};
 }

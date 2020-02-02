@@ -44,7 +44,7 @@ namespace math {
  *  @return the sum of elements within v.
  */
 template <typename N> constexpr
-N sum(const vec2_t<N>& v);
+N sum(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief reciprocal sum
@@ -55,7 +55,7 @@ N sum(const vec2_t<N>& v);
  *  @return the reciprocal of the sum of elements within v.
  */
 template <typename N> constexpr
-N sum_inv(const vec2_t<N>& v);
+N sum_inv(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief dot
@@ -68,7 +68,7 @@ N sum_inv(const vec2_t<N>& v);
  *  @return the 2D dot product of v1 & v2.
  */
 template <typename N> constexpr
-N dot(const vec2_t<N>& v1, const vec2_t<N>& v2);
+N dot(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  *  @brief cross
@@ -87,7 +87,7 @@ N dot(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  negative, v2 is on the right of v1.
  */
 template <typename N> constexpr
-N cross(const vec2_t<N>& v1, const vec2_t<N>& v2);
+N cross(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  *  @brief normalize
@@ -98,7 +98,7 @@ N cross(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  @return a normalized 2D vector.
  */
 template <typename N> inline
-vec2_t<N> normalize(const vec2_t<N>& v);
+vec2_t<N> normalize(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief lengthSquared
@@ -111,7 +111,7 @@ vec2_t<N> normalize(const vec2_t<N>& v);
  *  @return The square of the length/magnitude of a 2D vector.
  */
 template <typename N> constexpr
-N length_squared(const vec2_t<N>& v);
+N length_squared(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief length
@@ -123,7 +123,7 @@ N length_squared(const vec2_t<N>& v);
  *  @return The length/magnitude of a 2D vector.
  */
 template <typename N> inline
-N length(const vec2_t<N>& v);
+N length(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief rotate
@@ -138,7 +138,7 @@ N length(const vec2_t<N>& v);
  *  @return A rotated 2D vector.
  */
 template <typename N> inline
-vec2_t<N> rotate(const vec2_t<N>& v, N angle);
+vec2_t<N> rotate(const vec2_t<N>& v, N angle) noexcept;
 
 /**
  *  @brief angleBetween
@@ -152,7 +152,7 @@ vec2_t<N> rotate(const vec2_t<N>& v, N angle);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2);
+N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  *  @brief angleBetween
@@ -169,7 +169,7 @@ N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origin);
+N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origin) noexcept;
 
 /**
  *  @brief min
@@ -183,7 +183,7 @@ N angle_between(const vec2_t<N>& v1, const vec2_t<N>& v2, const vec2_t<N>& origi
  *  input vectors.
  */
 template <typename N> constexpr
-vec2_t<N> min(const vec2_t<N>& v1, const vec2_t<N>& v2);
+vec2_t<N> min(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  *  @brief mix
@@ -202,7 +202,7 @@ vec2_t<N> min(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  percentage N.
  */
 template <typename N> constexpr
-vec2_t<N> mix(const vec2_t<N>& v1, const vec2_t<N>& v2, N percent);
+vec2_t<N> mix(const vec2_t<N>& v1, const vec2_t<N>& v2, N percent) noexcept;
 
 /**
  *  @brief max
@@ -216,7 +216,7 @@ vec2_t<N> mix(const vec2_t<N>& v1, const vec2_t<N>& v2, N percent);
  *  input vectors.
  */
 template <typename N> constexpr
-vec2_t<N> max(const vec2_t<N>& v1, const vec2_t<N>& v2);
+vec2_t<N> max(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  * @brief clamp
@@ -236,7 +236,7 @@ vec2_t<N> max(const vec2_t<N>& v1, const vec2_t<N>& v2);
  * and 'maxVals.'
  */
 template <typename N>
-constexpr vec2_t<N> clamp(const vec2_t<N>& v, const vec2_t<N>& minVals, const vec2_t<N>& maxVals);
+constexpr vec2_t<N> clamp(const vec2_t<N>& v, const vec2_t<N>& minVals, const vec2_t<N>& maxVals) noexcept;
 
 /**
  *  @brief project
@@ -249,7 +249,7 @@ constexpr vec2_t<N> clamp(const vec2_t<N>& v, const vec2_t<N>& minVals, const ve
  *  @return The vector projection of v1 onto v2.
  */
 template <typename N> inline
-vec2_t<N> project(const vec2_t<N>& v1, const vec2_t<N>& v2);
+vec2_t<N> project(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  *  @brief reflect
@@ -264,7 +264,7 @@ vec2_t<N> project(const vec2_t<N>& v1, const vec2_t<N>& v2);
  *  The reflection of v around the normal vector 'norm'.
  */
 template <typename N> constexpr
-vec2_t<N> reflect(const vec2_t<N>& v, const vec2_t<N>& norm);
+vec2_t<N> reflect(const vec2_t<N>& v, const vec2_t<N>& norm) noexcept;
 
 /**
  *  @brief mid
@@ -276,7 +276,7 @@ vec2_t<N> reflect(const vec2_t<N>& v, const vec2_t<N>& norm);
  *  @return the midpoint between v1 and v2.
  */
 template <typename N> constexpr
-vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
+vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2) noexcept;
 
 /**
  * @brief step
@@ -293,7 +293,7 @@ vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
  * @return the step function generated by comparing two values.
  */
 template <typename N> constexpr
-vec2_t<N> step(const vec2_t<N>& edge, const vec2_t<N>& v);
+vec2_t<N> step(const vec2_t<N>& edge, const vec2_t<N>& v) noexcept;
 
 /**
  * @brief smoothstep
@@ -308,7 +308,7 @@ vec2_t<N> step(const vec2_t<N>& edge, const vec2_t<N>& v);
  * @return The smooth linear interpolation of x in between the interval a and b.
  */
 template <typename N> constexpr
-vec2_t<N> smoothstep(const vec2_t<N>& a, const vec2_t<N>& b, const vec2_t<N>& x);
+vec2_t<N> smoothstep(const vec2_t<N>& a, const vec2_t<N>& b, const vec2_t<N>& x) noexcept;
 
 /**
  *  @brief rcp
@@ -320,7 +320,7 @@ vec2_t<N> smoothstep(const vec2_t<N>& a, const vec2_t<N>& b, const vec2_t<N>& x)
  *  @return the element-wise reciprocal between v.
  */
 template <typename N> constexpr
-vec2_t<N> rcp(const vec2_t<N>& v);
+vec2_t<N> rcp(const vec2_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the sign bits of a vector type.
@@ -356,7 +356,7 @@ vec2_t<N> sign(const vec2_t<N>& x) noexcept;
  *  @return A vector with all elements rounded down to the nearest integer.
  */
 template <typename N> constexpr
-vec2_t<N> floor(const vec2_t<N>& v);
+vec2_t<N> floor(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief ceil
@@ -368,7 +368,7 @@ vec2_t<N> floor(const vec2_t<N>& v);
  *  @return A vector with all elements rounded up to the nearest integer.
  */
 template <typename N> constexpr
-vec2_t<N> ceil(const vec2_t<N>& v);
+vec2_t<N> ceil(const vec2_t<N>& v) noexcept;
 
 /**
  *  @brief round
@@ -380,7 +380,7 @@ vec2_t<N> ceil(const vec2_t<N>& v);
  *  @return A vector with all elements rounded to the nearest integer.
  */
 template <typename N> constexpr
-vec2_t<N> round(const vec2_t<N>& v);
+vec2_t<N> round(const vec2_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the absolute value of a vector.
@@ -390,7 +390,7 @@ vec2_t<N> round(const vec2_t<N>& v);
  * @return The absolute value of v.
  */
 template <typename N> constexpr
-vec2_t<N> abs(const vec2_t<N>& v);
+vec2_t<N> abs(const vec2_t<N>& v) noexcept;
 
 /**
  * @brief log2
@@ -534,7 +534,7 @@ constexpr vec2_t<N> fmsub(const vec2_t<N>& x, const vec2_t<N>& m, const vec2_t<N
  *  @return the sum of elements within v.
  */
 template <typename N> constexpr
-N sum(const vec3_t<N>& v);
+N sum(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief reciprocal sum
@@ -545,7 +545,7 @@ N sum(const vec3_t<N>& v);
  *  @return the reciprocal of the sum of elements within v.
  */
 template <typename N> constexpr
-N sum_inv(const vec3_t<N>& v);
+N sum_inv(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief dot
@@ -558,7 +558,7 @@ N sum_inv(const vec3_t<N>& v);
  *  @return the 3D dot product of v1 & v2.
  */
 template <typename N> constexpr
-N dot(const vec3_t<N>& v1, const vec3_t<N>& v2);
+N dot(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
 
 /**
  *  @brief cross
@@ -573,7 +573,7 @@ N dot(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  vectors.
  */
 template <typename N> constexpr
-vec3_t<N> cross(const vec3_t<N>& v1, const vec3_t<N>& v2);
+vec3_t<N> cross(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
 
 /**
  *  @brief normalize
@@ -584,7 +584,7 @@ vec3_t<N> cross(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  @return a normalized 4D vector.
  */
 template <typename N> inline
-vec3_t<N> normalize(const vec3_t<N>& v);
+vec3_t<N> normalize(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief lengthSquared
@@ -597,7 +597,7 @@ vec3_t<N> normalize(const vec3_t<N>& v);
  *  @return The square of the length/magnitude of a 3D vector.
  */
 template <typename N> constexpr
-N length_squared(const vec3_t<N>& v);
+N length_squared(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief length
@@ -609,7 +609,7 @@ N length_squared(const vec3_t<N>& v);
  *  @return The length/magnitude of a 3D vector.
  */
 template <typename N> inline
-N length(const vec3_t<N>& v);
+N length(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief xRotation
@@ -622,7 +622,7 @@ N length(const vec3_t<N>& v);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian X-Axis.
  */
 template <typename N> inline
-vec3_t<N> x_rotation(N angle);
+vec3_t<N> x_rotation(N angle) noexcept;
 
 /**
  *  @brief xRotation
@@ -635,7 +635,7 @@ vec3_t<N> x_rotation(N angle);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian Y-Axis.
  */
 template <typename N> inline
-vec3_t<N> y_rotation(N angle);
+vec3_t<N> y_rotation(N angle) noexcept;
 
 /**
  *  @brief xRotation
@@ -648,7 +648,7 @@ vec3_t<N> y_rotation(N angle);
  *  @return A 3D vector rotated by 'angle' radians around the cartesian Z-Axis.
  */
 template <typename N> inline
-vec3_t<N> z_rotation(N angle);
+vec3_t<N> z_rotation(N angle) noexcept;
 
 /**
  *  @brief angleBetween
@@ -662,7 +662,7 @@ vec3_t<N> z_rotation(N angle);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2);
+N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
 
 /**
  *  @brief angleBetween
@@ -679,7 +679,7 @@ N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origin);
+N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origin) noexcept;
 
 /**
  *  @brief min
@@ -693,7 +693,7 @@ N angle_between(const vec3_t<N>& v1, const vec3_t<N>& v2, const vec3_t<N>& origi
  *  input vectors.
  */
 template <typename N> constexpr
-vec3_t<N> min(const vec3_t<N>&, const vec3_t<N>&);
+vec3_t<N> min(const vec3_t<N>&, const vec3_t<N>&) noexcept;
 
 /**
  *  @brief mix
@@ -712,7 +712,7 @@ vec3_t<N> min(const vec3_t<N>&, const vec3_t<N>&);
  *  percentage N.
  */
 template <typename N> constexpr
-vec3_t<N> mix(const vec3_t<N>&, const vec3_t<N>&, N);
+vec3_t<N> mix(const vec3_t<N>&, const vec3_t<N>&, N) noexcept;
 
 /**
  *  @brief max
@@ -726,7 +726,7 @@ vec3_t<N> mix(const vec3_t<N>&, const vec3_t<N>&, N);
  *  input vectors.
  */
 template <typename N> constexpr
-vec3_t<N> max(const vec3_t<N>&, const vec3_t<N>&);
+vec3_t<N> max(const vec3_t<N>&, const vec3_t<N>&) noexcept;
 
 /**
  * @brief clamp
@@ -746,7 +746,7 @@ vec3_t<N> max(const vec3_t<N>&, const vec3_t<N>&);
  * and 'maxVals.'
  */
 template <typename N>
-constexpr vec3_t<N> clamp(const vec3_t<N>& v, const vec3_t<N>& minVals, const vec3_t<N>& maxVals);
+constexpr vec3_t<N> clamp(const vec3_t<N>& v, const vec3_t<N>& minVals, const vec3_t<N>& maxVals) noexcept;
 
 /**
  *  @brief project
@@ -759,7 +759,7 @@ constexpr vec3_t<N> clamp(const vec3_t<N>& v, const vec3_t<N>& minVals, const ve
  *  @return The vector projection of v1 onto v2.
  */
 template <typename N> inline
-vec3_t<N> project(const vec3_t<N>& v1, const vec3_t<N>& v2);
+vec3_t<N> project(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
 
 /**
  *  @brief reflect
@@ -774,7 +774,7 @@ vec3_t<N> project(const vec3_t<N>& v1, const vec3_t<N>& v2);
  *  The reflection of v around the normal vector 'norm'.
  */
 template <typename N> constexpr
-vec3_t<N> reflect(const vec3_t<N>& v1, const vec3_t<N>& norm);
+vec3_t<N> reflect(const vec3_t<N>& v1, const vec3_t<N>& norm) noexcept;
 
 /**
  *  @brief mid
@@ -786,7 +786,7 @@ vec3_t<N> reflect(const vec3_t<N>& v1, const vec3_t<N>& norm);
  *  @return the midpoint between v1 and v2.
  */
 template <typename N> constexpr
-vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
+vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2) noexcept;
 
 /**
  * @brief step
@@ -803,7 +803,7 @@ vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
  * @return the step function generated by comparing two values.
  */
 template <typename N> constexpr
-vec3_t<N> step(const vec3_t<N>& edge, const vec3_t<N>& v);
+vec3_t<N> step(const vec3_t<N>& edge, const vec3_t<N>& v) noexcept;
 
 /**
  * @brief smoothstep
@@ -818,7 +818,7 @@ vec3_t<N> step(const vec3_t<N>& edge, const vec3_t<N>& v);
  * @return The smooth linear interpolation of x in between the interval a and b.
  */
 template <typename N> constexpr
-vec3_t<N> smoothstep(const vec3_t<N>& a, const vec3_t<N>& b, const vec3_t<N>& x);
+vec3_t<N> smoothstep(const vec3_t<N>& a, const vec3_t<N>& b, const vec3_t<N>& x) noexcept;
 
 /**
  *  @brief rcp
@@ -830,7 +830,7 @@ vec3_t<N> smoothstep(const vec3_t<N>& a, const vec3_t<N>& b, const vec3_t<N>& x)
  *  @return the element-wise reciprocal between v.
  */
 template <typename N> constexpr
-vec3_t<N> rcp(const vec3_t<N>& v);
+vec3_t<N> rcp(const vec3_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the sign bits of a vector type.
@@ -866,7 +866,7 @@ vec3_t<N> sign(const vec3_t<N>& x) noexcept;
  *  @return A vector with all elements rounded down to the nearest integer.
  */
 template <typename N> constexpr
-vec3_t<N> floor(const vec3_t<N>& v);
+vec3_t<N> floor(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief ceil
@@ -878,7 +878,7 @@ vec3_t<N> floor(const vec3_t<N>& v);
  *  @return A vector with all elements rounded up to the nearest integer.
  */
 template <typename N> constexpr
-vec3_t<N> ceil(const vec3_t<N>& v);
+vec3_t<N> ceil(const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief round
@@ -890,7 +890,7 @@ vec3_t<N> ceil(const vec3_t<N>& v);
  *  @return A vector with all elements rounded to the nearest integer.
  */
 template <typename N> constexpr
-vec3_t<N> round(const vec3_t<N>& v);
+vec3_t<N> round(const vec3_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the absolute value of a vector.
@@ -900,7 +900,7 @@ vec3_t<N> round(const vec3_t<N>& v);
  * @return The absolute value of v.
  */
 template <typename N> constexpr
-vec3_t<N> abs(const vec3_t<N>& v);
+vec3_t<N> abs(const vec3_t<N>& v) noexcept;
 
 /**
  * @brief log2
@@ -1044,7 +1044,7 @@ constexpr vec3_t<N> fmsub(const vec3_t<N>& x, const vec3_t<N>& m, const vec3_t<N
  *  @return the sum of elements within v.
  */
 template <typename N> constexpr
-N sum(const vec4_t<N>& v);
+N sum(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief reciprocal sum
@@ -1055,7 +1055,7 @@ N sum(const vec4_t<N>& v);
  *  @return the reciprocal of the sum of elements within v.
  */
 template <typename N> constexpr
-N sum_inv(const vec4_t<N>& v);
+N sum_inv(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief dot
@@ -1068,7 +1068,7 @@ N sum_inv(const vec4_t<N>& v);
  *  @return the 4D dot product of v1 & v2.
  */
 template <typename N> constexpr
-N dot(const vec4_t<N>& v1, const vec4_t<N>& v2);
+N dot(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  *  @brief cross
@@ -1083,7 +1083,7 @@ N dot(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  vectors. The final component is set to zero.
  */
 template <typename N> constexpr
-vec4_t<N> cross(const vec4_t<N>& v1, const vec4_t<N>& v2);
+vec4_t<N> cross(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  *  @brief normalize
@@ -1094,7 +1094,7 @@ vec4_t<N> cross(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  @return a normalized 4D vector.
  */
 template <typename N> inline
-vec4_t<N> normalize(const vec4_t<N>& v);
+vec4_t<N> normalize(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief lengthSquared
@@ -1107,7 +1107,7 @@ vec4_t<N> normalize(const vec4_t<N>& v);
  *  @return The square of the length/magnitude of a 4D vector.
  */
 template <typename N> constexpr
-N length_squared(const vec4_t<N>& v);
+N length_squared(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief length
@@ -1119,7 +1119,7 @@ N length_squared(const vec4_t<N>& v);
  *  @return The length/magnitude of a 4D vector.
  */
 template <typename N> inline
-N length(const vec4_t<N>& v);
+N length(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief angleBetween
@@ -1133,7 +1133,7 @@ N length(const vec4_t<N>& v);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_between(const vec4_t<N>& v1, const vec4_t<N>& v2);
+N angle_between(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  *  @brief angleBetween
@@ -1150,7 +1150,7 @@ N angle_between(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  @return The number of radians in between v1 & v2.
  */
 template <typename N> inline
-N angle_bewteen(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origin);
+N angle_bewteen(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origin) noexcept;
 
 /**
  *  @brief min
@@ -1164,7 +1164,7 @@ N angle_bewteen(const vec4_t<N>& v1, const vec4_t<N>& v2, const vec4_t<N>& origi
  *  input vectors.
  */
 template <typename N> constexpr
-vec4_t<N> min(const vec4_t<N>& v1, const vec4_t<N>& v2);
+vec4_t<N> min(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  *  @brief mix
@@ -1183,7 +1183,7 @@ vec4_t<N> min(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  percentage N.
  */
 template <typename N> constexpr
-vec4_t<N> mix(const vec4_t<N>& v1, const vec4_t<N>& v2, N percent);
+vec4_t<N> mix(const vec4_t<N>& v1, const vec4_t<N>& v2, N percent) noexcept;
 
 /**
  *  @brief max
@@ -1197,7 +1197,7 @@ vec4_t<N> mix(const vec4_t<N>& v1, const vec4_t<N>& v2, N percent);
  *  input vectors.
  */
 template <typename N> constexpr
-vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2);
+vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  * @brief clamp
@@ -1217,7 +1217,7 @@ vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2);
  * and 'maxVals.'
  */
 template <typename N> constexpr
-vec4_t<N> clamp(const vec4_t<N>& v, const vec4_t<N>& minVals, const vec4_t<N>& maxVals);
+vec4_t<N> clamp(const vec4_t<N>& v, const vec4_t<N>& minVals, const vec4_t<N>& maxVals) noexcept;
 
 /**
  *  @brief project
@@ -1230,7 +1230,7 @@ vec4_t<N> clamp(const vec4_t<N>& v, const vec4_t<N>& minVals, const vec4_t<N>& m
  *  @return The vector projection of v1 onto v2.
  */
 template <typename N> inline
-vec4_t<N> project(const vec4_t<N>& v1, const vec4_t<N>& v2);
+vec4_t<N> project(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  *  @brief reflect
@@ -1245,7 +1245,7 @@ vec4_t<N> project(const vec4_t<N>& v1, const vec4_t<N>& v2);
  *  The reflection of v around the normal vector 'norm'.
  */
 template <typename N> constexpr
-vec4_t<N> reflect(const vec4_t<N>& v1, const vec4_t<N>& norm);
+vec4_t<N> reflect(const vec4_t<N>& v1, const vec4_t<N>& norm) noexcept;
 
 /**
  *  @brief mid
@@ -1257,7 +1257,7 @@ vec4_t<N> reflect(const vec4_t<N>& v1, const vec4_t<N>& norm);
  *  @return the midpoint between v1 and v2.
  */
 template <typename N> constexpr
-vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
+vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
 
 /**
  * @brief step
@@ -1274,7 +1274,7 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
  * @return the step function generated by comparing two values.
  */
 template <typename N> constexpr
-vec4_t<N> step(const vec4_t<N>& edge, const vec4_t<N>& v);
+vec4_t<N> step(const vec4_t<N>& edge, const vec4_t<N>& v) noexcept;
 
 /**
  * @brief smoothstep
@@ -1289,7 +1289,7 @@ vec4_t<N> step(const vec4_t<N>& edge, const vec4_t<N>& v);
  * @return The smooth linear interpolation of x in between the interval a and b.
  */
 template <typename N> constexpr
-vec4_t<N> smoothstep(const vec4_t<N>& a, const vec4_t<N>& b, const vec4_t<N>& x);
+vec4_t<N> smoothstep(const vec4_t<N>& a, const vec4_t<N>& b, const vec4_t<N>& x) noexcept;
 
 /**
  *  @brief rcp
@@ -1301,7 +1301,7 @@ vec4_t<N> smoothstep(const vec4_t<N>& a, const vec4_t<N>& b, const vec4_t<N>& x)
  *  @return the element-wise reciprocal between v.
  */
 template <typename N> constexpr
-vec4_t<N> rcp(const vec4_t<N>& v);
+vec4_t<N> rcp(const vec4_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the sign bits of a vector type.
@@ -1337,7 +1337,7 @@ vec4_t<N> sign(const vec4_t<N>& x) noexcept;
  *  @return A vector with all elements rounded down to the nearest integer.
  */
 template <typename N> constexpr
-vec4_t<N> floor(const vec4_t<N>& v);
+vec4_t<N> floor(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief ceil
@@ -1349,7 +1349,7 @@ vec4_t<N> floor(const vec4_t<N>& v);
  *  @return A vector with all elements rounded up to the nearest integer.
  */
 template <typename N> constexpr
-vec4_t<N> ceil(const vec4_t<N>& v);
+vec4_t<N> ceil(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief round
@@ -1361,7 +1361,7 @@ vec4_t<N> ceil(const vec4_t<N>& v);
  *  @return A vector with all elements rounded to the nearest integer.
  */
 template <typename N> constexpr
-vec4_t<N> round(const vec4_t<N>& v);
+vec4_t<N> round(const vec4_t<N>& v) noexcept;
 
 /**
  * @brief Retrieve the absolute value of a vector.
@@ -1371,7 +1371,7 @@ vec4_t<N> round(const vec4_t<N>& v);
  * @return The absolute value of v.
  */
 template <typename N> constexpr
-vec4_t<N> abs(const vec4_t<N>& v);
+vec4_t<N> abs(const vec4_t<N>& v) noexcept;
 
 /**
  * @brief log2

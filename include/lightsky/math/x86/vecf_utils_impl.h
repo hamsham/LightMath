@@ -20,7 +20,7 @@ namespace math
     3D Vectors
 -----------------------------------------------------------------------------*/
 /*
-inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2)
+inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2) noexcept
 {
     //const __m128i axy = _mm_loadl_epi64(reinterpret_cast<const __m128i*>(v1.v));
     //const __m128  va  = _mm_movelh_ps(_mm_castsi128_ps(axy), _mm_load_ss(&v1.v[2]));
@@ -42,7 +42,7 @@ inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2)
 /*-------------------------------------
     3D Cross
 -------------------------------------*/
-inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float>& v2)
+inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float>& v2) noexcept
 {
     union
     {
@@ -61,7 +61,7 @@ inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float
 /*-------------------------------------
     3D Magnitude
 -------------------------------------*/
-inline LS_INLINE float length(const vec3_t<float>& v)
+inline LS_INLINE float length(const vec3_t<float>& v) noexcept
 {
     // cache
     const __m128 s = _mm_set_ps(v.v[0], v.v[1], v.v[2], 0.f);
@@ -88,7 +88,7 @@ inline LS_INLINE float length(const vec3_t<float>& v)
 /*-------------------------------------
     4D Sum
 -------------------------------------*/
-inline LS_INLINE float sum(const vec4_t<float>& v)
+inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 {
     // horizontal add
     const __m128 a = v.simd;
@@ -107,7 +107,7 @@ inline LS_INLINE float sum(const vec4_t<float>& v)
 /*-------------------------------------
     4D Reciprocal Sum
 -------------------------------------*/
-inline LS_INLINE float sum_inv(const vec4_t<float>& v)
+inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 {
     // horizontal add
     const __m128 a = v.simd;
@@ -126,7 +126,7 @@ inline LS_INLINE float sum_inv(const vec4_t<float>& v)
 /*-------------------------------------
     4D Cross
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     const __m128 a = v1.simd;
     const __m128 b = v2.simd;
@@ -140,7 +140,7 @@ inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float
 /*-------------------------------------
     4D Dot
 -------------------------------------*/
-inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     // horizontal add
     const __m128 a = _mm_mul_ps(v1.simd, v2.simd);
@@ -159,7 +159,7 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2)
 /*-------------------------------------
     4D Magnitude
 -------------------------------------*/
-inline LS_INLINE float length(const vec4_t<float>& v)
+inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 {
     // cache
     const __m128 s = v.simd;
@@ -181,7 +181,7 @@ inline LS_INLINE float length(const vec4_t<float>& v)
 /*-------------------------------------
     4D Normalize
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 {
     // cache
     const __m128 s = v.simd;
@@ -204,7 +204,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v)
 /*-------------------------------------
     4D Mix
 -------------------------------------*/
-inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent)
+inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent) noexcept
 {
     const __m128 p = _mm_set1_ps(percent);
     const __m128 v = _mm_sub_ps(v2.simd, v1.simd);
@@ -214,7 +214,7 @@ inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<f
 /*-------------------------------------
     4D Reflect
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> reflect(const vec4_t<float>& v, const vec4_t<float>& norm)
+inline LS_INLINE vec4_t<float> reflect(const vec4_t<float>& v, const vec4_t<float>& norm) noexcept
 {
     //return v - vec4_t<num_t>{2} * dot(v, norm) * norm;
     // horizontal add
@@ -238,7 +238,7 @@ inline LS_INLINE vec4_t<float> reflect(const vec4_t<float>& v, const vec4_t<floa
 /*-------------------------------------
     4D Min
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     return vec4_t<float>{_mm_min_ps(v1.simd, v2.simd)};
 }
@@ -246,7 +246,7 @@ inline LS_INLINE vec4_t<float> min(const vec4_t<float>& v1, const vec4_t<float>&
 /*-------------------------------------
     4D Max
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2)
+inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
     return vec4_t<float>{_mm_max_ps(v1.simd, v2.simd)};
 }
@@ -254,7 +254,7 @@ inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>&
 /*-------------------------------------
     4D Clamp
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals)
+inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals) noexcept
 {
     return vec4_t<float>{_mm_min_ps(maxVals.simd, _mm_max_ps(v.simd, minVals.simd))};
 }
@@ -262,7 +262,7 @@ inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>
 /*-------------------------------------
     4D Step
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v) noexcept
 {
     return math::vec4_t<float>{_mm_and_ps(_mm_cmpge_ps(v.simd, edge.simd), _mm_set1_ps(1.f))};
 }
@@ -270,7 +270,7 @@ inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<floa
 /*-------------------------------------
     4D Smoothstep
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> smoothstep(const vec4_t<float>& a, const vec4_t<float>& b, const vec4_t<float>& x)
+inline LS_INLINE vec4_t<float> smoothstep(const vec4_t<float>& a, const vec4_t<float>& b, const vec4_t<float>& x) noexcept
 {
     const __m128 xa = _mm_sub_ps(x.simd, a.simd);
     const __m128 xb = _mm_sub_ps(b.simd, a.simd);
@@ -284,7 +284,7 @@ inline LS_INLINE vec4_t<float> smoothstep(const vec4_t<float>& a, const vec4_t<f
 /*-------------------------------------
     4D RCP
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 {
     return vec4_t<float>{_mm_rcp_ps(v.simd)};
 }
@@ -308,7 +308,7 @@ inline LS_INLINE vec4_t<float> sign(const vec4_t<float>& x) noexcept
 /*-------------------------------------
     4D floor
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> floor(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> floor(const vec4_t<float>& v) noexcept
 {
     return vec4_t<float>{_mm_floor_ps(v.simd)};
 }
@@ -316,7 +316,7 @@ inline LS_INLINE vec4_t<float> floor(const vec4_t<float>& v)
 /*-------------------------------------
     4D ceil
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> ceil(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> ceil(const vec4_t<float>& v) noexcept
 {
     return vec4_t<float>{_mm_ceil_ps(v.simd)};
 }
@@ -324,7 +324,7 @@ inline LS_INLINE vec4_t<float> ceil(const vec4_t<float>& v)
 /*-------------------------------------
     4D round
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v) noexcept
 {
     return vec4_t<float>{_mm_round_ps(v.simd, _MM_FROUND_TO_NEAREST_INT)};
 }
@@ -332,7 +332,7 @@ inline LS_INLINE vec4_t<float> round(const vec4_t<float>& v)
 /*-------------------------------------
     4D abs
 -------------------------------------*/
-inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v)
+inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v) noexcept
 {
     const __m128 sign = _mm_castsi128_ps(_mm_set1_epi32(0x80000000));
     return vec4_t<float>{_mm_xor_ps(_mm_or_ps(v.simd, sign), sign)};
