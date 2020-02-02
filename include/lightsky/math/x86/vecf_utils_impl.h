@@ -252,11 +252,33 @@ inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>&
 }
 
 /*-------------------------------------
+    4D Clamp
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals)
+{
+    return vec4_t<float>{_mm_min_ps(maxVals.simd, _mm_max_ps(v.simd, minVals.simd))};
+}
+
+/*-------------------------------------
     4D Step
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v)
 {
     return math::vec4_t<float>{_mm_and_ps(_mm_cmpge_ps(v.simd, edge.simd), _mm_set1_ps(1.f))};
+}
+
+/*-------------------------------------
+    4D Smoothstep
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> smoothstep(const vec4_t<float>& a, const vec4_t<float>& b, const vec4_t<float>& x)
+{
+    const __m128 xa = _mm_sub_ps(x.simd, a.simd);
+    const __m128 xb = _mm_sub_ps(b.simd, a.simd);
+    const __m128 d = _mm_div_ps(xa, xb);
+    const __m128 clamped = _mm_min_ps(_mm_set1_ps(1.f), _mm_max_ps(_mm_setzero_ps(), d));
+    const __m128 n = _mm_fnmadd_ps(_mm_set1_ps(2.f), clamped, _mm_set1_ps(3.f));
+
+    return vec4_t<float>{_mm_mul_ps(n, _mm_mul_ps(clamped, clamped))};
 }
 
 /*-------------------------------------

@@ -219,6 +219,26 @@ template <typename N> constexpr
 vec2_t<N> max(const vec2_t<N>& v1, const vec2_t<N>& v2);
 
 /**
+ * @brief clamp
+ * Bind vector elements to within a certain range.
+ *
+ * @param v
+ * A vector whose components should be constrained to be within a specific
+ * range.
+ *
+ * @param minVals
+ * The minimum allowable values for each component in 'v.'
+ *
+ * @param maxVals
+ * The maximum allowable values for each component in 'v.'
+ *
+ * @return A vector whose components have been constrained to those in 'minVals'
+ * and 'maxVals.'
+ */
+template <typename N>
+constexpr vec2_t<N> clamp(const vec2_t<N>& v, const vec2_t<N>& minVals, const vec2_t<N>& maxVals);
+
+/**
  *  @brief project
  *  Project one vector onto another and retrieve the result.
  *
@@ -274,6 +294,21 @@ vec2_t<N> mid(const vec2_t<N>& v1, const vec2_t<N>& v2);
  */
 template <typename N> constexpr
 vec2_t<N> step(const vec2_t<N>& edge, const vec2_t<N>& v);
+
+/**
+ * @brief smoothstep
+ * Perform a smooth interpolation of a number along the sub-sequence [a, b].
+ *
+ * @param a
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @param b
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @return The smooth linear interpolation of x in between the interval a and b.
+ */
+template <typename N> constexpr
+vec2_t<N> smoothstep(const vec2_t<N>& a, const vec2_t<N>& b, const vec2_t<N>& x);
 
 /**
  *  @brief rcp
@@ -694,6 +729,26 @@ template <typename N> constexpr
 vec3_t<N> max(const vec3_t<N>&, const vec3_t<N>&);
 
 /**
+ * @brief clamp
+ * Bind vector elements to within a certain range.
+ *
+ * @param v
+ * A vector whose components should be constrained to be within a specific
+ * range.
+ *
+ * @param minVals
+ * The minimum allowable values for each component in 'v.'
+ *
+ * @param maxVals
+ * The maximum allowable values for each component in 'v.'
+ *
+ * @return A vector whose components have been constrained to those in 'minVals'
+ * and 'maxVals.'
+ */
+template <typename N>
+constexpr vec3_t<N> clamp(const vec3_t<N>& v, const vec3_t<N>& minVals, const vec3_t<N>& maxVals);
+
+/**
  *  @brief project
  *  Project one vector onto another and retrieve the result.
  *
@@ -749,6 +804,21 @@ vec3_t<N> mid(const vec3_t<N>& v1, const vec3_t<N>& v2);
  */
 template <typename N> constexpr
 vec3_t<N> step(const vec3_t<N>& edge, const vec3_t<N>& v);
+
+/**
+ * @brief smoothstep
+ * Perform a smooth interpolation of a number along the sub-sequence [a, b].
+ *
+ * @param a
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @param b
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @return The smooth linear interpolation of x in between the interval a and b.
+ */
+template <typename N> constexpr
+vec3_t<N> smoothstep(const vec3_t<N>& a, const vec3_t<N>& b, const vec3_t<N>& x);
 
 /**
  *  @brief rcp
@@ -1130,6 +1200,26 @@ template <typename N> constexpr
 vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2);
 
 /**
+ * @brief clamp
+ * Bind vector elements to within a certain range.
+ *
+ * @param v
+ * A vector whose components should be constrained to be within a specific
+ * range.
+ *
+ * @param minVals
+ * The minimum allowable values for each component in 'v.'
+ *
+ * @param maxVals
+ * The maximum allowable values for each component in 'v.'
+ *
+ * @return A vector whose components have been constrained to those in 'minVals'
+ * and 'maxVals.'
+ */
+template <typename N> constexpr
+vec4_t<N> clamp(const vec4_t<N>& v, const vec4_t<N>& minVals, const vec4_t<N>& maxVals);
+
+/**
  *  @brief project
  *  Project one vector onto another and retrieve the result.
  *
@@ -1185,6 +1275,21 @@ vec4_t<N> mid(const vec4_t<N>& v1, const vec4_t<N>& v2);
  */
 template <typename N> constexpr
 vec4_t<N> step(const vec4_t<N>& edge, const vec4_t<N>& v);
+
+/**
+ * @brief smoothstep
+ * Perform a smooth interpolation of a number along the sub-sequence [a, b].
+ *
+ * @param a
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @param b
+ * A vector within the same sub-sequence that x lies on.
+ *
+ * @return The smooth linear interpolation of x in between the interval a and b.
+ */
+template <typename N> constexpr
+vec4_t<N> smoothstep(const vec4_t<N>& a, const vec4_t<N>& b, const vec4_t<N>& x);
 
 /**
  *  @brief rcp

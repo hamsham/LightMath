@@ -30,6 +30,7 @@ LS_MATH_ADD_TARGET(lsmath_test_log      lsmath_test_log.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_pow2     lsmath_test_pow2.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_rcp_sqrt lsmath_test_rcp_sqrt.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_signbit  lsmath_test_signbit.cpp)
+LS_MATH_ADD_TARGET(lsmath_test_step     lsmath_test_step.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_trig     lsmath_test_trig.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_vs_glm   lsmath_test_vs_glm.cpp)
 

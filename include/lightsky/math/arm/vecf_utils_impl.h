@@ -137,6 +137,14 @@ inline LS_INLINE vec4_t<float> max(const vec4_t<float>& v1, const vec4_t<float>&
 }
 
 /*-------------------------------------
+    4D Clamp
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>& minVals, const vec4_t<float>& maxVals)
+{
+    return vec4_t<float>{vminq_f32(maxVals.simd, vmaxq_f32(v.simd, minVals.simd))};
+}
+
+/*-------------------------------------
     4D Step
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v)

@@ -116,7 +116,6 @@ num_t math::angle_between(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2, co
 template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::min(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2)
 {
-    //return length_squared<num_t>(v1) < length_squared<num_t>(v2) ? v1 : v2;
     return math::vec2_t<num_t>{
         math::min<num_t>(v1.v[0], v2.v[0]),
         math::min<num_t>(v1.v[1], v2.v[1])
@@ -138,10 +137,21 @@ math::vec2_t<num_t> math::mix(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2
 template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::max(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2)
 {
-    //return length_squared<num_t>(v1) > length_squared<num_t>(v2) ? v1 : v2;
     return math::vec2_t<num_t>{
         math::max<num_t>(v1.v[0], v2.v[0]),
         math::max<num_t>(v1.v[1], v2.v[1])
+    };
+}
+
+/*-------------------------------------
+    2D Clamp
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::clamp(const vec2_t<num_t>& v, const vec2_t<num_t>& minVals, const vec2_t<num_t>& maxVals)
+{
+    return math::vec2_t<num_t>{
+        math::clamp<num_t>(v.v[0], minVals.v[0], maxVals.v[0]),
+        math::clamp<num_t>(v.v[1], minVals.v[1], maxVals.v[1])
     };
 }
 
@@ -197,6 +207,18 @@ math::vec2_t<num_t> math::step(const vec2_t <num_t>& edge, const vec2_t <num_t>&
     return math::vec2_t<num_t>{
         v[0] < edge[0] ? num_t{0} : num_t{1},
         v[1] < edge[1] ? num_t{0} : num_t{1}
+    };
+}
+
+/*-------------------------------------
+    2D Smoothstep
+-------------------------------------*/
+template<typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::smoothstep(const vec2_t<num_t>& a, const vec2_t<num_t>& b, const vec2_t<num_t>& x)
+{
+    return math::vec2_t<num_t>{
+        math::smoothstep<num_t>(a[0], b[0], x[0]),
+        math::smoothstep<num_t>(a[1], b[1], x[1])
     };
 }
 
@@ -575,6 +597,19 @@ math::vec3_t<num_t> math::max(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2
 }
 
 /*-------------------------------------
+    3D Clamp
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::clamp(const vec3_t<num_t>& v, const vec3_t<num_t>& minVals, const vec3_t<num_t>& maxVals)
+{
+    return math::vec3_t<num_t>{
+        math::clamp<num_t>(v.v[0], minVals.v[0], maxVals.v[0]),
+        math::clamp<num_t>(v.v[1], minVals.v[1], maxVals.v[1]),
+        math::clamp<num_t>(v.v[2], minVals.v[2], maxVals.v[2])
+    };
+}
+
+/*-------------------------------------
     3D Projection
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
@@ -626,6 +661,19 @@ math::vec3_t<num_t> math::step(const vec3_t <num_t>& edge, const vec3_t <num_t>&
         v[0] < edge[0] ? num_t{0} : num_t{1},
         v[1] < edge[1] ? num_t{0} : num_t{1},
         v[2] < edge[2] ? num_t{0} : num_t{1}
+    };
+}
+
+/*-------------------------------------
+    3D Smoothstep
+-------------------------------------*/
+template<typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::smoothstep(const vec3_t<num_t>& a, const vec3_t<num_t>& b, const vec3_t<num_t>& x)
+{
+    return math::vec3_t<num_t>{
+        math::smoothstep<num_t>(a[0], b[0], x[0]),
+        math::smoothstep<num_t>(a[1], b[1], x[1]),
+        math::smoothstep<num_t>(a[2], b[2], x[2])
     };
 }
 
@@ -976,6 +1024,20 @@ math::vec4_t<num_t> math::max(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2
 }
 
 /*-------------------------------------
+    4D Clamp
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::clamp(const vec4_t<num_t>& v, const vec4_t<num_t>& minVals, const vec4_t<num_t>& maxVals)
+{
+    return math::vec4_t<num_t>{
+        math::clamp<num_t>(v.v[0], minVals.v[0], maxVals.v[0]),
+        math::clamp<num_t>(v.v[1], minVals.v[1], maxVals.v[1]),
+        math::clamp<num_t>(v.v[2], minVals.v[2], maxVals.v[2]),
+        math::clamp<num_t>(v.v[3], minVals.v[3], maxVals.v[3])
+    };
+}
+
+/*-------------------------------------
     4D Projection
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
@@ -1028,6 +1090,20 @@ math::vec4_t<num_t> math::step(const vec4_t <num_t>& edge, const vec4_t <num_t>&
         v[1] < edge[1] ? num_t{0} : num_t{1},
         v[2] < edge[2] ? num_t{0} : num_t{1},
         v[3] < edge[3] ? num_t{0} : num_t{1}
+    };
+}
+
+/*-------------------------------------
+    4D Smoothstep
+-------------------------------------*/
+template<typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::smoothstep(const vec4_t<num_t>& a, const vec4_t<num_t>& b, const vec4_t<num_t>& x)
+{
+    return math::vec4_t<num_t>{
+        math::smoothstep<num_t>(a[0], b[0], x[0]),
+        math::smoothstep<num_t>(a[1], b[1], x[1]),
+        math::smoothstep<num_t>(a[2], b[2], x[2]),
+        math::smoothstep<num_t>(a[3], b[3], x[3])
     };
 }
 
