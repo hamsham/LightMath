@@ -115,9 +115,8 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent) noexcept
 {
-    const float32x4_t p = vdupq_n_f32(percent);
     const float32x4_t v = vsubq_f32(v2.simd, v1.simd);
-    return vec4_t<float>{vmlaq_f32(v1.simd, v, p)};
+    return vec4_t<float>{vmlaq_n_f32(v1.simd, v, percent)};
 }
 
 /*-------------------------------------
