@@ -161,11 +161,8 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
 -------------------------------------*/
 inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 {
-    // cache
-    const __m128 s = v.simd;
-
     // horizontal add
-    const __m128 a = _mm_mul_ps(s, s);
+    const __m128 a = _mm_mul_ps(v.simd, v.simd);
 
     // swap the words of each vector
     const __m128 b = _mm_permute_ps(a, 0xB1);
@@ -183,11 +180,8 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 {
-    // cache
-    const __m128 s = v.simd;
-
     // horizontal add
-    const __m128 a = _mm_mul_ps(s, s);
+    const __m128 a = _mm_mul_ps(v.simd, v.simd);
 
     // swap the words of each vector
     const __m128 b = _mm_permute_ps(a, 0xB1);
@@ -198,7 +192,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
     const __m128 e = _mm_add_ps(c, d);
 
     // normalization
-    return vec4_t<float>{_mm_mul_ps(s, _mm_rsqrt_ps(e))};
+    return vec4_t<float>{_mm_mul_ps(v.simd, _mm_rsqrt_ps(e))};
 }
 
 /*-------------------------------------

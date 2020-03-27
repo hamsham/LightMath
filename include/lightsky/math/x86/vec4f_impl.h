@@ -69,9 +69,9 @@ union alignas(sizeof(__m128)) vec4_t<float>
 
     vec4_t operator/(const vec4_t<float>&) const;
 
-    vec4_t& operator=(const vec4_t<float>&) noexcept;
+    vec4_t& operator=(const vec4_t<float>&) noexcept = default;
 
-    vec4_t& operator=(vec4_t<float>&&) noexcept;
+    vec4_t& operator=(vec4_t<float>&&) noexcept = default;
 
     vec4_t& operator+=(const vec4_t<float>&);
 
@@ -127,6 +127,8 @@ union alignas(sizeof(__m128)) vec4_t<float>
 
     vec4_t& operator/=(float);
 };
+
+static_assert(std::is_trivial<vec4_t<float>>::value, "Vec4f must be trivial.");
 
 /*-------------------------------------
     Constructors
@@ -395,6 +397,7 @@ vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
     return vec4_t{_mm_div_ps(simd, input.simd)};
 }
 
+/*
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator=(const vec4_t<float>& input) noexcept
 {
@@ -408,6 +411,7 @@ vec4_t<float>& vec4_t<float>::operator=(vec4_t<float>&& input) noexcept
     this->simd = input.simd;
     return *this;
 }
+*/
 
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator+=(const vec4_t<float>& input)
