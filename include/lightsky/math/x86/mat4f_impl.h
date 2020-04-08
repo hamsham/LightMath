@@ -128,10 +128,11 @@ vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
     __m128 v0 = _mm_mul_ps(  this->m[0].simd, _mm_permute_ps(v.simd, 0x00));
     __m128 v1 = _mm_fmadd_ps(this->m[1].simd, _mm_permute_ps(v.simd, 0x55), v0);
-    __m128 v2 = _mm_fmadd_ps(this->m[2].simd, _mm_permute_ps(v.simd, 0xAA), v1);
+
+    __m128 v2 = _mm_mul_ps(  this->m[2].simd, _mm_permute_ps(v.simd, 0xAA));
     __m128 v3 = _mm_fmadd_ps(this->m[3].simd, _mm_permute_ps(v.simd, 0xFF), v2);
 
-    return math::vec4_t<float>{v3};
+    return math::vec4_t<float>{_mm_add_ps(v1, v3)};
 }
 
 
