@@ -12,36 +12,31 @@ namespace math {
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
 {
-
     #if 1
-        const __m128* const tm = reinterpret_cast<const __m128*>(this);
-        const __m256 col0 = _mm256_broadcast_ps(tm+0);
-        const __m256 col1 = _mm256_broadcast_ps(tm+1);
-        const __m256 col2 = _mm256_broadcast_ps(tm+2);
-        const __m256 col3 = _mm256_broadcast_ps(tm+3);
-
-        //const float* const nm = reinterpret_cast<const float*>(&n);
-        const __m256 temp0 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[0].simd), n[1].simd, 1);
-        const __m256 temp1 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[2].simd), n[3].simd, 1);
-        __m256 r01;
-        __m256 r23;
-
         alignas(sizeof(__m256)) mat4_t<float> ret;
 
+        const __m256 col0 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[0].simd), m[0].simd, 1);
+        const __m256 col1 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[1].simd), m[1].simd, 1);
+        const __m256 col2 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[2].simd), m[2].simd, 1);
+        const __m256 col3 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[3].simd), m[3].simd, 1);
+
+        __m256 r01;
+        const __m256 temp0 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[0].simd), n[1].simd, 1);
         r01 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp0, 0x00));
         r01 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp0, 0x55), r01);
         r01 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp0, 0xAA), r01);
-        r01 = _mm256_fmadd_ps(col3, _mm256_permute_ps(temp0, 0xFF), r01);
-        _mm256_store_ps(reinterpret_cast<float*>(&ret), r01);
+        _mm256_store_ps(ret.m[0].v, _mm256_fmadd_ps(col3, _mm256_permute_ps(temp0, 0xFF), r01));
 
+        __m256 r23;
+        const __m256 temp1 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[2].simd), n[3].simd, 1);
         r23 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp1, 0x00));
         r23 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp1, 0x55), r23);
         r23 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp1, 0xAA), r23);
-        r23 = _mm256_fmadd_ps(col3, _mm256_permute_ps(temp1, 0xFF), r23);
-        _mm256_store_ps(reinterpret_cast<float*>(&ret)+8, r23);
+        _mm256_store_ps(ret.m[2].v, _mm256_fmadd_ps(col3, _mm256_permute_ps(temp1, 0xFF), r23));
 
         return ret;
     #else
+        alignas(sizeof(__m128)) mat4_t<float> ret;
         const __m128 col0 = this->m[0].simd;
         const __m128 col1 = this->m[1].simd;
         const __m128 col2 = this->m[2].simd;
@@ -57,32 +52,29 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
             r0 = _mm_fmadd_ps(col1, _mm_permute_ps(n[0].simd, 0x55), r0);
             r0 = _mm_fmadd_ps(col2, _mm_permute_ps(n[0].simd, 0xAA), r0);
             r0 = _mm_fmadd_ps(col3, _mm_permute_ps(n[0].simd, 0xFF), r0);
+            _mm_store_ps(reinterpret_cast<float*>(&ret)+0,  r0);
         }
         {
             r1 = _mm_mul_ps(  col0, _mm_permute_ps(n[1].simd, 0x00));
             r1 = _mm_fmadd_ps(col1, _mm_permute_ps(n[1].simd, 0x55), r1);
             r1 = _mm_fmadd_ps(col2, _mm_permute_ps(n[1].simd, 0xAA), r1);
             r1 = _mm_fmadd_ps(col3, _mm_permute_ps(n[1].simd, 0xFF), r1);
+            _mm_store_ps(reinterpret_cast<float*>(&ret)+4,  r1);
         }
         {
             r2 = _mm_mul_ps(  col0, _mm_permute_ps(n[2].simd, 0x00));
             r2 = _mm_fmadd_ps(col1, _mm_permute_ps(n[2].simd, 0x55), r2);
             r2 = _mm_fmadd_ps(col2, _mm_permute_ps(n[2].simd, 0xAA), r2);
             r2 = _mm_fmadd_ps(col3, _mm_permute_ps(n[2].simd, 0xFF), r2);
+            _mm_store_ps(reinterpret_cast<float*>(&ret)+8,  r2);
         }
         {
             r3 = _mm_mul_ps(  col0, _mm_permute_ps(n[3].simd, 0x00));
             r3 = _mm_fmadd_ps(col1, _mm_permute_ps(n[3].simd, 0x55), r3);
             r3 = _mm_fmadd_ps(col2, _mm_permute_ps(n[3].simd, 0xAA), r3);
             r3 = _mm_fmadd_ps(col3, _mm_permute_ps(n[3].simd, 0xFF), r3);
+            _mm_store_ps(reinterpret_cast<float*>(&ret)+12, r3);
         }
-
-        alignas(sizeof(__m128)) mat4_t<float> ret;
-
-        _mm_store_ps(reinterpret_cast<float*>(&ret)+0,  r0);
-        _mm_store_ps(reinterpret_cast<float*>(&ret)+4,  r1);
-        _mm_store_ps(reinterpret_cast<float*>(&ret)+8,  r2);
-        _mm_store_ps(reinterpret_cast<float*>(&ret)+12, r3);
 
         return ret;
     #endif
