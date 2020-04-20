@@ -5,11 +5,11 @@
  * This file contains macros and definitions for the math module of LightSky.
  */
 
-#ifndef __LS_MATH_SETUP_H__
-#define __LS_MATH_SETUP_H__
+#ifndef LS_MATH_SETUP_H
+#define LS_MATH_SETUP_H
 
 #include <limits>
 
 #include "lightsky/setup/Setup.h"
 
-#endif /* __LS_MATH_SETUP_H__ */
+#endif /* LS_MATH_SETUP_H */
