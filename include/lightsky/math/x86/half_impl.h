@@ -1,6 +1,13 @@
 
 #include "lightsky/setup/Compiler.h"
 
+// Clang seems to import the _cvtss_sh() function as a C-extension, rather
+// than ignoring system header code.
+#if defined(LS_COMPILER_CLANG)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
+
 namespace ls
 {
 namespace math
@@ -11,12 +18,8 @@ namespace math
 /*-------------------------------------
  * Construct from a float
 -------------------------------------*/
-inline LS_INLINE Half::Half(const float f) noexcept :
-    #ifdef LS_COMPILER_CLANG
-        bits{(uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set1_ps(f), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC))}
-    #else
-        bits{_cvtss_sh(f, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC)}
-    #endif
+inline LS_INLINE half::half(const float f) noexcept :
+    bits{_cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC)}
 {}
 
 
@@ -24,13 +27,9 @@ inline LS_INLINE Half::Half(const float f) noexcept :
 /*-------------------------------------
  * Convert from a float
 -------------------------------------*/
-inline LS_INLINE Half& Half::operator=(const float f) noexcept
+inline LS_INLINE half& half::operator=(const float f) noexcept
 {
-    #ifdef LS_COMPILER_CLANG
-        bits = (uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set1_ps(f), _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC));
-    #else
-        bits = _cvtss_sh(f, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
-    #endif
+    bits = _cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC);
     return *this;
 }
 
@@ -39,7 +38,7 @@ inline LS_INLINE Half& Half::operator=(const float f) noexcept
 /*-------------------------------------
  * Cast to a float
 -------------------------------------*/
-inline LS_INLINE Half::operator float() const noexcept
+inline LS_INLINE half::operator float() const noexcept
 {
     return _cvtsh_ss(bits);
 }
@@ -48,3 +47,7 @@ inline LS_INLINE Half::operator float() const noexcept
 
 } // end math namespace
 } // end ls namespace
+
+#if defined(LS_COMPILER_CLANG)
+    #pragma clang diagnostic pop
+#endif

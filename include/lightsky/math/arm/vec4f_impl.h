@@ -219,7 +219,7 @@ inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
 #if defined(LS_ARCH_AARCH64)
 template <>
 template <>
-inline LS_INLINE vec4_t<Half>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<half>::operator vec4_t<float>() const
 {
     vec4_t<float> ret;
     vst1q_f32(ret.v, vcvt_f32_f16(vld1_f16(reinterpret_cast<const float16_t*>(v))));
@@ -292,9 +292,9 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 
 #if defined(LS_ARCH_AARCH64)
 template <>
-inline LS_INLINE vec4_t<float>::operator vec4_t<Half>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
-    vec4_t<Half> ret;
+    vec4_t<half> ret;
     vst1_f16(reinterpret_cast<float16_t*>(ret.v), vcvt_f16_f32(vld1q_f32(v)));
     return ret;
 }

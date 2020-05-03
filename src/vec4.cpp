@@ -1,5 +1,5 @@
 
-#include "lightsky/math/Math.h"
+#include "lightsky/math/half.h"
 #include "lightsky/math/mat4.h"
 #include "lightsky/math/vec4.h"
 
@@ -14,6 +14,7 @@ namespace math {
 
 #endif
 
+LS_DEFINE_UNION_TYPE(vec4_t, half);
 LS_DEFINE_UNION_TYPE(vec4_t, double);
 LS_DEFINE_UNION_TYPE(vec4_t, int);
 LS_DEFINE_UNION_TYPE(vec4_t, unsigned);

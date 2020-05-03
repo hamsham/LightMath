@@ -5,7 +5,9 @@
     #include <intrin.h>
 #endif /* LS_COMPILER_MSC */
 
-#include <immintrin.h>
+extern "C" {
+    #include <immintrin.h>
+}
 
 
 
@@ -240,7 +242,7 @@ inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
 #if !defined(LS_COMPILER_MSC)
 template <>
 template <>
-inline LS_INLINE vec4_t<Half>::operator vec4_t<float>() const
+inline LS_INLINE vec4_t<half>::operator vec4_t<float>() const
 {
     return vec4_t<float>{_mm_cvtph_ps(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v)))};
 }
@@ -326,10 +328,10 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
 
 #if !defined(LS_COMPILER_MSC)
 template <>
-inline LS_INLINE vec4_t<float>::operator vec4_t<Half>() const
+inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
     const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
-    vec4_t<Half> ret;
+    vec4_t<half> ret;
     _mm_storel_pi(reinterpret_cast<__m64*>(ret.v), _mm_castsi128_ps(data));
 
     return ret;

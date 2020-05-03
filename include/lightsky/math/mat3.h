@@ -124,6 +124,9 @@ LS_DECLARE_STRUCT_TYPE(mat3u, mat3_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat3x, mat3_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat3, mat3_t, LS_FLOAT);
 */
+struct half;
+
+typedef mat3_t<half>     mat3h;
 typedef mat3_t<float>    mat3f;
 typedef mat3_t<double>   mat3d;
 typedef mat3_t<int>      mat3i;

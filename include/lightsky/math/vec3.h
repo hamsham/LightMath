@@ -126,6 +126,9 @@ LS_DECLARE_STRUCT_TYPE(vec3ui, vec3_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(vec3x, vec3_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(vec3, vec3_t, LS_FLOAT);
 */
+struct half;
+
+typedef vec3_t<half>     vec3h;
 typedef vec3_t<float>    vec3f;
 typedef vec3_t<double>   vec3d;
 typedef vec3_t<int>      vec3i;

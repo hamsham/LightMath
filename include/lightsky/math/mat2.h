@@ -117,6 +117,9 @@ LS_DECLARE_STRUCT_TYPE(mat2u, mat2_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat2x, mat2_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat2, mat2_t, LS_FLOAT);
 */
+struct half;
+
+typedef mat2_t<half>     mat2h;
 typedef mat2_t<float>    mat2f;
 typedef mat2_t<double>   mat2d;
 typedef mat2_t<int>      mat2i;

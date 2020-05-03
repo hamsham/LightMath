@@ -93,6 +93,9 @@ LS_DECLARE_STRUCT_TYPE(quatu, quat_t, unsigned); // not recommended
 LS_DECLARE_STRUCT_TYPE(quatx, quat_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(quat, quat_t, LS_FLOAT);
 */
+struct half;
+
+typedef quat_t<half>    quath;
 typedef quat_t<float>    quatf;
 typedef quat_t<double>   quatd;
 typedef quat_t<int>      quati;

@@ -1,4 +1,5 @@
 
+#include "lightsky/math/half.h"
 #include "lightsky/math/mat4.h"
 
 namespace ls {
@@ -7,6 +8,7 @@ namespace math {
 /*
  * 4x4 Matrix Specializations
  */
+LS_DEFINE_STRUCT_TYPE(mat4_t, half);
 LS_DEFINE_STRUCT_TYPE(mat4_t, float);
 LS_DEFINE_STRUCT_TYPE(mat4_t, double);
 LS_DEFINE_STRUCT_TYPE(mat4_t, int);

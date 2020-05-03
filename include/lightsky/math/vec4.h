@@ -128,6 +128,9 @@ LS_DECLARE_STRUCT_TYPE(vec4ui, vec4_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(vec4x, vec4_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(vec4, vec4_t, LS_FLOAT);
 */
+struct half;
+
+typedef vec4_t<half>     vec4h;
 typedef vec4_t<float>    vec4f;
 typedef vec4_t<double>   vec4d;
 typedef vec4_t<int>      vec4i;

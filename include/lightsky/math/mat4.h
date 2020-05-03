@@ -127,6 +127,9 @@ LS_DECLARE_STRUCT_TYPE(mat4u, mat4_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(mat4x, mat4_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(mat4, mat4_t, LS_FLOAT);
 */
+struct half;
+
+typedef mat4_t<half>     mat4h;
 typedef mat4_t<float>    mat4f;
 typedef mat4_t<double>   mat4d;
 typedef mat4_t<int>      mat4i;

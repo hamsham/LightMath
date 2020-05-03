@@ -1,5 +1,5 @@
 
-#include "lightsky/math/Math.h"
+#include "lightsky/math/half.h"
 #include "lightsky/math/mat3.h"
 #include "lightsky/math/vec3.h"
 
@@ -9,6 +9,7 @@ namespace math {
 /*
  * 3D Vector Specializations
  */
+LS_DEFINE_STRUCT_TYPE(vec3_t, half);
 LS_DEFINE_STRUCT_TYPE(vec3_t, float);
 LS_DEFINE_STRUCT_TYPE(vec3_t, double);
 LS_DEFINE_STRUCT_TYPE(vec3_t, int);

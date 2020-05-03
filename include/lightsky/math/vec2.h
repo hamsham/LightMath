@@ -124,6 +124,9 @@ LS_DECLARE_STRUCT_TYPE(vec2ui, vec2_t, unsigned);
 LS_DECLARE_STRUCT_TYPE(vec2x, vec2_t, medp_t);
 LS_DECLARE_STRUCT_TYPE(vec2, vec2_t, LS_FLOAT);
 */
+struct half;
+
+typedef vec2_t<half>     vec2h;
 typedef vec2_t<float>    vec2f;
 typedef vec2_t<double>   vec2d;
 typedef vec2_t<int>      vec2i;
