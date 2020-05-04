@@ -44,6 +44,7 @@ struct alignas(sizeof(uint16_t)) half
     half(const half& h) noexcept = default;
     half(half&& h) noexcept = default;
     half(const float f) noexcept;
+    explicit constexpr half(uint8_t hi, uint8_t lo) noexcept;
 
     half& operator=(const half& h) noexcept = default;
     half& operator=(half&& h) noexcept = default;
@@ -135,6 +136,15 @@ namespace ls
 {
 namespace math
 {
+
+
+
+/*-------------------------------------
+ * Construct from a bit pattern
+-------------------------------------*/
+constexpr LS_INLINE half::half(uint8_t hi, uint8_t lo) noexcept :
+    bits{(uint16_t)(((uint16_t)hi << (uint16_t)8u) | (uint16_t)lo)}
+{}
 
 
 
@@ -300,6 +310,16 @@ inline LS_INLINE half& half::operator*=(const half& f) noexcept
 inline LS_INLINE half& half::operator/=(const half& f) noexcept
 {
     return *this = (float)*this / (float)f;
+}
+
+
+
+/*-----------------------------------------------------------------------------
+ * Additional helper functions
+-----------------------------------------------------------------------------*/
+inline LS_INLINE half abs(half x) noexcept
+{
+    return ((float)x >= 0.f) ? x : -x;
 }
 
 
