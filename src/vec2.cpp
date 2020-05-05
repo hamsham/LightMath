@@ -1,5 +1,6 @@
 
 #include "lightsky/math/half.h"
+#include "lightsky/math/mat2.h"
 #include "lightsky/math/vec2.h"
 
 namespace ls {
