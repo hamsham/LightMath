@@ -90,7 +90,7 @@ class Float16Converter
 /*-------------------------------------
  * Construct from a float
 -------------------------------------*/
-inline LS_INLINE Half::Half(const float f) noexcept :
+inline LS_INLINE half::half(const float f) noexcept :
     bits{impl::Float16Converter::single_to_half(f)}
 {}
 
@@ -99,7 +99,7 @@ inline LS_INLINE Half::Half(const float f) noexcept :
 /*-------------------------------------
  * Convert from a float
 -------------------------------------*/
-inline LS_INLINE Half& Half::operator=(const float f) noexcept
+inline LS_INLINE half& half::operator=(const float f) noexcept
 {
     bits = impl::Float16Converter::single_to_half(f);
     return *this;
@@ -110,7 +110,7 @@ inline LS_INLINE Half& Half::operator=(const float f) noexcept
 /*-------------------------------------
  * Cast to a float
 -------------------------------------*/
-inline LS_INLINE Half::operator float() const noexcept
+inline LS_INLINE half::operator float() const noexcept
 {
     return impl::Float16Converter::half_to_single(bits);
 }
