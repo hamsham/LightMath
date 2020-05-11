@@ -221,9 +221,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<half>::operator vec4_t<float>() const
 {
-    vec4_t<float> ret;
-    vst1q_f32(ret.v, vcvt_f32_f16(vld1_f16(reinterpret_cast<const float16_t*>(v))));
-    return ret;
+    return vec4_t<float>{vcvt_f32_f16(vld1_f16(reinterpret_cast<const float16_t*>(v)))};
 }
 #endif
  
@@ -234,7 +232,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     uint32_t data[4];
-    vst1q_u32(data, vcvtq_u32_f32(vld1q_f32(v)));
+    vst1q_u32(data, vcvtq_u32_f32(this->simd));
     
     return vec4_t<uint8_t>{
         (uint8_t)data[0],
@@ -248,7 +246,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
 {
     int32_t data[4];
-    vst1q_s32(data, vcvtq_s32_f32(vld1q_f32(v)));
+    vst1q_s32(data, vcvtq_s32_f32(this->simd));
     
     return vec4_t<int8_t>{
         (int8_t)data[0],
@@ -262,7 +260,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 {
     vec4_t<uint16_t> ret;
-    vst1_u16(ret.v, vmovn_u32(vcvtq_u32_f32(vld1q_f32(v))));
+    vst1_u16(ret.v, vmovn_u32(vcvtq_u32_f32(this->simd)));
     return ret;
 }
 
@@ -270,7 +268,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
 {
     vec4_t<int16_t> ret;
-    vst1_s16(ret.v, vmovn_s32(vcvtq_s32_f32(vld1q_f32(v))));
+    vst1_s16(ret.v, vmovn_s32(vcvtq_s32_f32(this->simd)));
     return ret;
 }
 
@@ -278,7 +276,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
 {
     vec4_t<int32_t> ret;
-    vst1q_s32(ret.v, vcvtq_s32_f32(vld1q_f32(v)));
+    vst1q_s32(ret.v, vcvtq_s32_f32(this->simd));
     return ret;
 }
 
@@ -286,7 +284,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 {
     vec4_t<uint32_t> ret;
-    vst1q_u32(ret.v, vcvtq_u32_f32(vld1q_f32(v)));
+    vst1q_u32(ret.v, vcvtq_u32_f32(this->simd));
     return ret;
 }
 
@@ -295,7 +293,7 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
     vec4_t<half> ret;
-    vst1_f16(reinterpret_cast<float16_t*>(ret.v), vcvt_f16_f32(vld1q_f32(v)));
+    vst1_f16(reinterpret_cast<float16_t*>(ret.v), vcvt_f16_f32(this->simd));
     return ret;
 }
 #endif

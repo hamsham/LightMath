@@ -22,20 +22,27 @@ namespace math
 /*-------------------------------------
     3D Magnitude
 -------------------------------------*/
+/*
 inline LS_INLINE float length(const vec3_t<float>& v) noexcept
 {
     const float lanes[4] = {v.v[0], v.v[1], v.v[2], 0.f};
     const float32x4_t s = vld1q_f32(lanes);
+
+    // sum, squared
     const float32x4_t a = vmulq_f32(s, s);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
     const float32x2_t c = vpadd_f32(b, b);
-    const float32x2_t d = vrsqrte_f32(c);
 
-    const float32x2_t recip0 = vrecpe_f32(d);
-    const float32x2_t recip1 = vmul_f32(vrecps_f32(d, recip0), recip0);
-    return vget_lane_f32(recip1, 0);
+    float32x2_t d = vrsqrte_f32(c);
+    d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
+    //d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
+
+    float32x2_t e = vrecpe_f32(d);
+    e = vmul_f32(vrecps_f32(d, e), e);
+    e = vmul_f32(vrecps_f32(d, e), e);
+    return vget_lane_f32(e, 0);
 }
-
+*/
 
 
 /*-----------------------------------------------------------------------------
@@ -46,10 +53,9 @@ inline LS_INLINE float length(const vec3_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t a = v.simd;
-    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
-    const float32x2_t c = vpadd_f32(b, b);
-    return vget_lane_f32(c, 0);
+    const float32x2_t a = vadd_f32(vget_high_f32(v.simd), vget_low_f32(v.simd));
+    const float32x2_t b = vpadd_f32(a, a);
+    return vget_lane_f32(b, 0);
 }
 
 /*-------------------------------------
@@ -57,14 +63,9 @@ inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t a = v.simd;
-    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
-    const float32x2_t c = vpadd_f32(b, b);
-
-    const float32x2_t recip0 = vrecpe_f32(c);
-    const float32x2_t recip1 = vmul_f32(vrecps_f32(c, recip0), recip0);
-
-    return vget_lane_f32(recip1, 0);
+    const float32x2_t a = vadd_f32(vget_high_f32(v.simd), vget_low_f32(v.simd));
+    const float32x2_t b = vpadd_f32(a, a);
+    return vget_lane_f32(vrecpe_f32(b), 0);
 }
 
 /*-------------------------------------
@@ -75,7 +76,6 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
     const float32x4_t a = vmulq_f32(v1.simd, v2.simd);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
     const float32x2_t c = vpadd_f32(b, b);
-
     return vget_lane_f32(c, 0);
 }
 
@@ -84,15 +84,19 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
 -------------------------------------*/
 inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t s = vld1q_f32(&v);
-    const float32x4_t a = vmulq_f32(s, s);
+    // sum, squared
+    const float32x4_t a = vmulq_f32(v.simd, v.simd);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
     const float32x2_t c = vpadd_f32(b, b);
-    const float32x2_t d = vrsqrte_f32(c);
 
-    const float32x2_t recip0 = vrecpe_f32(d);
-    const float32x2_t recip1 = vmul_f32(vrecps_f32(d, recip0), recip0);
-    return vget_lane_f32(recip1, 0);
+    float32x2_t d = vrsqrte_f32(c);
+    d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
+    //d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
+
+    float32x2_t e = vrecpe_f32(d);
+    e = vmul_f32(vrecps_f32(d, e), e);
+    e = vmul_f32(vrecps_f32(d, e), e);
+    return vget_lane_f32(e, 0);
 }
 
 /*-------------------------------------
@@ -100,14 +104,17 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t s = v.simd;
-    const float32x4_t a = vmulq_f32(s, s);
+    const float32x4_t a = vmulq_f32(v.simd, v.simd);
     const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
     const float32x2_t c = vpadd_f32(b, b);
-    const float32x4_t d = vcombine_f32(c, c);
+
+    float32x4_t d = vcombine_f32(c, c);
 
     // normalization
-    return vec4_t<float>{vmulq_f32(s, vrsqrteq_f32(d))};
+    float32x4_t e = vrsqrteq_f32(d);
+    e = vmulq_f32(vrsqrtsq_f32(vmulq_f32(d, e), e), e);
+    //e = vmulq_f32(vrsqrtsq_f32(vmulq_f32(d, e), e), e);
+    return vmulq_f32(v.simd, e);
 }
 
 /*-------------------------------------
@@ -157,9 +164,8 @@ inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<floa
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t simd  = v.simd;
-    const float32x4_t recip = vrecpeq_f32(simd);
-    const float32x4_t ret   = vmulq_f32(vrecpsq_f32(simd, recip), recip);
+    const float32x4_t recip = vrecpeq_f32(v.simd);
+    const float32x4_t ret   = vmulq_f32(vrecpsq_f32(v.simd, recip), recip);
     return vec4_t<float>{ret};
 }
 
@@ -189,9 +195,9 @@ inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v) noexcept
 inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-    return vec4_t<float>{vfmaq_f32(a.simd, m.simd, x.simd)};
+        return vec4_t<float>{vfmaq_f32(a.simd, m.simd, x.simd)};
     #else
-    return vec4_t<float>{vaddq_f32(vmulq_f32(x.simd, m.simd), a.simd)};
+        return vec4_t<float>{vmlaq_f32(a.simd, m.simd, x.simd)};
     #endif
 }
 
@@ -201,9 +207,9 @@ inline LS_INLINE vec4_t<float> fmadd(const vec4_t<float>& x, const vec4_t<float>
 inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>& m, const vec4_t<float>& a) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-    return vec4_t<float>{vfmsq_f32(a.simd, m.simd, x.simd)};
+        return vec4_t<float>{vfmsq_f32(a.simd, m.simd, x.simd)};
     #else
-    return vec4_t<float>{vsubq_f32(vmulq_f32(x.simd, m.simd), a.simd)};
+        return vec4_t<float>{vmlsq_f32(a.simd, m.simd, x.simd)};
     #endif
 }
 

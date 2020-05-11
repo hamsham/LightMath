@@ -131,6 +131,13 @@ int main()
     const float camHeight = 3.f;
     const float aspect = camWidth / camHeight;
 
+    std::cout << "STD sqrt(fov): " << std::sqrt(fov) << std::endl;
+    std::cout << "LS sqrt(fov): " << ls::math::fast_sqrt(fov) << std::endl;
+
+    std::cout << "STD rsqrt(aspect): " << (1.f/std::sqrt(aspect)) << std::endl;
+    std::cout << "LS rsqrt(aspect): " << ls::math::inversesqrt(aspect) << std::endl;
+    std::cout << std::endl;
+
     const glm::vec3 glmVec3{1.f, 2.f, 3.f};
     std::cout << "GLM cross(vec3): " << glm::cross(glmVec3, glm::vec3{2.f, -1.f, 3.f}) << std::endl;
 
@@ -152,6 +159,8 @@ int main()
     std::cout << "GLM inverse(mat3): " << glm::inverse(glm::mat3{glmMat}) << std::endl;
     std::cout << "GLM dot(vec4): " << glm::dot(glmVec, glmVec) << std::endl;
     std::cout << "GLM outer(vec4): " << glm::outerProduct(glmVec, glmVec) << std::endl;
+    std::cout << "GLM normalize(vec4): " << glm::normalize(glmVec) << std::endl;
+    std::cout << "GLM length(vec4): " << glm::length(glmVec) << std::endl;
 
     std::cout << std::endl;
 
@@ -168,6 +177,8 @@ int main()
     std::cout << "ls inverse(mat3): " << ls::math::inverse(ls::math::mat3{lsMat}) << std::endl;
     std::cout << "ls dot(vec4): " << ls::math::dot(lsVec, lsVec) << std::endl;
     std::cout << "ls outer(vec4): " << ls::math::outer(lsVec, lsVec) << std::endl;
+    std::cout << "LS normalize(vec4): " << ls::math::normalize(lsVec) << std::endl;
+    std::cout << "LS length(vec4): " << ls::math::length(lsVec) << std::endl;
 
     std::cout << std::endl;
 
@@ -176,6 +187,8 @@ int main()
     std::cout << "GLM quat1 * quat2: " << glmQuat1 * glmQuat2 << std::endl;
     std::cout << "GLM quat2 * quat1: " << glmQuat2 * glmQuat1 << std::endl;
     std::cout << "GLM quat1 * inverse(quat1): " << glmQuat1 * glm::inverse(glmQuat1) << std::endl;
+    std::cout << "GLM length(quat1): " << glm::length(glmQuat1) << std::endl;
+    std::cout << "GLM normalize(quat1): " << glm::normalize(glmQuat1) << std::endl;
 
     std::cout << std::endl;
 
@@ -184,6 +197,8 @@ int main()
     std::cout << "ls quat1 * quat2: " << lsQuat1 * lsQuat2 << std::endl;
     std::cout << "ls quat2 * quat1: " << lsQuat2 * lsQuat1 << std::endl;
     std::cout << "ls quat1 * inverse(quat1): " << lsQuat1 * ls::math::inverse(lsQuat1) << std::endl;
+    std::cout << "LS length(quat1): " << ls::math::length(lsQuat1) << std::endl;
+    std::cout << "LS normalize(quat1): " << ls::math::normalize(lsQuat1) << std::endl;
 
     std::cout << std::endl;
 

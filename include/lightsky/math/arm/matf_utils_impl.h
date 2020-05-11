@@ -29,7 +29,7 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
     const float32x4_t col3{0.f, m[7], m[8], m[6]};
     const float32x4_t col4{0.f, m[0], m[1], m[2]};
 
-    const float32x4_t sub0 = vsubq_f32(vmulq_f32(col1, col0), vmulq_f32(col2, col3));
+    const float32x4_t sub0 = vmlaq_f32(vnegq_f32(vmulq_f32(col3, col2)), col1, col0);
     const float32x4_t mul2 = vmulq_f32(sub0, col4);
 
     // horizontal add: swap the words of each vector, add, then swap each

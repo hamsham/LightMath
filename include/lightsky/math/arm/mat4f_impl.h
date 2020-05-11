@@ -14,25 +14,49 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
 {
     alignas(sizeof(float32x4_t)) mat4_t<float> ret;
 
-    ret[0].simd = vmulq_n_f32(             this->m[0].simd, n[0][0]);
-    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[1].simd, n[0][1]);
-    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[2].simd, n[0][2]);
-    ret[0].simd = vmlaq_n_f32(ret[0].simd, this->m[3].simd, n[0][3]);
+    #if defined(LS_ARCH_AARCH64)
+        ret[0].simd = vmulq_laneq_f32(             this->m[0].simd, n[0].simd, 0);
+        ret[0].simd = vmlaq_laneq_f32(ret[0].simd, this->m[1].simd, n[0].simd, 1);
+        ret[0].simd = vmlaq_laneq_f32(ret[0].simd, this->m[2].simd, n[0].simd, 2);
+        ret[0].simd = vmlaq_laneq_f32(ret[0].simd, this->m[3].simd, n[0].simd, 3);
 
-    ret[1].simd = vmulq_n_f32(             this->m[0].simd, n[1][0]);
-    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[1].simd, n[1][1]);
-    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[2].simd, n[1][2]);
-    ret[1].simd = vmlaq_n_f32(ret[1].simd, this->m[3].simd, n[1][3]);
+        ret[1].simd = vmulq_laneq_f32(             this->m[0].simd, n[1].simd, 0);
+        ret[1].simd = vmlaq_laneq_f32(ret[1].simd, this->m[1].simd, n[1].simd, 1);
+        ret[1].simd = vmlaq_laneq_f32(ret[1].simd, this->m[2].simd, n[1].simd, 2);
+        ret[1].simd = vmlaq_laneq_f32(ret[1].simd, this->m[3].simd, n[1].simd, 3);
 
-    ret[2].simd = vmulq_n_f32(             this->m[0].simd, n[2][0]);
-    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[1].simd, n[2][1]);
-    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[2].simd, n[2][2]);
-    ret[2].simd = vmlaq_n_f32(ret[2].simd, this->m[3].simd, n[2][3]);
+        ret[2].simd = vmulq_laneq_f32(             this->m[0].simd, n[2].simd, 0);
+        ret[2].simd = vmlaq_laneq_f32(ret[2].simd, this->m[1].simd, n[2].simd, 1);
+        ret[2].simd = vmlaq_laneq_f32(ret[2].simd, this->m[2].simd, n[2].simd, 2);
+        ret[2].simd = vmlaq_laneq_f32(ret[2].simd, this->m[3].simd, n[2].simd, 3);
 
-    ret[3].simd = vmulq_n_f32(             this->m[0].simd, n[3][0]);
-    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[1].simd, n[3][1]);
-    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[2].simd, n[3][2]);
-    ret[3].simd = vmlaq_n_f32(ret[3].simd, this->m[3].simd, n[3][3]);
+        ret[3].simd = vmulq_laneq_f32(             this->m[0].simd, n[3].simd, 0);
+        ret[3].simd = vmlaq_laneq_f32(ret[3].simd, this->m[1].simd, n[3].simd, 1);
+        ret[3].simd = vmlaq_laneq_f32(ret[3].simd, this->m[2].simd, n[3].simd, 2);
+        ret[3].simd = vmlaq_laneq_f32(ret[3].simd, this->m[3].simd, n[3].simd, 3);
+
+    #else
+        ret[0].simd = vmulq_lane_f32(             this->m[0].simd, vget_low_f32( n[0].simd, 0);
+        ret[0].simd = vmlaq_lane_f32(ret[0].simd, this->m[1].simd, vget_low_f32( n[0].simd, 1);
+        ret[0].simd = vmlaq_lane_f32(ret[0].simd, this->m[2].simd, vget_high_f32(n[0].simd, 0);
+        ret[0].simd = vmlaq_lane_f32(ret[0].simd, this->m[3].simd, vget_high_f32(n[0].simd, 1);
+
+        ret[1].simd = vmulq_lane_f32(             this->m[0].simd, vget_low_f32( n[1].simd, 0);
+        ret[1].simd = vmlaq_lane_f32(ret[1].simd, this->m[1].simd, vget_low_f32( n[1].simd, 1);
+        ret[1].simd = vmlaq_lane_f32(ret[1].simd, this->m[2].simd, vget_high_f32(n[1].simd, 0);
+        ret[1].simd = vmlaq_lane_f32(ret[1].simd, this->m[3].simd, vget_high_f32(n[1].simd, 1);
+
+        ret[2].simd = vmulq_lane_f32(             this->m[0].simd, vget_low_f32( n[2].simd, 0);
+        ret[2].simd = vmlaq_lane_f32(ret[2].simd, this->m[1].simd, vget_low_f32( n[2].simd, 1);
+        ret[2].simd = vmlaq_lane_f32(ret[2].simd, this->m[2].simd, vget_high_f32(n[2].simd, 0);
+        ret[2].simd = vmlaq_lane_f32(ret[2].simd, this->m[3].simd, vget_high_f32(n[2].simd, 1);
+
+        ret[3].simd = vmulq_lane_f32(             this->m[0].simd, vget_low_f32( n[3].simd, 0);
+        ret[3].simd = vmlaq_lane_f32(ret[3].simd, this->m[1].simd, vget_low_f32( n[3].simd, 1);
+        ret[3].simd = vmlaq_lane_f32(ret[3].simd, this->m[2].simd, vget_high_f32(n[3].simd, 0);
+        ret[3].simd = vmlaq_lane_f32(ret[3].simd, this->m[3].simd, vget_high_f32(n[3].simd, 1);
+
+    #endif
 
     return ret;
 }
@@ -98,19 +122,42 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 /*-------------------------------------
     Vector-Matrix Math Operations (Declared in the 4D Vector header)
 -------------------------------------*/
+template <> inline LS_INLINE
+vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
+{
+    #if defined(LS_ARCH_AARCH64)
+        const float32x4_t v0 =     vmulq_laneq_f32(    this->m[0].simd, v.simd, 0);
+        const float32x4_t v1 =     vmlaq_laneq_f32(v0, this->m[1].simd, v.simd, 1);
+        const float32x4_t v2 =     vmlaq_laneq_f32(v1, this->m[2].simd, v.simd, 2);
+        return math::vec4_t<float>{vmlaq_laneq_f32(v2, this->m[3].simd, v.simd, 3)};
+    #else
+        const float32x4_t v0 =     vmulq_lane_f32(    this->m[0].simd, vget_low_f32(v.simd,   0));
+        const float32x4_t v1 =     vmlaq_lane_f32(v0, this->m[1].simd, vget_low_f32(v.simd),  1);
+        const float32x4_t v2 =     vmlaq_lane_f32(v1, this->m[2].simd, vget_high_f32(v.simd), 0);
+        return math::vec4_t<float>{vmlaq_lane_f32(v2, this->m[3].simd, vget_high_f32(v.simd), 1)};
+    #endif
+}
+
+
+
+/*-------------------------------------
+    Vector-Matrix Math Operations (Declared in the 4D Vector header)
+-------------------------------------*/
 inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
 {
-    #if 0
-    const mat4_t<float> temp0{
-        {vmulq_f32(this->simd, m[0].simd)},
-        {vmulq_f32(this->simd, m[1].simd)},
-        {vmulq_f32(this->simd, m[2].simd)},
-        {vmulq_f32(this->simd, m[3].simd)}
+    #if 1
+    const float32x4_t temp0[4] = {
+        vmulq_f32(this->simd, m[0].simd),
+        vmulq_f32(this->simd, m[1].simd),
+        vmulq_f32(this->simd, m[2].simd),
+        vmulq_f32(this->simd, m[3].simd)
     };
 
-    const float32x4x4_t temp1 = vld4q_f32(&temp0[0]);
+    const float32x4x4_t temp1 = vld4q_f32(reinterpret_cast<const float*>(temp0));
+    const float32x4_t a = vaddq_f32(temp1.val[1], temp1.val[0]);
+    const float32x4_t b = vaddq_f32(temp1.val[3], temp1.val[2]);
     
-    return vec4_t<float>{vaddq_f32(temp1.val[3], vaddq_f32(temp1.val[2], vaddq_f32(temp1.val[1], temp1.val[0])))};
+    return vec4_t<float>{vaddq_f32(b, a)};
     
     #else
 
