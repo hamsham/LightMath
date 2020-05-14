@@ -23,16 +23,28 @@ void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float)
 
 int main()
 {
-    printf("std::sin,ls:math::sin,absolute error,relative error,std::cos,ls:math::cos,absolute error,relative error,std::tan,ls:math::tan,absolute error,relative error,\n");
-
-    for (unsigned i = 1; i <= 360; ++i)
+    printf("std::sin,ls:math::sin,absolute error,relative error,\n");
+    for (int i = -360; i <= 360; ++i)
     {
         test_trig_values((float)i, std::sin, ls::math::sin);
+        printf("\n");
+    }
+    printf("\n");
+
+    printf("std::cos,ls:math::cos,absolute error,relative error,\n");
+    for (int i = -360; i <= 360; ++i)
+    {
         test_trig_values((float)i, std::cos, ls::math::cos);
+        printf("\n");
+    }
+    printf("\n");
+
+    printf("std::tan,ls:math::tan,absolute error,relative error,\n");
+    for (int i = -360; i <= 360; ++i)
+    {
         test_trig_values((float)i, std::tan, ls::math::tan);
         printf("\n");
     }
-
     printf("\n");
 
     return 0;
