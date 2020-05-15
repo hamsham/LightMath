@@ -147,10 +147,15 @@ int main()
     std::cout << std::endl;
 
     const glm::vec4 glmVec{1.f, 2.f, 3.f, 4.f};
-    const glm::mat4 glmMat = glm::perspective(ls::math::radians(fov), aspect, zNear, zFar); // GLM uses degrees
-    std::cout << "GLM Perspective: " << glmMat << std::endl;
+    const glm::mat4 glmMat = glm::mat4{
+        0.f,  1.f,  2.f,  3.f,
+        4.f,  5.f,  6.f,  7.f,
+        8.f,  9.f,  10.f, 11.f,
+        12.f, 13.f, 14.f, 15.f
+    };
+    std::cout << "GLM Perspective: " << glm::perspective(ls::math::radians(fov), aspect, zNear, zFar) << std::endl;
     std::cout << "GLM mat4 * vec4: " << glmMat * glmVec << std::endl;
-    std::cout << "GLM vec4 * mat4: " << glmVec * glmMat << std::endl;
+    std::cout << "GLM vec4 * mat4: " << glmVec * glm::outerProduct(glmVec, glmVec) << std::endl;
     std::cout << "GLM mat4 * mat4: " << glmMat * glmMat << std::endl;
     std::cout << "GLM transpose(mat4): " << glm::transpose(glmMat) << std::endl;
     std::cout << "GLM determinant(mat4): " << glm::determinant(glmMat) << std::endl;
@@ -165,10 +170,15 @@ int main()
     std::cout << std::endl;
 
     const ls::math::vec4 lsVec{1.f, 2.f, 3.f, 4.f};
-    const ls::math::mat4 lsMat = ls::math::perspective(ls::math::radians(fov), aspect, zNear, zFar);
-    std::cout << "ls Perspective: " << lsMat << std::endl;
+    const ls::math::mat4 lsMat = ls::math::mat4{
+        0.f,  1.f,  2.f,  3.f,
+        4.f,  5.f,  6.f,  7.f,
+        8.f,  9.f,  10.f, 11.f,
+        12.f, 13.f, 14.f, 15.f
+    };
+    std::cout << "ls Perspective: " << ls::math::perspective(ls::math::radians(fov), aspect, zNear, zFar) << std::endl;
     std::cout << "ls mat4 * vec4: " << lsMat * lsVec << std::endl;
-    std::cout << "ls vec4 * mat4: " << lsVec * lsMat << std::endl;
+    std::cout << "ls vec4 * mat4: " << lsVec * ls::math::outer(lsVec, lsVec) << std::endl;
     std::cout << "ls mat4 * mat4: " << lsMat * lsMat << std::endl;
     std::cout << "ls transpose(mat4): " << ls::math::transpose(lsMat) << std::endl;
     std::cout << "ls determinant(mat4): " << ls::math::determinant(lsMat) << std::endl;

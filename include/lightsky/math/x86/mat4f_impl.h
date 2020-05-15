@@ -146,37 +146,29 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
         const __m128 t2 = _mm_unpackhi_ps(row0, row1);
         const __m128 t3 = _mm_unpackhi_ps(row2, row3);
 
-        __m128 sum =          _mm_shuffle_ps(t0, t1, 0x44);
-        sum = _mm_add_ps(sum, _mm_shuffle_ps(t0, t1, 0xEE));
-        sum = _mm_add_ps(sum, _mm_shuffle_ps(t2, t3, 0x44));
-        sum = _mm_add_ps(sum, _mm_shuffle_ps(t2, t3, 0xEE));
-
-        return vec4_t<float>{sum};
+        __m128 sum0 = _mm_add_ps(_mm_shuffle_ps(t0, t1, 0xEE), _mm_shuffle_ps(t0, t1, 0x44));
+        __m128 sum1 = _mm_add_ps(_mm_shuffle_ps(t2, t3, 0xEE), _mm_shuffle_ps(t2, t3, 0x44));
+        return vec4_t<float>{_mm_add_ps(sum1, sum0)};
     #else
-        const __m256 s = _mm256_broadcast_ps(reinterpret_cast<const __m128*>(v));
 
-        const __m256 m0 = _mm256_set_m128(m[1].simd, m[0].simd);
-        const __m256 m1 = _mm256_set_m128(m[3].simd, m[2].simd);
-        const __m256 row02 = _mm256_mul_ps(s, m0);
-        const __m256 row13 = _mm256_mul_ps(s, m1);
+        alignas(sizeof(__m256)) float         temp[16];
+        alignas(sizeof(__m256)) mat4_t<float> ret;
 
-        const __m256 ml = _mm256_unpacklo_ps(row02, row13);
-        const __m256 mh = _mm256_unpackhi_ps(row02, row13);
+        _mm_store_ps(temp+0,  _mm_mul_ps(this->simd, m.m[0].simd));
+        _mm_store_ps(temp+4,  _mm_mul_ps(this->simd, m.m[1].simd));
+        _mm_store_ps(temp+8,  _mm_mul_ps(this->simd, m.m[2].simd));
+        _mm_store_ps(temp+12, _mm_mul_ps(this->simd, m.m[3].simd));
 
-        const __m256 nl = _mm256_shuffle_ps(ml, mh, 0x44);
-        const __m256 nh = _mm256_shuffle_ps(ml, mh, 0xEE);
+        const __m256i indices0 = _mm256_set_epi32(13, 9,  5, 1, 12,  8, 4, 0);
+        const __m256i indices1 = _mm256_set_epi32(15, 11, 7, 3, 14, 10, 6, 2);
 
-        const __m256d out01 = _mm256_castps_pd(_mm256_shuffle_ps(nl, nh, 0x44));
-        const __m256d out23 = _mm256_castps_pd(_mm256_shuffle_ps(nl, nh, 0xEE));
+        _mm256_store_ps(ret.m[0].v, _mm256_i32gather_ps(temp, indices0, sizeof(float)));
+        _mm256_store_ps(ret.m[2].v, _mm256_i32gather_ps(temp, indices1, sizeof(float)));
+        _mm256_zeroupper();
 
-        const __m256 temp0 = _mm256_castpd_ps(_mm256_permute4x64_pd(out01, 0xD8));
-        const __m256 temp1 = _mm256_castpd_ps(_mm256_permute4x64_pd(out23, 0xD8));
-        const __m256 temp2 = _mm256_add_ps(temp0, temp1);
-
-        const __m128 t0 = _mm256_extractf128_ps(temp2, 0);
-        const __m128 t1 = _mm256_extractf128_ps(temp2, 1);
-
-        return vec4_t<float>{_mm_add_ps(t0, t1)};
+        __m128 sum0 = _mm_add_ps(ret[1].simd, ret[0].simd);
+        __m128 sum1 = _mm_add_ps(ret[3].simd, ret[2].simd);
+        return vec4_t<float>{_mm_add_ps(sum1, sum0)};
     #endif
 }
 
