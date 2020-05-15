@@ -24,7 +24,10 @@ inline LS_INLINE float min(float a, float b) noexcept
 -------------------------------------*/
 inline LS_INLINE float min(float a, float b, float c) noexcept
 {
-    return _mm_cvtss_f32(_mm_min_ss(_mm_set_ss(a), _mm_min_ss(_mm_set_ss(b), _mm_set_ss(c))));
+    const __m128 v0 = _mm_min_ss(_mm_set_ss(a), _mm_set_ss(b));
+    const __m128 v1 = _mm_set_ss(c);
+
+    return _mm_cvtss_f32(_mm_min_ss(v1, v0));
 }
 
 /*-------------------------------------
@@ -32,12 +35,10 @@ inline LS_INLINE float min(float a, float b, float c) noexcept
 -------------------------------------*/
 inline LS_INLINE float min(float a, float b, float c, float d) noexcept
 {
-    const __m128 v = _mm_set_ps(a, b, c, d);
-    const __m128 v1 = _mm_shuffle_ps(v, v, 0xB1);
-    const __m128 v2 = _mm_min_ps(v, v1);
-    const __m128 v3 = _mm_shuffle_ps(v2, v2, 0x0F);
-    const __m128 v4 = _mm_min_ps(v2, v3);
-    return _mm_cvtss_f32(v4);
+    const __m128 v0 = _mm_min_ss(_mm_set_ss(a), _mm_set_ss(b));
+    const __m128 v1 = _mm_min_ss(_mm_set_ss(c), _mm_set_ss(d));
+
+    return _mm_cvtss_f32(_mm_min_ss(v1, v0));
 }
 
 
@@ -55,7 +56,10 @@ inline LS_INLINE float max(float a, float b) noexcept
 -------------------------------------*/
 inline LS_INLINE float max(float a, float b, float c) noexcept
 {
-    return _mm_cvtss_f32(_mm_max_ss(_mm_set_ss(a), _mm_max_ss(_mm_set_ss(b), _mm_set_ss(c))));
+    const __m128 v0 = _mm_max_ss(_mm_set_ss(a), _mm_set_ss(b));
+    const __m128 v1 = _mm_set_ss(c);
+
+    return _mm_cvtss_f32(_mm_max_ss(v1, v0));
 }
 
 /*-------------------------------------
@@ -63,12 +67,10 @@ inline LS_INLINE float max(float a, float b, float c) noexcept
 -------------------------------------*/
 inline LS_INLINE float max(float a, float b, float c, float d) noexcept
 {
-    const __m128 v = _mm_set_ps(a, b, c, d);
-    const __m128 v1 = _mm_shuffle_ps(v, v, 0xB1);
-    const __m128 v2 = _mm_max_ps(v, v1);
-    const __m128 v3 = _mm_shuffle_ps(v2, v2, 0x0F);
-    const __m128 v4 = _mm_max_ps(v2, v3);
-    return _mm_cvtss_f32(v4);
+    const __m128 v0 = _mm_max_ss(_mm_set_ss(a), _mm_set_ss(b));
+    const __m128 v1 = _mm_max_ss(_mm_set_ss(c), _mm_set_ss(d));
+
+    return _mm_cvtss_f32(_mm_max_ss(v1, v0));
 }
 
 
