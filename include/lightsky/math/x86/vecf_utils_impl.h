@@ -198,7 +198,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 /*-------------------------------------
     4D Mix
 -------------------------------------*/
-inline LS_INLINE math::vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent) noexcept
+inline LS_INLINE vec4_t<float> mix(const vec4_t<float>& v1, const vec4_t<float>& v2, float percent) noexcept
 {
     const __m128 p = _mm_set1_ps(percent);
     const __m128 v = _mm_sub_ps(v2.simd, v1.simd);
@@ -258,7 +258,7 @@ inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v) noexcept
 {
-    return math::vec4_t<float>{_mm_and_ps(_mm_cmpge_ps(v.simd, edge.simd), _mm_set1_ps(1.f))};
+    return vec4_t<float>{_mm_and_ps(_mm_cmpge_ps(v.simd, edge.simd), _mm_set1_ps(1.f))};
 }
 
 /*-------------------------------------
@@ -529,5 +529,36 @@ inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>
 {
     return vec4_t<float>{_mm_fmsub_ps(x.simd, m.simd, a.simd)};
 }
+
+
+
+/*-----------------------------------------------------------------------------
+    Vector Casting
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+    4D Vector from 3D & Scalar
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> vec4_cast(const vec3_t<float>& v, float s) noexcept
+{
+    __m128 sv = _mm_broadcast_ss(&s);
+    __m128 v3 = _mm_maskload_ps(v.v, _mm_castsi128_ps(_mm_set_epi32(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)));
+    //__m128 v3 = _mm_maskload_ps(v.v, _mm_castsi128_ps(_mm_set_epi32(0, 0, 0, 0)));
+    return vec4_t<float>{_mm_blend_ps(v3, sv, 0x08)};
+}
+
+
+
+/*-------------------------------------
+    4D Vector from Scalar & 3D
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> vec4_cast(float s, const vec3_t<float>& v) noexcept
+{
+    __m128 sv = _mm_broadcast_ss(&s);
+    __m128 v3 = _mm_maskload_ps(v.v, _mm_castsi128_ps(_mm_set_epi32(0, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF)));
+    return vec4_t<float>{_mm_blend_ps(sv, v3, 0x07)};
+}
+
+
+
 } // end math namespace
 } // end ls namespace
