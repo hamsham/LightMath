@@ -845,6 +845,48 @@ constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 
 
 /*-------------------------------------
+    atan2
+
+    Reference implementation found here:
+    https://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/
+-------------------------------------*/
+template <typename scalar_t>
+inline scalar_t math::atan2(scalar_t y, scalar_t x) noexcept
+{
+    //constexpr scalar_t cos10_9999 = scalar_t{0.9817};
+    //constexpr scalar_t sin11_3222 = scalar_t{0.1963};
+
+    constexpr scalar_t coeff_1 = scalar_t{LS_PI_OVER_4};
+    constexpr scalar_t coeff_2 = scalar_t{3.f} * scalar_t{LS_PI_OVER_4};
+
+    scalar_t absY = math::abs(y) + 1e-10f;
+    scalar_t angle;
+
+    if (x >= scalar_t{0})
+    {
+        scalar_t r = (x - absY) / (absY + x);
+        angle = coeff_1 - coeff_1 * r;
+        //angle = sin11_3222 * r * r * r - cos10_9999 * r + coeff_1;
+    }
+    else
+    {
+        scalar_t r = (x + absY) / (absY - x);
+        angle = coeff_2 - coeff_1 * r;
+        //angle = sin11_3222 * r * r * r - cos10_9999 * r + coeff_2;
+    }
+
+    // negate if in quad III or IV
+    if (y < scalar_t{0})
+    {
+        return -angle;
+    }
+
+    return angle;
+}
+
+
+
+/*-------------------------------------
     rcp
 -------------------------------------*/
 template<typename scalar_t>

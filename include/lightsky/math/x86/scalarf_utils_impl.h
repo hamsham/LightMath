@@ -165,6 +165,43 @@ inline LS_INLINE float fast_sqrt(float input) noexcept
 
 
 /*-------------------------------------
+    atan2
+
+    Reference implementation found here:
+    https://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/
+-------------------------------------*/
+inline float atan2(float y, float x) noexcept
+{
+    __m128 xs = _mm_set_ss(x);
+    __m128 ys = _mm_set_ss(y);
+
+    __m128 negX = _mm_sub_ss(_mm_setzero_ps(), xs);
+    __m128 absY = _mm_add_ss(_mm_and_ps(ys, _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF))), _mm_set_ss(1e-10f));
+
+    __m128 cmp = _mm_cmpge_ss(xs, _mm_setzero_ps());
+    __m128 negAbsY = _mm_sub_ss(_mm_setzero_ps(), absY);
+
+    __m128 xa = _mm_blendv_ps(negX, xs,      cmp);
+    __m128 ya = _mm_blendv_ps(absY, negAbsY, cmp);
+
+    __m128 p = _mm_add_ss(xs, ya);
+    __m128 q = _mm_rcp_ss(_mm_add_ss(absY, xa));
+    __m128 r = _mm_mul_ss(p, q);
+
+    const __m128 coeff_1 = _mm_set_ss(LS_PI_OVER_4);
+    const __m128 coeff_2 = _mm_set_ss(3.f * LS_PI_OVER_4);
+    __m128 coeff = _mm_blendv_ps(coeff_2, coeff_1, cmp);
+    __m128 cmp2 = _mm_cmplt_ss(ys, _mm_setzero_ps());
+    __m128 angle = _mm_sub_ss(coeff, _mm_mul_ss(r, coeff_1));
+    __m128 negAngle = _mm_sub_ss(_mm_setzero_ps(), angle);
+
+    __m128 ret = _mm_blendv_ps(angle, negAngle, cmp2);
+    return _mm_cvtss_f32(ret);
+}
+
+
+
+/*-------------------------------------
     rcp
 -------------------------------------*/
 inline LS_INLINE float rcp(float input) noexcept

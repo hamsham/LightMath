@@ -575,6 +575,21 @@ template <typename scalar_t>
 constexpr scalar_t tan(scalar_t) noexcept;
 
 /**
+ * @brief atan2
+ * Evaluate the arc-tangent of two cartesian lengths.
+ *
+ * @param y
+ * The length of the y-axis.
+ *
+ * @param x
+ * The length of the x-axis.
+ *
+ * @return The arc-tangent of a two lengths.
+ */
+template <typename scalar_t>
+inline scalar_t atan2(scalar_t y, scalar_t x) noexcept;
+
+/**
  * @brief rcp
  * Evaluate the reciprocal of a decimal scalar.
  *
