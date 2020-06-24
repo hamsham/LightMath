@@ -20,18 +20,19 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         const __m256 col2 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[2].simd), m[2].simd, 1);
         const __m256 col3 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[3].simd), m[3].simd, 1);
 
-        __m256 r01;
         const __m256 temp0 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[0].simd), n[1].simd, 1);
-        r01 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp0, 0x00));
-        r01 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp0, 0x55), r01);
-        r01 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp0, 0xAA), r01);
-        _mm256_store_ps(ret.m[0].v, _mm256_fmadd_ps(col3, _mm256_permute_ps(temp0, 0xFF), r01));
-
-        __m256 r23;
         const __m256 temp1 = _mm256_insertf128_ps(_mm256_castps128_ps256(n[2].simd), n[3].simd, 1);
+
+        __m256 r01;
+        __m256 r23;
+
+        r01 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp0, 0x00));
         r23 = _mm256_mul_ps(  col0, _mm256_permute_ps(temp1, 0x00));
+        r01 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp0, 0x55), r01);
         r23 = _mm256_fmadd_ps(col1, _mm256_permute_ps(temp1, 0x55), r23);
+        r01 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp0, 0xAA), r01);
         r23 = _mm256_fmadd_ps(col2, _mm256_permute_ps(temp1, 0xAA), r23);
+        _mm256_store_ps(ret.m[0].v, _mm256_fmadd_ps(col3, _mm256_permute_ps(temp0, 0xFF), r01));
         _mm256_store_ps(ret.m[2].v, _mm256_fmadd_ps(col3, _mm256_permute_ps(temp1, 0xFF), r23));
 
         return ret;
