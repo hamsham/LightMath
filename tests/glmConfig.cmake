@@ -93,14 +93,11 @@ if (NOT GLM_FOUND)
         UPDATE_COMMAND
             ${GIT_EXECUTABLE} fetch
         CMAKE_COMMAND
-            #${CMAKE_COMMAND}
-            ""
+            ${CMAKE_COMMAND}
         CMAKE_CACHE_ARGS
-            #${GLM_BUILD_FLAGS}
-            ""
+            ${GLM_BUILD_FLAGS}
         CMAKE_ARGS
-            #${GLM_BUILD_FLAGS}
-            ""
+            ${GLM_BUILD_FLAGS}
         BUILD_COMMAND
             #${CMAKE_COMMAND} --build . --config ${CMAKE_CFG_INTDIR}
             ""
