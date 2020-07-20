@@ -298,7 +298,7 @@ inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>
     #if defined(LS_ARCH_AARCH64)
         return vec4_t<float>{vfmsq_f32(a.simd, m.simd, x.simd)};
     #else
-        return vec4_t<float>{vmlsq_f32(a.simd, m.simd, x.simd)};
+        return vec4_t<float>{vmlaq_f32(vnegq_f32(a.simd), m.simd, x.simd)};
     #endif
 }
 

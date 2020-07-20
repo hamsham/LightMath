@@ -160,7 +160,7 @@ inline LS_INLINE float fmsub(float x, float m, float a) noexcept
     #if defined(LS_ARCH_AARCH64)
         const float32x2_t result = vfms_f32(vdup_n_f32(a), vdup_n_f32(m), vdup_n_f32(x));
     #else
-        const float32x2_t result = vmls_f32(vdup_n_f32(a), vdup_n_f32(m), vdup_n_f32(x));
+        const float32x2_t result = vmla_f32(vneg_f32(vdup_n_f32(a)), vdup_n_f32(m), vdup_n_f32(x));
     #endif
 
     return vget_lane_f32(result, 0);
