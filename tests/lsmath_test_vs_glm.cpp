@@ -139,14 +139,15 @@ int main()
     std::cout << "LS rsqrt(aspect): " << ls::math::inversesqrt(aspect) << std::endl;
     std::cout << std::endl;
 
-    const glm::vec3 glmVec3{1.f, 2.f, 3.f};
+    const glm::vec3 glmVec3{1.f, -2.f, -3.f};
     std::cout << "GLM cross(vec3): " << glm::cross(glmVec3, glm::vec3{2.f, -1.f, 3.f}) << std::endl;
 
-    const ls::math::vec3 lsVec3{1.f, 2.f, 3.f};
+    const ls::math::vec3 lsVec3{1.f, -2.f, -3.f};
     std::cout << "LS cross(vec3): " << ls::math::cross(lsVec3, ls::math::vec3{2.f, -1.f, 3.f}) << std::endl;
 
-    const ls::math::vec4 lsVec4{1.f, 2.f, 3.f, 4.f};
+    const ls::math::vec4 lsVec4{1.f, -2.f, -3.f, 4.f};
     std::cout << "LS cross(vec4): " << ls::math::cross(lsVec4, ls::math::vec4{2.f, -1.f, 3.f, 1.f}) << std::endl;
+    std::cout << "LS sign mask(vec4): " << ls::math::sign_mask(lsVec4) << std::endl;
 
     std::cout << std::endl;
 

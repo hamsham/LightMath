@@ -34,10 +34,14 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
 
     // horizontal add: swap the words of each vector, add, then swap each
     // half of the vectors and perform a final add.
-    const float32x2_t swap = vadd_f32(vget_high_f32(mul2), vget_low_f32(mul2));
-    const float32x2_t sum = vpadd_f32(swap, swap);
+    #if defined(LS_ARCH_AARCH64)
+        return vaddvq_f32(mul2);
+    #else
+        const float32x2_t swap = vadd_f32(vget_high_f32(mul2), vget_low_f32(mul2));
+        const float32x2_t sum = vpadd_f32(swap, swap);
 
-    return vget_lane_f32(sum, 0);
+        return vget_lane_f32(sum, 0);
+    #endif
 }
 
 /*-----------------------------------------------------------------------------
@@ -48,12 +52,23 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
-    return mat4_t<float>{
-        vmulq_n_f32(v2.simd, v1[0]),
-        vmulq_n_f32(v2.simd, v1[1]),
-        vmulq_n_f32(v2.simd, v1[2]),
-        vmulq_n_f32(v2.simd, v1[3])
-    };
+    #if defined(LS_ARCH_AARCH64)
+        return mat4_t<float>{
+            vmulq_laneq_f32(v2.simd, v1.simd, 0),
+            vmulq_laneq_f32(v2.simd, v1.simd, 1),
+            vmulq_laneq_f32(v2.simd, v1.simd, 2),
+            vmulq_laneq_f32(v2.simd, v1.simd, 3)
+        };
+
+    #else
+        return mat4_t<float>{
+            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 0))),
+            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 1))),
+            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 2))),
+            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 3)))
+        };
+
+    #endif
 }
 
 /*-------------------------------------
@@ -61,36 +76,13 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
-    // a|b|c|d
-    // e|f|g|h
-    // i|j|k|l
-    // m|n|o|p
-
-    // a|e|c|g
-    // b|f|d|h
-    // i|m|k|o
-    // j|n|l|p
-    /*
-    const float32x4x2_t aecg_bfdh = vtrnq_f32(m.m[0].simd, m.m[1].simd);
-    const float32x4x2_t imko_jnlp = vtrnq_f32(m.m[2].simd, m.m[3].simd);
-
-    // a|e|i|m
-    // b|f|j|n
-    // c|g|k|o
-    // d|h|l|p
+    const float32x4x4_t t {vld4q_f32(&m[0])};
     return mat4_t<float>{
-        {vcombine_f32(vget_low_f32(aecg_bfdh.val[0]), vget_low_f32(imko_jnlp.val[0]))},
-        {vcombine_f32(vget_low_f32(aecg_bfdh.val[1]), vget_low_f32(imko_jnlp.val[1]))},
-        {vcombine_f32(vget_high_f32(aecg_bfdh.val[0]), vget_high_f32(imko_jnlp.val[0]))},
-        {vcombine_f32(vget_high_f32(aecg_bfdh.val[1]), vget_high_f32(imko_jnlp.val[1]))}
+        {t.val[0]},
+        {t.val[1]},
+        {t.val[2]},
+        {t.val[3]}
     };
-    */
-    union
-    {
-        float32x4x4_t t;
-        mat4_t<float> m;
-    } ret{vld4q_f32(&m[0])};
-    return ret.m;
 }
 
 
