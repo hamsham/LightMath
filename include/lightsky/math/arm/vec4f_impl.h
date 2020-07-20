@@ -530,11 +530,7 @@ vec4_t<float> vec4_t<float>::operator-(float input) const
 inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator*(float input) const
 {
-    #if defined(LS_ARCH_AARCH64)
-        return vec4_t<float>{vmulq_n_f32(simd, input)};
-    #else
-        return vec4_t<float>{vmulq_f32(simd, vdupq_n_f32(input))};
-    #endif
+    return vec4_t<float>{vmulq_n_f32(simd, input)};
 }
 
 inline LS_INLINE
@@ -570,12 +566,7 @@ vec4_t<float>& vec4_t<float>::operator-=(float input)
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator*=(float input)
 {
-    #if defined(LS_ARCH_AARCH64)
-        simd = vmulq_n_f32(simd, input);
-    #else
-        simd = vmulq_f32(simd, vdupq_n_f32(input));
-    #endif
-
+    simd = vmulq_n_f32(simd, input);
     return *this;
 }
 
