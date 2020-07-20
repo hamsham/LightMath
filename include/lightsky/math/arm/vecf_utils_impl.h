@@ -80,6 +80,23 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
 }
 
 /*-------------------------------------
+    4D Cross
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
+{
+    const float32x2x2_t v1Split = vzip_f32(vget_low_f32(v1.simd), vrev64_f32(vget_high_f32(v1.simd)));
+    const float32x4_t yzxA = vcombine_f32(v1Split.val[1], v1Split.val[0]);
+
+    const float32x2x2_t v2Split = vzip_f32(vget_low_f32(v2.simd), vrev64_f32(vget_high_f32(v2.simd)));
+    const float32x4_t yzxB = vcombine_f32(v2Split.val[1], v2Split.val[0]);
+
+    const float32x4_t mulSub = vmlsq_f32(vmulq_f32(v1.simd, yzxB), v2.simd, yzxA);
+
+    const float32x2x2_t split = vzip_f32(vget_low_f32(mulSub), vrev64_f32(vget_high_f32(mulSub)));
+    return vec4_t<float>{vcombine_f32(split.val[1], split.val[0])};
+}
+
+/*-------------------------------------
     4D Magnitude
 -------------------------------------*/
 inline LS_INLINE float length(const vec4_t<float>& v) noexcept

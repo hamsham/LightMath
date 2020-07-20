@@ -128,13 +128,10 @@ inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float>& v2) noexcept
 {
-    const __m128 a = v1.simd;
-    const __m128 b = v2.simd;
-    const __m128 yzxA = _mm_permute_ps(a, _MM_SHUFFLE(3, 0, 2, 1));
-    const __m128 yzxB = _mm_permute_ps(b, _MM_SHUFFLE(3, 0, 2, 1));
-    const __m128 c = _mm_fmsub_ps(a, yzxB, _mm_mul_ps(yzxA, b));
-
-    return vec4_t<float>{_mm_permute_ps(c, _MM_SHUFFLE(3, 0, 2, 1))};
+    const __m128 yzxA = _mm_permute_ps(v1.simd, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 yzxB = _mm_permute_ps(v2.simd, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 ret = _mm_fmsub_ps(v1.simd, yzxB, _mm_mul_ps(yzxA, v2.simd));
+    return vec4_t<float>{_mm_permute_ps(ret, _MM_SHUFFLE(3, 0, 2, 1))};
 }
 
 /*-------------------------------------

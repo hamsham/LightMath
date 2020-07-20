@@ -145,6 +145,9 @@ int main()
     const ls::math::vec3 lsVec3{1.f, 2.f, 3.f};
     std::cout << "LS cross(vec3): " << ls::math::cross(lsVec3, ls::math::vec3{2.f, -1.f, 3.f}) << std::endl;
 
+    const ls::math::vec4 lsVec4{1.f, 2.f, 3.f, 4.f};
+    std::cout << "LS cross(vec4): " << ls::math::cross(lsVec4, ls::math::vec4{2.f, -1.f, 3.f, 1.f}) << std::endl;
+
     std::cout << std::endl;
 
     const glm::vec4 glmVec{1.f, 2.f, 3.f, 4.f};
