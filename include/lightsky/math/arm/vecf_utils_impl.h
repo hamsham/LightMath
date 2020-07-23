@@ -229,15 +229,15 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
     return ((a[3] >> 28) & 8) | ((a[2] >> 29) & 4) | ((a[1] >> 30) & 2) | ((a[0] >> 31) & 1);
     */
 
-    constexpr int32_t shiftLiterals[4] = {-28, -29, -30, -31};
-    constexpr int32_t andLiterals[4] = {1, 2, 4, 8};
+    const int32x4_t shiftLiterals{-28, -29, -30, -31};
+    const int32x4_t andLiterals{1, 2, 4, 8};
 
     int32x4_t cmp = vreinterpretq_s32_u32(vcltq_f32(x.simd, vdupq_n_f32(0.f)));
-    int32x4_t shifts = vqshlq_s32(cmp, vld1q_s32(shiftLiterals));
-    int32x4_t masks = vandq_s32(shifts, vld1q_s32(andLiterals));
+    int32x4_t shifts = vqshlq_s32(cmp, shiftLiterals);
+    int32x4_t masks = vandq_s32(shifts, andLiterals);
 
     int32x2_t or2 = vorr_s32(vget_high_s32(masks), vget_low_s32(masks));
-    return vget_lane_s32(or2, 0) | vget_lane_s32(or2, 1);
+    return vget_lane_s32(vorr_s32(or2, vrev64_s32(or2)), 0);
 }
 
 /*-------------------------------------
