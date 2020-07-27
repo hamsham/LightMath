@@ -16,17 +16,39 @@ namespace math
 /*-------------------------------------
     floor
 -------------------------------------*/
-/*
+#if defined(LS_ARCH_AARCH64)
 inline LS_INLINE float floor(float n) noexcept
 {
     const float32x2_t f = vdup_n_f32(n);
-    const float32x2_t t = vcvt_f32_s32(vcvt_s32_f32(f)); // truncate fraction bits
-    const uint32x2_t  i = vclt_f32(f, t);
-    const float32x2_t r = vsub_f32(t, vcvt_f32_u32(vand_u32(i, vdup_n_u32(1u))));
-
-    return vget_lane_f32(r, 0);
+    return vget_lane_f32(vrndm_f32(f), 0);
 }
-*/
+#endif
+
+
+
+/*-------------------------------------
+    ceil
+-------------------------------------*/
+#if defined(LS_ARCH_AARCH64)
+inline LS_INLINE float ceil(float n) noexcept
+{
+    const float32x2_t f = vdup_n_f32(n);
+    return vget_lane_f32(vrndp_f32(f), 0);
+}
+#endif
+
+
+
+/*-------------------------------------
+    round
+-------------------------------------*/
+#if defined(LS_ARCH_AARCH64)
+inline LS_INLINE float round(float n) noexcept
+{
+    const float32x2_t f = vdup_n_f32(n);
+    return vget_lane_f32(vrndi_f32(f), 0);
+}
+#endif
 
 
 
