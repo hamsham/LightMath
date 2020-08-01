@@ -62,6 +62,17 @@ math::mat2_t<num_t> math::mat_comp_mul(const mat2_t<num_t>& m1, const mat2_t<num
 }
 
 /*-------------------------------------
+    Row-based multiplication
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::mat2_t<num_t> math::mat_row_mul(const mat2_t<num_t>& m, const vec2_t<num_t>& v) noexcept {
+    return mat2_t<num_t>{
+        m.m[0] * v.v[0],
+        m.m[1] * v.v[1]
+    };
+}
+
+/*-------------------------------------
     2x2 Rotation
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
@@ -145,6 +156,18 @@ math::mat3_t<num_t> math::mat_comp_mul(const mat3_t<num_t>& m1, const mat3_t<num
         m1.m[0] * m2.m[0],
         m1.m[1] * m2.m[1],
         m1.m[2] * m2.m[2]
+    };
+}
+
+/*-------------------------------------
+    Row-based multiplication
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::mat3_t<num_t> math::mat_row_mul(const mat3_t<num_t>& m, const vec3_t<num_t>& v) noexcept {
+    return mat3_t<num_t>{
+        m.m[0] * v.v[0],
+        m.m[1] * v.v[1],
+        m.m[2] * v.v[2]
     };
 }
 
@@ -353,6 +376,19 @@ math::mat4_t<num_t> math::mat_comp_mul(const mat4_t<num_t>& m1, const mat4_t<num
         m1.m[1] * m2.m[1],
         m1.m[2] * m2.m[2],
         m1.m[3] * m2.m[3]
+    };
+}
+
+/*-------------------------------------
+    Row-based multiplication
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::mat4_t<num_t> math::mat_row_mul(const mat4_t<num_t>& m, const vec4_t<num_t>& v) noexcept {
+    return mat4_t<num_t>{
+        m.m[0] * v.v[0],
+        m.m[1] * v.v[1],
+        m.m[2] * v.v[2],
+        m.m[3] * v.v[3]
     };
 }
 

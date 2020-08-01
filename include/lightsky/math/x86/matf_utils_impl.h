@@ -238,14 +238,31 @@ inline LS_INLINE float determinant(const mat4_t<float>& m4x4) noexcept
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_t<float>& m2) noexcept
 {
-    mat4_t<float> result;
+    return mat4_t<float>{
+        {_mm_mul_ps(m1.m[0].simd, m2.m[0].simd)},
+        {_mm_mul_ps(m1.m[1].simd, m2.m[1].simd)},
+        {_mm_mul_ps(m1.m[2].simd, m2.m[2].simd)},
+        {_mm_mul_ps(m1.m[3].simd, m2.m[3].simd)}
+    };
+}
 
-    result.m[0].simd = _mm_mul_ps(m1.m[0].simd, m2.m[0].simd);
-    result.m[1].simd = _mm_mul_ps(m1.m[1].simd, m2.m[1].simd);
-    result.m[2].simd = _mm_mul_ps(m1.m[2].simd, m2.m[2].simd);
-    result.m[3].simd = _mm_mul_ps(m1.m[3].simd, m2.m[3].simd);
 
-    return result;
+
+/*-------------------------------------
+    Row-based multiplication
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> mat_row_mul(const mat4_t<float>& m, const vec4_t<float>& v) noexcept {
+    const __m128 row0 = _mm_permute_ps(v.simd, 0x00);
+    const __m128 row1 = _mm_permute_ps(v.simd, 0x55);
+    const __m128 row2 = _mm_permute_ps(v.simd, 0xAA);
+    const __m128 row3 = _mm_permute_ps(v.simd, 0xFF);
+
+    return mat4_t<float>{
+        {_mm_mul_ps(m.m[0].simd, row0)},
+        {_mm_mul_ps(m.m[1].simd, row1)},
+        {_mm_mul_ps(m.m[2].simd, row2)},
+        {_mm_mul_ps(m.m[3].simd, row3)},
+    };
 }
 
 

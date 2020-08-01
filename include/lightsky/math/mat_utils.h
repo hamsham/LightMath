@@ -85,6 +85,24 @@ template <typename N> constexpr
 mat2_t<N> mat_comp_mul(const mat2_t<N>& m1, const mat2_t<N>& m2) noexcept;
 
 /**
+ *  @brief Row-by-row multiplication of a matrix and vector
+ *
+ *  mat_row_mul() will multiply each row of a matrix by a each component of a
+ *  vector.
+ *
+ *  @param m
+ *  A constant reference to a matrix.
+ *
+ *  @param v
+ *  A constant reference to a vector.
+ *
+ *  @return a matrix containing the row-based multiplication of each component
+ *  in the input vector.
+ */
+template <typename N> constexpr
+mat2_t<N> mat_row_mul(const mat2_t<N>& m, const vec2_t<N>& v) noexcept;
+
+/**
  *  @brief rotate
  *  Rotate a 2x2 matrix by a number of radians.
  *
@@ -178,6 +196,24 @@ mat3_t<N> inverse(const mat3_t<N>& m) noexcept;
  */
 template <typename N> constexpr
 mat3_t<N> mat_comp_mul(const mat3_t<N>& m1, const mat3_t<N>& m2) noexcept;
+
+/**
+ *  @brief Row-by-row multiplication of a matrix and vector
+ *
+ *  mat_row_mul() will multiply each row of a matrix by a each component of a
+ *  vector.
+ *
+ *  @param m
+ *  A constant reference to a matrix.
+ *
+ *  @param v
+ *  A constant reference to a vector.
+ *
+ *  @return a matrix containing the row-based multiplication of each component
+ *  in the input vector.
+ */
+template <typename N> constexpr
+mat3_t<N> mat_row_mul(const mat3_t<N>& m, const vec3_t<N>& v) noexcept;
 
 /**
  *  @brief rotate
@@ -312,6 +348,24 @@ mat4_t<N> inverse(const mat4_t<N>& m) noexcept;
  */
 template <typename N> constexpr
 mat4_t<N> mat_comp_mul(const mat4_t<N>& m1, const mat4_t<N>& m2) noexcept;
+
+/**
+ *  @brief Row-by-row multiplication of a matrix and vector
+ *
+ *  mat_row_mul() will multiply each row of a matrix by a each component of a
+ *  vector.
+ *
+ *  @param m
+ *  A constant reference to a matrix.
+ *
+ *  @param v
+ *  A constant reference to a vector.
+ *
+ *  @return a matrix containing the row-based multiplication of each component
+ *  in the input vector.
+ */
+template <typename N> constexpr
+mat4_t<N> mat_row_mul(const mat4_t<N>& m, const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief rotate

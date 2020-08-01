@@ -44,6 +44,8 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
     #endif
 }
 
+
+
 /*-----------------------------------------------------------------------------
     4x4 Matrices
 -----------------------------------------------------------------------------*/
@@ -70,6 +72,42 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 
     #endif
 }
+
+
+
+/*-------------------------------------
+    4x4 Component-wise multiplication
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_t<float>& m2) noexcept
+{
+    return mat4_t<float>{
+        {vmulq_f32(m1.m[0].simd, m2.m[0].simd)},
+        {vmulq_f32(m1.m[1].simd, m2.m[1].simd)},
+        {vmulq_f32(m1.m[2].simd, m2.m[2].simd)},
+        {vmulq_f32(m1.m[3].simd, m2.m[3].simd)}
+    };
+}
+
+
+
+/*-------------------------------------
+    Row-based multiplication
+-------------------------------------*/
+inline LS_INLINE mat4_t<float> mat_row_mul(const mat4_t<float>& m, const vec4_t<float>& v) noexcept {
+    const float32x4_t row0 = vdupq_n_f32(vget_lane_f32(vget_low_f32(v.simd),  0));
+    const float32x4_t row1 = vdupq_n_f32(vget_lane_f32(vget_low_f32(v.simd),  1));
+    const float32x4_t row2 = vdupq_n_f32(vget_lane_f32(vget_high_f32(v.simd), 0));
+    const float32x4_t row3 = vdupq_n_f32(vget_lane_f32(vget_high_f32(v.simd), 1));
+
+    return mat4_t<float>{
+        {vmulq_f32(m.m[0].simd, row0)},
+        {vmulq_f32(m.m[1].simd, row1)},
+        {vmulq_f32(m.m[2].simd, row2)},
+        {vmulq_f32(m.m[3].simd, row3)},
+    };
+}
+
+
 
 /*-------------------------------------
     4x4 Transpose
