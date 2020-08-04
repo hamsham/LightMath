@@ -12,8 +12,11 @@
     extern "C" {
         #include <immintrin.h>
     }
-#elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
+#elif defined(LS_ARCH_AARCH64)
     #include <arm_neon.h>
+#elif defined(LS_ARCH_ARM)
+    #include <arm_neon.h>
+    #include <arm_fp16.h>
 #endif
 
 namespace ls

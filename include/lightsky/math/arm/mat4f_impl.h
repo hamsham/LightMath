@@ -12,9 +12,9 @@ namespace math {
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
 {
+    alignas(alignof(float32x4x4_t)) mat4_t<float> ret;
 
     #if defined(LS_ARCH_AARCH64)
-        alignas(sizeof(float32x4_t)) mat4_t<float> ret;
         ret[0].simd = vmulq_laneq_f32(             this->m[0].simd, n[0].simd, 0);
         ret[0].simd = vmlaq_laneq_f32(ret[0].simd, this->m[1].simd, n[0].simd, 1);
         ret[0].simd = vmlaq_laneq_f32(ret[0].simd, this->m[2].simd, n[0].simd, 2);
@@ -36,7 +36,6 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         ret[3].simd = vmlaq_laneq_f32(ret[3].simd, this->m[3].simd, n[3].simd, 3);
 
     #else
-        mat4_t<float> ret;
         ret[0].simd = vmulq_lane_f32(             this->m[0].simd, vget_low_f32( n[0].simd), 0);
         ret[0].simd = vmlaq_lane_f32(ret[0].simd, this->m[1].simd, vget_low_f32( n[0].simd), 1);
         ret[0].simd = vmlaq_lane_f32(ret[0].simd, this->m[2].simd, vget_high_f32(n[0].simd), 0);
