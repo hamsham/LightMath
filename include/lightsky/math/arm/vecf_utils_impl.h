@@ -53,7 +53,7 @@ inline LS_INLINE float length(const vec3_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 {
-    #if defined(LS_ARCH_AARCH64)
+    #if 0//defined(LS_ARCH_AARCH64)
         return vaddvq_f32(v.simd);
 
     #else
@@ -69,7 +69,7 @@ inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 {
-    #if defined(LS_ARCH_AARCH64)
+    #if 0//defined(LS_ARCH_AARCH64)
         const float32x2_t b = vdup_n_f32(vaddvq_f32(v.simd));
 
     #else
@@ -88,7 +88,7 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
 {
     const float32x4_t a = vmulq_f32(v1.simd, v2.simd);
 
-    #if defined(LS_ARCH_AARCH64)
+    #if 0//defined(LS_ARCH_AARCH64)
         return vaddvq_f32(a);
 
     #else
@@ -124,7 +124,7 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
     // sum, squared
     const float32x4_t a = vmulq_f32(v.simd, v.simd);
 
-    #if defined(LS_ARCH_AARCH64)
+    #if 0//defined(LS_ARCH_AARCH64)
         float32x2_t c = vdup_n_f32(vaddvq_f32(a));
     #else
         const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
@@ -148,7 +148,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
 {
     const float32x4_t a = vmulq_f32(v.simd, v.simd);
 
-    #if defined(LS_ARCH_AARCH64)
+    #if 0//defined(LS_ARCH_AARCH64)
         float32x4_t d = vdupq_n_f32(vaddvq_f32(a));
     #else
         const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
