@@ -221,23 +221,27 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
-    /*
-    uint32_t vals[4];
-    const uint32x4_t a = vreinterpretq_u32_f32(x.simd);
-    vst1q_u32(vals, a);
+    const int32x4_t shiftLiterals{-31, -30, -29, -28};
+    const int32x4_t sign  = vdupq_n_u32(0x80000000);
+    const int32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
+    const int32x4_t masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
 
-    return ((a[3] >> 28) & 8) | ((a[2] >> 29) & 4) | ((a[1] >> 30) & 2) | ((a[0] >> 31) & 1);
-    */
+    #if defined(LS_ARCH_AARCH64)
+        // Adding powers-of-two only sets the corresponding bits.
+        // This is a low-throughput instruction and only works now because it
+        // replaces the 6 instructions in the Arm32 version.
+        return vaddvq_s32(masks);
 
-    const int32x4_t shiftLiterals{-28, -29, -30, -31};
-    const int32x4_t andLiterals{1, 2, 4, 8};
+    #else
+        const int32x2_t lo    = vget_low_s32(masks);
+        const int32x2_t hi    = vget_high_s32(masks);
+        const int32x2_t swp   = vorr_s32(hi, lo);
+        const int32x2_t rev   = vrev64_s32(swp);
+        const int32x2_t bits  = vorr_s32(rev, swp);
 
-    int32x4_t cmp = vreinterpretq_s32_u32(vcltq_f32(x.simd, vdupq_n_f32(0.f)));
-    int32x4_t shifts = vqshlq_s32(cmp, shiftLiterals);
-    int32x4_t masks = vandq_s32(shifts, andLiterals);
+        return vget_lane_s32(bits, 0);
 
-    int32x2_t or2 = vorr_s32(vget_high_s32(masks), vget_low_s32(masks));
-    return vget_lane_s32(vorr_s32(or2, vrev64_s32(or2)), 0);
+    #endif
 }
 
 /*-------------------------------------
