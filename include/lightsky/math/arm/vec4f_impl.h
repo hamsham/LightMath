@@ -13,7 +13,7 @@ namespace math
 
 
 template<>
-union alignas(sizeof(float32x4_t)) vec4_t<float>
+union alignas(alignof(float32x4_t)) vec4_t<float>
 {
     typedef float value_type;
     static constexpr unsigned num_components() noexcept { return 4; }
