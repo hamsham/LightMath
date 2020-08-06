@@ -216,14 +216,12 @@ inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
     return ret;
 }
 
-#if defined(LS_ARCH_AARCH64)
 template <>
 template <>
 inline LS_INLINE vec4_t<half>::operator vec4_t<float>() const
 {
     return vec4_t<float>{vcvt_f32_f16(vld1_f16(reinterpret_cast<const float16_t*>(v)))};
 }
-#endif
  
 /*-------------------------------------
     Convert to Other 4D Types
@@ -288,7 +286,6 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
     return ret;
 }
 
-#if defined(LS_ARCH_AARCH64)
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
@@ -296,7 +293,6 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
     vst1_f16(reinterpret_cast<float16_t*>(ret.v), vcvt_f16_f32(this->simd));
     return ret;
 }
-#endif
  
 /*-------------------------------------
     Cast to a float pointer
