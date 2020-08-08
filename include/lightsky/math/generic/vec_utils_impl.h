@@ -44,7 +44,7 @@ num_t math::dot(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2) noexcept
 template <typename num_t> constexpr LS_INLINE
 num_t math::cross(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2) noexcept
 {
-    return (v1[0] * v2[1]) - (v1[1] * v2[0]);
+    return (v1.v[0] * v2.v[1]) - (v1.v[1] * v2.v[0]);
 }
 
 /*-------------------------------------
@@ -205,8 +205,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::step(const vec2_t <num_t>& edge, const vec2_t <num_t>& v) noexcept
 {
     return math::vec2_t<num_t>{
-        v[0] < edge[0] ? num_t{0} : num_t{1},
-        v[1] < edge[1] ? num_t{0} : num_t{1}
+        v.v[0] < edge.v[0] ? num_t{0} : num_t{1},
+        v.v[1] < edge.v[1] ? num_t{0} : num_t{1}
     };
 }
 
@@ -217,8 +217,8 @@ template<typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::smoothstep(const vec2_t<num_t>& a, const vec2_t<num_t>& b, const vec2_t<num_t>& x) noexcept
 {
     return math::vec2_t<num_t>{
-        math::smoothstep<num_t>(a[0], b[0], x[0]),
-        math::smoothstep<num_t>(a[1], b[1], x[1])
+        math::smoothstep<num_t>(a.v[0], b.v[0], x.v[0]),
+        math::smoothstep<num_t>(a.v[1], b.v[1], x.v[1])
     };
 }
 
@@ -229,8 +229,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::rcp(const vec2_t <num_t>& v) noexcept
 {
     return vec2_t < num_t > {
-        ls::math::rcp(v[0]),
-        ls::math::rcp(v[1])
+        ls::math::rcp(v.v[0]),
+        ls::math::rcp(v.v[1])
     };
 }
 
@@ -262,8 +262,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::floor(const vec2_t <num_t>& v) noexcept
 {
     return vec2_t < num_t > {
-        ls::math::floor(v[0]),
-        ls::math::floor(v[1])
+        ls::math::floor(v.v[0]),
+        ls::math::floor(v.v[1])
     };
 }
 
@@ -274,8 +274,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::ceil(const vec2_t <num_t>& v) noexcept
 {
     return vec2_t < num_t > {
-        ls::math::ceil(v[0]),
-        ls::math::ceil(v[1])
+        ls::math::ceil(v.v[0]),
+        ls::math::ceil(v.v[1])
     };
 }
 
@@ -286,8 +286,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::round(const vec2_t <num_t>& v) noexcept
 {
     return vec2_t < num_t > {
-        ls::math::round(v[0]),
-        ls::math::round(v[1])
+        ls::math::round(v.v[0]),
+        ls::math::round(v.v[1])
     };
 }
 
@@ -298,8 +298,8 @@ template <typename num_t> constexpr LS_INLINE
 math::vec2_t<num_t> math::abs(const vec2_t <num_t>& v) noexcept
 {
     return vec2_t < num_t > {
-        ls::math::abs(v[0]),
-        ls::math::abs(v[1])
+        ls::math::abs(v.v[0]),
+        ls::math::abs(v.v[1])
     };
 }
 
@@ -310,8 +310,8 @@ template <typename num_t> inline LS_INLINE
 math::vec2_t<num_t> math::log2(const math::vec2_t<num_t>& n) noexcept
 {
     return math::vec2_t<num_t>{
-        (num_t)math::log2<float>((float)n[0]),
-        (num_t)math::log2<float>((float)n[1])
+        (num_t)math::log2<float>((float)n.v[0]),
+        (num_t)math::log2<float>((float)n.v[1])
     };
 }
 
@@ -658,9 +658,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::step(const vec3_t <num_t>& edge, const vec3_t <num_t>& v) noexcept
 {
     return math::vec3_t<num_t>{
-        v[0] < edge[0] ? num_t{0} : num_t{1},
-        v[1] < edge[1] ? num_t{0} : num_t{1},
-        v[2] < edge[2] ? num_t{0} : num_t{1}
+        v.v[0] < edge.v[0] ? num_t{0} : num_t{1},
+        v.v[1] < edge.v[1] ? num_t{0} : num_t{1},
+        v.v[2] < edge.v[2] ? num_t{0} : num_t{1}
     };
 }
 
@@ -671,9 +671,9 @@ template<typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::smoothstep(const vec3_t<num_t>& a, const vec3_t<num_t>& b, const vec3_t<num_t>& x) noexcept
 {
     return math::vec3_t<num_t>{
-        math::smoothstep<num_t>(a[0], b[0], x[0]),
-        math::smoothstep<num_t>(a[1], b[1], x[1]),
-        math::smoothstep<num_t>(a[2], b[2], x[2])
+        math::smoothstep<num_t>(a.v[0], b.v[0], x.v[0]),
+        math::smoothstep<num_t>(a.v[1], b.v[1], x.v[1]),
+        math::smoothstep<num_t>(a.v[2], b.v[2], x.v[2])
     };
 }
 
@@ -684,9 +684,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::rcp(const vec3_t <num_t>& v) noexcept
 {
     return vec3_t < num_t > {
-        ls::math::rcp(v[0]),
-        ls::math::rcp(v[1]),
-        ls::math::rcp(v[2])
+        ls::math::rcp(v.v[0]),
+        ls::math::rcp(v.v[1]),
+        ls::math::rcp(v.v[2])
     };
 }
 
@@ -719,9 +719,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::floor(const vec3_t <num_t>& v) noexcept
 {
     return vec3_t < num_t > {
-        ls::math::floor(v[0]),
-        ls::math::floor(v[1]),
-        ls::math::floor(v[2])
+        ls::math::floor(v.v[0]),
+        ls::math::floor(v.v[1]),
+        ls::math::floor(v.v[2])
     };
 }
 
@@ -732,9 +732,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::ceil(const vec3_t <num_t>& v) noexcept
 {
     return vec3_t < num_t > {
-        ls::math::ceil(v[0]),
-        ls::math::ceil(v[1]),
-        ls::math::ceil(v[2])
+        ls::math::ceil(v.v[0]),
+        ls::math::ceil(v.v[1]),
+        ls::math::ceil(v.v[2])
     };
 }
 
@@ -745,9 +745,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::round(const vec3_t <num_t>& v) noexcept
 {
     return vec3_t < num_t > {
-        ls::math::round(v[0]),
-        ls::math::round(v[1]),
-        ls::math::round(v[2])
+        ls::math::round(v.v[0]),
+        ls::math::round(v.v[1]),
+        ls::math::round(v.v[2])
     };
 }
 
@@ -758,9 +758,9 @@ template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::abs(const vec3_t <num_t>& v) noexcept
 {
     return vec3_t < num_t > {
-        ls::math::abs(v[0]),
-        ls::math::abs(v[1]),
-        ls::math::abs(v[2])
+        ls::math::abs(v.v[0]),
+        ls::math::abs(v.v[1]),
+        ls::math::abs(v.v[2])
     };
 }
 
@@ -771,9 +771,9 @@ template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::log2(const math::vec3_t<num_t>& n) noexcept
 {
     return math::vec3_t<num_t>{
-        (num_t)math::log2<float>((float)n[0]),
-        (num_t)math::log2<float>((float)n[1]),
-        (num_t)math::log2<float>((float)n[2])
+        (num_t)math::log2<float>((float)n.v[0]),
+        (num_t)math::log2<float>((float)n.v[1]),
+        (num_t)math::log2<float>((float)n.v[2])
     };
 }
 
@@ -1086,10 +1086,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::step(const vec4_t <num_t>& edge, const vec4_t <num_t>& v) noexcept
 {
     return math::vec4_t<num_t>{
-        v[0] < edge[0] ? num_t{0} : num_t{1},
-        v[1] < edge[1] ? num_t{0} : num_t{1},
-        v[2] < edge[2] ? num_t{0} : num_t{1},
-        v[3] < edge[3] ? num_t{0} : num_t{1}
+        v.v[0] < edge.v[0] ? num_t{0} : num_t{1},
+        v.v[1] < edge.v[1] ? num_t{0} : num_t{1},
+        v.v[2] < edge.v[2] ? num_t{0} : num_t{1},
+        v.v[3] < edge.v[3] ? num_t{0} : num_t{1}
     };
 }
 
@@ -1100,10 +1100,10 @@ template<typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::smoothstep(const vec4_t<num_t>& a, const vec4_t<num_t>& b, const vec4_t<num_t>& x) noexcept
 {
     return math::vec4_t<num_t>{
-        math::smoothstep<num_t>(a[0], b[0], x[0]),
-        math::smoothstep<num_t>(a[1], b[1], x[1]),
-        math::smoothstep<num_t>(a[2], b[2], x[2]),
-        math::smoothstep<num_t>(a[3], b[3], x[3])
+        math::smoothstep<num_t>(a.v[0], b.v[0], x.v[0]),
+        math::smoothstep<num_t>(a.v[1], b.v[1], x.v[1]),
+        math::smoothstep<num_t>(a.v[2], b.v[2], x.v[2]),
+        math::smoothstep<num_t>(a.v[3], b.v[3], x.v[3])
     };
 }
 
@@ -1114,10 +1114,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::rcp(const vec4_t <num_t>& v) noexcept
 {
     return vec4_t < num_t > {
-        ls::math::rcp(v[0]),
-        ls::math::rcp(v[1]),
-        ls::math::rcp(v[2]),
-        ls::math::rcp(v[3])
+        ls::math::rcp(v.v[0]),
+        ls::math::rcp(v.v[1]),
+        ls::math::rcp(v.v[2]),
+        ls::math::rcp(v.v[3])
     };
 }
 
@@ -1154,10 +1154,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::floor(const vec4_t <num_t>& v) noexcept
 {
     return vec4_t < num_t > {
-        ls::math::round(v[0]),
-        ls::math::round(v[1]),
-        ls::math::round(v[2]),
-        ls::math::round(v[3])
+        ls::math::round(v.v[0]),
+        ls::math::round(v.v[1]),
+        ls::math::round(v.v[2]),
+        ls::math::round(v.v[3])
     };
 }
 
@@ -1168,10 +1168,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::ceil(const vec4_t <num_t>& v) noexcept
 {
     return vec4_t < num_t > {
-        ls::math::ceil(v[0]),
-        ls::math::ceil(v[1]),
-        ls::math::ceil(v[2]),
-        ls::math::ceil(v[3])
+        ls::math::ceil(v.v[0]),
+        ls::math::ceil(v.v[1]),
+        ls::math::ceil(v.v[2]),
+        ls::math::ceil(v.v[3])
     };
 }
 
@@ -1182,10 +1182,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::round(const vec4_t <num_t>& v) noexcept
 {
     return vec4_t < num_t > {
-        ls::math::round(v[0]),
-        ls::math::round(v[1]),
-        ls::math::round(v[2]),
-        ls::math::round(v[3])
+        ls::math::round(v.v[0]),
+        ls::math::round(v.v[1]),
+        ls::math::round(v.v[2]),
+        ls::math::round(v.v[3])
     };
 }
 
@@ -1196,10 +1196,10 @@ template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::abs(const vec4_t <num_t>& v) noexcept
 {
     return vec4_t < num_t > {
-        ls::math::abs(v[0]),
-        ls::math::abs(v[1]),
-        ls::math::abs(v[2]),
-        ls::math::abs(v[3])
+        ls::math::abs(v.v[0]),
+        ls::math::abs(v.v[1]),
+        ls::math::abs(v.v[2]),
+        ls::math::abs(v.v[3])
     };
 }
 
@@ -1210,10 +1210,10 @@ template <typename num_t> inline LS_INLINE
 math::vec4_t<num_t> math::log2(const math::vec4_t<num_t>& n) noexcept
 {
     return math::vec4_t<num_t>{
-        (num_t)math::log2<float>((float)n[0]),
-        (num_t)math::log2<float>((float)n[1]),
-        (num_t)math::log2<float>((float)n[2]),
-        (num_t)math::log2<float>((float)n[3])
+        (num_t)math::log2<float>((float)n.v[0]),
+        (num_t)math::log2<float>((float)n.v[1]),
+        (num_t)math::log2<float>((float)n.v[2]),
+        (num_t)math::log2<float>((float)n.v[3])
     };
 }
 
@@ -1340,7 +1340,7 @@ constexpr LS_INLINE math::vec4_t<num_t> math::fmsub(const vec4_t <num_t>& x, con
 template <typename N>
 constexpr math::vec2_t<N> math::vec2_cast(const math::vec3_t<N>& v) noexcept
 {
-    return math::vec2_t<N>{v[0], v[1]};
+    return math::vec2_t<N>{v.v[0], v.v[1]};
 }
 
 
@@ -1351,7 +1351,7 @@ constexpr math::vec2_t<N> math::vec2_cast(const math::vec3_t<N>& v) noexcept
 template <typename N>
 constexpr math::vec2_t<N> math::vec2_cast(const math::vec4_t<N>& v) noexcept
 {
-    return math::vec2_t<N>{v[0], v[1]};
+    return math::vec2_t<N>{v.v[0], v.v[1]};
 }
 
 
@@ -1362,7 +1362,7 @@ constexpr math::vec2_t<N> math::vec2_cast(const math::vec4_t<N>& v) noexcept
 template <typename N>
 constexpr math::vec3_t<N> math::vec3_cast(const math::vec2_t<N>& v, const N& s) noexcept
 {
-    return math::vec3_t<N>{v[0], v[1], s};
+    return math::vec3_t<N>{v.v[0], v.v[1], s};
 }
 
 
@@ -1373,7 +1373,7 @@ constexpr math::vec3_t<N> math::vec3_cast(const math::vec2_t<N>& v, const N& s) 
 template <typename N>
 constexpr math::vec3_t<N> math::vec3_cast(const N& s, const math::vec2_t<N>& v) noexcept
 {
-    return math::vec3_t<N>{s, v[0], v[1]};
+    return math::vec3_t<N>{s, v.v[0], v.v[1]};
 }
 
 
@@ -1384,7 +1384,7 @@ constexpr math::vec3_t<N> math::vec3_cast(const N& s, const math::vec2_t<N>& v) 
 template <typename N>
 constexpr math::vec3_t<N> math::vec3_cast(const math::vec4_t<N>& v) noexcept
 {
-    return math::vec3_t<N>{v[0], v[1], v[2]};
+    return math::vec3_t<N>{v.v[0], v.v[1], v.v[2]};
 }
 
 
@@ -1395,7 +1395,7 @@ constexpr math::vec3_t<N> math::vec3_cast(const math::vec4_t<N>& v) noexcept
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v, const N& s0, const N& s1) noexcept
 {
-    return math::vec4_t<N>{v[0], v[1], s0, s1};
+    return math::vec4_t<N>{v.v[0], v.v[1], s0, s1};
 }
 
 
@@ -1406,7 +1406,7 @@ constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v, const N& s0,
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const math::vec2_t<N>& v, const N& s1) noexcept
 {
-    return math::vec4_t<N>{s0, v[0], v[1], s1};
+    return math::vec4_t<N>{s0, v.v[0], v.v[1], s1};
 }
 
 
@@ -1417,7 +1417,7 @@ constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const math::vec2_t<N>& v,
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const N& s1, const math::vec2_t<N>& v) noexcept
 {
-    return math::vec4_t<N>{s0, s1, v[0], v[1]};
+    return math::vec4_t<N>{s0, s1, v.v[0], v.v[1]};
 }
 
 
@@ -1428,7 +1428,7 @@ constexpr math::vec4_t<N> math::vec4_cast(const N& s0, const N& s1, const math::
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v0, const math::vec2_t<N>& v1) noexcept
 {
-    return math::vec4_t<N>{v0[0], v0[1], v1[0], v1[1]};
+    return math::vec4_t<N>{v0.v[0], v0.v[1], v1.v[0], v1.v[1]};
 }
 
 
@@ -1439,7 +1439,7 @@ constexpr math::vec4_t<N> math::vec4_cast(const math::vec2_t<N>& v0, const math:
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const math::vec3_t<N>& v, const N& s) noexcept
 {
-    return math::vec4_t<N>{v[0], v[1], v[2], s};
+    return math::vec4_t<N>{v.v[0], v.v[1], v.v[2], s};
 }
 
 
@@ -1450,6 +1450,6 @@ constexpr math::vec4_t<N> math::vec4_cast(const math::vec3_t<N>& v, const N& s) 
 template <typename N>
 constexpr math::vec4_t<N> math::vec4_cast(const N& s, const math::vec3_t<N>& v) noexcept
 {
-    return math::vec4_t<N>{s, v[0], v[1], v[2]};
+    return math::vec4_t<N>{s, v.v[0], v.v[1], v.v[2]};
 }
 } // end ls namespace
