@@ -232,16 +232,50 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
         return vaddvq_s32(masks);
 
     #else
-        const int32x4_t shiftLiterals{-31, -30, -29, -28};
-        const int32x4_t sign  = vdupq_n_u32(0x80000000);
-        const int32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
-        const int32x4_t masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
+        const int32x4_t  shiftLiterals{-31, -30, -29, -28};
+        const uint32x4_t sign  = vdupq_n_u32(0x80000000);
+        const uint32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
+        const int32x4_t  masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
 
-        const int32x2_t lo    = vget_low_s32(masks);
-        const int32x2_t hi    = vget_high_s32(masks);
-        const int32x2_t swp   = vorr_s32(hi, lo);
-        const int32x2_t rev   = vrev64_s32(swp);
-        const int32x2_t bits  = vorr_s32(rev, swp);
+        const int32x2_t lo   = vget_low_s32(masks);
+        const int32x2_t hi   = vget_high_s32(masks);
+        const int32x2_t swp  = vorr_s32(hi, lo);
+        const int32x2_t rev  = vrev64_s32(swp);
+        const int32x2_t bits = vorr_s32(rev, swp);
+
+        return vget_lane_s32(bits, 0);
+
+    #endif
+}
+
+/*-------------------------------------
+    4D Sign Bits (int)
+-------------------------------------*/
+inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
+{
+    const int32x4_t v = vld1q_s32(x.v);
+
+    #if defined(LS_ARCH_AARCH64)
+        const int32x4_t andLiterals{0x01, 0x02, 0x04, 0x08};
+        const int32x4_t cmp   = vcltzq_s32(v);
+        const int32x4_t masks = vandq_s32(andLiterals, cmp);
+
+        // Adding powers-of-two only sets the corresponding bits.
+        // This is a low-throughput instruction and only works now because it
+        // replaces the 6 instructions in the Arm32 version.
+        return vaddvq_s32(masks);
+
+    #else
+        const int32x4_t  shiftLiterals{-31, -30, -29, -28};
+        const uint32x4_t sign  = vdupq_n_u32(0x80000000);
+        const uint32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_s32(v));
+        const int32x4_t  masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
+
+        const int32x2_t lo   = vget_low_s32(masks);
+        const int32x2_t hi   = vget_high_s32(masks);
+        const int32x2_t swp  = vorr_s32(hi, lo);
+        const int32x2_t rev  = vrev64_s32(swp);
+        const int32x2_t bits = vorr_s32(rev, swp);
 
         return vget_lane_s32(bits, 0);
 

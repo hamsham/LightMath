@@ -281,6 +281,15 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 }
 
 /*-------------------------------------
+    4D Sign Bits (int)
+-------------------------------------*/
+inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
+{
+    const __m128i v = _mm_loadu_si128(reinterpret_cast<const __m128i*>(x.v));
+    return _mm_movemask_ps(_mm_castsi128_ps(v));
+}
+
+/*-------------------------------------
     4D Sign Bits
 -------------------------------------*/
 inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
