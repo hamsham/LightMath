@@ -326,7 +326,7 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int32_t>() const
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
-    const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
+    const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_NO_EXC);
     vec4_t<half> ret;
     _mm_storel_pi(reinterpret_cast<__m64*>(ret.v), _mm_castsi128_ps(data));
 
