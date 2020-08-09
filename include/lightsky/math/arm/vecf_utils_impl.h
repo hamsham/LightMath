@@ -257,7 +257,7 @@ inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
 
     #if defined(LS_ARCH_AARCH64)
         const int32x4_t andLiterals{0x01, 0x02, 0x04, 0x08};
-        const int32x4_t cmp   = vcltzq_s32(v);
+        const int32x4_t cmp   = vreinterpretq_s32_u32(vcltzq_s32(v));
         const int32x4_t masks = vandq_s32(andLiterals, cmp);
 
         // Adding powers-of-two only sets the corresponding bits.
