@@ -236,7 +236,7 @@ inline LS_INLINE float sum(float num0, float num1, float num2, float num3) noexc
 -------------------------------------*/
 inline LS_INLINE int sign_mask(float x) noexcept
 {
-    return _mm_cvtsi128_si32(_mm_srli_si128(_mm_castps_si128(_mm_set_ss(x)), 31));
+    return _mm_cvtsi128_si32(_mm_srli_epi32(_mm_castps_si128(_mm_set_ss(x)), 31));
 }
 
 
