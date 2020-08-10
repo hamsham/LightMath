@@ -119,10 +119,11 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
-    const __m128 a = _mm_broadcast_ss(v.v+0);
-    const __m128 b = _mm_broadcast_ss(v.v+1);
-    const __m128 c = _mm_broadcast_ss(v.v+2);
-    const __m128 d = _mm_broadcast_ss(v.v+3);
+    const __m128 s = _mm_loadu_ps(v.v);
+    const __m128 a = _mm_permute_ps(s, 0x00);
+    const __m128 b = _mm_permute_ps(s, 0x55);
+    const __m128 c = _mm_permute_ps(s, 0xAA);
+    const __m128 d = _mm_permute_ps(s, 0xFF);
     const __m128 v0 = _mm_mul_ps(  this->m[0].simd, a);
     const __m128 v1 = _mm_fmadd_ps(this->m[1].simd, b, v0);
     const __m128 v2 = _mm_mul_ps(  this->m[2].simd, c);
