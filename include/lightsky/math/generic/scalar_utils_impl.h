@@ -1001,17 +1001,15 @@ constexpr LS_INLINE out_type math::scale_to_range(
     Get a number's sign bit
 -------------------------------------*/
 template <typename data_t>
-constexpr LS_INLINE int math::sign_mask(
-    typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type x
-) noexcept
+constexpr LS_INLINE int math::sign_mask(typename setup::EnableIf<setup::IsUnsigned<data_t>::value, data_t>::type) noexcept
 {
-    return setup::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+    return 0;
 }
 
 template <typename data_t>
 constexpr LS_INLINE int math::sign_mask(data_t x) noexcept
 {
-    return setup::IsSigned<data_t>::value ? (x < data_t{0}) : 0;
+    return x > data_t{0};
 }
 
 

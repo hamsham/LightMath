@@ -737,7 +737,7 @@ constexpr out_type scale_to_range(
  * @returns 1 if the sign bit is set, 0 if x is greater than, or equal to zero.
  */
 template <typename data_t>
-constexpr int sign_mask(typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type) noexcept;
+constexpr int sign_mask(typename setup::EnableIf<setup::IsUnsigned<data_t>::value, data_t>::type) noexcept;
 
 template <typename data_t>
 constexpr int sign_mask(data_t x) noexcept;
