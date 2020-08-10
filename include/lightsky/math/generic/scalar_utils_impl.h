@@ -1009,7 +1009,7 @@ constexpr LS_INLINE int math::sign_mask(typename setup::EnableIf<setup::IsUnsign
 template <typename data_t>
 constexpr LS_INLINE int math::sign_mask(data_t x) noexcept
 {
-    return x > data_t{0};
+    return x < data_t{0};
 }
 
 
