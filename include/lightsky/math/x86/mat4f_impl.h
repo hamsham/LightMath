@@ -119,11 +119,14 @@ inline LS_INLINE mat4_t<float>& mat4_t<float>::operator*=(const mat4_t<float>& n
 template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
-    __m128 v0 = _mm_mul_ps(  this->m[0].simd, _mm_permute_ps(v.simd, 0x00));
-    __m128 v1 = _mm_fmadd_ps(this->m[1].simd, _mm_permute_ps(v.simd, 0x55), v0);
-
-    __m128 v2 = _mm_mul_ps(  this->m[2].simd, _mm_permute_ps(v.simd, 0xAA));
-    __m128 v3 = _mm_fmadd_ps(this->m[3].simd, _mm_permute_ps(v.simd, 0xFF), v2);
+    const __m128 a = _mm_broadcast_ss(v.v+0);
+    const __m128 b = _mm_broadcast_ss(v.v+1);
+    const __m128 c = _mm_broadcast_ss(v.v+2);
+    const __m128 d = _mm_broadcast_ss(v.v+3);
+    const __m128 v0 = _mm_mul_ps(  this->m[0].simd, a);
+    const __m128 v1 = _mm_fmadd_ps(this->m[1].simd, b, v0);
+    const __m128 v2 = _mm_mul_ps(  this->m[2].simd, c);
+    const __m128 v3 = _mm_fmadd_ps(this->m[3].simd, d, v2);
 
     return math::vec4_t<float>{_mm_add_ps(v1, v3)};
 }
