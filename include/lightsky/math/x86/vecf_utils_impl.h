@@ -70,14 +70,14 @@ inline LS_INLINE float length(const vec3_t<float>& v) noexcept
     const __m128 a = _mm_mul_ps(s, s);
 
     // swap the words of each vector
-    const __m128 b = _mm_permute_ps(a, 0xB1);
+    const __m128 b = _mm_movehdup_ps(a);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
-    const __m128 d = _mm_permute_ps(c, 0x0F);
-    const __m128 e = _mm_add_ps(c, d);
+    const __m128 d = _mm_movehl_ps(c, c);
+    const __m128 e = _mm_add_ss(c, d);
 
-    return _mm_cvtss_f32(_mm_sqrt_ps(e));
+    return _mm_cvtss_f32(_mm_sqrt_ss(e));
 }
 
 
@@ -94,12 +94,12 @@ inline LS_INLINE float sum(const vec4_t<float>& v) noexcept
     const __m128 a = v.simd;
 
     // swap the words of each vector
-    const __m128 b = _mm_permute_ps(a, 0xB1);
+    const __m128 b = _mm_movehdup_ps(a);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
-    const __m128 d = _mm_permute_ps(c, 0x0F);
-    const __m128 e = _mm_add_ps(c, d);
+    const __m128 d = _mm_movehl_ps(c, c);
+    const __m128 e = _mm_add_ss(c, d);
 
     return _mm_cvtss_f32(e);
 }
@@ -113,14 +113,14 @@ inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
     const __m128 a = v.simd;
 
     // swap the words of each vector
-    const __m128 b = _mm_permute_ps(a, 0xB1);
+    const __m128 b = _mm_movehdup_ps(a);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
-    const __m128 d = _mm_permute_ps(c, 0x0F);
-    const __m128 e = _mm_add_ps(c, d);
+    const __m128 d = _mm_movehl_ps(c, c);
+    const __m128 e = _mm_add_ss(c, d);
 
-    return _mm_cvtss_f32(_mm_rcp_ps(e));
+    return _mm_cvtss_f32(_mm_rcp_ss(e));
 }
 
 /*-------------------------------------
@@ -143,12 +143,12 @@ inline LS_INLINE float dot(const vec4_t<float>& v1, const vec4_t<float>& v2) noe
     const __m128 a = _mm_mul_ps(v1.simd, v2.simd);
 
     // swap the words of each vector
-    const __m128 b = _mm_permute_ps(a, 0xB1);
+    const __m128 b = _mm_movehdup_ps(a);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
-    const __m128 d = _mm_permute_ps(c, 0x0F);
-    const __m128 e = _mm_add_ps(c, d);
+    const __m128 d = _mm_movehl_ps(c, c);
+    const __m128 e = _mm_add_ss(c, d);
 
     return _mm_cvtss_f32(e);
 }
@@ -162,14 +162,14 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
     const __m128 a = _mm_mul_ps(v.simd, v.simd);
 
     // swap the words of each vector
-    const __m128 b = _mm_permute_ps(a, 0xB1);
+    const __m128 b = _mm_movehdup_ps(a);
     const __m128 c = _mm_add_ps(a, b);
 
     // swap each half of the vector
-    const __m128 d = _mm_permute_ps(c, 0x0F);
-    const __m128 e = _mm_add_ps(c, d);
+    const __m128 d = _mm_unpackhi_ps(c, c);
+    const __m128 e = _mm_add_ss(c, d);
 
-    return _mm_cvtss_f32(_mm_rcp_ps(_mm_rsqrt_ps(e)));
+    return _mm_cvtss_f32(_mm_rcp_ss(_mm_rsqrt_ss(e)));
 }
 
 /*-------------------------------------
