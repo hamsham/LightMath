@@ -39,3 +39,5 @@ if (NOT GLM_FOUND)
     add_dependencies(lsmath_test_vs_glm Glm)
 endif()
 
+target_include_directories(lsmath_test_vs_glm PRIVATE ${GLM_INCLUDE_DIR})
+
