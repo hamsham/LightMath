@@ -9,6 +9,7 @@
 #include <iostream>
 
 #define GLM_ENABLE_EXPERIMENTAL 1
+#define GLM_FORCE_XYZW_ONLY 1
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
