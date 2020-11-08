@@ -25,20 +25,13 @@ find_path(GLM_INCLUDE_DIR
 )
 
 if(GLM_INCLUDE_DIR)
-    set(NEED_BUILD_GLM FALSE)
-else()
-    set(NEED_BUILD_GLM TRUE)
+    message("-- Found GLM: ${GLM_INCLUDE_DIR}")
+    set(GLM_FOUND TRUE)
 endif()
 
-set(BUILD_GLM "Force GLM to build from source." CACHE BOOL ${NEED_BUILD_GLM})
 
 
-
-if (NOT BUILD_GLM)
-    message("-- Found GLM: ${GLM_INCLUDE_DIR}")
-else()
-    message("-- Building GLM from source")
-
+if (NOT GLM_FOUND)
     # #####################################
     # Folders for the external data
     # #####################################
@@ -59,6 +52,8 @@ else()
     # #####################################
     # External build for GLM (for testing only)
     # #####################################
+    message("-- Building GLM from source")
+
     set(GLM_BRANCH "master" CACHE STRING "Git branch or tag for checking out GLM.")
     #set(GLM_BRANCH "0.9.9.2" CACHE STRING "Git branch or tag for checking out GLM.")
     mark_as_advanced(GLM_BRANCH)

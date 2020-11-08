@@ -35,7 +35,7 @@ LS_MATH_ADD_TARGET(lsmath_test_step     lsmath_test_step.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_trig     lsmath_test_trig.cpp)
 LS_MATH_ADD_TARGET(lsmath_test_vs_glm   lsmath_test_vs_glm.cpp)
 
-if (NOT BUILD_GLM)
+if (NOT GLM_FOUND)
     add_dependencies(lsmath_test_vs_glm Glm)
 endif()
 
