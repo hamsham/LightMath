@@ -19,7 +19,11 @@ namespace math
  * Construct from a float
 -------------------------------------*/
 inline LS_INLINE half::half(const float f) noexcept :
-    bits{_cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC)}
+    #if defined(LS_COMPILER_MSC)
+        bits{(uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC) & 0x07U))}
+    #else
+        bits{_cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC)}
+    #endif
 {}
 
 
@@ -29,7 +33,12 @@ inline LS_INLINE half::half(const float f) noexcept :
 -------------------------------------*/
 inline LS_INLINE half& half::operator=(const float f) noexcept
 {
-    bits = _cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC);
+    #if defined(LS_COMPILER_MSC)
+        bits = (uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC) & 0x07U));
+    #else
+        bits = _cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC);
+    #endif
+
     return *this;
 }
 
@@ -40,7 +49,11 @@ inline LS_INLINE half& half::operator=(const float f) noexcept
 -------------------------------------*/
 inline LS_INLINE half::operator float() const noexcept
 {
-    return _cvtsh_ss(bits);
+    #if defined(LS_COMPILER_MSC)
+        return _mm_cvtss_f32(_mm_cvtph_ps(_mm_cvtsi32_si128((int)bits)));
+    #else
+        return _cvtsh_ss(bits);
+    #endif
 }
 
 
