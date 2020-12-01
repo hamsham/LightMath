@@ -9,15 +9,14 @@
 
 void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float))
 {
-    x = ls::math::radians(360.f / x);
-    const float baseImpl = pStdFunc(x);
-    const float testImpl = pLsFunc(x);
+    float y = LS_PI * ls::math::radians(360.f / x);
+    const float baseImpl = pStdFunc(y);
+    const float testImpl = pLsFunc(y);
     const float errAbs = ls::math::abs(baseImpl - testImpl);
     const float errRel = 100.f * (errAbs / ls::math::abs(baseImpl));
 
-    printf("%2.9f, %2.9f, %2.9f, %2.9f,", baseImpl, testImpl, errAbs, errRel);
+    printf("%1.1f, %2.9f, %2.9f, %2.9f, %2.9f,", x, baseImpl, testImpl, errAbs, errRel);
 }
-
 
 
 

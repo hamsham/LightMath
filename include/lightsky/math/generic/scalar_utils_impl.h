@@ -834,12 +834,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-
-    return x
-           + (x * x * x / scalar_t{3})
-           + (x * x * x * x * x / scalar_t{15})
-           + (x * x * x * x * x * x * x / scalar_t{315})
-           + (x * x * x * x * x * x * x * x * x / scalar_t{2835});
+    return math::sin<scalar_t>(x) / math::cos<scalar_t>(x);
 }
 
 
