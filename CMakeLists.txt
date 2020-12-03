@@ -10,8 +10,6 @@ set(OUTPUT_NAME lsmath)
 # -------------------------------------
 # Source Paths
 # -------------------------------------
-include_directories(include)
-
 set(LS_MATH_SOURCES
     src/fixed.cpp
     src/mat2.cpp
@@ -94,6 +92,8 @@ else()
 endif()
 
 add_library(${OUTPUT_NAME} ${LS_LIB_TYPE} ${LS_MATH_SOURCES} ${LS_MATH_HEADERS})
+
+target_include_directories(${OUTPUT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
 
 # Dependencies
 target_link_libraries(${OUTPUT_NAME} LightSky::Utils LightSky::Setup)
