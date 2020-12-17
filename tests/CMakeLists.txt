@@ -18,7 +18,7 @@ include(glmConfig.cmake)
 # -------------------------------------
 function(LS_MATH_ADD_TARGET target sources)
     add_executable(${target} ${sources} ${ARGN})
-    target_link_libraries(${target} LightSky::Math LightSky::Utils LightSky::Setup)
+    target_link_libraries(${target} LightSky::Math LightSky::Setup)
 endfunction(LS_MATH_ADD_TARGET)
 
 LS_MATH_ADD_TARGET(lsmath_test_atan2    lsmath_test_atan2.cpp)
