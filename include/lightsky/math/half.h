@@ -8,7 +8,7 @@
 #include "lightsky/setup/Arch.h" // LS_ARCH_X86, LS_ARCH_ARM, LS_ARCH_AARCH64
 #include "lightsky/setup/Types.h"
 
-#if defined(LS_ARCH_X86)
+#if defined(LS_X86_FP16)
     extern "C" {
         #include <immintrin.h>
     }
@@ -122,7 +122,7 @@ struct IsFloat<ls::math::half> : public ls::setup::TrueType<ls::math::half>
 /*-----------------------------------------------------------------------------
  * Platform-specific methods needed for inlining
 -----------------------------------------------------------------------------*/
-#if defined(LS_ARCH_X86)
+#if defined(LS_X86_FP16)
     #include "lightsky/math/x86/half_impl.h"
 #elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
     #include "lightsky/math/arm/half_impl.h"

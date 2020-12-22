@@ -76,13 +76,17 @@ inline LS_INLINE float determinant(const mat3_t<float>& m3x3) noexcept
         const __m128 col3 = _mm_permute_ps(row2, shuffleMask120);
     #endif
 
-    const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
+    #ifdef LS_X86_FMA
+        const __m128 sub0 = _mm_fmsub_ps(col0, col1, _mm_mul_ps(col2, col3));
+    #else
+        const __m128 sub0 = _mm_sub_ps(_mm_mul_ps(col0, col1), _mm_mul_ps(col2, col3));
+    #endif
     const __m128 mul2 = _mm_mul_ps(sub0, col4);
 
     // horizontal add: swap the words of each vector, add, then swap each
     // half of the vectors and perform a final add.
-    const __m128 swap = _mm_add_ps(mul2, _mm_permute_ps(mul2, 0xB1));
-    const __m128 sum  = _mm_add_ps(swap, _mm_permute_ps(swap, 0x0F));
+    const __m128 swap = _mm_add_ps(mul2, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(mul2), 0xB1)));
+    const __m128 sum  = _mm_add_ps(swap, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(swap), 0x0F)));
 
     return _mm_cvtss_f32(sum);
 }
@@ -129,7 +133,7 @@ inline LS_INLINE mat3_t<float> inverse(const mat3_t<float>& m3x3) noexcept
     const __m128i storeMask = _mm_set_epi32(0x00000000, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF);
     _mm_storeu_ps(pOut+0, sub0);
     _mm_storeu_ps(pOut+3, sub1);
-    _mm_maskstore_ps(pOut+6, storeMask, sub2);
+    _mm_maskmoveu_si128(_mm_castps_si128(sub2), storeMask, reinterpret_cast<char*>(pOut+6));
 
     return out;
 }
@@ -162,10 +166,10 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
         return ret.m;
     #else
         return mat4_t<float>{
-            _mm_mul_ps(_mm_permute_ps(v1.simd, 0x00), v2.simd),
-            _mm_mul_ps(_mm_permute_ps(v1.simd, 0x55), v2.simd),
-            _mm_mul_ps(_mm_permute_ps(v1.simd, 0xAA), v2.simd),
-            _mm_mul_ps(_mm_permute_ps(v1.simd, 0xFF), v2.simd)
+            _mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x00)), v2.simd),
+            _mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x55)), v2.simd),
+            _mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xAA)), v2.simd),
+            _mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xFF)), v2.simd)
         };
     #endif
 }
@@ -182,30 +186,30 @@ inline LS_INLINE float determinant(const mat4_t<float>& m4x4) noexcept
     const __m128 m2 = _mm_loadu_ps(m+8);
     const __m128 m3 = _mm_loadu_ps(m+12);
 
-    const __m128 a0 = _mm_permute_ps(m0, _MM_SHUFFLE(1, 3, 2, 3));
-    const __m128 a1 = _mm_permute_ps(m1, _MM_SHUFFLE(3, 1, 3, 2));
-    const __m128 a2 = _mm_permute_ps(m2, _MM_SHUFFLE(2, 2, 1, 1));
-    const __m128 a3 = _mm_permute_ps(m3, _MM_SHUFFLE(0, 0, 0, 0));
-    const __m128 b0 = _mm_permute_ps(m0, _MM_SHUFFLE(2, 3, 1, 2));
-    const __m128 b1 = _mm_permute_ps(m1, _MM_SHUFFLE(3, 2, 2, 1));
-    const __m128 b2 = _mm_permute_ps(m2, _MM_SHUFFLE(0, 0, 3, 3));
-    const __m128 b3 = _mm_permute_ps(m3, _MM_SHUFFLE(1, 1, 0, 0));
-    const __m128 c0 = _mm_permute_ps(m0, _MM_SHUFFLE(0, 2, 0, 3));
-    const __m128 c1 = _mm_permute_ps(m1, _MM_SHUFFLE(2, 0, 3, 0));
-    const __m128 c2 = _mm_permute_ps(m2, _MM_SHUFFLE(3, 3, 2, 2));
-    const __m128 c3 = _mm_permute_ps(m3, _MM_SHUFFLE(1, 1, 1, 1));
-    const __m128 d0 = _mm_permute_ps(m0, _MM_SHUFFLE(0, 3, 1, 3));
-    const __m128 d1 = _mm_permute_ps(m1, _MM_SHUFFLE(3, 0, 3, 1));
-    const __m128 d2 = _mm_permute_ps(m2, _MM_SHUFFLE(1, 1, 0, 0));
-    const __m128 d3 = _mm_permute_ps(m3, _MM_SHUFFLE(2, 2, 2, 2));
-    const __m128 e0 = _mm_permute_ps(m0, _MM_SHUFFLE(1, 2, 0, 1));
-    const __m128 e1 = _mm_permute_ps(m1, _MM_SHUFFLE(2, 1, 1, 0));
-    const __m128 e2 = _mm_permute_ps(m2, _MM_SHUFFLE(0, 0, 3, 3));
-    const __m128 e3 = _mm_permute_ps(m3, _MM_SHUFFLE(3, 3, 2, 2));
-    const __m128 f0 = _mm_permute_ps(m0, _MM_SHUFFLE(0, 1, 0, 2));
-    const __m128 f1 = _mm_permute_ps(m1, _MM_SHUFFLE(1, 0, 2, 0));
-    const __m128 f2 = _mm_permute_ps(m2, _MM_SHUFFLE(2, 2, 1, 1));
-    const __m128 f3 = _mm_permute_ps(m3, _MM_SHUFFLE(3, 3, 3, 3));
+    const __m128 a0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(1, 3, 2, 3)));
+    const __m128 a1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(3, 1, 3, 2)));
+    const __m128 a2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(2, 2, 1, 1)));
+    const __m128 a3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(0, 0, 0, 0)));
+    const __m128 b0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(2, 3, 1, 2)));
+    const __m128 b1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(3, 2, 2, 1)));
+    const __m128 b2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(0, 0, 3, 3)));
+    const __m128 b3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(1, 1, 0, 0)));
+    const __m128 c0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(0, 2, 0, 3)));
+    const __m128 c1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(2, 0, 3, 0)));
+    const __m128 c2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(3, 3, 2, 2)));
+    const __m128 c3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(1, 1, 1, 1)));
+    const __m128 d0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(0, 3, 1, 3)));
+    const __m128 d1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(3, 0, 3, 1)));
+    const __m128 d2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(1, 1, 0, 0)));
+    const __m128 d3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(2, 2, 2, 2)));
+    const __m128 e0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(1, 2, 0, 1)));
+    const __m128 e1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(2, 1, 1, 0)));
+    const __m128 e2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(0, 0, 3, 3)));
+    const __m128 e3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(3, 3, 2, 2)));
+    const __m128 f0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m0), _MM_SHUFFLE(0, 1, 0, 2)));
+    const __m128 f1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m1), _MM_SHUFFLE(1, 0, 2, 0)));
+    const __m128 f2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m2), _MM_SHUFFLE(2, 2, 1, 1)));
+    const __m128 f3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(m3), _MM_SHUFFLE(3, 3, 3, 3)));
 
     __m128 a = _mm_mul_ps(_mm_mul_ps(_mm_mul_ps(a0, a1), a2), a3);
     __m128 b = _mm_mul_ps(_mm_mul_ps(_mm_mul_ps(b0, b1), b2), b3);
@@ -226,8 +230,8 @@ inline LS_INLINE float determinant(const mat4_t<float>& m4x4) noexcept
 
     // horizontal add: swap the words of each vector, add, then swap each
     // half of the vectors and perform a final add.
-    const __m128 swap = _mm_add_ps(temp, _mm_permute_ps(temp,  0xB1));
-    const __m128 sum  = _mm_add_ps(swap, _mm_permute_ps(swap, 0x0F));
+    const __m128 swap = _mm_add_ps(temp, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(temp),  0xB1)));
+    const __m128 sum  = _mm_add_ps(swap, _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(swap), 0x0F)));
     return _mm_cvtss_f32(sum);
 }
 
@@ -252,10 +256,10 @@ inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_
     Row-based multiplication
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> mat_row_mul(const mat4_t<float>& m, const vec4_t<float>& v) noexcept {
-    const __m128 row0 = _mm_permute_ps(v.simd, 0x00);
-    const __m128 row1 = _mm_permute_ps(v.simd, 0x55);
-    const __m128 row2 = _mm_permute_ps(v.simd, 0xAA);
-    const __m128 row3 = _mm_permute_ps(v.simd, 0xFF);
+    const __m128 row0 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v.simd), 0x00));
+    const __m128 row1 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v.simd), 0x55));
+    const __m128 row2 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v.simd), 0xAA));
+    const __m128 row3 = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v.simd), 0xFF));
 
     return mat4_t<float>{
         {_mm_mul_ps(m.m[0].simd, row0)},

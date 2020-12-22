@@ -90,7 +90,11 @@ inline LS_INLINE float clamp(float n, float minVal, float maxVal) noexcept
 -------------------------------------*/
 inline LS_INLINE float floor(float n) noexcept
 {
-    return _mm_cvtss_f32(_mm_floor_ps(_mm_set1_ps(n)));
+    #ifdef LS_X86_SSE4_1
+        return _mm_cvtss_f32(_mm_floor_ps(_mm_set1_ps(n)));
+    #else
+        return _mm_cvtss_f32(_mm_cvtepi32_ps(_mm_cvtps_epi32(_mm_set_ss(n))));
+    #endif
 }
 
 
@@ -100,7 +104,13 @@ inline LS_INLINE float floor(float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float ceil(float n) noexcept
 {
-    return _mm_cvtss_f32(_mm_ceil_ps(_mm_set1_ps(n)));
+    #ifdef LS_X86_SSE4_1
+        return _mm_cvtss_f32(_mm_ceil_ps(_mm_set1_ps(n)));
+    #else
+        const __m128i one = _mm_set1_epi32(1);
+        const __m128i c = _mm_cvtps_epi32(_mm_set_ss(n));
+        return _mm_cvtss_f32(_mm_cvtepi32_ps(_mm_add_epi32(one, c)));
+    #endif
 }
 
 
@@ -110,7 +120,12 @@ inline LS_INLINE float ceil(float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float round(float n) noexcept
 {
-    return _mm_cvtss_f32(_mm_round_ps(_mm_set1_ps(n), _MM_FROUND_TO_NEAREST_INT));
+    #ifdef LS_X86_SSE4_1
+        return _mm_cvtss_f32(_mm_round_ps(_mm_set1_ps(n), _MM_FROUND_TO_NEAREST_INT));
+    #else
+        const __m128i i = _mm_cvtps_epi32(_mm_add_ss(_mm_set_ss(0.5f), _mm_set_ss(n)));
+        return _mm_cvtss_f32(_mm_cvtepi32_ps(i));
+    #endif
 }
 
 
@@ -170,6 +185,7 @@ inline LS_INLINE float fast_sqrt(float input) noexcept
     Reference implementation found here:
     https://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/
 -------------------------------------*/
+#ifdef LS_X86_SSE4_1
 inline float atan2(float y, float x) noexcept
 {
     __m128 xs = _mm_set_ss(x);
@@ -198,6 +214,7 @@ inline float atan2(float y, float x) noexcept
     __m128 ret = _mm_blendv_ps(angle, negAngle, cmp2);
     return _mm_cvtss_f32(ret);
 }
+#endif
 
 
 
@@ -294,7 +311,13 @@ inline LS_INLINE float log2(float n) noexcept
     const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
     const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  d   = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+
+    #ifdef LS_X86_FMA
+        const __m128  d   = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+    #else
+        const __m128  d = _mm_sub_ss(_mm_mul_ps(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set_ss(124.22551499f));
+    #endif
+
     const __m128  a   = _mm_rcp_ss(_mm_add_ss(_mm_set_ss(0.3520887068f), mxf));
     const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
     const __m128  b   = _mm_mul_ss(_mm_set_ss(1.72587999f), a);
@@ -315,7 +338,13 @@ inline LS_INLINE float log(float n) noexcept
     const __m128i vxi = _mm_castps_si128(_mm_set_ss(n));
     const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
     const __m128  mxf = _mm_castsi128_ps(mx);
-    const __m128  d   = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+
+    #ifdef LS_X86_FMA
+        const __m128  d = _mm_fmsub_ss(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set_ss(124.22551499f));
+    #else
+        const __m128  d = _mm_sub_ss(_mm_mul_ps(_mm_set_ss(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set_ss(124.22551499f));
+    #endif
+
     const __m128  a   = _mm_rcp_ss(_mm_add_ss(_mm_set_ss(0.3520887068f), mxf));
     const __m128  c   = _mm_mul_ss(_mm_set_ss(1.498030302f), mxf);
     const __m128  b   = _mm_mul_ss(_mm_set_ss(1.72587999f), a);
@@ -511,7 +540,11 @@ inline LS_INLINE float pow(float x, float y) noexcept
 -------------------------------------*/
 inline LS_INLINE float fmadd(float x, float m, float a) noexcept
 {
-    return _mm_cvtss_f32(_mm_fmadd_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+    #ifdef LS_X86_FMA
+        return _mm_cvtss_f32(_mm_fmadd_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+    #else
+        return _mm_cvtss_f32(_mm_add_ps(_mm_mul_ps(_mm_set_ss(x), _mm_set_ss(m)), _mm_set_ss(a)));
+    #endif
 }
 
 
@@ -521,7 +554,11 @@ inline LS_INLINE float fmadd(float x, float m, float a) noexcept
 -------------------------------------*/
 inline LS_INLINE float fmsub(float x, float m, float a) noexcept
 {
-    return _mm_cvtss_f32(_mm_fmsub_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+    #ifdef LS_X86_FMA
+        return _mm_cvtss_f32(_mm_fmsub_ps(_mm_set_ss(x), _mm_set_ss(m), _mm_set_ss(a)));
+    #else
+        return _mm_cvtss_f32(_mm_sub_ps(_mm_mul_ps(_mm_set_ss(x), _mm_set_ss(m)), _mm_set_ss(a)));
+    #endif
 }
 
 

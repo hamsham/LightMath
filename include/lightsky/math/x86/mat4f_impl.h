@@ -12,7 +12,7 @@ namespace math {
 template <>
 inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) const
 {
-    #if 1
+    #ifdef LS_X86_AVX2
         alignas(sizeof(__m256)) mat4_t<float> ret;
 
         const __m256 col0 = _mm256_insertf128_ps(_mm256_castps128_ps256(m[0].simd), m[0].simd, 1);
@@ -49,31 +49,31 @@ inline LS_INLINE mat4_t<float> mat4_t<float>::operator*(const mat4_t<float>& n) 
         __m128 r3;
 
         {
-            r0 = _mm_mul_ps(  col0, _mm_permute_ps(n[0].simd, 0x00));
-            r0 = _mm_fmadd_ps(col1, _mm_permute_ps(n[0].simd, 0x55), r0);
-            r0 = _mm_fmadd_ps(col2, _mm_permute_ps(n[0].simd, 0xAA), r0);
-            r0 = _mm_fmadd_ps(col3, _mm_permute_ps(n[0].simd, 0xFF), r0);
+            r0 = _mm_mul_ps(           col0, _mm_shuffle_ps(n[0].simd, n[0].simd, 0x00));
+            r0 = _mm_add_ps(_mm_mul_ps(col1, _mm_shuffle_ps(n[0].simd, n[0].simd, 0x55)), r0);
+            r0 = _mm_add_ps(_mm_mul_ps(col2, _mm_shuffle_ps(n[0].simd, n[0].simd, 0xAA)), r0);
+            r0 = _mm_add_ps(_mm_mul_ps(col3, _mm_shuffle_ps(n[0].simd, n[0].simd, 0xFF)), r0);
             _mm_store_ps(reinterpret_cast<float*>(&ret)+0,  r0);
         }
         {
-            r1 = _mm_mul_ps(  col0, _mm_permute_ps(n[1].simd, 0x00));
-            r1 = _mm_fmadd_ps(col1, _mm_permute_ps(n[1].simd, 0x55), r1);
-            r1 = _mm_fmadd_ps(col2, _mm_permute_ps(n[1].simd, 0xAA), r1);
-            r1 = _mm_fmadd_ps(col3, _mm_permute_ps(n[1].simd, 0xFF), r1);
+            r1 = _mm_mul_ps(           col0, _mm_shuffle_ps(n[1].simd, n[1].simd, 0x00));
+            r1 = _mm_add_ps(_mm_mul_ps(col1, _mm_shuffle_ps(n[1].simd, n[1].simd, 0x55)), r1);
+            r1 = _mm_add_ps(_mm_mul_ps(col2, _mm_shuffle_ps(n[1].simd, n[1].simd, 0xAA)), r1);
+            r1 = _mm_add_ps(_mm_mul_ps(col3, _mm_shuffle_ps(n[1].simd, n[1].simd, 0xFF)), r1);
             _mm_store_ps(reinterpret_cast<float*>(&ret)+4,  r1);
         }
         {
-            r2 = _mm_mul_ps(  col0, _mm_permute_ps(n[2].simd, 0x00));
-            r2 = _mm_fmadd_ps(col1, _mm_permute_ps(n[2].simd, 0x55), r2);
-            r2 = _mm_fmadd_ps(col2, _mm_permute_ps(n[2].simd, 0xAA), r2);
-            r2 = _mm_fmadd_ps(col3, _mm_permute_ps(n[2].simd, 0xFF), r2);
+            r2 = _mm_mul_ps(           col0, _mm_shuffle_ps(n[2].simd, n[2].simd, 0x00));
+            r2 = _mm_add_ps(_mm_mul_ps(col1, _mm_shuffle_ps(n[2].simd, n[2].simd, 0x55)), r2);
+            r2 = _mm_add_ps(_mm_mul_ps(col2, _mm_shuffle_ps(n[2].simd, n[2].simd, 0xAA)), r2);
+            r2 = _mm_add_ps(_mm_mul_ps(col3, _mm_shuffle_ps(n[2].simd, n[2].simd, 0xFF)), r2);
             _mm_store_ps(reinterpret_cast<float*>(&ret)+8,  r2);
         }
         {
-            r3 = _mm_mul_ps(  col0, _mm_permute_ps(n[3].simd, 0x00));
-            r3 = _mm_fmadd_ps(col1, _mm_permute_ps(n[3].simd, 0x55), r3);
-            r3 = _mm_fmadd_ps(col2, _mm_permute_ps(n[3].simd, 0xAA), r3);
-            r3 = _mm_fmadd_ps(col3, _mm_permute_ps(n[3].simd, 0xFF), r3);
+            r3 = _mm_mul_ps(           col0, _mm_shuffle_ps(n[3].simd, n[3].simd, 0x00));
+            r3 = _mm_add_ps(_mm_mul_ps(col1, _mm_shuffle_ps(n[3].simd, n[3].simd, 0x55)), r3);
+            r3 = _mm_add_ps(_mm_mul_ps(col2, _mm_shuffle_ps(n[3].simd, n[3].simd, 0xAA)), r3);
+            r3 = _mm_add_ps(_mm_mul_ps(col3, _mm_shuffle_ps(n[3].simd, n[3].simd, 0xFF)), r3);
             _mm_store_ps(reinterpret_cast<float*>(&ret)+12, r3);
         }
 
@@ -120,14 +120,22 @@ template <> inline LS_INLINE
 vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 {
     const __m128 s = _mm_loadu_ps(v.v);
-    const __m128 a = _mm_permute_ps(s, 0x00);
-    const __m128 b = _mm_permute_ps(s, 0x55);
-    const __m128 c = _mm_permute_ps(s, 0xAA);
-    const __m128 d = _mm_permute_ps(s, 0xFF);
-    const __m128 v0 = _mm_mul_ps(  this->m[0].simd, a);
-    const __m128 v1 = _mm_fmadd_ps(this->m[1].simd, b, v0);
-    const __m128 v2 = _mm_mul_ps(  this->m[2].simd, c);
-    const __m128 v3 = _mm_fmadd_ps(this->m[3].simd, d, v2);
+    const __m128 a = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(s), 0x00));
+    const __m128 b = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(s), 0x55));
+    const __m128 c = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(s), 0xAA));
+    const __m128 d = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(s), 0xFF));
+
+    #ifdef LS_X86_FMA
+        const __m128 v0 = _mm_mul_ps(  this->m[0].simd, a);
+        const __m128 v1 = _mm_fmadd_ps(this->m[1].simd, b, v0);
+        const __m128 v2 = _mm_mul_ps(  this->m[2].simd, c);
+        const __m128 v3 = _mm_fmadd_ps(this->m[3].simd, d, v2);
+    #else
+        const __m128 v0 = _mm_mul_ps(this->m[0].simd, a);
+        const __m128 v1 = _mm_add_ps(_mm_mul_ps(this->m[1].simd, b), v0);
+        const __m128 v2 = _mm_mul_ps(this->m[2].simd, c);
+        const __m128 v3 = _mm_add_ps(_mm_mul_ps(this->m[3].simd, d), v2);
+    #endif
 
     return math::vec4_t<float>{_mm_add_ps(v1, v3)};
 }
