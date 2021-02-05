@@ -757,10 +757,21 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
 
 /*-------------------------------------
     sin
-
-    Alternate (non-taylor-series) method found here:
-    https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
 -------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
+{
+    //static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+
+    return x
+           - (x * x * x / scalar_t{6.0})
+           + (x * x * x * x * x / scalar_t{120.0})
+           - (x * x * x * x * x * x * x / scalar_t{5040.0})
+           + (x * x * x * x * x * x * x * x * x / scalar_t{362880.0});
+}
+
+// Alternate (non-taylor-series) method found here:
+// https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
 namespace
 {
     template <typename scalar_t>
@@ -771,32 +782,31 @@ namespace
 }
 
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::sin(typename setup::EnableIf<setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
-{
-    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return sin_step(ls::math::abs(ls::math::fract((x - scalar_t{LS_PI_OVER_2}) / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
-}
-
-template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-
-    return x
-           - (x * x * x / scalar_t{6})
-           + (x * x * x * x * x / scalar_t{120})
-           - (x * x * x * x * x * x * x / scalar_t{5040})
-           + (x * x * x * x * x * x * x * x * x / scalar_t{362880});
+    return sin_step(ls::math::abs(ls::math::fract((x - scalar_t{LS_PI_OVER_2}) / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
 }
 
 
 
 /*-------------------------------------
     cos
-
-    Alternate (non-taylor-series) method found here:
-    https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
 -------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::cos(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
+{
+    //static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+
+    return scalar_t{1.0}
+           - (x * x / scalar_t{2.0})
+           + (x * x * x * x / scalar_t{24.0})
+           - (x * x * x * x * x * x / scalar_t{720.0})
+           + (x * x * x * x * x * x * x * x / scalar_t{40320.0});
+}
+
+// Alternate (non-taylor-series) method found here:
+// https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
 namespace
 {
     template <typename scalar_t>
@@ -807,22 +817,10 @@ namespace
 }
 
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::cos(typename setup::EnableIf<setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
-{
-    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return cos_step(ls::math::abs(ls::math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
-}
-
-template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-
-    return scalar_t{1.f}
-           - (x * x / scalar_t{2})
-           + (x * x * x * x / scalar_t{24})
-           - (x * x * x * x * x * x / scalar_t{720})
-           + (x * x * x * x * x * x * x * x / scalar_t{40320});
+    return cos_step(ls::math::abs(ls::math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
 }
 
 
@@ -833,7 +831,7 @@ constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 {
-    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    //static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
     return math::sin<scalar_t>(x) / math::cos<scalar_t>(x);
 }
 

@@ -544,10 +544,10 @@ inline scalar_t exp2(scalar_t x) noexcept;
  * @return The sine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t sin(typename setup::EnableIf<setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
+constexpr scalar_t sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
 
 template <typename scalar_t>
-constexpr scalar_t sin(scalar_t) noexcept;
+constexpr scalar_t sin(scalar_t x) noexcept;
 
 /**
  * @brief cos
@@ -558,10 +558,10 @@ constexpr scalar_t sin(scalar_t) noexcept;
  * @return The cosine of a given angle.
  */
 template <typename scalar_t>
-constexpr scalar_t cos(typename setup::EnableIf<setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
+constexpr scalar_t cos(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
 
 template <typename scalar_t>
-constexpr scalar_t cos(scalar_t) noexcept;
+constexpr scalar_t cos(scalar_t x) noexcept;
 
 /**
  * @brief tan

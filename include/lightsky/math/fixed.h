@@ -32,7 +32,7 @@ class fixed_t final {
     typedef fixed_base_t base_type;
 
     static constexpr fixed_base_t fraction_digits = num_frac_digits;
-    static constexpr fixed_base_t fraction_mask   = (fixed_base_t)(0xFFFFFFFFFFFFFFFFull >> (((sizeof (fixed_base_t)) * CHAR_BIT)-num_frac_digits));
+    static constexpr fixed_base_t fraction_mask   = ~0ull ^ (~0ull << num_frac_digits);//(fixed_base_t)(0xFFFFFFFFFFFFFFFFull >> (((sizeof (fixed_base_t)) * CHAR_BIT)-num_frac_digits));
     static constexpr fixed_base_t integer_mask    = ~fraction_mask;
 
     /**
@@ -276,6 +276,14 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fmod_1(const fixed_t<
 
 
 /*-------------------------------------
+    floor
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fract(const fixed_t<fixed_base_t, num_frac_digits>& n) noexcept;
+
+
+
+/*-------------------------------------
     sin
 -------------------------------------*/
 template<typename fixed_base_t, unsigned num_frac_digits>
@@ -294,8 +302,8 @@ inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> cos(const fixed_t<
 /*-------------------------------------
     tan
 -------------------------------------*/
-template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> tan(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
+//template<typename fixed_base_t, unsigned num_frac_digits>
+//inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> tan(const fixed_t<fixed_base_t, num_frac_digits>& x) noexcept;
 
 
 
