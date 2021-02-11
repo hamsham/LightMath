@@ -460,19 +460,17 @@ math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>&
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_t zFar) noexcept {
-    const num_t right  = zNear * LS_TAN(fov * num_t{2});
-    const num_t left   = -right;
-    const num_t bottom = left / aspect;
-    const num_t top    = right / aspect;
-    const num_t x      = right - left;
-    const num_t y      = top - bottom;
-    const num_t z      = zFar - zNear;
+    const num_t top = LS_TAN(fov / num_t{2}) * zNear;
+    const num_t bottom = -top;
+    const num_t xMin = bottom * aspect;
+    const num_t xMax = top * aspect;
+    const num_t zDelta = zFar - zNear;
 
     return mat4_t<num_t>{
-        (num_t{2}*zNear)/x, num_t{0},           num_t{0},                 num_t{0},
-        num_t{0},           (num_t{2}*zNear)/y, num_t{0},                 num_t{0},
-        (right+left)/x,     (top+bottom)/y,     -(zFar+zNear)/z,          num_t{-1},
-        num_t{0},           num_t{0},           -(num_t{2}*zFar*zNear)/z, num_t{0}
+        (num_t{2}*zNear) / (xMax - xMin), num_t{0},                          num_t{0},                          num_t{0},
+        num_t{0},                         (num_t{2}*zNear) / (top - bottom), num_t{0},                          num_t{0},
+        num_t{0},                         num_t{0},                          -(zFar + zNear) / zDelta,          num_t{-1},
+        num_t{0},                         num_t{0},                          (num_t{-2}*zFar * zNear) / zDelta, num_t{0}
     };
 }
 
