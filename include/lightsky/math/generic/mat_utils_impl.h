@@ -540,6 +540,60 @@ math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bott
 }
 
 /*-------------------------------------
+    Viewport Scissor
+-------------------------------------*/
+template <typename num_t> inline LS_INLINE
+math::mat4_t<num_t> math::scissor(num_t x, num_t y, num_t w, num_t h) noexcept {
+    if (x < num_t{0})
+    {
+        w -= x;
+        x = num_t{0};
+    }
+
+    if (y < num_t{0})
+    {
+        h -= y;
+        y = num_t{0};
+    }
+
+    w = math::min(num_t{1} - x, w);
+    h = math::min(num_t{1} - y, h);
+
+    /*
+    const math::mat4 m1{
+        math::rcp(w-1.f), 0.f,              0.f, 0.f,
+        0.f,              math::rcp(w-1.f), 0.f, 0.f,
+        0.f,              0.f,              1.f, 0.f,
+        w,                h,                1.f, 1.f
+    };
+
+    const math::mat4 m2{
+        x * (-2.f * math::rcp(w)), 0.f,                       0.f, 0.f,
+        0.f,                       y * (-2.f * math::rcp(h)), 0.f, 0.f,
+        0.f,                       0.f,                       1.f, 0.f,
+        0.f,                       0.f,                       0.f, 1.f
+    };
+
+    return m2 * m1;
+    */
+
+    const num_t x0 = x * (-num_t{2} / w);
+    const num_t y0 = y * (-num_t{2} / h);
+
+    const num_t x1 = x0 / (w - num_t{1});
+    const num_t y1 = y0 / (h - num_t{1});
+    const num_t w1 = x0 * w;
+    const num_t h1 = y0 * h;
+
+    return math::mat4_t<num_t>{
+        x1,       num_t{0}, num_t{0}, num_t{0},
+        num_t{0}, y1,       num_t{0}, num_t{0},
+        num_t{0}, num_t{0}, num_t{1}, num_t{0},
+        w1,       h1,       num_t{1}, num_t{1}
+    };
+}
+
+/*-------------------------------------
     4x4 LookAt
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
