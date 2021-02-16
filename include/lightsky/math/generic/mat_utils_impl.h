@@ -556,8 +556,8 @@ math::mat4_t<num_t> math::scissor(num_t x, num_t y, num_t w, num_t h) noexcept {
         y = num_t{0};
     }
 
-    w = math::min(num_t{1} - x, w);
-    h = math::min(num_t{1} - y, h);
+    w = ls::math::min<num_t>(num_t{1} - x, w);
+    h = ls::math::min<num_t>(num_t{1} - y, h);
 
     /*
     const math::mat4 m1{

@@ -812,7 +812,7 @@ constexpr data_t fmsub(data_t x, data_t m, data_t a) noexcept;
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/scalarf_utils_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/scalarf_utils_impl.h"
 #endif
 

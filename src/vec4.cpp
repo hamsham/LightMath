@@ -9,7 +9,7 @@ namespace math {
 /*
  * 4D Vector Specializations
  */
-#if !defined(LS_ARCH_X86) && !defined(LS_ARCH_ARM)
+#if !defined(LS_ARCH_X86) && !defined(LS_ARM_NEON)
     LS_DEFINE_UNION_TYPE(vec4_t, float);
 
 #endif

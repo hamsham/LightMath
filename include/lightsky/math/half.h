@@ -14,7 +14,7 @@
     }
 #elif defined(LS_ARCH_AARCH64)
     #include <arm_neon.h>
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include <arm_neon.h>
     #include <arm_fp16.h>
 #endif
@@ -124,7 +124,7 @@ struct IsFloat<ls::math::half> : public ls::setup::TrueType<ls::math::half>
 -----------------------------------------------------------------------------*/
 #if defined(LS_X86_FP16)
     #include "lightsky/math/x86/half_impl.h"
-#elif defined(LS_ARCH_ARM) || defined(LS_ARCH_AARCH64)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/half_impl.h"
 #else
     #include "lightsky/math/generic/half_impl.h"

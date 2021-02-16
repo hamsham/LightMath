@@ -144,7 +144,7 @@ typedef mat4_t<LS_FLOAT> mat4;
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/mat4f_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/mat4f_impl.h"
 #endif
 

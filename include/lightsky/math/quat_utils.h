@@ -416,7 +416,7 @@ quat_t<N> from_axis_angle(const vec4_t<N>& axisAngle);
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/quatf_utils_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/quatf_utils_impl.h"
 #endif
 

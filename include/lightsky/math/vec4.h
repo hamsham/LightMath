@@ -145,7 +145,7 @@ typedef vec4_t<LS_FLOAT> vec4;
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/vec4f_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/vec4f_impl.h"
 #endif
 

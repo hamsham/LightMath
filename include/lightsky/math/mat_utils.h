@@ -637,7 +637,7 @@ mat4_t<N> billboard(const vec3_t<N>& pos, const mat4_t<N>& viewMatrix) noexcept;
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/matf_utils_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/matf_utils_impl.h"
 #endif
 

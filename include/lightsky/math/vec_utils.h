@@ -1704,7 +1704,7 @@ constexpr vec4_t<N> vec4_cast(const N& s, const vec3_t<N>& v) noexcept;
 
 #ifdef LS_ARCH_X86
     #include "lightsky/math/x86/vecf_utils_impl.h"
-#elif defined(LS_ARCH_ARM)
+#elif defined(LS_ARM_NEON)
     #include "lightsky/math/arm/vecf_utils_impl.h"
 #endif
 
