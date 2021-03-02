@@ -561,35 +561,34 @@ math::mat4_t<num_t> math::scissor(num_t x, num_t y, num_t w, num_t h) noexcept {
 
     /*
     const math::mat4 m1{
-        math::rcp(w-1.f), 0.f,              0.f, 0.f,
-        0.f,              math::rcp(w-1.f), 0.f, 0.f,
+        math::rcp(w),     0.f,              0.f, 0.f,
+        0.f,              math::rcp(h),     0.f, 0.f,
         0.f,              0.f,              1.f, 0.f,
-        w,                h,                1.f, 1.f
+        math::rcp(w)-1.f, math::rcp(h)-1.f, 0.f, 1.f
     };
 
     const math::mat4 m2{
-        x * (-2.f * math::rcp(w)), 0.f,                       0.f, 0.f,
-        0.f,                       y * (-2.f * math::rcp(h)), 0.f, 0.f,
+        1.f,                       0.f,                       0.f, 0.f,
+        0.f,                       1.f,                       0.f, 0.f,
         0.f,                       0.f,                       1.f, 0.f,
-        0.f,                       0.f,                       0.f, 1.f
+        x * (-2.f * math::rcp(w)), y * (-2.f * math::rcp(h)), 0.f, 1.f
     };
-
-    return m2 * m1;
     */
 
-    const num_t x0 = x * (-num_t{2} / w);
-    const num_t y0 = y * (-num_t{2} / h);
+    const num_t nm00 = math::rcp<num_t>(w);
+    const num_t nm11 = math::rcp<num_t>(h);
 
-    const num_t x1 = x0 / (w - num_t{1});
-    const num_t y1 = y0 / (h - num_t{1});
-    const num_t w1 = x0 * w;
-    const num_t h1 = y0 * h;
+    const num_t nm30 = nm00 - num_t{1};
+    const num_t nm31 = nm11 - num_t{1};
+
+    const num_t m30 = math::fmadd<num_t>(x, (num_t{-2} * nm00), nm30);
+    const num_t m31 = math::fmadd<num_t>(y, (num_t{-2} * nm11), nm31);
 
     return math::mat4_t<num_t>{
-        x1,       num_t{0}, num_t{0}, num_t{0},
-        num_t{0}, y1,       num_t{0}, num_t{0},
-        num_t{0}, num_t{0}, num_t{1}, num_t{0},
-        w1,       h1,       num_t{1}, num_t{1}
+        nm00, 0.f,  0.f, 0.f,
+        0.f,  nm11, 0.f, 0.f,
+        0.f,  0.f,  1.f, 0.f,
+        m30,  m31,  0.f, 1.f
     };
 }
 
