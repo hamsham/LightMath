@@ -540,6 +540,22 @@ math::mat4_t<num_t> math::frustum(num_t left, num_t right, num_t top, num_t bott
 }
 
 /*-------------------------------------
+    Viewport Rectangle
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::mat4_t<num_t> math::viewport(num_t x, num_t y, num_t w, num_t h, num_t zMin, num_t zMax) noexcept {
+    // viewport calculation derived from DirectX, adapted to OpenGL-style
+    // viewport volume
+    // https://docs.microsoft.com/en-us/windows/win32/direct3d9/viewports-and-clipping
+    return math::mat4{
+        w,             0.f,           0.f,       0.f,
+        0.f,           h,             0.f,       0.f,
+        0.f,           0.f,           zMax-zMin, 0.f,
+        (x*2.f-1.f)+w, (y*2.f-1.f)+h, zMin,      1.f
+    };
+}
+
+/*-------------------------------------
     Viewport Scissor
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE

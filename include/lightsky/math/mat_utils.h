@@ -552,9 +552,36 @@ template <typename N> inline
 mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar) noexcept;
 
 /**
- * @brief Create a scissor rectangle which can be applied to a transform just
- * before projection multiplication to "cut out" a specific region of a
- * projection matrix.
+ * @brief Create a viewport rectangle which can be applied after projection
+ * transformations to "scale" a specific region of a viewport into another
+ * space.
+ *
+ * @param x
+ * The x-coordinate to begin scale, as a percentage.
+ *
+ * @param y
+ * The y-coordinate to begin the cut-out, as a percentage.
+ *
+ * @param w
+ * The width of the region to cut, as a percentage.
+ * @param h
+ * The width of the region to cut, as a percentage.
+ *
+ * @param zMin
+ * The minimum z-coordinate to scale.
+ *
+ * @param zMax
+ * The maximum z-coordinate to scale.
+ *
+ * @return A viewport rectangle which can be pre-multiplied against a
+ * projection matrix to define a viewport rectangle.
+ */
+template <typename N> constexpr
+mat4_t<N> viewport(N x, N y, N w, N h, N zMin = N{0}, N zMax = N{1}) noexcept;
+
+/**
+ * @brief Create a scissor rectangle which can be applied after projection
+ * transformations to "cut out" a specific region of a viewport.
  *
  * @param x
  * The x-coordinate to begin the cut-out, in percentage between [0 - 1].
@@ -568,7 +595,7 @@ mat4_t<N> frustum(N left, N right, N top, N bottom, N zNear, N zFar) noexcept;
  * The width of the region to cut, in percentage between [0 - 1].
  *
  * @return A scissor rectangle which can be pre-multiplied against a
- * projection matrix to define a viewport rectangle.
+ * projection matrix to define a cut-out rectangle.
  */
 template <typename N> inline
 mat4_t<N> scissor(N x, N y, N w, N h) noexcept;
