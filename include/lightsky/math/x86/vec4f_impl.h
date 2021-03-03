@@ -25,9 +25,9 @@ union alignas(alignof(__m128)) vec4_t<float>
     static constexpr unsigned num_components() noexcept { return 4; }
 
     // data
-    float v[4];
-
     __m128 simd;
+
+    float v[4];
 
     // Main Constructor
     constexpr vec4_t(float inX, float inY, float inZ, float inW);
@@ -35,7 +35,7 @@ union alignas(alignof(__m128)) vec4_t<float>
     // Delegated Constructors
     vec4_t() = default;
 
-    constexpr vec4_t(const __m128 n);
+    explicit constexpr vec4_t(__m128 n);
 
     vec4_t(float n);
 
@@ -234,7 +234,7 @@ inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
     __m128i v1  = _mm_and_si128(v0, _mm_set1_epi32(1));
     __m128  v2f = _mm_cvtepi32_ps(v2);
     __m128  v1f = _mm_cvtepi32_ps(v1);
-    return _mm_add_ps(_mm_add_ps(v2f, v2f), v1f);
+    return vec4_t<float>{_mm_add_ps(_mm_add_ps(v2f, v2f), v1f)};
 }
 
 #endif

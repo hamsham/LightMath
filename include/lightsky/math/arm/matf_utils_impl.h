@@ -56,18 +56,18 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 {
     #if defined(LS_ARCH_AARCH64)
         return mat4_t<float>{
-            vmulq_laneq_f32(v2.simd, v1.simd, 0),
-            vmulq_laneq_f32(v2.simd, v1.simd, 1),
-            vmulq_laneq_f32(v2.simd, v1.simd, 2),
-            vmulq_laneq_f32(v2.simd, v1.simd, 3)
+            vec4_t<float>{vmulq_laneq_f32(v2.simd, v1.simd, 0)},
+            vec4_t<float>{vmulq_laneq_f32(v2.simd, v1.simd, 1)},
+            vec4_t<float>{vmulq_laneq_f32(v2.simd, v1.simd, 2)},
+            vec4_t<float>{vmulq_laneq_f32(v2.simd, v1.simd, 3)}
         };
 
     #else
         return mat4_t<float>{
-            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 0))),
-            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 1))),
-            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 2))),
-            vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 3)))
+            vec4_t<float>{vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 0)))},
+            vec4_t<float>{vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 1)))},
+            vec4_t<float>{vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 2)))},
+            vec4_t<float>{vmulq_f32(v2.simd, vdupq_n_f32(vgetq_lane_f32(v1.simd, 3)))}
         };
 
     #endif
@@ -81,10 +81,10 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 inline LS_INLINE mat4_t<float> mat_comp_mul(const mat4_t<float>& m1, const mat4_t<float>& m2) noexcept
 {
     return mat4_t<float>{
-        {vmulq_f32(m1.m[0].simd, m2.m[0].simd)},
-        {vmulq_f32(m1.m[1].simd, m2.m[1].simd)},
-        {vmulq_f32(m1.m[2].simd, m2.m[2].simd)},
-        {vmulq_f32(m1.m[3].simd, m2.m[3].simd)}
+        vec4_t<float>{vmulq_f32(m1.m[0].simd, m2.m[0].simd)},
+        vec4_t<float>{vmulq_f32(m1.m[1].simd, m2.m[1].simd)},
+        vec4_t<float>{vmulq_f32(m1.m[2].simd, m2.m[2].simd)},
+        vec4_t<float>{vmulq_f32(m1.m[3].simd, m2.m[3].simd)}
     };
 }
 
@@ -100,10 +100,10 @@ inline LS_INLINE mat4_t<float> mat_row_mul(const mat4_t<float>& m, const vec4_t<
     const float32x4_t row3 = vdupq_n_f32(vget_lane_f32(vget_high_f32(v.simd), 1));
 
     return mat4_t<float>{
-        {vmulq_f32(m.m[0].simd, row0)},
-        {vmulq_f32(m.m[1].simd, row1)},
-        {vmulq_f32(m.m[2].simd, row2)},
-        {vmulq_f32(m.m[3].simd, row3)},
+        vec4_t<float>{vmulq_f32(m.m[0].simd, row0)},
+        vec4_t<float>{vmulq_f32(m.m[1].simd, row1)},
+        vec4_t<float>{vmulq_f32(m.m[2].simd, row2)},
+        vec4_t<float>{vmulq_f32(m.m[3].simd, row3)},
     };
 }
 
@@ -116,10 +116,10 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
     const float32x4x4_t t {vld4q_f32(&m[0])};
     return mat4_t<float>{
-        {t.val[0]},
-        {t.val[1]},
-        {t.val[2]},
-        {t.val[3]}
+        vec4_t<float>{t.val[0]},
+        vec4_t<float>{t.val[1]},
+        vec4_t<float>{t.val[2]},
+        vec4_t<float>{t.val[3]}
     };
 }
 

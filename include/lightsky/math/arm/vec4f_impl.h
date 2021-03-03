@@ -31,7 +31,7 @@ union alignas(alignof(float32x4_t)) vec4_t<float>
     // Delegated Constructors
     vec4_t() = default;
 
-    constexpr vec4_t(const float32x4_t n);
+    explicit constexpr vec4_t(const float32x4_t n);
 
     vec4_t(float n);
 

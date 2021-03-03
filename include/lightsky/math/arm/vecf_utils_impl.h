@@ -161,7 +161,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
     float32x4_t e = vrsqrteq_f32(d);
     e = vmulq_f32(vrsqrtsq_f32(vmulq_f32(d, e), e), e);
     //e = vmulq_f32(vrsqrtsq_f32(vmulq_f32(d, e), e), e);
-    return vmulq_f32(v.simd, e);
+    return vec4_t<float>{vmulq_f32(v.simd, e)};
 }
 
 /*-------------------------------------
