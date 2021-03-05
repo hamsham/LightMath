@@ -222,9 +222,9 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-        const int32x4_t andLiterals{0x01, 0x02, 0x04, 0x08};
-        const int32x4_t cmp   = vreinterpretq_s32_u32(vcltzq_f32(x.simd));
-        const int32x4_t masks = vandq_s32(andLiterals, cmp);
+        constexpr int32_t andMasks[4] = {0x01, 0x02, 0x04, 0x08};
+        const int32x4_t   cmp         = vreinterpretq_s32_u32(vcltzq_f32(x.simd));
+        const int32x4_t   masks       = vandq_s32(vld1q_s32(andMasks), cmp);
 
         // Adding powers-of-two only sets the corresponding bits.
         // This is a low-throughput instruction and only works now because it
@@ -232,10 +232,10 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
         return vaddvq_s32(masks);
 
     #else
-        const int32x4_t  shiftLiterals{-31, -30, -29, -28};
-        const uint32x4_t sign  = vdupq_n_u32(0x80000000);
-        const uint32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
-        const int32x4_t  masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
+        constexpr int32_t shifts[4] = {-31, -30, -29, -28};
+        const uint32x4_t  sign      = vdupq_n_u32(0x80000000);
+        const uint32x4_t  cmp       = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
+        const int32x4_t   masks     = vreinterpretq_s32_u32(vqshlq_u32(cmp, vld1q_s32(shifts)));
 
         const int32x2_t lo   = vget_low_s32(masks);
         const int32x2_t hi   = vget_high_s32(masks);
@@ -256,9 +256,9 @@ inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
     const int32x4_t v = vld1q_s32(x.v);
 
     #if defined(LS_ARCH_AARCH64)
-        const int32x4_t andLiterals{0x01, 0x02, 0x04, 0x08};
-        const int32x4_t cmp   = vreinterpretq_s32_u32(vcltzq_s32(v));
-        const int32x4_t masks = vandq_s32(andLiterals, cmp);
+        constexpr int32_t andMasks[4] = {0x01, 0x02, 0x04, 0x08};
+        const int32x4_t   cmp         = vreinterpretq_s32_u32(vcltzq_s32(v));
+        const int32x4_t   masks       = vandq_s32(vld1q_s32(andMasks), cmp);
 
         // Adding powers-of-two only sets the corresponding bits.
         // This is a low-throughput instruction and only works now because it
@@ -266,10 +266,10 @@ inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
         return vaddvq_s32(masks);
 
     #else
-        const int32x4_t  shiftLiterals{-31, -30, -29, -28};
-        const uint32x4_t sign  = vdupq_n_u32(0x80000000);
-        const uint32x4_t cmp   = vandq_u32(sign, vreinterpretq_u32_s32(v));
-        const int32x4_t  masks = vreinterpretq_s32_u32(vqshlq_u32(cmp, shiftLiterals));
+        constexpr int32_t shifts[4] = {-31, -30, -29, -28};
+        const uint32x4_t  sign      = vdupq_n_u32(0x80000000);
+        const uint32x4_t  cmp       = vandq_u32(sign, vreinterpretq_u32_s32(v));
+        const int32x4_t   masks     = vreinterpretq_s32_u32(vqshlq_u32(cmp, vld1q_s32(shifts)));
 
         const int32x2_t lo   = vget_low_s32(masks);
         const int32x2_t hi   = vget_high_s32(masks);

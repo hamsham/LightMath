@@ -145,38 +145,37 @@ vec4_t<float> mat4_t<float>::operator*(const vec4_t<float>& v) const
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) const
 {
-    #if 1
-    const float32x4_t temp0[4] = {
-        vmulq_f32(this->simd, m[0].simd),
-        vmulq_f32(this->simd, m[1].simd),
-        vmulq_f32(this->simd, m[2].simd),
-        vmulq_f32(this->simd, m[3].simd)
-    };
+    #if defined(LS_ARCH_AARCH64)
+        float32x4_t aq = vmulq_f32(m[0].simd, simd);
+        float32x4_t bq = vmulq_f32(m[1].simd, simd);
+        float32x4_t cq = vmulq_f32(m[2].simd, simd);
+        float32x4_t dq = vmulq_f32(m[3].simd, simd);
 
-    const float32x4x4_t temp1 = vld4q_f32(reinterpret_cast<const float*>(temp0));
-    const float32x4_t a = vaddq_f32(temp1.val[1], temp1.val[0]);
-    const float32x4_t b = vaddq_f32(temp1.val[3], temp1.val[2]);
-    
-    return vec4_t<float>{vaddq_f32(b, a)};
+        return vec4_t<float>{
+            vaddvq_f32(aq),
+            vaddvq_f32(bq),
+            vaddvq_f32(cq),
+            vaddvq_f32(dq)
+        };
     
     #else
+        float32x4_t aq = vmulq_f32(m[0].simd, simd);
+        float32x4_t bq = vmulq_f32(m[1].simd, simd);
+        float32x4_t cq = vmulq_f32(m[2].simd, simd);
+        float32x4_t dq = vmulq_f32(m[3].simd, simd);
 
-    const float32x4_t aq = vmulq_f32(m[0].simd, simd);
-    const float32x4_t bq = vmulq_f32(m[1].simd, simd);
-    const float32x4_t cq = vmulq_f32(m[2].simd, simd);
-    const float32x4_t dq = vmulq_f32(m[3].simd, simd);
+        aq = vpaddq_f32(aq, aq);
+        bq = vpaddq_f32(bq, bq);
+        cq = vpaddq_f32(cq, cq);
+        dq = vpaddq_f32(dq, dq);
 
-    const float32x2_t ad = vadd_f32(vget_high_f32(aq), vget_low_f32(aq));
-    const float32x2_t bd = vadd_f32(vget_high_f32(bq), vget_low_f32(bq));
-    const float32x2_t cd = vadd_f32(vget_high_f32(cq), vget_low_f32(cq));
-    const float32x2_t dd = vadd_f32(vget_high_f32(dq), vget_low_f32(dq));
+        return vec4_t<float>{
+            vgetq_lane_f32(vpaddq_f32(aq, aq), 0),
+            vgetq_lane_f32(vpaddq_f32(bq, bq), 0),
+            vgetq_lane_f32(vpaddq_f32(cq, cq), 0),
+            vgetq_lane_f32(vpaddq_f32(dq, dq), 0)
+        };
 
-    return vec4_t<float>{
-        vget_lane_f32(vpadd_f32(ad, ad), 0),
-        vget_lane_f32(vpadd_f32(bd, bd), 0),
-        vget_lane_f32(vpadd_f32(cd, cd), 0),
-        vget_lane_f32(vpadd_f32(dd, dd), 0)
-    };
     #endif
 }
 

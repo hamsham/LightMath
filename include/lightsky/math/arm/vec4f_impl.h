@@ -532,17 +532,10 @@ vec4_t<float> vec4_t<float>::operator*(float input) const
 inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
-    #if defined(LS_ARCH_AARCH64)
-        const float32x2_t scalar = vdup_n_f32(input);
-        const float32x2_t recip = vrecpe_f32(scalar);
+    const float32x4_t scalar = vdupq_n_f32(input);
+    const float32x4_t recip = vrecpeq_f32(scalar);
 
-        return vec4_t<float>{vmulq_lane_f32(simd, vmul_f32(vrecps_f32(scalar, recip), recip), 0)};
-    #else
-        const float32x4_t scalar = vdupq_n_f32(input);
-        const float32x4_t recip = vrecpeq_f32(scalar);
-
-        return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
-    #endif
+    return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
 }
 
 inline LS_INLINE

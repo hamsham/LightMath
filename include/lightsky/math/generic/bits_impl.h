@@ -8,6 +8,10 @@
     #include <intrin.h>
 #endif
 
+#ifdef LS_ARM_NEON
+    #include <arm_neon.h>
+#endif
+
 namespace ls
 {
 
@@ -23,12 +27,20 @@ namespace ls
 -------------------------------------*/
 inline LS_INLINE int32_t math::popcnt_i32(int32_t n) noexcept
 {
-    #if !defined(LS_COMPILER_GNU)
+    #if defined(LS_ARM_NEON)
+        uint8x8_t i = vcnt_u8(vreinterpret_u8_s32(vdup_n_s32(n)));
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        return (int32_t)vget_lane_u8(i, 0);
+
+    #elif defined(LS_COMPILER_GNU)
+        return __builtin_popcount((unsigned)n);
+
+    #else
         n = n - ((n >> 1) & 0x55555555);                       // reuse input as temporary
         n = (n & 0x33333333) + ((n >> 2) & 0x33333333);        // temp
         return ((n + (n >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
-    #else
-        return __builtin_popcount((unsigned)n);
+
     #endif
 }
 
@@ -39,12 +51,20 @@ inline LS_INLINE int32_t math::popcnt_i32(int32_t n) noexcept
 -------------------------------------*/
 inline LS_INLINE uint32_t math::popcnt_u32(uint32_t n) noexcept
 {
-    #if !defined(LS_COMPILER_GNU)
+    #if defined(LS_ARM_NEON)
+        uint8x8_t i = vcnt_u8(vreinterpret_u8_u32(vdup_n_u32(n)));
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        return (uint32_t)vget_lane_u8(i, 0);
+
+    #elif defined(LS_COMPILER_GNU)
+        return __builtin_popcount(n);
+
+    #else
         n = n - ((n >> 1) & 0x55555555);                       // reuse input as temporary
         n = (n & 0x33333333) + ((n >> 2) & 0x33333333);        // temp
         return ((n + (n >> 4) & 0xF0F0F0F) * 0x1010101) >> 24; // count
-    #else
-        return __builtin_popcount(n);
+
     #endif
 }
 
@@ -55,12 +75,25 @@ inline LS_INLINE uint32_t math::popcnt_u32(uint32_t n) noexcept
 -------------------------------------*/
 inline LS_INLINE int64_t math::popcnt_i64(int64_t n) noexcept
 {
-    #if !defined(LS_COMPILER_GNU)
+
+    #if defined(LS_ARCH_AARCH64)
+        const uint8x8_t i = vcnt_u8(vcreate_u8((uint64_t)n));
+        return (int64_t)vaddlv_u8(i);
+
+    #elif defined(LS_ARM_NEON)
+        uint8x8_t i = vcnt_u8(vcreate_u8((uint64_t)n));
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        return (int64_t)vget_lane_u8(i, 0);
+
+    #elif defined(LS_COMPILER_GNU)
+        return __builtin_popcountll((unsigned long long)n);
+
+    #else
         n = n - ((n >> 1ll) & 0x5555555555555555ll);                                   // reuse input as temporary
         n = (n & 0x3333333333333333ll) + ((n >> 2ll) & 0x3333333333333333ll);          // temp
         return ((n + (n >> 4ll) & 0xF0F0F0F0F0F0F0Fll) * 0x101010101010101ll) >> 56ll; // count
-    #else
-        return __builtin_popcountll((unsigned long long)n);
     #endif
 }
 
@@ -71,12 +104,24 @@ inline LS_INLINE int64_t math::popcnt_i64(int64_t n) noexcept
 -------------------------------------*/
 inline LS_INLINE uint64_t math::popcnt_u64(uint64_t n) noexcept
 {
-    #if !defined(LS_COMPILER_GNU)
+    #if defined(LS_ARCH_AARCH64)
+        const uint8x8_t i = vcnt_u8(vcreate_u8(n));
+        return (uint64_t)vaddlv_u8(i);
+
+    #elif defined(LS_ARM_NEON)
+        int8x8_t i = vcnt_u8(vcreate_u8(n));
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        i = vpadd_u8(i, i);
+        return (uint64_t)vget_lane_u8(i, 0);
+
+    #elif defined(LS_COMPILER_GNU)
+        return __builtin_popcountll(n);
+
+    #else
         n = n - ((n >> 1ull) & 0x5555555555555555ull);                                     // reuse input as temporary
         n = (n & 0x3333333333333333ull) + ((n >> 2ull) & 0x3333333333333333ull);           // temp
         return ((n + (n >> 4ull) & 0xF0F0F0F0F0F0F0Full) * 0x101010101010101ull) >> 56ull; // count
-    #else
-        return __builtin_popcountll(n);
     #endif
 }
 
