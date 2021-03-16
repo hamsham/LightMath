@@ -109,7 +109,7 @@ inline LS_INLINE uint64_t math::popcnt_u64(uint64_t n) noexcept
         return (uint64_t)vaddlv_u8(i);
 
     #elif defined(LS_ARM_NEON)
-        int8x8_t i = vcnt_u8(vcreate_u8(n));
+        uint8x8_t i = vcnt_u8(vcreate_u8(n));
         i = vpadd_u8(i, i);
         i = vpadd_u8(i, i);
         i = vpadd_u8(i, i);
