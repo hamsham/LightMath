@@ -1050,7 +1050,7 @@ constexpr LS_INLINE data_t math::abs(typename setup::EnableIf<setup::IsIntegral<
 template <typename data_t>
 constexpr LS_INLINE data_t math::abs(data_t x) noexcept
 {
-    return (x >= 0.f) ? x : -x;
+    return (x >= data_t{0}) ? x : -x;
 }
 
 

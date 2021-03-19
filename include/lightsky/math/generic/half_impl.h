@@ -74,7 +74,7 @@ class Float16Converter
         v.si ^= ((v.si + maxD) ^ v.si) & -(v.si > maxC);
         Bits s;
         s.si = mulC;
-        s.f *= v.si;
+        s.f *= (float)v.si;
         int32_t mask = -(norC > v.si);
         v.si <<= shift;
         v.si ^= (s.si ^ v.si) & mask;
