@@ -354,9 +354,12 @@ vec4_t<float> vec4_t<float>::operator*(const vec4_t<float>& input) const
 inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(const vec4_t<float>& input) const
 {
-    const float32x4_t scalar = input.simd;
-    const float32x4_t recip = vrecpeq_f32(scalar);
-    return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
+    #ifdef LS_ARCH_AARCH64
+        return vec4_t<float>{vdivq_f32(simd, input.simd)};
+    #else
+        const float32x4_t recip = vrecpeq_f32(input.simd);
+        return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(input.simd, recip), recip))};
+    #endif
 }
 
 /*
@@ -399,9 +402,13 @@ vec4_t<float>& vec4_t<float>::operator*=(const vec4_t<float>& input)
 inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(const vec4_t<float>& input)
 {
-    const float32x4_t scalar = input.simd;
-    const float32x4_t recip = vrecpeq_f32(scalar);
-    simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip));
+    #ifdef LS_ARCH_AARCH64
+        simd = vdivq_f32(simd, input.simd);
+    #else
+        const float32x4_t recip = vrecpeq_f32(input.simd);
+        simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(input.simd, recip), recip));
+    #endif
+
     return *this;
 }
 
@@ -533,9 +540,13 @@ inline LS_INLINE
 vec4_t<float> vec4_t<float>::operator/(float input) const
 {
     const float32x4_t scalar = vdupq_n_f32(input);
-    const float32x4_t recip = vrecpeq_f32(scalar);
 
-    return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
+    #ifdef LS_ARCH_AARCH64
+        return vec4_t<float>{vdivq_f32(simd, scalar)};
+    #else
+        const float32x4_t recip = vrecpeq_f32(scalar);
+        return vec4_t<float>{vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip))};
+    #endif
 }
 
 inline LS_INLINE
@@ -563,9 +574,13 @@ inline LS_INLINE
 vec4_t<float>& vec4_t<float>::operator/=(float input)
 {
     const float32x4_t scalar = vdupq_n_f32(input);
-    const float32x4_t recip = vrecpeq_f32(scalar);
 
-    simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip));
+    #ifdef LS_ARCH_AARCH64
+        simd = vdivq_f32(simd, scalar);
+    #else
+        const float32x4_t recip = vrecpeq_f32(scalar);
+        simd = vmulq_f32(simd, vmulq_f32(vrecpsq_f32(scalar, recip), recip));
+    #endif
 
     return *this;
 }

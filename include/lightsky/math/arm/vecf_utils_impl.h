@@ -123,21 +123,22 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
 {
     // sum, squared
     const float32x4_t a = vmulq_f32(v.simd, v.simd);
-
-    #if 0//defined(LS_ARCH_AARCH64)
-        float32x2_t c = vdup_n_f32(vaddvq_f32(a));
-    #else
-        const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
-        const float32x2_t c = vpadd_f32(b, b);
-    #endif
+    const float32x2_t b = vadd_f32(vget_high_f32(a), vget_low_f32(a));
+    const float32x2_t c = vpadd_f32(b, b);
 
     float32x2_t d = vrsqrte_f32(c);
     d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
     //d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
 
-    float32x2_t e = vrecpe_f32(d);
-    e = vmul_f32(vrecps_f32(d, e), e);
-    e = vmul_f32(vrecps_f32(d, e), e);
+    #ifdef LS_ARCH_AARCH64
+        const float32x2_t e = vdiv_f32(vdup_n_f32(1.f), d);
+
+    #else
+        float32x2_t e = vrecpe_f32(d);
+        e = vmul_f32(vrecps_f32(d, e), e);
+        e = vmul_f32(vrecps_f32(d, e), e);
+    #endif
+
     return vget_lane_f32(e, 0);
 }
 
@@ -211,8 +212,14 @@ inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<floa
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 {
-    const float32x4_t recip = vrecpeq_f32(v.simd);
-    const float32x4_t ret   = vmulq_f32(vrecpsq_f32(v.simd, recip), recip);
+    #ifdef LS_ARCH_AARCH64
+        const float32x4_t ret = vdivq_f32(vdupq_n_f32(1.f), v.simd);
+
+    #else
+        const float32x4_t recip = vrecpeq_f32(v.simd);
+        const float32x4_t ret   = vmulq_f32(vrecpsq_f32(v.simd, recip), recip);
+    #endif
+
     return vec4_t<float>{ret};
 }
 

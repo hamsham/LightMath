@@ -114,9 +114,15 @@ inline LS_INLINE float fast_sqrt(float x) noexcept
     rsqr = vmul_f32(vrsqrts_f32(vmul_f32(scalar, rsqr), rsqr), rsqr);
     rsqr = vmul_f32(vrsqrts_f32(vmul_f32(scalar, rsqr), rsqr), rsqr);
 
-    float32x2_t inv = vrecpe_f32(rsqr);
-    inv = vmul_f32(vrecps_f32(rsqr, inv), inv);
-    inv = vmul_f32(vrecps_f32(rsqr, inv), inv);
+    #ifdef LS_ARCH_AARCH64
+        const float32x2_t inv = vdiv_f32(vdup_n_f32(1.f), rsqr);
+
+    #else
+        float32x2_t inv = vrecpe_f32(rsqr);
+        inv = vmul_f32(vrecps_f32(rsqr, inv), inv);
+        inv = vmul_f32(vrecps_f32(rsqr, inv), inv);
+
+    #endif
 
     return vget_lane_f32(inv, 0);
 }
@@ -130,9 +136,14 @@ inline LS_INLINE float rcp(float x) noexcept
 {
     const float32x2_t scalar = vdup_n_f32(x);
 
-    float32x2_t recip = vrecpe_f32(scalar);
-    recip = vmul_f32(vrecps_f32(scalar, recip), recip);
-    recip = vmul_f32(vrecps_f32(scalar, recip), recip);
+    #ifdef LS_ARCH_AARCH64
+        float32x2_t recip = vdiv_f32(vdup_n_f32(1.f), scalar);
+
+    #else
+        float32x2_t recip = vrecpe_f32(scalar);
+        recip = vmul_f32(vrecps_f32(scalar, recip), recip);
+        recip = vmul_f32(vrecps_f32(scalar, recip), recip);
+    #endif
 
     return vget_lane_f32(recip, 0);
 }

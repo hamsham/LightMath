@@ -41,9 +41,15 @@ inline LS_INLINE float length(const quat_t<float>& q)
     d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
     //d = vmul_f32(vrsqrts_f32(vmul_f32(c, d), d), d);
 
-    float32x2_t e = vrecpe_f32(d);
-    e = vmul_f32(vrecps_f32(d, e), e);
-    e = vmul_f32(vrecps_f32(d, e), e);
+    #ifdef LS_ARCH_AARCH64
+        const float32x2_t e = vdiv_f32(vdup_n_f32(1.f), d);
+
+    #else
+        float32x2_t e = vrecpe_f32(d);
+        e = vmul_f32(vrecps_f32(d, e), e);
+        e = vmul_f32(vrecps_f32(d, e), e);
+    #endif
+
     return vget_lane_f32(e, 0);
 }
 
