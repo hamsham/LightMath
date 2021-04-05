@@ -185,19 +185,24 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<other_t>() const
     return vec4_t<other_t>{(other_t)v[0], (other_t)v[1], (other_t)v[2], (other_t)v[3]};
 }
 
+#ifdef LS_X86_SSE2
+
 template <>
 template <>
 inline LS_INLINE vec4_t<int8_t>::operator vec4_t<float>() const
 {
-    const __m128i vals = _mm_castps_si128(_mm_load1_ps(reinterpret_cast<const float*>(v)));
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu8_epi32(vals))};
+    const __m128i raw = _mm_castps_si128(_mm_load1_ps(reinterpret_cast<const float*>(v)));
+    const __m128i vals = _mm_unpacklo_epi16(_mm_unpacklo_epi8(raw, _mm_setzero_si128()), _mm_setzero_si128());
+    return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<int16_t>::operator vec4_t<float>() const
 {
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepi16_epi32(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v))))};
+    const __m128i raw = _mm_castps_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
+    const __m128i vals = _mm_unpacklo_epi16(raw, _mm_setzero_si128());
+    return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
 
 template <>
@@ -207,21 +212,22 @@ inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
     return vec4_t<float>{_mm_cvtepi32_ps(reinterpret_cast<const __m128i&>(*this))};
 }
 
-#ifdef LS_X86_SSE4_1
-
 template <>
 template <>
 inline LS_INLINE vec4_t<uint8_t>::operator vec4_t<float>() const
 {
-    const __m128i vals = _mm_castps_si128(_mm_load1_ps(reinterpret_cast<const float*>(v)));
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu8_epi32(vals))};
+    const __m128i raw = _mm_castps_si128(_mm_load1_ps(reinterpret_cast<const float*>(v)));
+    const __m128i vals = _mm_unpacklo_epi16(_mm_unpacklo_epi8(raw, _mm_setzero_si128()), _mm_setzero_si128());
+    return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
 
 template <>
 template <>
 inline LS_INLINE vec4_t<uint16_t>::operator vec4_t<float>() const
 {
-    return vec4_t<float>{_mm_cvtepi32_ps(_mm_cvtepu16_epi32(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(v))))};
+    const __m128i raw = _mm_castps_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
+    const __m128i vals = _mm_unpacklo_epi16(raw, _mm_setzero_si128());
+    return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
 
 template <>
@@ -248,17 +254,18 @@ inline LS_INLINE vec4_t<half>::operator vec4_t<float>() const
 }
 #endif
 
+#ifdef LS_X86_SSE2
+
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<int8_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 8, 4, 0);
 
     union
     {
-        const __m128i i;
+        const int32_t i;
         const vec4_t<int8_t> v;
-    } ret{_mm_shuffle_epi8(data, perms)};
+    } ret{_mm_cvtsi128_si32(_mm_packs_epi16(_mm_packs_epi32(data, data), data))};
     return ret.v;
 }
 
@@ -271,7 +278,7 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<int16_t>() const
     {
         const __m128i i;
         const vec4_t<int16_t> v;
-    } ret{_mm_packs_epi32(data, _mm_setzero_si128())};
+    } ret{_mm_packs_epi32(data, data)};
     return ret.v;
 }
 
@@ -291,15 +298,16 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint8_t>() const
 {
     const __m128i data = _mm_cvtps_epi32(simd);
-    const __m128i perms = _mm_set_epi8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 12, 8, 4, 0);
 
     union
     {
-        const __m128i i;
+        const int32_t i;
         const vec4_t<uint8_t> v;
-    } ret{_mm_shuffle_epi8(data, perms)};
+    } ret{_mm_cvtsi128_si32(_mm_packus_epi16(_mm_packs_epi32(data, data), data))};
     return ret.v;
 }
+
+#endif
 
 #ifdef LS_X86_SSE4_1
 
@@ -318,6 +326,8 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint16_t>() const
 
 #endif
 
+#ifdef LS_X86_SSE2
+
 template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 {
@@ -329,6 +339,8 @@ inline LS_INLINE vec4_t<float>::operator vec4_t<uint32_t>() const
 
     return data.vec;
 }
+
+#endif
 
 #if defined(LS_X86_FP16)
 template <>
