@@ -285,7 +285,7 @@ uint64_t rrotate_u64(uint64_t n, uint64_t count) noexcept;
 
 
 
-#if defined(LS_X86_SSE_4_2) && !defined(LS_COMPILER_MSC)
+#if defined(LS_X86_SSE4_2) && !defined(LS_COMPILER_MSC)
     #include "lightsky/math/x86/bits_impl.h"
 #else
     #include "lightsky/math/generic/bits_impl.h"
