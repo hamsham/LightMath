@@ -200,7 +200,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<int16_t>::operator vec4_t<float>() const
 {
-    const __m128i raw = _mm_castps_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
+    const __m128i raw = _mm_castpd_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
     const __m128i vals = _mm_unpacklo_epi16(raw, _mm_setzero_si128());
     return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
@@ -225,7 +225,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<uint16_t>::operator vec4_t<float>() const
 {
-    const __m128i raw = _mm_castps_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
+    const __m128i raw = _mm_castpd_si128(_mm_load1_pd(reinterpret_cast<const double*>(v)));
     const __m128i vals = _mm_unpacklo_epi16(raw, _mm_setzero_si128());
     return vec4_t<float>{_mm_cvtepi32_ps(vals)};
 }
