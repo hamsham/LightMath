@@ -644,7 +644,7 @@ namespace impl
     template <typename scalar_t>
     constexpr scalar_t powi_impl(scalar_t p, scalar_t y, scalar_t result) noexcept
     {
-        return (y < scalar_t{1}) ? result : math::impl::powi_impl<scalar_t>(p*p, y >> scalar_t{2}, (y & scalar_t{1}) ? (result*p) : result);
+        return (y < scalar_t{1}) ? result : math::impl::powi_impl<scalar_t>(p*p, y / scalar_t{2}, (y & scalar_t{1}) ? (result*p) : result);
     }
 } // end impl namespace
 } // end math namespace
