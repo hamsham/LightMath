@@ -29,6 +29,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/bits.h
     include/lightsky/math/fixed.h
     include/lightsky/math/half.h
+    include/lightsky/math/Interpolate.h
     include/lightsky/math/mat2.h
     include/lightsky/math/mat3.h
     include/lightsky/math/mat4.h
@@ -47,6 +48,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/bits_impl.h
     include/lightsky/math/generic/fixed_impl.h
     include/lightsky/math/generic/half_impl.h
+    include/lightsky/math/generic/Interpolate_impl.h
     include/lightsky/math/generic/mat2_impl.h
     include/lightsky/math/generic/mat3_impl.h
     include/lightsky/math/generic/mat4_impl.h

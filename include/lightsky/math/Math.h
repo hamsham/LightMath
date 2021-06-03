@@ -19,6 +19,7 @@
 #include "lightsky/math/bits.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/half.h"
+#include "lightsky/math/Interpolate.h"
 #include "lightsky/math/mat2.h"
 #include "lightsky/math/mat3.h"
 #include "lightsky/math/mat4.h"
