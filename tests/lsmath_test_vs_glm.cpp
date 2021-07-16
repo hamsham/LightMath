@@ -160,6 +160,7 @@ int main()
         12.f, 13.f, 14.f, 15.f
     };
     std::cout << "GLM Perspective: " << glm::perspective(ls::math::radians(fov), aspect, zNear, zFar) << std::endl;
+    std::cout << "GLM Look At: " << glm::lookAt(glm::vec3{4.f, 2.f, 3.f}, glm::vec3{-1.f, 0.f, 1.f}, glm::vec3{0.f, 1.f, 0.f}) << std::endl;
     std::cout << "GLM mat4 * vec4: " << glmMat * glmVec << std::endl;
     std::cout << "GLM vec4 * mat4: " << glmVec * glm::outerProduct(glmVec, glmVec) << std::endl;
     std::cout << "GLM mat4 * mat4: " << glmMat * glmMat << std::endl;
@@ -183,6 +184,7 @@ int main()
         12.f, 13.f, 14.f, 15.f
     };
     std::cout << "ls Perspective: " << ls::math::perspective(ls::math::radians(fov), aspect, zNear, zFar) << std::endl;
+    std::cout << "LS Look At: " << ls::math::look_from(ls::math::vec3{4.f, 2.f, 3.f}, ls::math::vec3{-1.f, 0.f, 1.f}, ls::math::vec3{0.f, 1.f, 0.f}) << std::endl;
     std::cout << "ls mat4 * vec4: " << lsMat * lsVec << std::endl;
     std::cout << "ls vec4 * mat4: " << lsVec * ls::math::outer(lsVec, lsVec) << std::endl;
     std::cout << "ls mat4 * mat4: " << lsMat * lsMat << std::endl;
