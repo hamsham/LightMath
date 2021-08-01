@@ -165,11 +165,16 @@ inline LS_INLINE mat4_t<float> outer(const vec4_t<float>& v1, const vec4_t<float
 
         return ret.m;
     #else
+        const __m128 a = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x00));
+        const __m128 b = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x55));
+        const __m128 c = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xAA));
+        const __m128 d = _mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xFF));
+
         return mat4_t<float>{
-            vec4_t<float>{_mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x00)), v2.simd)},
-            vec4_t<float>{_mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0x55)), v2.simd)},
-            vec4_t<float>{_mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xAA)), v2.simd)},
-            vec4_t<float>{_mm_mul_ps(_mm_castsi128_ps(_mm_shuffle_epi32(_mm_castps_si128(v1.simd), 0xFF)), v2.simd)}
+            vec4_t<float>{_mm_mul_ps(a, v2.simd)},
+            vec4_t<float>{_mm_mul_ps(b, v2.simd)},
+            vec4_t<float>{_mm_mul_ps(c, v2.simd)},
+            vec4_t<float>{_mm_mul_ps(d, v2.simd)}
         };
     #endif
 }
@@ -276,7 +281,6 @@ inline LS_INLINE mat4_t<float> mat_row_mul(const mat4_t<float>& m, const vec4_t<
 -------------------------------------*/
 inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 {
-
     #if 1
         const __m128 m0 = _mm_loadu_ps(&m[0]);
         const __m128 m1 = _mm_loadu_ps(&m[1]);
@@ -289,10 +293,10 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
         const __m128 t3 = _mm_unpackhi_ps(m2, m3);
 
         return mat4_t<float>{
-            vec4_t<float>{_mm_shuffle_ps(t0, t1, 0x44)},
-            vec4_t<float>{_mm_shuffle_ps(t0, t1, 0xEE)},
-            vec4_t<float>{_mm_shuffle_ps(t2, t3, 0x44)},
-            vec4_t<float>{_mm_shuffle_ps(t2, t3, 0xEE)}
+            vec4_t<float>{_mm_movelh_ps(t0, t1)},
+            vec4_t<float>{_mm_movehl_ps(t1, t0)},
+            vec4_t<float>{_mm_movelh_ps(t2, t3)},
+            vec4_t<float>{_mm_movehl_ps(t3, t2)}
         };
     #else
         alignas(sizeof(__m256)) mat4_t<float> ret;

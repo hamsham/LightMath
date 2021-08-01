@@ -159,8 +159,9 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
         const __m128 t2 = _mm_unpackhi_ps(row0, row1);
         const __m128 t3 = _mm_unpackhi_ps(row2, row3);
 
-        __m128 sum0 = _mm_add_ps(_mm_shuffle_ps(t0, t1, 0xEE), _mm_shuffle_ps(t0, t1, 0x44));
-        __m128 sum1 = _mm_add_ps(_mm_shuffle_ps(t2, t3, 0xEE), _mm_shuffle_ps(t2, t3, 0x44));
+        __m128 sum0 = _mm_add_ps(_mm_movehl_ps(t1, t0), _mm_movelh_ps(t0, t1));
+        __m128 sum1 = _mm_add_ps(_mm_movehl_ps(t3, t2), _mm_movelh_ps(t2, t3));
+
         return vec4_t<float>{_mm_add_ps(sum1, sum0)};
     #else
 
