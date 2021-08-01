@@ -756,7 +756,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::cos(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     typedef ls::math::fixed_t<fixed_base_t, num_frac_digits> FixedType;
-    return cos_step<FixedType>(ls::math::abs<FixedType>(ls::math::fract<FixedType>(x / FixedType{LS_TWO_PI}) * FixedType{2.0} - FixedType{1.0}));
+    return sin_step<FixedType>(ls::math::abs<FixedType>(ls::math::fract<FixedType>(x / FixedType{LS_TWO_PI}) * FixedType{2.0} - FixedType{1.0}));
 }
 
 

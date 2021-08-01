@@ -308,6 +308,36 @@ inline LS_INLINE const fixed_t<fixed_base_t, num_frac_digits> cos(const fixed_t<
 
 
 }//end math namespace
+
+
+
+
+/*----------------------------------------------------------------------------
+ * Type Information
+----------------------------------------------------------------------------*/
+namespace setup
+{
+/*-------------------------------------
+ * Integral Determination
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+struct IsIntegral<math::fixed_t<fixed_base_t, num_frac_digits>> : public ls::setup::FalseType<math::fixed_t<fixed_base_t, num_frac_digits>>
+{
+};
+
+
+
+/*-------------------------------------
+ * Float Determination
+-------------------------------------*/
+template<typename fixed_base_t, unsigned num_frac_digits>
+struct IsFloat<math::fixed_t<fixed_base_t, num_frac_digits>> : public ls::setup::FalseType<math::fixed_t<fixed_base_t, num_frac_digits>>
+{
+};
+
+
+
+} // end setup namespace
 }//end ls namespace
 
 #include "lightsky/math/generic/fixed_impl.h"

@@ -9,7 +9,7 @@
 
 void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float))
 {
-    float y = LS_PI * ls::math::radians(360.f / x);
+    float y = ls::math::radians(x);
     const float baseImpl = pStdFunc(y);
     const float testImpl = pLsFunc(y);
     const float errAbs = ls::math::abs(baseImpl - testImpl);
@@ -23,13 +23,14 @@ void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float)
 int main()
 {
     printf("std::sin,ls:math::sin,absolute error,relative error,\n");
-    for (int i = -360; i <= 360; ++i)
+    for (int i = -540; i <= 540; ++i)
     {
         test_trig_values((float)i, std::sin, ls::math::sin);
         printf("\n");
     }
     printf("\n");
 
+    /*
     printf("std::cos,ls:math::cos,absolute error,relative error,\n");
     for (int i = -360; i <= 360; ++i)
     {
@@ -45,6 +46,7 @@ int main()
         printf("\n");
     }
     printf("\n");
+    */
 
     return 0;
 }

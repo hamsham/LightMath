@@ -805,22 +805,11 @@ constexpr LS_INLINE scalar_t math::cos(typename setup::EnableIf<!setup::IsFloat<
            + (x * x * x * x * x * x * x * x / scalar_t{40320.0});
 }
 
-// Alternate (non-taylor-series) method found here:
-// https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
-namespace
-{
-    template <typename scalar_t>
-    constexpr LS_INLINE scalar_t cos_step(scalar_t x) noexcept
-    {
-        return x * x * (scalar_t{3.0} - scalar_t{2.0} * x) * scalar_t{2.0} - scalar_t{1.0};
-    }
-}
-
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return cos_step(ls::math::abs(ls::math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
+    return sin_step(ls::math::abs(ls::math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
 }
 
 
@@ -1015,13 +1004,13 @@ constexpr LS_INLINE data_t math::sign(
     typename setup::EnableIf<setup::IsIntegral<data_t>::value, data_t>::type x
 ) noexcept
 {
-    return setup::IsSigned<data_t>::value ? (int)(x >> (((sizeof(data_t)*CHAR_BIT)-1)) & 0x01) : 0;
+    return data_t{x > 0} | setup::IsSigned<data_t>::value ? (x < data_t{0} ? data_t{-1} : data_t{1}) : 0;
 }
 
 template <typename data_t>
 constexpr LS_INLINE data_t math::sign(data_t x) noexcept
 {
-    return (setup::IsSigned<data_t>::value  && (x < data_t{0})) ? data_t{1} : data_t{0};
+    return (setup::IsSigned<data_t>::value && (x < data_t{0})) ? data_t{-1} : (x > data_t{0} ? data_t{1} : data_t{0});
 }
 
 
