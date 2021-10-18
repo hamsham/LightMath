@@ -230,25 +230,27 @@ template<typename scalar_t>
 inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
 {
     const float x = (float)input;
-    /*
-    union
-    {
-        float f;
-        unsigned long u;
-    } y = {x};
-    y.u = 0x5F1FFFF9ul - (y.u >> 1);
-    return 0.703952253f * y.f * (2.38924456f - x * y.f * y.f);
-    */
 
-    union
-    {
-        float f;
-        int32_t i;
-    } y = {x};
+    #if 1
+        union
+        {
+            float f;
+            uint64_t u;
+        } y = {x};
+        y.u = 0x5F1FFFF9ul - (y.u >> 1);
+        return 0.703952253f * y.f * (2.38924456f - x * y.f * y.f);
 
-    const float xhalf = 0.5f * x;
-    y.i = 0x5f3759df - (y.i >> 1);
-    return y.f * (1.5f - xhalf * y.f * y.f);
+    #else
+        union
+        {
+            float f;
+            int32_t i;
+        } y = {x};
+
+        const float xhalf = 0.5f * x;
+        y.i = 0x5f3759df - (y.i >> 1);
+        return y.f * (1.5f - xhalf * y.f * y.f);
+    #endif
 }
 
 

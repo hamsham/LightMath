@@ -135,7 +135,7 @@ inline LS_INLINE vec4_t<float> cross(const vec4_t<float>& v1, const vec4_t<float
 {
     const __m128 yzxA = _mm_shuffle_ps(v1.simd, v1.simd, _MM_SHUFFLE(3, 0, 2, 1));
     const __m128 yzxB = _mm_shuffle_ps(v2.simd, v2.simd, _MM_SHUFFLE(3, 0, 2, 1));
-    #ifdef LS_x86_FMA
+    #ifdef LS_X86_FMA
         const __m128 ret = _mm_fmsub_ps(v1.simd, yzxB, _mm_mul_ps(yzxA, v2.simd));
     #else
         const __m128 ret = _mm_sub_ps(_mm_mul_ps(v1.simd, yzxB), _mm_mul_ps(yzxA, v2.simd));
