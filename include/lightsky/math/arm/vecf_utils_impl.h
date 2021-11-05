@@ -78,7 +78,10 @@ inline LS_INLINE float sum_inv(const vec4_t<float>& v) noexcept
 
     #endif
 
-    return vget_lane_f32(vrecpe_f32(b), 0);
+    float32x2_t c = vrecpe_f32(b);
+    c = vmul_f32(vrecps_f32(b, c), c);
+    //c = vmul_f32(vrecps_f32(b, c), c);
+    return vget_lane_f32(c, 0);
 }
 
 /*-------------------------------------
