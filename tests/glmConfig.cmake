@@ -58,14 +58,25 @@ if (NOT GLM_FOUND)
     #set(GLM_BRANCH "0.9.9.2" CACHE STRING "Git branch or tag for checking out GLM.")
     mark_as_advanced(GLM_BRANCH)
 
+    if (MSVC)
+        set(GLM_C_FLAGS "${CMAKE_C_FLAGS} /p:CharacterSet=Unicode")
+        set(GLM_CXX_FLAGS "${CMAKE_CXX_FLAGS} /p:CharacterSet=Unicode")
+    else()
+        set(GLM_C_FLAGS "${CMAKE_C_FLAGS}")
+        set(GLM_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    endif()
+
+    mark_as_advanced(GLM_CXX_FLAGS)
+    mark_as_advanced(GLM_C_FLAGS)
+
     # Configure build options
     set(GLM_BUILD_FLAGS
         -DBUILD_SHARED_LIBS:BOOL=FALSE
         -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
         -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-        -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+        -DCMAKE_CXX_FLAGS:STRING=${GLM_CXX_FLAGS}
         -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-        -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+        -DCMAKE_C_FLAGS:STRING=${GLM_C_FLAGS}
         -DCMAKE_MAKE_PROGRAM:PATH=${CMAKE_MAKE_PROGRAM}
         -DCMAKE_INSTALL_PREFIX:FILEPATH=${EXTERNAL_PROJECT_PREFIX}
         -DCMAKE_SYSTEM_NAME:STRING=${CMAKE_SYSTEM_NAME}
