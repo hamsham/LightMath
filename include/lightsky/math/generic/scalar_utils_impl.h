@@ -745,7 +745,7 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
     float   offset = (p < 0.f) ? 1.f : 0.f;
     float   clipp  = (p < -126.f) ? -126.f : p;
     int32_t w      = (int32_t)clipp;
-    float   z      = clipp - w + offset;
+    float   z      = clipp - (float)w + offset;
 
     union {
         uint32_t i;
