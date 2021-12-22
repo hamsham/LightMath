@@ -273,36 +273,36 @@ vec3_t<num_t> vec3_t<num_t>::operator=(num_t input) {
 template <typename num_t> constexpr LS_INLINE
 vec3_t<num_t> vec3_t<num_t>::operator+(num_t input) const {
     return vec3_t<num_t>{
-        v[0] + input,
-        v[1] + input,
-        v[2] + input
+        (num_t)(v[0] + input),
+        (num_t)(v[1] + input),
+        (num_t)(v[2] + input)
     };
 }
 
 template <typename num_t> constexpr LS_INLINE
 vec3_t<num_t> vec3_t<num_t>::operator-(num_t input) const {
     return vec3_t<num_t>{
-        v[0] - input,
-        v[1] - input,
-        v[2] - input
+        (num_t)(v[0] - input),
+        (num_t)(v[1] - input),
+        (num_t)(v[2] - input)
     };
 }
 
 template <typename num_t> constexpr LS_INLINE
 vec3_t<num_t> vec3_t<num_t>::operator*(num_t input) const {
     return vec3_t<num_t>{
-        v[0] * input,
-        v[1] * input,
-        v[2] * input
+        (num_t)(v[0] * input),
+        (num_t)(v[1] * input),
+        (num_t)(v[2] * input)
     };
 }
 
 template <typename num_t> constexpr LS_INLINE
 vec3_t<num_t> vec3_t<num_t>::operator/(num_t input) const {
     return vec3_t<num_t>{
-        v[0] / input,
-        v[1] / input,
-        v[2] / input
+        (num_t)(v[0] / input),
+        (num_t)(v[1] / input),
+        (num_t)(v[2] / input)
     };
 }
 
