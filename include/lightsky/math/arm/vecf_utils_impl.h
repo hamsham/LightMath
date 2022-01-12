@@ -232,28 +232,22 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-        constexpr int32_t andMasks[4] = {0x01, 0x02, 0x04, 0x08};
-        const int32x4_t   cmp         = vreinterpretq_s32_u32(vcltzq_f32(x.simd));
-        const int32x4_t   masks       = vandq_s32(vld1q_s32(andMasks), cmp);
+        const int32x4_t signBits = vshrq_n_s32(vreinterpretq_s32_f32(x.simd), 31);
+        const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
+        const int32x4_t bits     = vandq_s32(masks, signBits);
 
         // Adding powers-of-two only sets the corresponding bits.
         // This is a low-throughput instruction and only works now because it
         // replaces the 6 instructions in the Arm32 version.
-        return vaddvq_s32(masks);
+        return vaddvq_s32(bits);
 
     #else
-        constexpr int32_t shifts[4] = {-31, -30, -29, -28};
-        const uint32x4_t  sign      = vdupq_n_u32(0x80000000);
-        const uint32x4_t  cmp       = vandq_u32(sign, vreinterpretq_u32_f32(x.simd));
-        const int32x4_t   masks     = vreinterpretq_s32_u32(vqshlq_u32(cmp, vld1q_s32(shifts)));
+        const int32x4_t signBits = vshrq_n_s32(vreinterpretq_s32_f32(x.simd), 31);
+        const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
+        const int32x4_t bits0123 = vandq_s32(masks, signBits);
 
-        const int32x2_t lo   = vget_low_s32(masks);
-        const int32x2_t hi   = vget_high_s32(masks);
-        const int32x2_t swp  = vorr_s32(hi, lo);
-        const int32x2_t rev  = vrev64_s32(swp);
-        const int32x2_t bits = vorr_s32(rev, swp);
-
-        return vget_lane_s32(bits, 0);
+    int32x2_t bits = vorr_s32(vget_low_s32(bits0123), vget_high_s32(bits0123));
+    return vget_lane_s32(vorr_s32(bits, vrev64_s32(bits)), 0);
 
     #endif
 }
@@ -263,31 +257,25 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 -------------------------------------*/
 inline LS_INLINE int sign_mask(const vec4_t<int32_t>& x) noexcept
 {
-    const int32x4_t v = vld1q_s32(x.v);
-
     #if defined(LS_ARCH_AARCH64)
-        constexpr int32_t andMasks[4] = {0x01, 0x02, 0x04, 0x08};
-        const int32x4_t   cmp         = vreinterpretq_s32_u32(vcltzq_s32(v));
-        const int32x4_t   masks       = vandq_s32(vld1q_s32(andMasks), cmp);
+        const int32x4_t value    = vld1q_s32(x.v);
+        const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
+        const int32x4_t signBits = vshrq_n_s32(value, 31);
+        const int32x4_t bits     = vandq_s32(masks, signBits);
 
         // Adding powers-of-two only sets the corresponding bits.
         // This is a low-throughput instruction and only works now because it
         // replaces the 6 instructions in the Arm32 version.
-        return vaddvq_s32(masks);
+        return vaddvq_s32(bits);
 
     #else
-        constexpr int32_t shifts[4] = {-31, -30, -29, -28};
-        const uint32x4_t  sign      = vdupq_n_u32(0x80000000);
-        const uint32x4_t  cmp       = vandq_u32(sign, vreinterpretq_u32_s32(v));
-        const int32x4_t   masks     = vreinterpretq_s32_u32(vqshlq_u32(cmp, vld1q_s32(shifts)));
+    const int32x4_t value    = vld1q_s32(x.v);
+    const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
+    const int32x4_t signBits = vshrq_n_s32(value, 31);
+    const int32x4_t bits0123 = vandq_s32(masks, signBits);
 
-        const int32x2_t lo   = vget_low_s32(masks);
-        const int32x2_t hi   = vget_high_s32(masks);
-        const int32x2_t swp  = vorr_s32(hi, lo);
-        const int32x2_t rev  = vrev64_s32(swp);
-        const int32x2_t bits = vorr_s32(rev, swp);
-
-        return vget_lane_s32(bits, 0);
+    int32x2_t bits = vorr_s32(vget_low_s32(bits0123), vget_high_s32(bits0123));
+    return vget_lane_s32(vorr_s32(bits, vrev64_s32(bits)), 0);
 
     #endif
 }
