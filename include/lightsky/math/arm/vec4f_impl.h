@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_VEC4F_IMPL_H
+#define LS_MATH_VEC4F_IMPL_H
+
 #include <arm_neon.h>
 
 #include "lightsky/setup/Api.h" // LS_INLINE
@@ -635,3 +638,5 @@ vec4_t<float> operator*(float n, const vec4_t<float>& v)
 }
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_VEC4F_IMPL_H */

@@ -5,8 +5,8 @@
  * Created on August 15, 2014, 9:23 PM
  */
 
-#ifndef LS__MATH_PERLIN_NOISE_H
-#define LS__MATH_PERLIN_NOISE_H
+#ifndef LS_MATH_PERLIN_NOISE_H
+#define LS_MATH_PERLIN_NOISE_H
 
 #include <chrono>
 #include <utility> // std::move
@@ -207,4 +207,4 @@ LS_DECLARE_CLASS_TYPE(PerlinNoised, PerlinNoise, double);
 
 #include "lightsky/math/generic/perlinNoise_impl.h"
 
-#endif  /* LS__MATH_PERLIN_NOISE_H */
+#endif  /* LS_MATH_PERLIN_NOISE_H */

@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_MATF_UTILS_IMPL_H
+#define LS_MATH_MATF_UTILS_IMPL_H
+
 #include <arm_neon.h>
 
 namespace ls
@@ -127,3 +130,5 @@ inline LS_INLINE mat4_t<float> transpose(const mat4_t<float>& m)
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_MATF_UTILS_IMPL_H */

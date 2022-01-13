@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_BITS_IMPL_H
+#define LS_MATH_BITS_IMPL_H
+
 #include <climits> // CHAR_BIT
 
 #include "lightsky/setup/Api.h"
@@ -443,3 +446,5 @@ inline LS_INLINE uint64_t math::rrotate_u64(uint64_t n, uint64_t count) noexcept
 
 
 } // end ls namespace
+
+#endif /* LS_MATH_BITS_IMPL_H */

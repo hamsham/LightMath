@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_VEC3_IMPL_H
+#define LS_MATH_VEC3_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 namespace ls {
@@ -358,3 +361,5 @@ vec3_t<num_t> operator*(num_t n, const vec3_t<num_t>& v) {
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_VEC3_IMPL_H */

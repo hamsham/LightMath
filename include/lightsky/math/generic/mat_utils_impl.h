@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_MAT_UTILS_IMPL_H
+#define LS_MATH_MAT_UTILS_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 namespace ls {
@@ -656,3 +659,5 @@ math::mat4_t<num_t> math::billboard(const vec3_t<num_t>& pos, const mat4_t<num_t
 }
 
 } // end ls namespace
+
+#endif /* LS_MATH_MAT_UTILS_IMPL_H */

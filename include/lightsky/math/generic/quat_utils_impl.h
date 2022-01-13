@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_QUAT_UTILS_IMPL_H
+#define LS_MATH_QUAT_UTILS_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 namespace ls {
@@ -486,3 +489,5 @@ math::quat_t<num_t> math::from_axis_angle(const vec4_t<num_t>& v) {
 }
 
 } // end ls namespace
+
+#endif /* LS_MATH_QUAT_UTILS_IMPL_H */

@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_HALFF_IMPL_H
+#define LS_MATH_HALFF_IMPL_H
+
 #include "lightsky/setup/Compiler.h"
 
 // Clang seems to import the _cvtss_sh() function as a C-extension, rather
@@ -64,3 +67,5 @@ inline LS_INLINE half::operator float() const noexcept
 #if defined(LS_COMPILER_CLANG)
     #pragma clang diagnostic pop
 #endif
+
+#endif /* LS_MATH_HALFF_IMPL_H */

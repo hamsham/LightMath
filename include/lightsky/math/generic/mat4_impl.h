@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_MAT4_IMPL_H
+#define LS_MATH_MAT4_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 
@@ -561,3 +564,5 @@ constexpr LS_INLINE mat4_t<num_t> operator*(num_t n, const mat4_t<num_t>& m)
 }
 } //end math namespace
 } //end ls namespace
+
+#endif /* LS_MATH_MAT4_IMPL_H */

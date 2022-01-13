@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_VEC_UTILS_IMPL_H
+#define LS_MATH_VEC_UTILS_IMPL_H
+
 #include <type_traits>
 
 #include "lightsky/setup/Api.h" // LS_INLINE
@@ -1453,3 +1456,5 @@ constexpr math::vec4_t<N> math::vec4_cast(const N& s, const math::vec3_t<N>& v) 
     return math::vec4_t<N>{s, v.v[0], v.v[1], v.v[2]};
 }
 } // end ls namespace
+
+#endif /* LS_MATH_VEC_UTILS_IMPL_H */

@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_FIXED_IMPL_H
+#define LS_MATH_FIXED_IMPL_H
+
 #include "lightsky/math/scalar_utils.h"
 
 namespace ls
@@ -785,3 +788,5 @@ inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::tan(co
 
 
 } //end ls namespace
+
+#endif /* LS_MATH_FIXED_IMPL_H */

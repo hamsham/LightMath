@@ -1,6 +1,6 @@
 
-#ifndef LS_MATH_HALF_HPP
-#define LS_MATH_HALF_HPP
+#ifndef LS_MATH_HALF_H
+#define LS_MATH_HALF_H
 
 #include <cstdint> // uint16_t
 
@@ -330,4 +330,4 @@ inline LS_INLINE half abs(half x) noexcept
 } // end math namespace
 } // end ls namespace
 
-#endif /* LS_MATH_HALF_HPP */
+#endif /* LS_MATH_HALF_H */

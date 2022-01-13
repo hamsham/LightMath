@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_INTERPOLATE_IMPL_H
+#define LS_MATH_INTERPOLATE_IMPL_H
+
 #include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/vec_utils.h"
 
@@ -115,3 +118,5 @@ inline T math::bezier_general(const U& t, const T& p0, const TT&... p1) noexcept
 
 
 } // ls namespace
+
+#endif /* LS_MATH_INTERPOLATE_IMPL_H */

@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_QUATF_UTILS_IMPL_H
+#define LS_MATH_QUATF_UTILS_IMPL_H
+
 #include <pmmintrin.h>
 
 namespace ls
@@ -81,3 +84,5 @@ inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_QUATF_UTILS_IMPL_H */

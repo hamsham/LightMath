@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_BITSF_IMPL_H
+#define LS_MATH_BITSF_IMPL_H
+
 #include <immintrin.h>
 #include <climits> // CHAR_BIT
 
@@ -326,3 +329,5 @@ inline LS_INLINE uint64_t math::rrotate_u64(uint64_t n, uint64_t count) noexcept
 
 
 } // end ls namespace
+
+#endif /* LS_MATH_BITSF_IMPL_H */

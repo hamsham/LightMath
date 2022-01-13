@@ -1,6 +1,6 @@
 
-#ifndef LS_MATH_BITS_HPP
-#define LS_MATH_BITS_HPP
+#ifndef LS_MATH_BITS_H
+#define LS_MATH_BITS_H
 
 #include <cstdint> // fixed-width types
 
@@ -293,4 +293,4 @@ uint64_t rrotate_u64(uint64_t n, uint64_t count) noexcept;
 
 
 
-#endif /* LS_MATH_BITS_HPP */
+#endif /* LS_MATH_BITS_H */

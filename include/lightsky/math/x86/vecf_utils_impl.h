@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_VECF_UTILS_IMPL_H
+#define LS_MATH_VECF_UTILS_IMPL_H
+
 #include <pmmintrin.h>
 
 
@@ -575,3 +578,5 @@ inline LS_INLINE vec4_t<float> fmsub(const vec4_t<float>& x, const vec4_t<float>
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_VECF_UTILS_IMPL_H */

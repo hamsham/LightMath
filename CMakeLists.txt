@@ -45,9 +45,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/vec4.h
     include/lightsky/math/vec_utils.h
 
-    include/lightsky/math/generic/bits_impl.h
     include/lightsky/math/generic/fixed_impl.h
-    include/lightsky/math/generic/half_impl.h
     include/lightsky/math/generic/Interpolate_impl.h
     include/lightsky/math/generic/mat2_impl.h
     include/lightsky/math/generic/mat3_impl.h
@@ -61,6 +59,11 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/vec3_impl.h
     include/lightsky/math/generic/vec4_impl.h
     include/lightsky/math/generic/vec_utils_impl.h
+)
+
+set(LS_MATH_PLATFORM_HEADERS
+    include/lightsky/math/generic/bits_impl.h
+    include/lightsky/math/generic/half_impl.h
 
     include/lightsky/math/x86/bits_impl.h
     include/lightsky/math/x86/half_impl.h
@@ -77,14 +80,15 @@ set(LS_MATH_HEADERS
     include/lightsky/math/arm/quatf_utils_impl.h
     include/lightsky/math/arm/scalarf_utils_impl.h
     include/lightsky/math/arm/vec4f_impl.h
-    include/lightsky/math/arm/vecf_utils_impl.h)
+    include/lightsky/math/arm/vecf_utils_impl.h
+)
 
 
 
 # -------------------------------------
 # Library Setup
 # -------------------------------------
-add_library(${OUTPUT_NAME} ${LS_MATH_SOURCES} ${LS_MATH_HEADERS})
+add_library(${OUTPUT_NAME} ${LS_MATH_SOURCES} ${LS_MATH_HEADERS} ${LS_MATH_PLATFORM_HEADERS})
 
 ls_configure_target(${OUTPUT_NAME})
 target_include_directories(${OUTPUT_NAME} PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>)
@@ -111,6 +115,19 @@ install(EXPORT LightMath
 
 export(EXPORT LightMath NAMESPACE LightSky::)
 add_library(LightSky::Math ALIAS lsmath)
+
+
+
+# -------------------------------------
+# Precompiled Headers
+# -------------------------------------
+if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+    target_precompile_headers(
+        lsmath
+        PUBLIC
+            ${LS_MATH_HEADERS}
+    )
+endif()
 
 
 

@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_PERLIN_NOISE_IMPL_H
+#define LS_MATH_PERLIN_NOISE_IMPL_H
+
 namespace ls
 {
 namespace math
@@ -258,3 +261,5 @@ num_t PerlinNoise<num_t>::get_octave_noise(const vec3_t <num_t>& point, unsigned
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_PERLIN_NOISE_IMPL_H */

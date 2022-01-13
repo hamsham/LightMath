@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_HALF_IMPL_H
+#define LS_MATH_HALF_IMPL_H
+
 namespace ls
 {
 namespace math
@@ -119,3 +122,5 @@ inline LS_INLINE half::operator float() const noexcept
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_HALF_IMPL_H */

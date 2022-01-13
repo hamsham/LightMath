@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_SCALAR_UTILS_IMPL_H
+#define LS_MATH_SCALAR_UTILS_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 
@@ -1069,3 +1072,5 @@ constexpr LS_INLINE data_t math::fmsub(data_t x, data_t m, data_t a) noexcept
 
 
 } /* end ls namespace */
+
+#endif /* LS_MATH_SCALAR_UTILS_IMPL_H */

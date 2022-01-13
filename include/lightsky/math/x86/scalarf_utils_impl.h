@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_SCALARF_UTILS_IMPL_H
+#define LS_MATH_SCALARF_UTILS_IMPL_H
+
 #include <immintrin.h> // SSE3
 
 namespace ls
@@ -565,3 +568,5 @@ inline LS_INLINE float fmsub(float x, float m, float a) noexcept
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_SCALARF_UTILS_IMPL_H */

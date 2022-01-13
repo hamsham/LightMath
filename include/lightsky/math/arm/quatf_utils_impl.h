@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_QUATF_UTILS_IMPL_H
+#define LS_MATH_QUATF_UTILS_IMPL_H
+
 #include <arm_neon.h>
 
 #include "lightsky/setup/Api.h" // LS_INLINE
@@ -79,3 +82,5 @@ inline LS_INLINE quat_t<float> normalize(const quat_t<float>& q)
 
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_QUATF_UTILS_IMPL_H */

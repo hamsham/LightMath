@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_VEC4F_IMPL_H
+#define LS_MATH_VEC4F_IMPL_H
+
 #include "lightsky/setup/Compiler.h"
 
 #ifdef LS_COMPILER_MSC
@@ -603,3 +606,5 @@ inline LS_INLINE vec4_t<float> operator*(float n, const vec4_t<float>& v)
 }
 } // end math namespace
 } // end ls namespace
+
+#endif /* LS_MATH_VEC4F_IMPL_H */

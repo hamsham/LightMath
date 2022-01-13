@@ -1,4 +1,7 @@
 
+#ifndef LS_MATH_MAT4F_IMPL_H
+#define LS_MATH_MAT4F_IMPL_H
+
 #include "lightsky/setup/Api.h" // LS_INLINE
 
 namespace ls {
@@ -184,3 +187,5 @@ inline LS_INLINE vec4_t<float> vec4_t<float>::operator*(const mat4_t<float>& m) 
 
 } //end math namespace
 } //end ls namespace
+
+#endif /* LS_MATH_MAT4F_IMPL_H */
