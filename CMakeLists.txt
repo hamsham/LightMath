@@ -121,7 +121,7 @@ add_library(LightSky::Math ALIAS lsmath)
 # -------------------------------------
 # Precompiled Headers
 # -------------------------------------
-if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+if (LIGHTSKY_ENABLE_PCH)
     target_precompile_headers(
         lsmath
         PUBLIC
@@ -134,9 +134,9 @@ endif()
 # -------------------------------------
 # Unit Tests
 # -------------------------------------
-option(LS_BUILD_MATH_TESTS "Build tests for the LightMath library." ON)
+option(LS_MATH_BUILD_TESTS "Build tests for the LightMath library." ON)
 
-if(LS_BUILD_MATH_TESTS)
+if(LS_MATH_BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 

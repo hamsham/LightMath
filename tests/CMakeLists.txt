@@ -22,7 +22,7 @@ function(LS_MATH_ADD_TARGET target sources)
     ls_configure_target(${target})
 
     # Precompiled Headers
-    if (${CMAKE_VERSION} VERSION_GREATER_EQUAL "3.16.0")
+    if (LIGHTSKY_ENABLE_PCH)
         target_precompile_headers(${target} REUSE_FROM lsmath)
     endif()
 endfunction(LS_MATH_ADD_TARGET)
