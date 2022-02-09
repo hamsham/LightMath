@@ -212,7 +212,7 @@ template <>
 template <>
 inline LS_INLINE vec4_t<int32_t>::operator vec4_t<float>() const
 {
-    return vec4_t<float>{_mm_cvtepi32_ps(reinterpret_cast<const __m128i&>(*this))};
+    return vec4_t<float>{_mm_cvtepi32_ps(_mm_loadu_si128(reinterpret_cast<const __m128i*>(this)))};
 }
 
 template <>
@@ -238,7 +238,7 @@ template <>
 inline LS_INLINE vec4_t<uint32_t>::operator vec4_t<float>() const
 {
     //return vec4_t<float>{_mm_cvtepi32_ps(_mm_lddqu_si128(reinterpret_cast<const __m128i*>(v)))};
-    const __m128i& v0 = reinterpret_cast<const __m128i&>(*this);
+    const __m128i v0 = _mm_loadu_si128(reinterpret_cast<const __m128i*>(this));
     __m128i v2  = _mm_srli_epi32(v0, 1);
     __m128i v1  = _mm_and_si128(v0, _mm_set1_epi32(1));
     __m128  v2f = _mm_cvtepi32_ps(v2);
