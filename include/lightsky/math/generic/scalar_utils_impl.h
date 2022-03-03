@@ -845,26 +845,26 @@ inline scalar_t math::atan2(scalar_t y, scalar_t x) noexcept
 {
     constexpr scalar_t pi5Over16 = scalar_t{5.0} * scalar_t{LS_PI} / scalar_t{16.0};
     constexpr scalar_t piOver16 = scalar_t{LS_PI} / scalar_t{16.0};
-    constexpr scalar_t coeff_1 = scalar_t{LS_PI_OVER_4};
-    constexpr scalar_t coeff_2 = scalar_t{3.0} * scalar_t{LS_PI_OVER_4};
+    constexpr scalar_t theta1 = scalar_t{LS_PI_OVER_4};
+    constexpr scalar_t theta2 = scalar_t{3.0} * scalar_t{LS_PI_OVER_4};
 
     const scalar_t absY = math::abs(y);// + scalar_t{1e-10};
     const scalar_t xy = (x + absY);
-    scalar_t r;
+    scalar_t r, angle, theta;
 
-    if (x >= scalar_t{0})
+    if (x >= scalar_t{0.0})
     {
         r = (x - absY) / xy;
-        //angle = coeff_1 - coeff_1 * r;
+        theta = theta1;
     }
     else
     {
         r = xy / (absY - x);
-        //angle = coeff_2 - coeff_1 * r;
+        theta = theta2;
     }
 
     // is it necessary to clamp values between [-1,1] ???
-    const scalar_t angle = piOver16 * r * r * r - pi5Over16 * r + coeff_1;
+    angle = piOver16 * r * r * r - pi5Over16 * r + theta;
 
     // negate if in quad III or IV
     return (y < scalar_t{0.0}) ? -angle : angle;
