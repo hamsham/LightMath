@@ -777,12 +777,15 @@ constexpr LS_INLINE scalar_t math::sin(typename setup::EnableIf<!setup::IsFloat<
 
 // Alternate (non-taylor-series) method found here:
 // https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
-namespace
+namespace math
 {
-    template <typename scalar_t>
-    constexpr LS_INLINE scalar_t sin_step(scalar_t x) noexcept
+    namespace impl
     {
-        return x * x * (scalar_t{3.0} - scalar_t{2.0} * x) * scalar_t{2.0} - scalar_t{1.0};
+        template <typename scalar_t>
+        constexpr LS_INLINE scalar_t sin_step(scalar_t x) noexcept
+        {
+            return scalar_t{2.0} * (x * x * (scalar_t{3.0} - (scalar_t{2.0} * x))) - scalar_t{1.0};
+        }
     }
 }
 
@@ -790,7 +793,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return sin_step(ls::math::abs(ls::math::fract((x - scalar_t{LS_PI_OVER_2}) / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
+    return ls::math::impl::sin_step(ls::math::abs(ls::math::fract((x - scalar_t{LS_PI_OVER_2}) / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
 }
 
 
@@ -814,7 +817,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return sin_step(ls::math::abs(ls::math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
+    return math::impl::sin_step(math::abs(math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
 }
 
 
@@ -832,7 +835,7 @@ constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 
 
 /*-------------------------------------
-    atan2
+    atan2, accurate to within 0.01 radians.
 
     Reference implementation found here:
     https://dspguru.com/dsp/tricks/fixed-point-atan2-with-self-normalization/
@@ -840,35 +843,55 @@ constexpr LS_INLINE scalar_t math::tan(scalar_t x) noexcept
 template <typename scalar_t>
 inline scalar_t math::atan2(scalar_t y, scalar_t x) noexcept
 {
-    //constexpr scalar_t cos10_9999 = scalar_t{0.9817};
-    //constexpr scalar_t sin11_3222 = scalar_t{0.1963};
-
+    constexpr scalar_t pi5Over16 = scalar_t{5.0} * scalar_t{LS_PI} / scalar_t{16.0};
+    constexpr scalar_t piOver16 = scalar_t{LS_PI} / scalar_t{16.0};
     constexpr scalar_t coeff_1 = scalar_t{LS_PI_OVER_4};
-    constexpr scalar_t coeff_2 = scalar_t{3.f} * scalar_t{LS_PI_OVER_4};
+    constexpr scalar_t coeff_2 = scalar_t{3.0} * scalar_t{LS_PI_OVER_4};
 
-    scalar_t absY = math::abs(y) + 1e-10f;
-    scalar_t angle;
+    const scalar_t absY = math::abs(y);// + scalar_t{1e-10};
+    const scalar_t xy = (x + absY);
+    scalar_t r;
 
     if (x >= scalar_t{0})
     {
-        scalar_t r = (x - absY) / (absY + x);
-        angle = coeff_1 - coeff_1 * r;
-        //angle = sin11_3222 * r * r * r - cos10_9999 * r + coeff_1;
+        r = (x - absY) / xy;
+        //angle = coeff_1 - coeff_1 * r;
     }
     else
     {
-        scalar_t r = (x + absY) / (absY - x);
-        angle = coeff_2 - coeff_1 * r;
-        //angle = sin11_3222 * r * r * r - cos10_9999 * r + coeff_2;
+        r = xy / (absY - x);
+        //angle = coeff_2 - coeff_1 * r;
     }
+
+    // is it necessary to clamp values between [-1,1] ???
+    const scalar_t angle = piOver16 * r * r * r - pi5Over16 * r + coeff_1;
 
     // negate if in quad III or IV
-    if (y < scalar_t{0})
-    {
-        return -angle;
-    }
+    return (y < scalar_t{0.0}) ? -angle : angle;
+}
 
-    return angle;
+
+
+/*-------------------------------------
+    acos
+-------------------------------------*/
+template<typename scalar_t>
+inline LS_INLINE scalar_t math::acos(scalar_t x) noexcept
+{
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    return math::atan2(std::sqrt(scalar_t{1.f} - (x * x)), x);
+}
+
+
+
+/*-------------------------------------
+    asin
+-------------------------------------*/
+template<typename scalar_t>
+inline LS_INLINE scalar_t math::asin(scalar_t x) noexcept
+{
+    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+    return math::atan2(x, std::sqrt(scalar_t{1.f} - (x * x)));
 }
 
 

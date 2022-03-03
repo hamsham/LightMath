@@ -590,6 +590,28 @@ template <typename scalar_t>
 inline scalar_t atan2(scalar_t y, scalar_t x) noexcept;
 
 /**
+ * @brief acos
+ * Evaluate the arc-cosine of an angle at compile-time.
+ *
+ * @param An angle, in radians, who's arc-cosine value is to be calculated.
+ *
+ * @return The arc-cosine of a given angle.
+ */
+template <typename scalar_t>
+inline scalar_t acos(scalar_t) noexcept;
+
+/**
+ * @brief asin
+ * Evaluate the arc-sine of an angle at compile-time.
+ *
+ * @param An angle, in radians, who's arc-sine value is to be calculated.
+ *
+ * @return The arc-sine of a given angle.
+ */
+template <typename scalar_t>
+inline scalar_t asin(scalar_t) noexcept;
+
+/**
  * @brief rcp
  * Evaluate the reciprocal of a decimal scalar.
  *

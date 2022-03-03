@@ -126,11 +126,11 @@ math::quat_t<num_t> math::slerp(const quat_t<num_t>& q1, const quat_t<num_t>& q2
 
     // just return a regular lerp if there's too small of an angle to
     // interpolate between.
-    if (num_t{1} - cosTheta < LS_EPSILON) {
+    if ((num_t{1} - cosTheta) < num_t{1e-9}) {
         return lerp<num_t>(q1, q2, t);
     }
 
-    const num_t theta = std::acos(cosTheta);
+    const num_t&&         theta = math::acos(cosTheta);
     const quat_t<num_t>&& sq1   = q1 * LS_SIN(theta * (num_t{1}-t));
     const quat_t<num_t>&& sq2   = q * LS_SIN(t * theta);
     const num_t sinTheta        = num_t{1} / LS_SIN(theta);
