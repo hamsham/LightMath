@@ -452,6 +452,50 @@ inline LS_INLINE float exp2(float x) noexcept
 
 
 /*-------------------------------------
+    atan2, accurate to within 0.01 radians.
+-------------------------------------*/
+#if 1
+inline LS_INLINE float atan2(float y, float x) noexcept
+{
+    __m128 r, angle, theta;
+    __m128 yf = _mm_set_ss(y);
+    __m128 xf = _mm_set_ss(x);
+
+    const __m128 absMask  = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
+    const __m128 signMask = _mm_and_ps(_mm_cmplt_ss(yf, _mm_setzero_ps()), _mm_castsi128_ps(_mm_set1_epi32(0x80000000)));
+
+    {
+        const __m128 theta1      = _mm_set_ss(LS_PI_OVER_4);
+        const __m128 theta2      = _mm_set_ss(3.f * LS_PI_OVER_4);
+        const __m128 absY        = _mm_and_ps(yf, absMask);// + scalar_t{1e-10};
+        const __m128 xy          = _mm_add_ss(xf, absY);
+        const __m128 xGtY        = _mm_cmpge_ss(xf, _mm_setzero_ps());
+        const __m128 numerator   = _mm_or_ps(_mm_and_ps(xGtY, _mm_sub_ss(xf, absY)), _mm_andnot_ps(xGtY, xy));
+        const __m128 denominator = _mm_or_ps(_mm_and_ps(xGtY, xy), _mm_andnot_ps(xGtY, _mm_sub_ss(absY, xf)));
+
+        r = _mm_div_ss(numerator, denominator);
+        theta = _mm_or_ps(_mm_and_ps(xGtY, theta1), _mm_andnot_ps(xGtY, theta2));
+    }
+
+    {
+        const __m128 pi5Over16 = _mm_set_ss(5.f * LS_PI / 16.f);
+        const __m128 piOver16  = _mm_set_ss(LS_PI / 16.f);
+        const __m128 r2        = _mm_mul_ss(r, r);
+        const __m128 rPi16     = _mm_mul_ss(piOver16, r);
+        const __m128 r5Pi16    = _mm_mul_ss(pi5Over16, r);
+
+        // is it necessary to clamp values between [-1,1] ???
+        angle = _mm_add_ss(_mm_sub_ss(_mm_mul_ss(r2, rPi16), r5Pi16), theta);
+    }
+
+    // negate if in quad III or IV
+    return _mm_cvtss_f32(_mm_or_ps(signMask, angle));
+}
+#endif
+
+
+
+/*-------------------------------------
     pow
 -------------------------------------*/
 inline LS_INLINE float pow(float x, float y) noexcept
