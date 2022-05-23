@@ -15,38 +15,44 @@ void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float)
     const float errAbs = ls::math::abs(baseImpl - testImpl);
     const float errRel = 100.f * (errAbs / ls::math::abs(baseImpl));
 
-    printf("%1.1f, %2.9f, %2.9f, %2.9f, %2.9f,", x, baseImpl, testImpl, errAbs, errRel);
+    printf("%1.1f, %2.9f, %2.9f, %2.9f, %2.9f", x, baseImpl, testImpl, errAbs, errRel);
 }
 
 
 
 int main()
 {
-    printf("std::sin,ls:math::sin,absolute error,relative error,\n");
-    for (int i = -540; i <= 540; ++i)
-    {
-        test_trig_values((float)i, std::sin, ls::math::sin);
-        printf("\n");
-    }
-    printf("\n");
+    constexpr int steps = 540;
 
-    /*
-    printf("std::cos,ls:math::cos,absolute error,relative error,\n");
-    for (int i = -360; i <= 360; ++i)
-    {
-        test_trig_values((float)i, std::cos, ls::math::cos);
+    #if 0
+        printf("x, std::sin, ls:math::sin, absolute error, relative error\n");
+        for (int i = -steps; i <= steps; ++i)
+        {
+            test_trig_values((float)i, std::sin, ls::math::sin);
+            printf("\n");
+        }
         printf("\n");
-    }
-    printf("\n");
+    #endif
 
-    printf("std::tan,ls:math::tan,absolute error,relative error,\n");
-    for (int i = -360; i <= 360; ++i)
-    {
-        test_trig_values((float)i, std::tan, ls::math::tan);
+    #if 1
+        printf("x, std::cos, ls:math::cos, absolute error, relative error\n");
+        for (int i = -steps; i <= steps; ++i)
+        {
+            test_trig_values((float)i, std::cos, ls::math::cos);
+            printf("\n");
+        }
         printf("\n");
-    }
-    printf("\n");
-    */
+    #endif
+
+    #if 0
+        printf("x, std::tan, ls:math::tan, absolute error, relative error\n");
+        for (int i = -steps; i <= steps; ++i)
+        {
+            test_trig_values((float)i, std::tan, ls::math::tan);
+            printf("\n");
+        }
+        printf("\n");
+    #endif
 
     return 0;
 }

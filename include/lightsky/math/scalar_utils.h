@@ -584,10 +584,22 @@ constexpr scalar_t tan(scalar_t) noexcept;
  * @param x
  * The length of the x-axis.
  *
- * @return The arc-tangent of a two lengths.
+ * @return The arc-tangent of two lengths.
  */
 template <typename scalar_t>
 inline scalar_t atan2(scalar_t y, scalar_t x) noexcept;
+
+/**
+ * @brief atan
+ * Evaluate the arc-tangent of y/x.
+ *
+ * @param n
+ * The value of y/x
+ *
+ * @return The arc-tangent of two lengths.
+ */
+template <typename scalar_t>
+inline scalar_t atan(scalar_t n) noexcept;
 
 /**
  * @brief acos

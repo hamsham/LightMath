@@ -11,6 +11,8 @@ int main()
     float maxRelError = 0.f;
     float maxAbsError = 0.f;
 
+    std::cout << "x, 1/std::sqrt(), math::inversesqrt(), absolute error, relative error,\n";
+
     for (int i = 1, j = 0; i <= 10000; ++i, ++j)
     {
         const float baseImpl = 1.f / std::sqrt((float)i);
@@ -33,7 +35,7 @@ int main()
             maxRelError = ls::math::max(maxRelError, errRel);
         }
 
-        std::cout << baseImpl << ", " << testImpl << ", " << errAbs << ", " << errRel << ",\n";
+        std::cout << i << ", " << baseImpl << ", " << testImpl << ", " << errAbs << ", " << errRel << ",\n";
     }
 
     std::cout << std::endl;

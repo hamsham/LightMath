@@ -194,8 +194,7 @@ math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& ax
     const num_t c = LS_COS(angle);
     const num_t s = LS_SIN(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
-    const num_t omc = num_t{1}
-    -c;
+    const num_t omc = num_t{1}-c;
     const num_t xy = (a.v[0] * a.v[1]) * omc;
     const num_t yz = (a.v[1] * a.v[2]) * omc;
     const num_t zx = (a.v[2] * a.v[0]) * omc;

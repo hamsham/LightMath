@@ -228,6 +228,9 @@ constexpr LS_INLINE floating_t math::smoothstep(floating_t a, floating_t b, floa
 
     However, after running some benchmarks on Clang and GCC, it turns out that
     Carmack's original implementation is still the fastest (I blame sunspots).
+
+    The non-Carmack version has a maximum absolute error of 0.0003 when
+    compared to 1/std::sqrt.
 -------------------------------------*/
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
@@ -782,9 +785,33 @@ namespace math
     namespace impl
     {
         template <typename scalar_t>
-        constexpr LS_INLINE scalar_t sin_step(scalar_t x) noexcept
+        constexpr LS_INLINE scalar_t tan_step(scalar_t x) noexcept
         {
             return scalar_t{2.0} * (x * x * (scalar_t{3.0} - (scalar_t{2.0} * x))) - scalar_t{1.0};
+        }
+
+        template <typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step1(const scalar_t x, const scalar_t coeff0) noexcept
+        {
+            return ls::math::fract(coeff0 + x * scalar_t{-2.0}) * scalar_t{2.0} - scalar_t{1.0};
+        }
+
+        template <typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step2(const scalar_t x, const scalar_t coeff1) noexcept
+        {
+            return ls::math::sign(scalar_t{0.5}-ls::math::fract(coeff1 - x));
+        }
+
+        template <typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step3(const scalar_t si, const scalar_t so) noexcept
+        {
+            return ((scalar_t{20.0} / (si*si + scalar_t{4.0}) - scalar_t{4.0}) * so);
+        }
+
+        template <typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_impl(const scalar_t x, const scalar_t coeff0, const scalar_t coeff1) noexcept
+        {
+            return sincos_step3(sincos_step1(x, coeff0), sincos_step2(x, coeff1));
         }
     }
 }
@@ -793,7 +820,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return ls::math::impl::sin_step(ls::math::abs(ls::math::fract((x - scalar_t{LS_PI_OVER_2}) / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
+    return ls::math::impl::sincos_impl(ls::math::fmod_1(x / scalar_t{LS_TWO_PI}), scalar_t{1.0}, scalar_t{0.5});
 }
 
 
@@ -817,7 +844,7 @@ template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return math::impl::sin_step(math::abs(math::fract(x / scalar_t{LS_TWO_PI}) * scalar_t{2.0} - scalar_t{1.0}));
+    return ls::math::impl::sincos_impl(ls::math::fmod_1(x / scalar_t{LS_TWO_PI}), scalar_t{0.5}, scalar_t{0.25});
 }
 
 
@@ -867,7 +894,18 @@ inline scalar_t math::atan2(scalar_t y, scalar_t x) noexcept
     angle = piOver16 * r * r * r - pi5Over16 * r + theta;
 
     // negate if in quad III or IV
-    return (y < scalar_t{0.0}) ? -angle : angle;
+    return math::sign(y) * angle;
+}
+
+
+
+/*-------------------------------------
+    atan, accurate to within 0.01 radians.
+-------------------------------------*/
+template <typename scalar_t>
+inline scalar_t math::atan(scalar_t n) noexcept
+{
+    return atan2(n, scalar_t{1.0});
 }
 
 
@@ -879,7 +917,7 @@ template<typename scalar_t>
 inline LS_INLINE scalar_t math::acos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return math::atan2(std::sqrt(scalar_t{1.f} - (x * x)), x);
+    return math::atan2(math::fast_sqrt(scalar_t{1.0} - (x * x)), x);
 }
 
 
@@ -891,7 +929,7 @@ template<typename scalar_t>
 inline LS_INLINE scalar_t math::asin(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return math::atan2(x, std::sqrt(scalar_t{1.f} - (x * x)));
+    return math::atan2(x, math::fast_sqrt(scalar_t{1.0} - (x * x)));
 }
 
 
