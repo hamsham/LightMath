@@ -266,6 +266,23 @@ template <typename floating_t>
 constexpr floating_t smoothstep(floating_t a, floating_t b, floating_t x) noexcept;
 
 /**
+ * @brief smootherstep
+ * Perform a second-order smooth interpolation of a number along the
+ * sub-sequence [a, b].
+ *
+ * @param a
+ * A number within the same sub-sequence that x lies on.
+ *
+ * @param b
+ * A number within the same sub-sequence that x lies on.
+ *
+ * @return The smoother linear interpolation of x in between the interval a and
+ * b.
+ */
+template <typename floating_t>
+constexpr floating_t smootherstep(floating_t a, floating_t b, floating_t x) noexcept;
+
+/**
  * @brief fastSqrt
  * Perform a square root on a single number without using the standard library.
  * This method uses IEEE floating point arithmetic. Use only if the input

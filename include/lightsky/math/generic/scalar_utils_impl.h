@@ -218,6 +218,31 @@ constexpr LS_INLINE floating_t math::smoothstep(floating_t a, floating_t b, floa
 
 
 /*-------------------------------------
+    smooterhstep
+-------------------------------------*/
+namespace math
+{
+namespace impl
+{
+    template<typename scalar_t>
+    constexpr LS_INLINE scalar_t smootherstep_impl(const scalar_t t) noexcept
+    {
+        return t * t * t * (t * (t * scalar_t{6.0} - scalar_t{15.0}) + scalar_t{10.f});
+    }
+} // math::impl namespace
+} // math namespace
+
+
+
+template<typename floating_t>
+constexpr LS_INLINE floating_t math::smootherstep(floating_t a, floating_t b, floating_t x) noexcept
+{
+    return math::impl::smoothstep_impl<floating_t>(math::clamp<floating_t>((x - a) / (b - a), floating_t{0}, floating_t{1}));
+}
+
+
+
+/*-------------------------------------
     fastInvSqrt
 
     The fast inverse square root method adopted for regular square rooting.
