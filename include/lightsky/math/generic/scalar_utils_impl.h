@@ -266,9 +266,11 @@ inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
         union
         {
             float f;
-            uint64_t u;
+            uint32_t u;
         } y = {x};
-        y.u = 0x5F1FFFF9ul - (y.u >> 1);
+
+        //y.u = 0x5F1FFFF9u - (y.u >> 1);
+        y.u = 0x5f1fffe6u - (y.u >> 1);
         return 0.703952253f * y.f * (2.38924456f - x * y.f * y.f);
 
     #else
@@ -311,7 +313,24 @@ inline scalar_t math::fast_sqrt(typename setup::EnableIf<setup::IsIntegral<scala
 template<typename scalar_t>
 inline LS_INLINE scalar_t math::fast_sqrt(scalar_t input) noexcept
 {
-    return (scalar_t)math::rcp(math::inversesqrt<float>((float)input));
+    const float f = (float)input;
+    union
+    {
+        float f;
+        uint32_t i;
+    } y;
+
+    y.f = f;
+    y.i >>= 1u;
+    //y.i += 0x1FBB67AEu;
+    y.i += 0x1fbb28a9u; // found through testing of a few million numbers
+    float f1 = y.f;
+    f1 = (f / f1) + f1;
+    f1 = (f / f1) + (f1 * 0.25f);
+    //f1 = 0.5f * (f1 + f / f1);
+    //f1 = 0.5f * (f1 + f / f1);
+
+    return (scalar_t)f1;
 }
 
 

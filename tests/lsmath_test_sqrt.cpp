@@ -13,58 +13,60 @@ typedef chrono::nanoseconds hr_prec;
 
 
 
-inline LS_INLINE float rsqrt_test(float input, uint32_t magic = 0x5F1FFFF9u) noexcept
+inline LS_INLINE float sqrt_test(float input, uint32_t magic = 0x1FBB67AEu) noexcept
 {
+    const float f = (float)input;
     union
     {
         float f;
-        uint32_t u;
-    } y = {input};
-    y.u = magic - (y.u >> 1);
-    return 0.703952253f * y.f * (2.38924456f - input * y.f * y.f);
+        uint32_t i;
+    } y;
+
+    y.f = f;
+    y.i >>= 1u;
+    y.i += magic;
+    float f1 = y.f;
+    f1 = (f / f1) + f1;
+    f1 = (f / f1) + (f1 * 0.25f);
+    //f1 = 0.5f * (f1 + f / f1);
+    //f1 = 0.5f * (f1 + f / f1);
+
+    return f1;
 }
 
 
 
 void find_magic() noexcept
 {
-    constexpr int maxIters = 10000;
+    constexpr int maxIters = 1000;
     unsigned magic = 0;
     double absError = std::numeric_limits<double>::max();
-    double relError = std::numeric_limits<double>::max();
 
-    for (unsigned i = 0x5F100000; i < 0x5F200000; ++i)
+    for (unsigned i = 0x1F000000; i < 0x1FF00000; ++i)
     {
         double maxAbsError = 0.0;
-        double maxRelError = 0.0;
 
         for (int j = 1; j <= maxIters; ++j)
         {
-            const double baseImpl = (double)(1.f / std::sqrt((float)j));
-            const double testImpl = (double)rsqrt_test((float)j, i);
+            const double baseImpl = (double)std::sqrt((float)j);
+            const double testImpl = (double)sqrt_test((float)j, i);
 
             const double errAbs = ls::math::abs(baseImpl - testImpl);
             const double errRel = 100.0 * (errAbs / ls::math::abs(baseImpl));
 
-            maxAbsError = ls::math::max(maxAbsError, errAbs);
-            maxRelError = ls::math::max(maxRelError, errRel);
+            maxAbsError = ls::math::max(maxAbsError, errRel);
         }
 
-        if (maxAbsError < absError && maxRelError < relError)
+        if (maxAbsError < absError)
         {
             absError = maxAbsError;
-            relError = maxRelError;
             magic = i;
 
             //printf("Magic (%%err=%f): 0x%X\n", absError, magic);
         }
     }
 
-    std::cout
-        << "Magic: " << std::hex << magic << std::dec << 'u'
-        << "\n\tAbs Error: " << absError
-        << "\n\tRel Error: " << relError
-        << std::endl;
+    std::cout << "Magic (%err=" << absError << "): 0x" << std::hex << magic << 'u' << std::endl;
 }
 
 
@@ -80,19 +82,19 @@ int main()
     uint64_t stdTime = 0;
     uint64_t lsTime = 0;
 
-    //std::cout << "x, 1.f/std::sqrt(), math::inversesqrt(), absolute error, relative error,\n";
+    //std::cout << "x, std::sqrt(), math::fast_sqrt(), absolute error, relative error,\n";
 
     for (int i = 1, j = 0; i <= maxIters; ++i, ++j)
     {
         hr_time t1, t2;
 
         t1 = chrono::steady_clock::now();
-        const float baseImpl = 1.f / std::sqrt((float)i);
+        const float baseImpl = std::sqrt((float)i);
         t2 = chrono::steady_clock::now();
         stdTime += chrono::duration_cast<hr_prec>(t2 - t1).count();
 
         t1 = chrono::steady_clock::now();
-        const float testImpl = ls::math::inversesqrt<float>((float)i);
+        const float testImpl = ls::math::fast_sqrt<float>((float)i);
         t2 = chrono::steady_clock::now();
         lsTime += chrono::duration_cast<hr_prec>(t2 - t1).count();
 
@@ -131,7 +133,7 @@ int main()
         << "\n\tLS (ns):  " << lsTime
         << std::endl;
 
-    find_magic();
+    //find_magic();
 
     return 0;
 }
