@@ -61,7 +61,7 @@ void find_magic() noexcept
     }
 
     std::cout
-        << "Magic: " << std::hex << magic << std::dec << 'u'
+        << "Magic: 0x" << std::hex << magic << std::dec << 'u'
         << "\n\tAbs Error: " << absError
         << "\n\tRel Error: " << relError
         << std::endl;

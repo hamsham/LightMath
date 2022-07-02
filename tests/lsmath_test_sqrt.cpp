@@ -41,10 +41,12 @@ void find_magic() noexcept
     constexpr int maxIters = 1000;
     unsigned magic = 0;
     double absError = std::numeric_limits<double>::max();
+    double relError = std::numeric_limits<double>::max();
 
-    for (unsigned i = 0x1F000000; i < 0x1FF00000; ++i)
+    for (unsigned i = 0x1FB00000; i < 0x1FC00000; ++i)
     {
         double maxAbsError = 0.0;
+        double maxRelError = 0.0;
 
         for (int j = 1; j <= maxIters; ++j)
         {
@@ -54,19 +56,25 @@ void find_magic() noexcept
             const double errAbs = ls::math::abs(baseImpl - testImpl);
             const double errRel = 100.0 * (errAbs / ls::math::abs(baseImpl));
 
-            maxAbsError = ls::math::max(maxAbsError, errRel);
+            maxAbsError = ls::math::max(maxAbsError, errAbs);
+            maxRelError = ls::math::max(maxRelError, errRel);
         }
 
-        if (maxAbsError < absError)
+        if (maxAbsError < absError && maxRelError < relError)
         {
             absError = maxAbsError;
+            relError = maxRelError;
             magic = i;
 
             //printf("Magic (%%err=%f): 0x%X\n", absError, magic);
         }
     }
 
-    std::cout << "Magic (%err=" << absError << "): 0x" << std::hex << magic << 'u' << std::endl;
+    std::cout
+        << "Magic: 0x" << std::hex << magic << std::dec << 'u'
+        << "\n\tAbs Error: " << absError
+        << "\n\tRel Error: " << relError
+        << std::endl;
 }
 
 
@@ -133,7 +141,7 @@ int main()
         << "\n\tLS (ns):  " << lsTime
         << std::endl;
 
-    //find_magic();
+    find_magic();
 
     return 0;
 }
