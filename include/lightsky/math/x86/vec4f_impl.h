@@ -58,7 +58,7 @@ union alignas(alignof(__m128)) vec4_t<float>
 
     // Subscripting Operators
     template <typename index_t>
-    constexpr float operator[](index_t i) const;
+    inline float operator[](index_t i) const;
 
     template <typename index_t>
     inline float& operator[](index_t i);
@@ -376,9 +376,24 @@ inline LS_INLINE float* vec4_t<float>::operator&()
     Subscripting Operators
 -------------------------------------*/
 template <typename index_t>
-constexpr float vec4_t<float>::operator[](index_t i) const
+inline float vec4_t<float>::operator[](index_t i) const
 {
-    return v[i];
+    #if defined(LS_X86_AVX)
+        const __m128i shuf = _mm_set1_epi32((int32_t)i);
+        const __m128 ret = _mm_permutevar_ps(this->simd, shuf);
+        return _mm_cvtss_f32(ret);
+
+    #elif defined(LS_X86_SSSE3)
+        const uint32_t index = 0x03020100u + (uint32_t)i * 0x04040404u;
+        const __m128i shuf = _mm_set1_epi32(index);
+        const __m128i val = _mm_castps_si128(this->simd);
+        const __m128i ret = _mm_shuffle_epi8(val, shuf);
+        return _mm_cvtss_f32(_mm_castsi128_ps(ret));
+
+    #else
+        return v[i];
+
+    #endif
 }
 
 template <typename index_t>

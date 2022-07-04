@@ -52,7 +52,7 @@ union alignas(alignof(float32x4_t)) vec4_t<float>
 
     // Subscripting Operators
     template <typename index_t>
-    constexpr float operator[](index_t i) const;
+    inline float operator[](index_t i) const;
 
     template <typename index_t>
     inline float& operator[](index_t i);
@@ -342,9 +342,17 @@ inline LS_INLINE float* vec4_t<float>::operator&()
     Subscripting Operators
 -------------------------------------*/
 template <typename index_t>
-constexpr LS_INLINE float vec4_t<float>::operator[](index_t i) const
+inline LS_INLINE float vec4_t<float>::operator[](index_t i) const
 {
-    return v[i];
+    const uint32_t index = 0x03020100u + (uint32_t)i * 0x04040404u;
+
+    uint8x8x2_t f8;
+    f8.val[0] = vreinterpret_u8_f32(vget_low_f32(this->simd));
+    f8.val[1] = vreinterpret_u8_f32(vget_high_f32(this->simd));
+
+    uint32x2_t shuf32 = vdup_n_u32(index);
+    uint8x8_t result = vtbl2_u8(f8, vreinterpret_u8_u32(shuf32));
+    return vget_lane_f32(vreinterpret_f32_u8(result), 0);
 }
 
 template <typename index_t>
