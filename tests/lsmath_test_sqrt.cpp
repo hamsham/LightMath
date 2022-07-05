@@ -89,13 +89,12 @@ int main()
 
     uint64_t stdTime = 0;
     uint64_t lsTime = 0;
+    hr_time t1, t2;
 
     //std::cout << "x, std::sqrt(), math::fast_sqrt(), absolute error, relative error,\n";
 
     for (int i = 1, j = 0; i <= maxIters; ++i, ++j)
     {
-        hr_time t1, t2;
-
         t1 = chrono::steady_clock::now();
         const float baseImpl = std::sqrt((float)i);
         t2 = chrono::steady_clock::now();
