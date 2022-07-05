@@ -371,35 +371,22 @@ inline LS_INLINE vec4_t<float> abs(const vec4_t<float>& v) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
 {
-    #if 0
-    __m128 exp = n.simd;
-    __m128i x = _mm_castps_si128(exp);
+    const __m128i vxi = _mm_castps_si128(n.simd);
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  a   = _mm_rcp_ps(_mm_add_ps(_mm_set1_ps(0.3520887068f), mxf));
 
-    const __m128i log2 = _mm_sub_epi32(_mm_and_si128(_mm_srai_epi32(x, 23), _mm_set1_epi32(255)), _mm_set1_epi32(128));
+    #if defined(LS_X86_FMA)
+        const __m128 b = _mm_fmadd_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set1_ps(-124.22551499f));
+        const __m128 c = _mm_fmadd_ps(_mm_set1_ps(-1.498030302f), mxf, b);
+        const __m128 d = _mm_fmadd_ps(_mm_set1_ps(-1.72587999f), a, c);
+        return vec4_t<float>{d};
 
-    x = _mm_and_si128(x, _mm_set1_epi32(~(255 << 23)));
-    x = _mm_add_epi32(x, _mm_set1_epi32(127 << 23));
-
-    exp = _mm_castsi128_ps(x);
-    __m128 ret;
-    ret = _mm_fmadd_ps(_mm_set1_ps(-0.333333333333f), exp, _mm_set1_ps(2.f));
-    ret = _mm_fmsub_ps(ret, exp, _mm_set1_ps(0.666666666666f));
-    return vec4_t<float>{_mm_add_ps(ret, _mm_cvtepi32_ps(log2))};
     #else
-    const __m128 vx = n.simd;
-    const __m128i vxi = _mm_castps_si128(vx);
-    const __m128i mx = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
-    const __m128 mxf = _mm_castsi128_ps(mx);
-    #ifdef LS_X86_FMA
-        const __m128 d = _mm_fmsub_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set1_ps(124.22551499f));
-    #else
-        const __m128 d = _mm_sub_ps(_mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set1_ps(124.22551499f));
-    #endif
-    const __m128 a = _mm_rcp_ps(_mm_add_ps(_mm_set1_ps(0.3520887068f), mxf));
-    const __m128 c = _mm_mul_ps(_mm_set1_ps(1.498030302f), mxf);
-    const __m128 b = _mm_mul_ps(_mm_set1_ps(1.72587999f), a);
-
-    return vec4_t<float>{_mm_sub_ps(_mm_sub_ps(d, c), b)};
+        const __m128 b = _mm_add_ps(_mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set1_ps(-124.22551499f));
+        const __m128 c = _mm_mul_ps(_mm_set1_ps(-1.498030302f), mxf);
+        const __m128 d = _mm_mul_ps(_mm_set1_ps(-1.72587999f), a);
+        return vec4_t<float>{_mm_add_ps(_mm_add_ps(b, c), d)};
     #endif
 }
 
@@ -414,21 +401,25 @@ inline LS_INLINE vec4_t<float> log2(const vec4_t<float>& n) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> log(const vec4_t<float>& n) noexcept
 {
-    const __m128 vx = n.simd;
-    const __m128i vxi = _mm_castps_si128(vx);
-    const __m128i mx = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
-    const __m128 mxf = _mm_castsi128_ps(mx);
-    #ifdef LS_X86_FMA
-        const __m128 d = _mm_fmsub_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set1_ps(124.22551499f));
-    #else
-        const __m128 d = _mm_sub_ps(_mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set1_ps(124.22551499f));
-    #endif
-    const __m128 a = _mm_rcp_ps(_mm_add_ps(_mm_set1_ps(0.3520887068f), mxf));
-    const __m128 c = _mm_mul_ps(_mm_set1_ps(1.498030302f), mxf);
-    const __m128 b = _mm_mul_ps(_mm_set1_ps(1.72587999f), a);
-    const __m128 ln2 = _mm_set1_ps(0.69314718056f);
+    const __m128i vxi = _mm_castps_si128(n.simd);
+    const __m128i mx  = _mm_or_si128(_mm_and_si128(vxi, _mm_set1_epi32(0x007FFFFFu)), _mm_set1_epi32(0x3f000000u));
+    const __m128  mxf = _mm_castsi128_ps(mx);
+    const __m128  a   = _mm_rcp_ps(_mm_add_ps(_mm_set1_ps(0.3520887068f), mxf));
 
-    return vec4_t<float>{_mm_mul_ps(ln2, _mm_sub_ps(_mm_sub_ps(d, c), b))};
+    #if defined(LS_X86_FMA)
+        const __m128 b   = _mm_fmadd_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi), _mm_set1_ps(-124.22551499f));
+        const __m128 c   = _mm_fmadd_ps(_mm_set1_ps(-1.498030302f), mxf, b);
+        const __m128 d   = _mm_fmadd_ps(_mm_set1_ps(-1.72587999f), a, c);
+        const __m128 ln2 = _mm_set1_ps(0.69314718056f);
+        return vec4_t<float>{_mm_mul_ps(ln2, d)};
+
+    #else
+        const __m128 b   = _mm_add_ps(_mm_mul_ps(_mm_set1_ps(1.1920928955078125e-7f), _mm_cvtepi32_ps(vxi)), _mm_set1_ps(-124.22551499f));
+        const __m128 c   = _mm_mul_ps(_mm_set1_ps(-1.498030302f), mxf);
+        const __m128 d   = _mm_mul_ps(_mm_set1_ps(-1.72587999f), a);
+        const __m128 ln2 = _mm_set1_ps(0.6931471805599453f);
+        return vec4_t<float>{_mm_mul_ps(ln2, _mm_add_ps(_mm_add_ps(b, c), d))};
+    #endif
 }
 
 
