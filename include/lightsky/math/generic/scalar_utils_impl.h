@@ -90,6 +90,17 @@ constexpr LS_INLINE scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t m
 
 
 /*-------------------------------------
+    saturate
+-------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::saturate(scalar_t n) noexcept
+{
+    return n <= scalar_t{0} ? scalar_t{0} : (n >= scalar_t{1} ? scalar_t{1} : n);
+}
+
+
+
+/*-------------------------------------
     floor
 -------------------------------------*/
 template<typename floating_t>

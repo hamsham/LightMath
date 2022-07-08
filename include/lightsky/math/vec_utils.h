@@ -239,6 +239,19 @@ template <typename N>
 constexpr vec2_t<N> clamp(const vec2_t<N>& v, const vec2_t<N>& minVals, const vec2_t<N>& maxVals) noexcept;
 
 /**
+ * @brief Saturate
+ * Clamp all elements to the range of 0-1.
+ *
+ * @param v
+ * A 2D vector.
+ *
+ * @return The input vector, with all elements clamped between the range of
+ * (0, 1), inclusive.
+ */
+template <typename N>
+constexpr vec2_t<N> saturate(const vec2_t<N>& v) noexcept;
+
+/**
  *  @brief project
  *  Project one vector onto another and retrieve the result.
  *
@@ -749,6 +762,19 @@ template <typename N>
 constexpr vec3_t<N> clamp(const vec3_t<N>& v, const vec3_t<N>& minVals, const vec3_t<N>& maxVals) noexcept;
 
 /**
+ * @brief Saturate
+ * Clamp all elements to the range of 0-1.
+ *
+ * @param v
+ * A 2D vector.
+ *
+ * @return The input vector, with all elements clamped between the range of
+ * (0, 1), inclusive.
+ */
+template <typename N>
+constexpr vec3_t<N> saturate(const vec3_t<N>& v) noexcept;
+
+/**
  *  @brief project
  *  Project one vector onto another and retrieve the result.
  *
@@ -1218,6 +1244,19 @@ vec4_t<N> max(const vec4_t<N>& v1, const vec4_t<N>& v2) noexcept;
  */
 template <typename N> constexpr
 vec4_t<N> clamp(const vec4_t<N>& v, const vec4_t<N>& minVals, const vec4_t<N>& maxVals) noexcept;
+
+/**
+ * @brief Saturate
+ * Clamp all elements to the range of 0-1.
+ *
+ * @param v
+ * A 2D vector.
+ *
+ * @return The input vector, with all elements clamped between the range of
+ * (0, 1), inclusive.
+ */
+template <typename N>
+constexpr vec4_t<N> saturate(const vec4_t<N>& v) noexcept;
 
 /**
  *  @brief project

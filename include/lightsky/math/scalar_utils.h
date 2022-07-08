@@ -129,6 +129,17 @@ template <typename scalar_t>
 constexpr scalar_t clamp(scalar_t n, scalar_t minVal, scalar_t maxVal) noexcept;
 
 /**
+ * @brief Clamp a number between 0 and 1.
+ *
+ * @param n
+ * A single scalar value.
+ *
+ * @return The input value, clamped between the range of (0, 1), inclusive.
+ */
+template <typename scalar_t>
+constexpr scalar_t saturate(const scalar_t n) noexcept;
+
+/**
  * @brief Retrieve the nearest integer less than or equal to the input float.
  *
  * @param n

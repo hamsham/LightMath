@@ -268,6 +268,14 @@ inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>
 }
 
 /*-------------------------------------
+    4D Saturate
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> saturate(const vec4_t<float>& v) noexcept
+{
+    return vec4_t<float>{_mm_min_ps(_mm_set1_ps(1.f), _mm_max_ps(v.simd, _mm_xor_ps(v.simd, v.simd)))};
+}
+
+/*-------------------------------------
     4D Step
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> step(const vec4_t<float>& edge, const vec4_t<float>& v) noexcept

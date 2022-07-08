@@ -159,6 +159,18 @@ math::vec2_t<num_t> math::clamp(const vec2_t<num_t>& v, const vec2_t<num_t>& min
 }
 
 /*-------------------------------------
+    2D Saturate
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec2_t<num_t> math::saturate(const vec2_t<num_t>& v) noexcept
+{
+    return math::vec2_t<num_t>{
+        math::saturate<num_t>(v.v[0]),
+        math::saturate<num_t>(v.v[1])
+    };
+}
+
+/*-------------------------------------
     2D Projection
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
@@ -613,6 +625,19 @@ math::vec3_t<num_t> math::clamp(const vec3_t<num_t>& v, const vec3_t<num_t>& min
 }
 
 /*-------------------------------------
+    3D Saturate
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec3_t<num_t> math::saturate(const vec3_t<num_t>& v) noexcept
+{
+    return math::vec3_t<num_t>{
+        math::saturate<num_t>(v.v[0]),
+        math::saturate<num_t>(v.v[1]),
+        math::saturate<num_t>(v.v[2])
+    };
+}
+
+/*-------------------------------------
     3D Projection
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
@@ -1037,6 +1062,20 @@ math::vec4_t<num_t> math::clamp(const vec4_t<num_t>& v, const vec4_t<num_t>& min
         math::clamp<num_t>(v.v[1], minVals.v[1], maxVals.v[1]),
         math::clamp<num_t>(v.v[2], minVals.v[2], maxVals.v[2]),
         math::clamp<num_t>(v.v[3], minVals.v[3], maxVals.v[3])
+    };
+}
+
+/*-------------------------------------
+    4D Saturate
+-------------------------------------*/
+template <typename num_t> constexpr LS_INLINE
+math::vec4_t<num_t> math::saturate(const vec4_t<num_t>& v) noexcept
+{
+    return math::vec4_t<num_t>{
+        math::saturate<num_t>(v.v[0]),
+        math::saturate<num_t>(v.v[1]),
+        math::saturate<num_t>(v.v[2]),
+        math::saturate<num_t>(v.v[2])
     };
 }
 

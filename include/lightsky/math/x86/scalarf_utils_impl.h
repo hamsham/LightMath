@@ -89,6 +89,17 @@ inline LS_INLINE float clamp(float n, float minVal, float maxVal) noexcept
 
 
 /*-------------------------------------
+    saturate
+-------------------------------------*/
+inline LS_INLINE float saturate(float n) noexcept
+{
+    const __m128 s = _mm_set1_ps(n);
+    return _mm_cvtss_f32(_mm_max_ss(_mm_min_ss(s, _mm_set_ss(1.f)), _mm_xor_ps(s, s)));
+}
+
+
+
+/*-------------------------------------
     floor
 -------------------------------------*/
 inline LS_INLINE float floor(float n) noexcept
