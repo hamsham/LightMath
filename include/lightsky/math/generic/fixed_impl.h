@@ -13,16 +13,59 @@ namespace math
     Fixed-Point Class Methods
 -----------------------------------------------------------------------------*/
 /*
- *  Constructor
+ *  Destructor
  */
 /*
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::fixed_t() :
-    number{}
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::~fixed_t() noexcept
 {
 }
 */
+
+
+
+/*
+ *  Constructor (integral)
+ */
+/*
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t() noexcept :
+    number{0}
+{}
+*/
+
+
+
+/*
+ *  Constructor (integral)
+ */
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t(float n) noexcept :
+    number{(fixed_base_t)(n * (float)(1ull << num_frac_digits))}
+{}
+
+
+
+/*
+ *  Constructor (integral)
+ */
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t(double n) noexcept :
+    number{(fixed_base_t)(n * (double)(1ull << num_frac_digits))}
+{}
+
+
+
+/*
+ *  Constructor (integral)
+ */
+template<typename fixed_base_t, unsigned num_frac_digits>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_base_t n, bool useRawBits) noexcept :
+    number{useRawBits
+        ? n
+        : (fixed_base_t)((unsigned long long)n << (unsigned long long)num_frac_digits)
+    }
+{}
 
 
 
@@ -32,11 +75,9 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t() :
  */
 /*
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::fixed_t(const fixed_t& f) :
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t(const fixed_t& f) noexcept :
     number{f.number}
-{
-}
+{}
 */
 
 
@@ -46,25 +87,38 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(const fixed_t& f) :
  */
 /*
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_t&& f) :
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::fixed_t(fixed_t&& f) noexcept :
     number{f.number}
+{}
+*/
+
+
+
+/*
+ *  Copy-Assignment operator
+ */
+/*
+template <typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(const fixed_t& f) noexcept
 {
+    number = f.number;
+    return *this;
 }
 */
 
 
 
 /*
- *  Numeric Constructor
+ *  Move-Assignment operator
  */
-template<typename fixed_base_t, unsigned num_frac_digits>
-template<typename numeric_t>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::fixed_t(numeric_t f) :
-    number{(fixed_base_t)(setup::IsFloat<numeric_t>::value ? (f * (numeric_t)(1ull << num_frac_digits)) : f)}
+/*
+template <typename fixed_base_t, unsigned num_frac_digits>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(fixed_t&& f) noexcept
 {
+    number = f.number;
+    return *this;
 }
+*/
 
 
 
@@ -72,8 +126,7 @@ fixed_t<fixed_base_t, num_frac_digits>::fixed_t(numeric_t f) :
  *  Pre-Increment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator++()
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator++() noexcept
 {
     number += (fixed_base_t)(1ull << num_frac_digits);
     return *this;
@@ -85,8 +138,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Pre-Decrement operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator--()
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator--() noexcept
 {
     number -= (fixed_base_t)(1ull << num_frac_digits);
     return *this;
@@ -98,8 +150,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Post-Increment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator++(int)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator++(int) noexcept
 {
     const fixed_t ret{number};
     number += (fixed_base_t)(1ull << num_frac_digits);
@@ -112,8 +163,7 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Post-Decrement operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator--(int)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator--(int) noexcept
 {
     const fixed_t ret{number};
     number -= (fixed_base_t)(1ull << num_frac_digits);
@@ -126,8 +176,7 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Arithmetic "not" operator.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator!() const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator!() const noexcept
 {
     return !number;
 }
@@ -138,8 +187,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator!() const
  *  Equivalence operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator==(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator==(const fixed_t& f) const noexcept
 {
     return number == f.number;
 }
@@ -150,8 +198,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator==(const fixed_t& f) const
  *  Non-Equivalence operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator!=(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator!=(const fixed_t& f) const noexcept
 {
     return number != f.number;
 }
@@ -162,8 +209,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator!=(const fixed_t& f) const
  *  Greater than or equal to operator.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator>=(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator>=(const fixed_t& f) const noexcept
 {
     return number >= f.number;
 }
@@ -174,8 +220,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator>=(const fixed_t& f) const
  *  Less than or equal to operator.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator<=(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator<=(const fixed_t& f) const noexcept
 {
     return number <= f.number;
 }
@@ -186,8 +231,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator<=(const fixed_t& f) const
  *  Greater than operator.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator>(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator>(const fixed_t& f) const noexcept
 {
     return number > f.number;
 }
@@ -198,8 +242,7 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator>(const fixed_t& f) const
  *  Less than operator.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-bool fixed_t<fixed_base_t, num_frac_digits>::operator<(const fixed_t& f) const
+constexpr LS_INLINE bool fixed_t<fixed_base_t, num_frac_digits>::operator<(const fixed_t& f) const noexcept
 {
     return number < f.number;
 }
@@ -210,10 +253,9 @@ bool fixed_t<fixed_base_t, num_frac_digits>::operator<(const fixed_t& f) const
  *  Addition operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator+(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator+(const fixed_t& f) const noexcept
 {
-    return fixed_t{number + f.number};
+    return fixed_t{number + f.number, true};
 }
 
 
@@ -222,10 +264,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Subtraction operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator-(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator-(const fixed_t& f) const noexcept
 {
-    return fixed_t{number - f.number};
+    return fixed_t{number - f.number, true};
 }
 
 
@@ -234,10 +275,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Negation operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator-() const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator-() const noexcept
 {
-    return fixed_t{~number + (fixed_base_t{1} << fixed_base_t{fraction_digits})};
+    return fixed_t{(~number + fixed_base_t{1}), true};
 }
 
 
@@ -246,14 +286,14 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Multiplication operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator*(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator*(const fixed_t& f) const noexcept
 {
-    return fixed_t{(fixed_base_t)(
-        (((uint64_t)(number >> num_frac_digits) * (uint64_t)(f.number >> num_frac_digits)) << (uint64_t)num_frac_digits) + // integer multiply
-        (((uint64_t)(number & fraction_mask)    * (uint64_t)(f.number & fraction_mask))    >> (uint64_t)num_frac_digits) + // fraction multiply
-        (((uint64_t)(number >> num_frac_digits) * (uint64_t)(f.number & fraction_mask)) + ((uint64_t)(number & fraction_mask) * (uint64_t)(f.number >> num_frac_digits))) // mixed multiply
-    )};
+    return fixed_t{
+        (ls::setup::IsUnsigned<fixed_base_t>::value
+            ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) / (1ull << (uint64_t)num_frac_digits))
+            : (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << (int64_t)num_frac_digits))),
+        true
+    };
 }
 
 
@@ -262,11 +302,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Division operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const noexcept
 {
-    //return fixed_t{(fixed_base_t)(((int64_t)number << (int64_t)num_frac_digits) / (int64_t)f.number)};
-    return this->operator*(fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(((0x8000000000000000ull >> (63ull-(uint64_t)num_frac_digits)) << (uint64_t)num_frac_digits) / (uint64_t)f.number)});
+    return fixed_t{(fixed_base_t)(((uint64_t)number << (uint64_t)num_frac_digits) / (uint64_t)f.number), true};
 }
 
 
@@ -275,10 +313,9 @@ fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::o
  *  Modulus operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator%(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator%(const fixed_t& f) const noexcept
 {
-    return fixed_t{number % f.number};
+    return fixed_t{number % f.number, true};
 }
 
 
@@ -287,10 +324,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Logical AND operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator&(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator&(const fixed_t& f) const noexcept
 {
-    return fixed_t{number & f.number};
+    return fixed_t{number & f.number, true};
 }
 
 
@@ -299,10 +335,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Logical OR operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator|(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator|(const fixed_t& f) const noexcept
 {
-    return fixed_t{number | f.number};
+    return fixed_t{number | f.number, true};
 }
 
 
@@ -311,10 +346,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Logical XOR operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator^(const fixed_t& f) const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator^(const fixed_t& f) const noexcept
 {
-    return fixed_t{number ^ f.number};
+    return fixed_t{number ^ f.number, true};
 }
 
 
@@ -323,10 +357,9 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Logical NOT operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator~() const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator~() const noexcept
 {
-    return fixed_t{~number};
+    return fixed_t{~number, true};
 }
 
 
@@ -335,10 +368,10 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Shift-Right operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator>>(int n) const
+template <typename integral_type>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator>>(typename setup::EnableIf<setup::IsIntegral<integral_type>::value, integral_type>::type n) const noexcept
 {
-    return fixed_t{number >> n};
+    return fixed_t{number >> (fixed_base_t)n, true};
 }
 
 
@@ -347,37 +380,11 @@ fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::
  *  Shift-Left operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator<<(int n) const
+template <typename integral_type>
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator<<(typename setup::EnableIf<setup::IsIntegral<integral_type>::value, integral_type>::type n) const noexcept
 {
-    return fixed_t{number << n};
+    return fixed_t{number << (fixed_base_t)n, true};
 }
-
-
-
-/*
- *  Copy-Assignment operator
- */
-/*
-template <typename fixed_base_t, unsigned num_frac_digits> inline LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(const fixed_t& f) {
-    number = f.number;
-    return *this;
-}
-*/
-
-
-
-/*
- *  Move-Assignment operator
- */
-/*
-template <typename fixed_base_t, unsigned num_frac_digits> inline LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(fixed_t&& f) {
-    number = f.number;
-    return *this;
-}
-*/
 
 
 
@@ -385,8 +392,7 @@ fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::
  *  Addition-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator+=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator+=(const fixed_t& f) noexcept
 {
     number += f.number;
     return *this;
@@ -398,8 +404,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Subtraction-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator-=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator-=(const fixed_t& f) noexcept
 {
     number -= f.number;
     return *this;
@@ -411,10 +416,12 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Multiplication-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator*=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator*=(const fixed_t& f) noexcept
 {
-    return *this = this->operator*(f);
+    number = ls::setup::IsUnsigned<fixed_base_t>::value
+        ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) / (1ull << (uint64_t)num_frac_digits))
+        : (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << (int64_t)num_frac_digits));
+    return *this;
 }
 
 
@@ -423,10 +430,10 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Division-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f) noexcept
 {
-    return *this = this->operator/(f);
+    number = (fixed_base_t)(((uint64_t)number << (uint64_t)num_frac_digits) / (uint64_t)f.number);
+    return *this;
 }
 
 
@@ -435,8 +442,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Modulo-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator%=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator%=(const fixed_t& f) noexcept
 {
     number %= f.number;
     return *this;
@@ -448,8 +454,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Logical AND-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator&=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator&=(const fixed_t& f) noexcept
 {
     number &= f.number;
     return *this;
@@ -461,8 +466,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Logical OR-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator|=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator|=(const fixed_t& f) noexcept
 {
     number |= f.number;
     return *this;
@@ -474,8 +478,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Logical XOR-Assignment operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator^=(const fixed_t& f)
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator^=(const fixed_t& f) noexcept
 {
     number ^= f.number;
     return *this;
@@ -487,10 +490,10 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Shift-Right and Assign operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator>>=(int n)
+template <typename integral_type>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator>>=(typename setup::EnableIf<setup::IsIntegral<integral_type>::value, integral_type>::type n) noexcept
 {
-    number >>= n;
+    number >>= (fixed_base_t)n;
     return *this;
 }
 
@@ -500,10 +503,10 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Shift-Left and Assign operator
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator<<=(int n)
+template <typename integral_type>
+inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator<<=(typename setup::EnableIf<setup::IsIntegral<integral_type>::value, integral_type>::type n) noexcept
 {
-    number <<= n;
+    number <<= (fixed_base_t)n;
     return *this;
 }
 
@@ -513,8 +516,7 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
  *  Single-Precision floating-point cast.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::operator float() const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::operator float() const noexcept
 {
     return ls::math::float_cast<float>(*this);
 }
@@ -525,8 +527,7 @@ fixed_t<fixed_base_t, num_frac_digits>::operator float() const
  *  Double-Precision floating-point cast.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::operator double() const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::operator double() const noexcept
 {
     return ls::math::float_cast<double>(*this);
 }
@@ -537,39 +538,10 @@ fixed_t<fixed_base_t, num_frac_digits>::operator double() const
  *  Numeric cast.
  */
 template<typename fixed_base_t, unsigned num_frac_digits>
-constexpr LS_INLINE
-fixed_t<fixed_base_t, num_frac_digits>::operator fixed_base_t() const
+constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits>::operator fixed_base_t() const noexcept
 {
     return ls::math::integer_cast<fixed_base_t>(*this);
 }
-
-
-
-#if 0
-/*
- *  Integral Assignment.
- */
-template<typename fixed_base_t, unsigned num_frac_digits>
-template<typename numeric_t>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(typename ls::utils::EnableIf<ls::math::IsIntegral<numeric_t>::value, numeric_t>::type f)
-{
-    return *this = fixed_t{f};
-}
-
-
-
-/*
- *  Single-Precision floating-point Assignment.
- */
-template<typename fixed_base_t, unsigned num_frac_digits>
-template<typename numeric_t>
-inline LS_INLINE
-fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator=(numeric_t f)
-{
-    return *this = fixed_t{f};
-}
-#endif
 
 
 
@@ -579,26 +551,46 @@ fixed_t <fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>:
 } //end math namespace
 
 /*-------------------------------------
-    Cast to Fixed-Point Representation
+    Float to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
-constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const typename setup::EnableIf<setup::IsFloat<numeric_t>::value, numeric_t>::type n)
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(
+    const typename setup::EnableIf<setup::IsFloat<numeric_t>::value, numeric_t>::type& n
+) noexcept
 {
-    //return fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
     return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n};
 }
 
 
 
 /*-------------------------------------
-    Cast to Fixed-Point Representation
+    Int to Fixed-Point Representation
 -------------------------------------*/
 template <class fixed_type, typename numeric_t>
-constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(const numeric_t n)
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(
+    const typename setup::EnableIf<setup::IsIntegral<numeric_t>::value, numeric_t>::type& n
+) noexcept
 {
-    return setup::IsFloat<numeric_t>::value
-        ? math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n}
-        : math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{(typename fixed_type::base_type)((unsigned long long)n << fixed_type::fraction_digits)};
+    return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{n, false};
+}
+
+
+
+/*-------------------------------------
+    Fixed to Fixed-Point Representation
+-------------------------------------*/
+template <class fixed_type, typename other_fixed_type>
+constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(
+    const math::fixed_t<typename other_fixed_type::base_type, other_fixed_type::fraction_digits>& n
+) noexcept
+{
+    return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{
+        (typename fixed_type::base_type)((fixed_type::fraction_digits >= other_fixed_type::fraction_digits)
+            ? (n.number * (1 << (fixed_type::fraction_digits - other_fixed_type::fraction_digits)))
+            : (n.number / (1 << (other_fixed_type::fraction_digits - fixed_type::fraction_digits)))
+        ),
+        true
+    };
 }
 
 
@@ -607,9 +599,9 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
     Cast to Integer
 -------------------------------------*/
 template <typename integral_type, typename fixed_type>
-constexpr integral_type math::integer_cast(const fixed_type f)
+constexpr integral_type math::integer_cast(const fixed_type& f)
 {
-    return (integral_type)((unsigned long long)f.number >> fixed_type::fraction_digits);
+    return (integral_type)(f.number >> fixed_type::fraction_digits);
 }
 
 
@@ -618,9 +610,9 @@ constexpr integral_type math::integer_cast(const fixed_type f)
     Cast to Float
 -------------------------------------*/
 template <typename float_type, class fixed_type>
-constexpr float_type math::float_cast(const fixed_type f)
+constexpr float_type math::float_cast(const fixed_type& f)
 {
-    return (float_type)f.number / (float_type)(1ull << fixed_type::fraction_digits);
+    return (float_type)f.number / (float_type)(1ull << (unsigned long long)fixed_type::fraction_digits);
 }
 
 
@@ -646,7 +638,9 @@ namespace fixed_impl
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::abs(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
-    return (num.number >= 0) ? num : math::fixed_t<fixed_base_t, num_frac_digits>{fixed_impl::abs_shift<fixed_base_t>(num.number)};
+    return (num.number >= 0)
+        ? num
+        : math::fixed_t<fixed_base_t, num_frac_digits>{fixed_impl::abs_shift<fixed_base_t>(num.number), true};
 }
 
 
@@ -658,7 +652,8 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const math::fixed_t<fixed_base_t, num_frac_digits>& num) noexcept
 {
     return (num.number != 0)
-    ? (math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)(0x8000000000000000ull >> (63ull-num_frac_digits))} / num) : math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)0ull};
+        ? (math::fixed_cast<math::fixed_t<fixed_base_t, num_frac_digits>, fixed_base_t>(1) / num)
+        : math::fixed_t<fixed_base_t, num_frac_digits>{~(fixed_base_t)0, true};
 }
 
 
@@ -669,9 +664,7 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::rcp(const
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE int math::sign_mask(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return setup::IsSigned<fixed_base_t>::value
-        ? (int)(x.number >> (((sizeof(fixed_base_t) * CHAR_BIT) - 1)) & 0x01)
-        : 0;
+    return setup::IsSigned<fixed_base_t>::value ? (int)(x.number < 0) : 0;
 }
 
 
@@ -682,7 +675,7 @@ constexpr LS_INLINE int math::sign_mask(const math::fixed_t<fixed_base_t, num_fr
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::floor(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return math::fixed_t<fixed_base_t, num_frac_digits>{x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask};
+    return math::fixed_t<fixed_base_t, num_frac_digits>{x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask, true};
 }
 
 
@@ -693,7 +686,7 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::floor(con
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::ceil(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    return math::floor<fixed_base_t, num_frac_digits>(math::fixed_t<fixed_base_t, num_frac_digits>{x.number + (fixed_base_t)(0x01ull << num_frac_digits)});
+    return math::floor<fixed_base_t, num_frac_digits>(math::fixed_t<fixed_base_t, num_frac_digits>{x.number + (fixed_base_t)(0x01ull * (1ull << (num_frac_digits-1ull))), true});
 }
 
 
@@ -704,14 +697,12 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::ceil(cons
 template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::round(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
-    constexpr fixed_base_t pointFive = (fixed_base_t)(0x05ull * (1ull << (num_frac_digits-1ull)));
-    constexpr fixed_base_t one = (fixed_base_t)(1ull << num_frac_digits);
-    const fixed_base_t standard = x.number + pointFive;
-    const fixed_base_t rounded = x.number + one;
+    constexpr math::fixed_t<fixed_base_t, num_frac_digits> pointFive{(fixed_base_t)(0x01ull * (1ull << (num_frac_digits - 1ull))), true};
 
-    return ((standard >> num_frac_digits) <= (rounded >> num_frac_digits))
-    ? math::floor<fixed_base_t, num_frac_digits>(x)
-    : math::ceil<fixed_base_t, num_frac_digits>(x);
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& lo = math::floor<fixed_base_t, num_frac_digits>(x);
+    const math::fixed_t<fixed_base_t, num_frac_digits>&& hi = math::floor<fixed_base_t, num_frac_digits>(x + pointFive);
+
+    return lo == hi ? lo : hi;
 }
 
 
@@ -723,7 +714,8 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::fmod_1(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     return math::fixed_t<fixed_base_t, num_frac_digits>{
-        (x.number - (x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask)) - ((fixed_base_t)(x.number < 0) << num_frac_digits)
+        (x.number - (x.number & math::fixed_t<fixed_base_t, num_frac_digits>::integer_mask)) - ((fixed_base_t)(x.number < 0) << num_frac_digits),
+        true
     };
 }
 
@@ -735,7 +727,7 @@ constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::fmod_1(co
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE math::fixed_t<fixed_base_t, num_frac_digits> math::fract(const math::fixed_t<fixed_base_t, num_frac_digits>& n) noexcept
 {
-    return math::fixed_t<fixed_base_t, num_frac_digits>{(fixed_base_t)((~0ull ^ (~0ull << num_frac_digits)) & n.number)};
+    return math::fixed_t<fixed_base_t, num_frac_digits>{n.number & math::fixed_t<fixed_base_t, num_frac_digits>::fraction_mask, true};
 }
 
 

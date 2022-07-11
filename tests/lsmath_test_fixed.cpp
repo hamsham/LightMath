@@ -3,15 +3,31 @@
 
 #include "lightsky/math/fixed.h"
 
-#define FixedType ls::math::long_medp_t
+#define FixedType ls::math::long_lowp_t
+#define OtherFixedType ls::math::medp_t
 
 
 
 inline std::ostream& operator << (std::ostream& os, const FixedType& fx) noexcept
 {
+    /*
     const FixedType::base_type n = fx.number >> FixedType::fraction_digits;
     const FixedType::base_type d = fx.number & FixedType::fraction_mask;
     return os << n << '.' << d;
+    */
+    return os << ls::math::float_cast<float>(fx);
+}
+
+
+
+inline std::ostream& operator << (std::ostream& os, const OtherFixedType& fx) noexcept
+{
+    /*
+    const FixedType::base_type n = fx.number >> FixedType::fraction_digits;
+    const FixedType::base_type d = fx.number & FixedType::fraction_mask;
+    return os << n << '.' << d;
+    */
+    return os << ls::math::float_cast<float>(fx);
 }
 
 
@@ -24,16 +40,18 @@ int main()
     std::cout << f << " == " << fx << '\n' << std::endl;
 
     f *= 42.f;
-    fx *= ls::math::fixed_cast<FixedType>((FixedType::base_type)42);
+    fx *= ls::math::fixed_cast<FixedType, int>(42);
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
+
+    std::cout << fx << " -> " << ls::math::fixed_cast<OtherFixedType, FixedType>(fx) << '\n' << std::endl;
 
     f *= 123.456789f;
     fx *= FixedType(123.456789f);
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << '\n' << std::endl;
 
     f /= LS_PI;
-    FixedType fx2 = fx * ls::math::rcp<FixedType::base_type, FixedType::fraction_digits>(FixedType(LS_PI));
-    fx /= FixedType(LS_PI);
+    FixedType fx2 = fx * ls::math::rcp<FixedType::base_type, FixedType::fraction_digits>(FixedType{LS_PI});
+    fx /= FixedType{LS_PI};
     std::cout << f << " == " << ls::math::float_cast<float>(fx) << " && " << fx << ' ' << fx2 << '\n' << std::endl;
 
     constexpr FixedType pi = FixedType{LS_PI};
