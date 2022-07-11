@@ -290,7 +290,7 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t,
 {
     return fixed_t{
         (ls::setup::IsUnsigned<fixed_base_t>::value
-            ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) / (1ull << (uint64_t)num_frac_digits))
+            ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) >> ((uint64_t)num_frac_digits))
             : (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << (int64_t)num_frac_digits))),
         true
     };
@@ -304,7 +304,12 @@ constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t,
 template<typename fixed_base_t, unsigned num_frac_digits>
 constexpr LS_INLINE fixed_t<fixed_base_t, num_frac_digits> fixed_t<fixed_base_t, num_frac_digits>::operator/(const fixed_t& f) const noexcept
 {
-    return fixed_t{(fixed_base_t)(((uint64_t)number << (uint64_t)num_frac_digits) / (uint64_t)f.number), true};
+    return fixed_t{
+        (ls::setup::IsUnsigned<fixed_base_t>::value
+            ? (fixed_base_t)(((uint64_t)number * (1ull << (uint64_t)num_frac_digits) / (uint64_t)f.number))
+            : (fixed_base_t)(((int64_t)number * (1ll << (int64_t)num_frac_digits) / (int64_t)f.number))),
+        true
+    };
 }
 
 
@@ -419,7 +424,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator*=(const fixed_t& f) noexcept
 {
     number = ls::setup::IsUnsigned<fixed_base_t>::value
-        ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) / (1ull << (uint64_t)num_frac_digits))
+        ? (fixed_base_t)(((uint64_t)number * (uint64_t)f.number) >> ((uint64_t)num_frac_digits))
         : (fixed_base_t)(((int64_t)number * (int64_t)f.number) / (1ll << (int64_t)num_frac_digits));
     return *this;
 }
@@ -432,7 +437,9 @@ inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, n
 template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE fixed_t<fixed_base_t, num_frac_digits>& fixed_t<fixed_base_t, num_frac_digits>::operator/=(const fixed_t& f) noexcept
 {
-    number = (fixed_base_t)(((uint64_t)number << (uint64_t)num_frac_digits) / (uint64_t)f.number);
+    number = ls::setup::IsUnsigned<fixed_base_t>::value
+        ? (fixed_base_t)(((uint64_t)number * (1ull << (uint64_t)num_frac_digits) / (uint64_t)f.number))
+        : (fixed_base_t)(((int64_t)number * (1ll << (int64_t)num_frac_digits) / (int64_t)f.number));
     return *this;
 }
 
