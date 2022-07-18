@@ -586,6 +586,26 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
 /*-------------------------------------
     Fixed to Fixed-Point Representation
 -------------------------------------*/
+namespace math
+{
+namespace impl
+{
+
+template <unsigned fixed_shifts, unsigned other_shifts>
+constexpr unsigned long long _fixed_shift_factor(typename ls::setup::EnableIf<(fixed_shifts >= other_shifts), unsigned>::type n) noexcept
+{
+    return n << (unsigned long long)(fixed_shifts - other_shifts);
+}
+
+template <unsigned fixed_shifts, unsigned other_shifts>
+constexpr unsigned long long _fixed_shift_factor(typename ls::setup::EnableIf<(fixed_shifts < other_shifts), unsigned>::type n) noexcept
+{
+    return n << (unsigned long long)(other_shifts - fixed_shifts);
+}
+
+} // end impl namespace
+} // end math namespace
+
 template <class fixed_type, typename other_fixed_type>
 constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits> math::fixed_cast(
     const math::fixed_t<typename other_fixed_type::base_type, other_fixed_type::fraction_digits>& n
@@ -593,8 +613,8 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
 {
     return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{
         (typename fixed_type::base_type)((fixed_type::fraction_digits >= (typename fixed_type::base_type)other_fixed_type::fraction_digits)
-            ? (typename fixed_type::base_type)((unsigned long long)n.number * (1ull << (unsigned long long)(fixed_type::fraction_digits - other_fixed_type::fraction_digits)))
-            : (typename fixed_type::base_type)((unsigned long long)n.number / (1ull << (unsigned long long)(other_fixed_type::fraction_digits - fixed_type::fraction_digits)))
+            ? (typename fixed_type::base_type)((unsigned long long)n.number * impl::_fixed_shift_factor<fixed_type::fraction_digits, other_fixed_type::fraction_digits>(1))
+            : (typename fixed_type::base_type)((unsigned long long)n.number / impl::_fixed_shift_factor<fixed_type::fraction_digits, other_fixed_type::fraction_digits>(1))
         ),
         true
     };
