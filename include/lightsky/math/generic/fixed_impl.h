@@ -591,16 +591,16 @@ namespace math
 namespace impl
 {
 
-template <unsigned fixed_shifts, unsigned other_shifts>
-constexpr unsigned long long _fixed_shift_factor(typename ls::setup::EnableIf<(fixed_shifts >= other_shifts), unsigned>::type n) noexcept
+template <unsigned long long fixed_shifts, unsigned long long other_shifts>
+constexpr unsigned long long _fixed_cast_shift(typename ls::setup::EnableIf<(fixed_shifts >= other_shifts), unsigned long long>::type n) noexcept
 {
-    return n << (unsigned long long)(fixed_shifts - other_shifts);
+    return n * (1ull << (fixed_shifts - other_shifts));
 }
 
-template <unsigned fixed_shifts, unsigned other_shifts>
-constexpr unsigned long long _fixed_shift_factor(typename ls::setup::EnableIf<(fixed_shifts < other_shifts), unsigned>::type n) noexcept
+template <unsigned long long fixed_shifts, unsigned long long other_shifts>
+constexpr unsigned long long _fixed_cast_shift(typename ls::setup::EnableIf<(fixed_shifts < other_shifts), unsigned long long>::type n) noexcept
 {
-    return n << (unsigned long long)(other_shifts - fixed_shifts);
+    return n / (1ull << (other_shifts - fixed_shifts));
 }
 
 } // end impl namespace
@@ -612,10 +612,7 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
 ) noexcept
 {
     return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{
-        (typename fixed_type::base_type)((fixed_type::fraction_digits >= (typename fixed_type::base_type)other_fixed_type::fraction_digits)
-            ? (typename fixed_type::base_type)((unsigned long long)n.number * impl::_fixed_shift_factor<fixed_type::fraction_digits, other_fixed_type::fraction_digits>(1))
-            : (typename fixed_type::base_type)((unsigned long long)n.number / impl::_fixed_shift_factor<fixed_type::fraction_digits, other_fixed_type::fraction_digits>(1))
-        ),
+        (typename fixed_type::base_type)impl::_fixed_cast_shift<fixed_type::fraction_digits, other_fixed_type::fraction_digits>(n.number),
         true
     };
 }
