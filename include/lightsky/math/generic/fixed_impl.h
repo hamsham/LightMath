@@ -592,7 +592,7 @@ constexpr math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_dig
 ) noexcept
 {
     return math::fixed_t<typename fixed_type::base_type, fixed_type::fraction_digits>{
-        (typename fixed_type::base_type)((fixed_type::fraction_digits >= other_fixed_type::fraction_digits)
+        (typename fixed_type::base_type)((fixed_type::fraction_digits >= (typename fixed_type::base_type)other_fixed_type::fraction_digits)
             ? (typename fixed_type::base_type)((unsigned long long)n.number * (1ull << (unsigned long long)(fixed_type::fraction_digits - other_fixed_type::fraction_digits)))
             : (typename fixed_type::base_type)((unsigned long long)n.number / (1ull << (unsigned long long)(other_fixed_type::fraction_digits - fixed_type::fraction_digits)))
         ),

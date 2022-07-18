@@ -243,22 +243,23 @@ inline LS_INLINE vec4_t<float> rcp(const vec4_t<float>& v) noexcept
 inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
 {
     #if defined(LS_ARCH_AARCH64)
-        const int32x4_t signBits = vshrq_n_s32(vreinterpretq_s32_f32(x.simd), 31);
-        const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
-        const int32x4_t bits     = vandq_s32(masks, signBits);
+        const uint32x4_t zero     = veorq_u32(vreinterpretq_u32_f32(x.simd), vreinterpretq_u32_f32(x.simd));
+        const uint32x4_t signBits = vcltq_f32(x.simd, vreinterpretq_f32_u32(zero));
+        const int32x4_t  masks    = vcombine_u32(vcreate_u32(0x0000000200000001), vcreate_u32(0x0000000800000004));
+        const uint32x4_t bits     = vandq_u32(masks, signBits);
 
         // Adding powers-of-two only sets the corresponding bits.
         // This is a low-throughput instruction and only works now because it
         // replaces the 6 instructions in the Arm32 version.
-        return vaddvq_s32(bits);
+        return vaddvq_s32(vreinterpretq_s32_u32(bits));
 
     #else
         const int32x4_t signBits = vshrq_n_s32(vreinterpretq_s32_f32(x.simd), 31);
         const int32x4_t masks    = vcombine_s32(vcreate_s32(0x0000000200000001), vcreate_s32(0x0000000800000004));
         const int32x4_t bits0123 = vandq_s32(masks, signBits);
 
-    int32x2_t bits = vorr_s32(vget_low_s32(bits0123), vget_high_s32(bits0123));
-    return vget_lane_s32(vorr_s32(bits, vrev64_s32(bits)), 0);
+        const int32x2_t bits = vorr_s32(vget_low_s32(bits0123), vget_high_s32(bits0123));
+        return vget_lane_s32(vorr_s32(bits, vrev64_s32(bits)), 0);
 
     #endif
 }
