@@ -367,14 +367,14 @@ inline LS_INLINE float logN(float baseN, float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float exp(float x) noexcept
 {
-    #if 0//defined(LS_MATH_HIGH_PREC)
-        __m128 p = _mm_mul_ss(_mm_set_ss(x), _mm_set_ss(1.442695040f)); // x * 1/ln(2)
-        __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
-        __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
-        __m128 lt126 = _mm_cmplt_ss(p, _mm_set_ss(-126.f));
-        __m128 clipp = _mm_or_ps(_mm_and_ps(lt126, _mm_set_ss(-126.f)), _mm_andnot_ps(lt126, p));
-        __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-        __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
+    #if defined(LS_MATH_HIGH_PREC)
+        const __m128 p = _mm_mul_ss(_mm_set1_ps(x), _mm_set_ss(1.442695040f)); // x * 1/ln(2)
+        const __m128 s126 = _mm_set1_ps(-126.f);
+        const __m128 ltzero = _mm_cmplt_ss(p, _mm_setzero_ps());
+        const __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
+        const __m128 clipp  = _mm_max_ps(p, s126);
+        const __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
+        const __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
 
         const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
         const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
@@ -389,9 +389,9 @@ inline LS_INLINE float exp(float x) noexcept
         return _mm_cvtss_f32(_mm_castsi128_ps(v));
 
     #else
+        const __m128 s126   = _mm_set1_ps(-126.f);
         const __m128 p      = _mm_mul_ss(_mm_set1_ps(x), _mm_set1_ps(1.4426950408889634f)); // x * 1/ln(2)
-        const __m128 lt126  = _mm_cmplt_ps(p, _mm_set_ss(-126.f));
-        const __m128 clipp  = _mm_or_ps(_mm_andnot_ps(lt126, p), _mm_and_ps(lt126, _mm_set1_ps(-126.f)));
+        const __m128 clipp  = _mm_max_ps(p, s126);
         const __m128 clipp2 = _mm_add_ps(clipp, _mm_set1_ps(126.94269504f));
         const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
 
@@ -411,13 +411,13 @@ inline LS_INLINE float exp(float x) noexcept
 inline LS_INLINE float exp2(float x) noexcept
 {
     #if defined(LS_MATH_HIGH_PREC)
-        __m128 p = _mm_set_ss(x);
-        __m128 ltzero = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(p), 31);
-        __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
-        __m128 lt126 = _mm_cmplt_ss(p, _mm_set_ss(-126.f));
-        __m128 clipp = _mm_or_ps(_mm_and_ps(lt126, _mm_set_ss(-126.f)), _mm_andnot_ps(lt126, p));
-        __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-        __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
+        const __m128 p = _mm_set1_ps(x);
+        const __m128 s126   = _mm_set1_ps(-126.f);
+        const __m128 ltzero = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(p), 31));
+        const __m128 offset = _mm_and_ps(ltzero, _mm_set_ss(1.f));
+        const __m128 clipp  = _mm_max_ps(p, s126);
+        const __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
+        const __m128 z = _mm_add_ss(_mm_sub_ss(clipp, w), offset);
 
         const __m128 d = _mm_add_ss(_mm_set_ss(121.2740575f), clipp);
         const __m128 c = _mm_mul_ss(_mm_set_ss(1.49012907f), z);
@@ -432,9 +432,9 @@ inline LS_INLINE float exp2(float x) noexcept
         return _mm_cvtss_f32(_mm_castsi128_ps(v));
 
     #else
+        const __m128 s126   = _mm_set1_ps(-126.f);
         const __m128 p      = _mm_set1_ps(x);
-        const __m128 lt126  = _mm_cmplt_ps (p, _mm_set1_ps(-126.f));
-        const __m128 clipp  = _mm_or_ps(_mm_andnot_ps(lt126, p), _mm_and_ps(lt126, _mm_set1_ps(-126.f)));
+        const __m128 clipp  = _mm_max_ps(p, s126);
         const __m128 clipp2 = _mm_add_ps(clipp, _mm_set1_ps(126.94269504f));
         const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
 

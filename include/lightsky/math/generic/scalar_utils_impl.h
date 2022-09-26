@@ -772,7 +772,7 @@ inline LS_INLINE scalar_t math::exp(scalar_t x) noexcept
     union {
         uint32_t i;
         float f;
-    } const v = {(uint32_t)((1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
+    } const v = {(uint32_t)((float)(1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
 
     return v.f;
 }
@@ -811,7 +811,7 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
     union {
         uint32_t i;
         float f;
-    } const v = {(uint32_t)((1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
+    } const v = {(uint32_t)((float)(1 << 23) * (clipp + 121.2740575f+27.7280233f / (4.84252568f-z) - 1.49012907f*z))};
 
     return v.f;
 }

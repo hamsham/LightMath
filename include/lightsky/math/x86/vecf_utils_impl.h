@@ -463,14 +463,14 @@ inline LS_INLINE vec4_t<float> logN(const vec4_t<float>& baseN, const vec4_t<flo
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 {
-    #ifdef LS_MATH_HIGH_PREC
-        __m128 p = _mm_mul_ps(_mm_set1_ps(x), _mm_set1_ps(1.442695040f)); // x * 1/ln(2)
-        __m128 ltzero = _mm_cmplt_ps(p, _mm_setzero_ps());
-        __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
-        __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
-        __m128 clipp = _mm_or_ps(_mm_and_ps(lt126, _mm_set1_ps(-126.f)), _mm_andnot_ps(lt126, p));
-        __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-        __m128 z = _mm_add_ps(_mm_sub_ps(clipp, w), offset);
+    #if defined(LS_MATH_HIGH_PREC)
+        const __m128 p = _mm_mul_ps(_mm_set1_ps(x), _mm_set1_ps(1.442695040f)); // x * 1/ln(2)
+        const __m128 s126   = _mm_set1_ps(-126.f);
+        const __m128 ltzero = _mm_cmplt_ps(p, _mm_setzero_ps());
+        const __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
+        const __m128 clipp  = _mm_max_ps(p, s126);
+        const __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
+        const __m128 z = _mm_add_ps(_mm_sub_ps(clipp, w), offset);
 
         const __m128 d = _mm_add_ps(_mm_set1_ps(121.2740575f), clipp);
         const __m128 c = _mm_mul_ps(_mm_set1_ps(1.49012907f), z);
@@ -484,11 +484,11 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 
         return vec4_t<float>{_mm_castsi128_ps(v)};
     #else
-        const __m128 p = _mm_mul_ps(x.simd, _mm_set1_ps(1.4426950408889634f)); // x * 1/ln(2)
-        const __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
-        const __m128 clipp = _mm_or_ps(_mm_andnot_ps(lt126, p), _mm_and_ps(lt126, _mm_set1_ps(-126.f)));
+        const __m128 s126   = _mm_set1_ps(-126.f);
+        const __m128 p      = _mm_mul_ps(x.simd, _mm_set1_ps(1.4426950408889634f)); // x * 1/ln(2)
+        const __m128 clipp  = _mm_max_ps(p, s126);
         const __m128 clipp2 = _mm_add_ps(clipp, _mm_set1_ps(126.94269504f));
-        const __m128i v = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
+        const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
 
         return vec4_t<float>{_mm_castsi128_ps(v)};
     #endif
@@ -504,14 +504,14 @@ inline LS_INLINE vec4_t<float> exp(const vec4_t<float>& x) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
 {
-    #ifdef LS_MATH_HIGH_PREC
-        __m128 p = _mm_set1_ps(x);
-        __m128 ltzero = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(p), 31);
-        __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
-        __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
-        __m128 clipp = _mm_or_ps(_mm_and_ps(lt126, _mm_set1_ps(-126.f)), _mm_andnot_ps(lt126, p));
-        __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
-        __m128 z = _mm_add_ps(_mm_sub_ps(clipp, w), offset);
+    #if defined(LS_MATH_HIGH_PREC)
+        const __m128 p = _mm_set1_ps(x);
+        const __m128 s126   = _mm_set1_ps(-126.f);
+        const __m128 ltzero = _mm_castsi128_ps(_mm_srai_epi32(_mm_castps_si128(p), 31));
+        const __m128 offset = _mm_and_ps(ltzero, _mm_set1_ps(1.f));
+        const __m128 clipp  = _mm_max_ps(p, s126);
+        const __m128 w = _mm_round_ps(clipp, _MM_FROUND_TO_ZERO |_MM_FROUND_NO_EXC);
+        const __m128 z = _mm_add_ps(_mm_sub_ps(clipp, w), offset);
 
         const __m128 d = _mm_add_ps(_mm_set1_ps(121.2740575f), clipp);
         const __m128 c = _mm_mul_ps(_mm_set1_ps(1.49012907f), z);
@@ -526,11 +526,11 @@ inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
         return vec4_t<float>{_mm_castsi128_ps(v)};
 
     #else
-        const __m128 p = x.simd;
-        const __m128 lt126 = _mm_cmplt_ps(p, _mm_set1_ps(-126.f));
-        const __m128 clipp = _mm_or_ps(_mm_andnot_ps(lt126, p), _mm_and_ps(lt126, _mm_set1_ps(-126.f)));
+        const __m128 s126   = _mm_set1_ps(-126.f);
+        const __m128 p      = x.simd;
+        const __m128 clipp  = _mm_max_ps(p, s126);
         const __m128 clipp2 = _mm_add_ps(clipp, _mm_set1_ps(126.94269504f));
-        const __m128i v = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
+        const __m128i v     = _mm_cvtps_epi32(_mm_mul_ps(_mm_set1_ps((float)(1 << 23)), clipp2));
 
         return vec4_t<float>{_mm_castsi128_ps(v)};
     #endif
@@ -543,7 +543,7 @@ inline LS_INLINE vec4_t<float> exp2(const vec4_t<float>& x) noexcept
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> pow(const vec4_t<float>& x, const vec4_t<float>& y) noexcept
 {
-    return exp2(log2(x) * y);
+    return exp(log(x) * y);
 }
 
 
