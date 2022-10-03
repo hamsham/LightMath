@@ -95,7 +95,7 @@ constexpr LS_INLINE scalar_t math::clamp(scalar_t n, scalar_t minVal, scalar_t m
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::saturate(scalar_t n) noexcept
 {
-    return n <= scalar_t{0} ? scalar_t{0} : (n >= scalar_t{1} ? scalar_t{1} : n);
+    return n < scalar_t{0.f} ? scalar_t{0.f} : (n > scalar_t{1.f} ? scalar_t{1.f} : n);
 }
 
 
@@ -274,6 +274,8 @@ inline LS_INLINE scalar_t math::inversesqrt(scalar_t input) noexcept
     const float x = (float)input;
 
     #if 1
+        return (scalar_t)(1.f / std::sqrt(x));
+    #elif 1
         union
         {
             float f;

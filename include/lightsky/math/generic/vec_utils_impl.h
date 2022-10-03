@@ -56,9 +56,9 @@ num_t math::cross(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2) noexcept
 template <typename num_t> inline LS_INLINE
 math::vec2_t<num_t> math::normalize(const vec2_t <num_t>& v) noexcept
 {
-    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec2_t<num_t>&& temp = v * v;
-    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
+    return v / math::fast_sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -76,7 +76,7 @@ num_t math::length_squared(const vec2_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec2_t <num_t>& v) noexcept
 {
-    return fast_sqrt<num_t>(length_squared<num_t>(v));
+    return math::fast_sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
@@ -97,8 +97,8 @@ math::vec2_t<num_t> math::rotate(const vec2_t <num_t>& v, num_t angle) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::angle_between(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1, v2) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1, v2) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -108,8 +108,8 @@ num_t math::angle_between(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2) no
 template <typename num_t> inline LS_INLINE
 num_t math::angle_between(const vec2_t <num_t>& v1, const vec2_t <num_t>& v2, const vec2_t <num_t>& origin) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1 - origin, v2 - origin) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1 - origin, v2 - origin) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -182,7 +182,7 @@ math::vec2_t<num_t> math::project(const vec2_t <num_t>& v1, const vec2_t <num_t>
     const math::vec2_t<num_t>&& v1Norm = v1 / v1Len;
     const math::vec2_t<num_t>&& v2Norm = v2 / v2Len;
 
-    const num_t cosTheta = math::dot<num_t>(v1Norm, v2Norm);
+    const num_t cosTheta = math::dot(v1Norm, v2Norm);
 
     return v2Norm * cosTheta * v1Len;
 }
@@ -196,7 +196,7 @@ math::vec2_t<num_t> math::reflect(const vec2_t <num_t>& v, const vec2_t <num_t>&
     /*
     const math::vec2_t<num_t>&& nv = math::normalize<num_t>(v);
 
-    const math::vec2_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
+    const math::vec2_t<num_t>&& bounce = norm * (math::dot(nv, norm) * num_t {2});
     return bounce - nv;
     */
     return v - math::vec2_t<num_t>{2} * math::dot(v, norm) * norm;
@@ -493,9 +493,9 @@ math::vec3_t<num_t> math::cross(const vec3_t <num_t>& v1, const vec3_t <num_t>& 
 template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::normalize(const vec3_t <num_t>& v) noexcept
 {
-    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec3_t<num_t>&& temp = v * v;
-    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
+    return v / math::fast_sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -513,7 +513,7 @@ num_t math::length_squared(const vec3_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec3_t <num_t>& v) noexcept
 {
-    return fast_sqrt<num_t>(length_squared<num_t>(v));
+    return math::fast_sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
@@ -558,8 +558,8 @@ math::vec3_t<num_t> math::z_rotation(num_t angle) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::angle_between(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1, v2) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1, v2) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -569,8 +569,8 @@ num_t math::angle_between(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2) no
 template <typename num_t> inline LS_INLINE
 num_t math::angle_between(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2, const vec3_t <num_t>& origin) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1 - origin, v2 - origin) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1 - origin, v2 - origin) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -580,7 +580,7 @@ num_t math::angle_between(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2, co
 template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::min(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2) noexcept
 {
-    //return length_squared<num_t>(v1) < length_squared<num_t>(v2) ? v1 : v2;
+    //return math::length_squared<num_t>(v1) < math::length_squared<num_t>(v2) ? v1 : v2;
     return math::vec3_t<num_t>{
         math::min<num_t>(v1.v[0], v2.v[0]),
         math::min<num_t>(v1.v[1], v2.v[1]),
@@ -603,7 +603,7 @@ math::vec3_t<num_t> math::mix(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2
 template <typename num_t> constexpr LS_INLINE
 math::vec3_t<num_t> math::max(const vec3_t <num_t>& v1, const vec3_t <num_t>& v2) noexcept
 {
-    //return length_squared<num_t>(v1) > length_squared<num_t>(v2) ? v1 : v2;
+    //return math::length_squared<num_t>(v1) > math::length_squared<num_t>(v2) ? v1 : v2;
     return math::vec3_t<num_t>{
         math::max<num_t>(v1.v[0], v2.v[0]),
         math::max<num_t>(v1.v[1], v2.v[1]),
@@ -649,7 +649,7 @@ math::vec3_t<num_t> math::project(const vec3_t <num_t>& v1, const vec3_t <num_t>
     const math::vec3_t<num_t>&& v1Norm = v1 / v1Len;
     const math::vec3_t<num_t>&& v2Norm = v2 / v2Len;
 
-    const num_t cosTheta = math::dot<num_t>(v1Norm, v2Norm);
+    const num_t cosTheta = math::dot(v1Norm, v2Norm);
 
     return v2Norm * cosTheta * v1Len;
 }
@@ -662,7 +662,7 @@ math::vec3_t<num_t> math::reflect(const vec3_t <num_t>& v, const vec3_t <num_t>&
 {
     /*
     const math::vec4_t<num_t>&& nv = math::normalize(v);
-    const math::vec4_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
+    const math::vec4_t<num_t>&& bounce = norm * (math::dot(nv, norm) * num_t {2});
     return bounce - nv;
     */
     return v - math::vec3_t<num_t>{2} * math::dot(v, norm) * norm;
@@ -967,9 +967,9 @@ math::vec4_t<num_t> math::cross(const vec4_t <num_t>& v1, const vec4_t <num_t>& 
 template <typename num_t> inline LS_INLINE
 math::vec4_t<num_t> math::normalize(const vec4_t <num_t>& v) noexcept
 {
-    //return v * inversesqrt<num_t>(length_squared<num_t>(v));
+    //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec4_t<num_t>&& temp = v * v;
-    return v * inversesqrt<num_t>(math::sum<num_t>(temp));
+    return v / math::fast_sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -987,7 +987,7 @@ num_t math::length_squared(const vec4_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec4_t <num_t>& v) noexcept
 {
-    return fast_sqrt<num_t>(length_squared<num_t>(v));
+    return math::fast_sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
@@ -996,8 +996,8 @@ num_t math::length(const vec4_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::angle_between(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1, v2) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1, v2) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -1007,8 +1007,8 @@ num_t math::angle_between(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2) no
 template <typename num_t> inline LS_INLINE
 num_t math::angle_bewteen(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2, const vec4_t <num_t>& origin) noexcept
 {
-    return (num_t)acos(
-        dot<num_t>(v1 - origin, v2 - origin) / (length<num_t>(v1) * length<num_t>(v2))
+    return (num_t)math::acos(
+        math::dot(v1 - origin, v2 - origin) / (math::length<num_t>(v1) * math::length<num_t>(v2))
     );
 }
 
@@ -1018,7 +1018,7 @@ num_t math::angle_bewteen(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2, co
 template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::min(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2) noexcept
 {
-    //return length_squared<num_t>(v1) < length_squared<num_t>(v2) ? v1 : v2;
+    //return math::length_squared<num_t>(v1) < math::length_squared<num_t>(v2) ? v1 : v2;
     return math::vec4_t<num_t>{
         math::min<num_t>(v1.v[0], v2.v[0]),
         math::min<num_t>(v1.v[1], v2.v[1]),
@@ -1042,7 +1042,7 @@ math::vec4_t<num_t> math::mix(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2
 template <typename num_t> constexpr LS_INLINE
 math::vec4_t<num_t> math::max(const vec4_t <num_t>& v1, const vec4_t <num_t>& v2) noexcept
 {
-    //return length_squared<num_t>(v1) > length_squared<num_t>(v2) ? v1 : v2;
+    //return math::length_squared<num_t>(v1) > math::length_squared<num_t>(v2) ? v1 : v2;
     return math::vec4_t<num_t>{
         math::max<num_t>(v1.v[0], v2.v[0]),
         math::max<num_t>(v1.v[1], v2.v[1]),
@@ -1091,7 +1091,7 @@ math::vec4_t<num_t> math::project(const vec4_t <num_t>& v1, const vec4_t <num_t>
     const math::vec4_t<num_t>&& v1Norm = v1 / v1Len;
     const math::vec4_t<num_t>&& v2Norm = v2 / v2Len;
 
-    const num_t cosTheta = math::dot<num_t>(v1Norm, v2Norm);
+    const num_t cosTheta = math::dot(v1Norm, v2Norm);
 
     return v2Norm * cosTheta * v1Len;
 }
@@ -1104,7 +1104,7 @@ math::vec4_t<num_t> math::reflect(const vec4_t <num_t>& v, const vec4_t <num_t>&
 {
     /*
     const math::vec4_t<num_t>&& nv = math::normalize(v);
-    const math::vec4_t<num_t>&& bounce = norm * (math::dot<num_t>(nv, norm) * num_t {2});
+    const math::vec4_t<num_t>&& bounce = norm * (math::dot(nv, norm) * num_t {2});
     return bounce - nv;
     */
     return v - math::vec4_t<num_t>{2} * math::dot(v, norm) * norm;

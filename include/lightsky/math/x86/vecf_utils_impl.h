@@ -181,7 +181,7 @@ inline LS_INLINE float length(const vec4_t<float>& v) noexcept
     const __m128 d = _mm_unpackhi_ps(c, c);
     const __m128 e = _mm_add_ss(c, d);
 
-    return _mm_cvtss_f32(_mm_rcp_ss(_mm_rsqrt_ss(e)));
+    return _mm_cvtss_f32(_mm_sqrt_ss(e));
 }
 
 /*-------------------------------------
@@ -201,7 +201,7 @@ inline LS_INLINE vec4_t<float> normalize(const vec4_t<float>& v) noexcept
     const __m128 e = _mm_add_ps(c, d);
 
     // normalization
-    return vec4_t<float>{_mm_mul_ps(v.simd, _mm_rsqrt_ps(e))};
+    return vec4_t<float>{_mm_mul_ps(v.simd, _mm_rcp_ps(_mm_sqrt_ps(e)))};
 }
 
 /*-------------------------------------

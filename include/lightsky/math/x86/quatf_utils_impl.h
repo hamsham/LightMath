@@ -52,7 +52,7 @@ inline LS_INLINE float length(const quat_t<float>& q)
     const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
     const __m128 e = _mm_add_ps(c, d);
 
-    return _mm_cvtss_f32(_mm_rcp_ps(_mm_rsqrt_ps(e)));
+    return _mm_cvtss_f32(_mm_sqrt_ps(e));
 }
 
 /*-------------------------------------
@@ -76,7 +76,7 @@ inline LS_INLINE math::quat_t<float> normalize(const quat_t<float>& q)
 
     // normalization
     alignas(sizeof(__m128)) quat_t<float> ret;
-    _mm_store_ps(ret.q, _mm_mul_ps(s, _mm_rsqrt_ps(e)));
+    _mm_store_ps(ret.q, _mm_mul_ps(s, _mm_rcp_ps(_mm_sqrt_ps(e))));
     return ret;
 }
 
