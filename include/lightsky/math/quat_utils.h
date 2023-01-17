@@ -199,6 +199,35 @@ template <typename N> inline
 quat_t<N> look_at(const vec3_t<N>& target, const vec3_t<N>& dir);
 
 /*-----------------------------------------------------------------------------
+    Quaternions & Vectors
+-----------------------------------------------------------------------------*/
+/**
+ *  @brief reorient
+ *  Multiply a quaternion by a 3D vector, leading to a rotation.
+ *
+ *  @param q
+ *
+ *  @param v
+ *
+ *  @return a 3D vector rotated about a quaternion.
+ */
+template <typename N> inline
+vec3_t<N> reorient(const quat_t<N>& q, const vec3_t<N>& v);
+
+/**
+ *  @brief reorient
+ *  Multiply a quaternion by a 3D vector, leading to a rotation.
+ *
+ *  @param q
+ *
+ *  @param v
+ *
+ *  @return a 3D vector rotated about a quaternion.
+ */
+template <typename N> inline
+vec3_t<N> reorient(const vec3_t<N>& v, const quat_t<N>& q);
+
+/*-----------------------------------------------------------------------------
     Quaternions & Matrices
 -----------------------------------------------------------------------------*/
 /**
