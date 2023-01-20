@@ -17,29 +17,6 @@
 template <typename data_t, unsigned ExponentBits, unsigned MantissaBits, unsigned Bias>
 class CustomFloat
 {
-
-  private:
-    template <uint64_t NumMaskBits>
-    struct BitMask;
-
-    template <>
-    struct BitMask<0>
-    {
-        static constexpr uint64_t mask_bits(uint64_t bits) noexcept
-        {
-            return bits;
-        }
-    };
-
-    template <uint64_t NumMaskBits>
-    struct BitMask
-    {
-        static constexpr uint64_t mask_bits(uint64_t bits) noexcept
-        {
-            return BitMask<NumMaskBits-1>::mask_bits(bits | (1ull << (NumMaskBits-1ull)));
-        }
-    };
-
   public:
     enum SL_RGB9e5Limits : uint64_t
     {
@@ -47,7 +24,7 @@ class CustomFloat
         EXPONENT_BITS        = ExponentBits,
         MANTISSA_BITS        = MantissaBits,
         EXP_BIAS             = Bias,
-        MAX_VALID_BIASED_EXP = (uint64_t)BitMask<ExponentBits>::mask_bits(0)
+        MAX_VALID_BIASED_EXP = (uint64_t)((1 << ExponentBits)-1)
     };
 
     static constexpr float MAX_EXP_VALUE      = (float)(1 << (MAX_VALID_BIASED_EXP - EXP_BIAS));
