@@ -48,7 +48,7 @@
     #define LS_SIN(x)       std::sin((x))
     #define LS_COS(x)       std::cos((x))
     #define LS_TAN(x)       std::tan((x))
-    #define LS_SQRT(x)      std::fast_sqrt((x))
+    #define LS_SQRT(x)      std::sqrt((x))
 
 #else /* LS_MATH_HIGH_PREC */
 
