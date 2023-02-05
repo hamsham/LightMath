@@ -288,7 +288,7 @@ inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::h
 
 inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 {
-    math::half result;
+    math::half result{0};
 
     result.bits |= decode_2_bits_in_float<0>(tri.circumcenter[0]);
     result.bits |= decode_2_bits_in_float<2>(tri.circumcenter[1]);

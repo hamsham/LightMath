@@ -77,7 +77,7 @@ class CustomFloat
 
     static constexpr CustomFloatInternal set_sign(const CustomFloatInternal& bits, bool sign) noexcept
     {
-        return CustomFloatInternal{bits.raw | ((SIGN_BIT != 0 && sign) ? SIGN_BIT : 0)};
+        return CustomFloatInternal{bits.raw | ((SIGN_BIT != 0 && sign) ? (uint64_t)SIGN_BIT : 0ull)};
     }
 
     static data_t to_custom(float f) noexcept
