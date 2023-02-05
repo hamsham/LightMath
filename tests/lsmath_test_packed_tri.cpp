@@ -6,231 +6,12 @@
  */
 
 #include <iostream>
-#include <iomanip>
-#include <limits>
 
 #include "lightsky/math/mat_utils.h"
 #include "lightsky/math/quat_utils.h"
 #include "lightsky/math/vec_utils.h"
 
 namespace math = ls::math;
-
-
-
-template <typename float_type>
-struct PackedLineLength
-{
-    float_type invMaxLen; // store inverse to allow more precision
-    float_type aOverC;
-};
-
-typedef PackedLineLength<float> PackedLineLength32;
-typedef PackedLineLength<math::half> PackedLineLength16;
-
-
-
-template <typename float_type>
-struct PackedTriLength
-{
-    float_type invMaxLen; // store inverse to allow more precision
-    float_type aOverC;
-    float_type bOverC;
-};
-
-typedef PackedTriLength<float> PackedTriLength32;
-typedef PackedTriLength<math::half> PackedTriLength16;
-
-
-
-inline void sort_floats(float& a, float& b) noexcept
-{
-    float tmp;
-
-    if (a > b)
-    {
-        tmp = a;
-        a = b;
-        b = tmp;
-    }
-}
-
-
-
-inline void sort_floats(float& a, float& b, float& c) noexcept
-{
-    float tmp;
-
-    if (a > b)
-    {
-        tmp = a;
-        a = b;
-        b = tmp;
-    }
-
-    if (a > c)
-    {
-        tmp = a;
-        a = c;
-        c = tmp;
-    }
-
-    if (b > c)
-    {
-        tmp = b;
-        b = c;
-        c = tmp;
-    }
-}
-
-
-
-template <typename float_type>
-PackedLineLength<float_type> pack_floats(float l0, float l1) noexcept
-{
-    sort_floats(l0, l1);
-
-    // compressed form: a single angle and length
-    const PackedLineLength<float_type> ret = {
-        (float_type)(1.f/l1),
-        (float_type)(l0/l1),
-    };
-
-    return ret;
-}
-
-
-
-template <typename float_type>
-PackedTriLength<float_type> pack_floats(float l0, float l1, float l2) noexcept
-{
-    std::cout
-        << "Input Lengths:"
-        << "\n\tIN Len0: " << l0
-        << "\n\tIN Len1: " << l1
-        << "\n\tIN Len2: " << l2
-        << '\n' << std::endl;
-
-    sort_floats(l0, l1, l2);
-
-    // compressed form: a single angle and length
-    const PackedTriLength<float_type> ret = {
-        (float_type)(1.f/l2),
-        (float_type)(l0/l2),
-        (float_type)(l1/l2),
-    };
-
-    /*
-    std::cout
-        << "Compressed data:"
-        << "\n\tMid Length: " << ret.midLen
-        << "\n\tA / B:      " << (float)ret.bOverC
-        << "\n\tB / C:      " << (float)ret.aOverB
-        << '\n' << std::endl;
-    */
-
-    return ret;
-}
-
-
-
-template <typename float_type>
-PackedLineLength<float_type> pack_line_lengths(const math::vec3& a, const math::vec3& b) noexcept
-{
-    float l0 = math::length(a);
-    float l1 = math::length(b);
-    const PackedLineLength<float_type> ret = pack_floats<float_type>(l0, l1);
-
-    return ret;
-}
-
-
-
-template <typename float_type>
-PackedTriLength<float_type> pack_triangle_lengths(const math::vec3& a, const math::vec3& b, const math::vec3& c) noexcept
-{
-    float l0 = math::length(a);
-    float l1 = math::length(b);
-    float l2 = math::length(c);
-    const PackedTriLength<float_type> ret = pack_floats<float_type>(l0, l1, l2);
-
-    return ret;
-}
-
-
-
-template <typename float_type>
-void unpack_line_lengths(const PackedLineLength<float_type>& tri, float& a, float& b) noexcept
-{
-    // output metadata
-    float outCoeff0 = 1.f/(float)tri.invMaxLen;
-    float aOverC    = (float)tri.aOverC;
-    float outCoeff1 = aOverC;
-
-    float outL0 = outCoeff0 * outCoeff1;
-    float outL1 = outCoeff0;
-
-    a = outL0;
-    b = outL1;
-}
-
-
-
-template <typename float_type>
-void unpack_triangle_lengths(const PackedTriLength<float_type>& tri, float& a, float& b, float& c) noexcept
-{
-    // output metadata
-    float outCoeff0 = 1.f/(float)tri.invMaxLen;
-    float aOverC    = (float)tri.aOverC;
-    float bOverC    = (float)tri.bOverC;
-    float outCoeff1 = aOverC;
-    float outCoeff2 = bOverC;
-
-    /*
-    std::cout
-        << "Output coefficients:"
-        << "\n\tA / B:     " << aOverB
-        << "\n\tB / C:     " << bOverC
-        << "\n\tMid Len:   " << outCoeff1
-        << '\n' << std::endl;
-    */
-
-    float outL0 = outCoeff0 * outCoeff1;
-    float outL1 = outCoeff0 * outCoeff2;
-    float outL2 = outCoeff0;
-
-    /*
-    std::cout
-        << "Output Lengths:"
-        << "\n\tLength 0: " << outL0
-        << "\n\tLength 1: " << outL1
-        << "\n\tLength 2: " << outL2
-        << '\n' << std::endl;
-    */
-
-    a = outL0;
-    b = outL1;
-    c = outL2;
-}
-
-
-
-void test_packed_tri_length()
-{
-    //math::vec3 v0 = {42.f, 77.f, 96.f};
-    //math::vec3 v1 = {13.f, -2.f, 86.f};
-    //math::vec3 v2 = {82.f, -15.f, 7.f};
-
-    math::vec3 v0 = {5.75f, 6.9f, 4.25f};
-    math::vec3 v1 = {28.96f, 13.77f, 2.7f};
-    math::vec3 v2 = {1.234f, -33.12f, -1.1f};
-
-    float af, bf, cf;
-    const PackedTriLength32&& test32 = pack_triangle_lengths<float>(v0, v1, v2);
-    unpack_triangle_lengths<float>(test32, af, bf, cf);
-
-    const PackedTriLength16&& test16 = pack_triangle_lengths<math::half>(v0, v1, v2);
-    unpack_triangle_lengths<math::half>(test16, af, bf, cf);
-}
 
 
 
@@ -259,25 +40,6 @@ float circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c
 
 
 
-math::vec3 circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c) noexcept
-{
-    const math::vec3&& ac = c - a;
-    const math::vec3&& ab = b - a;
-    const math::vec3&& abac = math::cross(ab, ac); // triangle normal
-
-    const float abLen = math::length_squared(ab);
-    const float acLen = math::length_squared(ac);
-    const float abacLen = math::length_squared(abac);
-
-    const math::vec3&& abx = math::cross(abac, ab);
-    const math::vec3&& acx = math::cross(ac, abac);
-
-    // center is relative to the vector A
-    return a + (abx * acLen + acx * abLen) / (abacLen + abacLen);
-}
-
-
-
 float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
 {
     const math::vec3&& bc = b - c;
@@ -302,7 +64,7 @@ float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, ma
     const float sc = s-lc;
     const float area = std::sqrt(s*sa*sb*sc);
 
-    return (2.f*area)/p; // radius
+    return area/s; // radius
 }
 
 
@@ -366,26 +128,16 @@ inline math::vec3 spherical_norm_decode(const math::vec2& n) noexcept
 
 
 
-template <bool positiveY>
 inline math::mat3 axial_rotation_matrix(const math::mat3& r, float angleA, float angleB, float angleC) noexcept
 {
     const float cx = std::cos(angleA);
-    const float sx = math::sin(angleA);
+    const float sx = std::sin(angleA);
 
     const float cy = std::cos(angleB);
-    const float sy = math::sin(angleB);
+    const float sy = std::sin(angleB);
 
     const float cz = std::cos(angleC);
-    const float sz = math::sin(angleC);
-
-    if (!positiveY)
-    {
-        return math::mat3{
-            math::normalize(math::vec3{(r.m[0][0] * cx) + (r.m[0][1] * sx), -(r.m[1][0] * cx) - (r.m[1][1] * sx), (r.m[2][0] * cx) + (r.m[2][1] * sx)}),
-            math::normalize(math::vec3{(r.m[0][0] * cy) + (r.m[0][1] * sy), -(r.m[1][0] * cy) - (r.m[1][1] * sy), (r.m[2][0] * cy) + (r.m[2][1] * sy)}),
-            math::normalize(math::vec3{(r.m[0][0] * cz) + (r.m[0][1] * sz), -(r.m[1][0] * cz) - (r.m[1][1] * sz), (r.m[2][0] * cz) + (r.m[2][1] * sz)})
-        };
-    }
+    const float sz = std::sin(angleC);
 
     return math::mat3{
         math::normalize(math::vec3{(r.m[0][0] * cx) + (r.m[0][1] * sx), (r.m[1][0] * cx) + (r.m[1][1] * sx), (r.m[2][0] * cx) + (r.m[2][1] * sx)}),
@@ -396,41 +148,28 @@ inline math::mat3 axial_rotation_matrix(const math::mat3& r, float angleA, float
 
 
 
-inline void create_orthonormal_basis(const math::vec3& n, math::vec3& x, math::vec3& y) noexcept
+inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
 {
     const float sign = n[2] < 0.f ? -1.f : 1.f;
     const float a = -1.f / (sign+n[2]);
     const float b = n[0] * n[1] * a;
-    x = math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]};
-    y = math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]};
+
+    return math::mat3{
+        math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]},
+        -math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]},
+        n
+    };
 }
 
 
 
-math::quat create_orthonormal_basis(const math::vec3& forward, const math::vec3& up) noexcept
+inline math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
 {
-    // forward and size vectors of the coordinate frame
-    const math::vec3 side = math::normalize(math::cross(up, forward));
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float a = -1.f / (sign+n[2]);
+    const float b = n[0] * n[1] * a;
 
-    // cross product of bisection and [0, 0, -1] gives you the
-    // half-sine values required to orientate [0, 0, -1] to f
-    // the dot product gives you half the cosine
-    const math::vec3&& b = math::normalize(forward + math::vec3(0.f, 0.f, -1.f));
-    const math::quat&& p = math::from_axis_angle(math::cross(b, forward), math::dot(b, forward));
-
-    // now we need an additional rotation around the f vector
-    // to orientate the side vector.
-    math::vec3 r{
-        p[3] * p[3] + p[0] * p[0] - p[1] * p[1] - p[2] * p[2],
-        (2.f * p[0] * p[1]) - (2.f * p[3] * p[2]),
-        2.f * p[0] * p[2] + 2.f * p[3] * p[1]
-    };
-
-    const math::vec3&& c = math::normalize(side + r);
-    const math::quat&& q = math::from_axis_angle(math::cross(side, c), math::dot(c, side));
-
-    // now we can take the product of q and p
-    return math::normalize(p * q);
+    return math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]};
 }
 
 
@@ -477,36 +216,100 @@ void test_tri_incenter()
 
 
 
-inline unsigned octahedral_to_int16(const math::vec2& o) noexcept
+struct alignas(uint16_t) PackedTriangle
 {
-    unsigned x = (unsigned)((o[0] * 0.5f + 0.5f)*256.f);
-    unsigned y = (unsigned)((o[1] * 0.5f + 0.5f)*256.f);
-    return x + y * 256u;
-}
+    math::vec2_t<math::half> circumcenter;
+    math::vec2_t<math::half> normal;
 
-
-
-inline math::vec2 int16_to_octahedral(const unsigned o) noexcept
-{
-    float x = (float)(o % 256u) / 256.f;
-    float y = (float)(o / 256u) / 256.f;
-    return math::vec2{x, y} * 2.f - 1.f;
-}
-
-
-
-struct PackedTriangle
-{
-    math::vec2 circumcenter;
-    float distance;
-
-    unsigned normal;
-    float radius;
-
-    float angleA;
-    float angleB;
-    float angleC;
+    math::half distance;
+    math::half angleA;
+    math::half angleB;
+    math::half angleC;
 };
+
+static_assert(sizeof(PackedTriangle) == sizeof(uint16_t)*8, "Invalid size of packed triangle structure.");
+
+
+
+template <uint16_t numShifts>
+inline math::half encode_2_bits_in_float(math::half f, math::half bits) noexcept
+{
+    uint16_t maskedBits = bits.bits & (0x0003u << numShifts);
+    f.bits |= maskedBits << (14-numShifts);
+    return f;
+}
+
+
+
+template <uint16_t numShifts>
+inline uint16_t decode_2_bits_in_float(const math::half f) noexcept
+{
+    uint16_t maskedBits = (f.bits & 0xC000) >> (14-numShifts);
+    return maskedBits;
+}
+
+
+
+template <uint16_t bitPos>
+inline uint16_t extract_sign_bit(math::half f) noexcept
+{
+    uint16_t bit = f.bits & 0x8000;
+    return bit >> (15-bitPos);
+}
+
+
+
+template <uint16_t bitPos>
+inline math::half insert_sign_bit(math::half f, math::half bits) noexcept
+{
+    uint16_t bit = (bits.bits & (1 << bitPos));
+    f.bits |= bit << (15-bitPos);
+    return f;
+}
+
+
+
+inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::half& f) noexcept
+{
+    PackedTriangle result;
+    result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], f);
+    result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], f);
+    result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       f);
+    result.normal[1]       = encode_2_bits_in_float<6>(tri.normal[1],       f);
+    result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          f);
+    result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         f);
+    result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         f);
+    result.distance        = insert_sign_bit<14>(tri.distance,              f);
+
+    return result;
+}
+
+
+
+inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
+{
+    math::half result;
+
+    result.bits |= decode_2_bits_in_float<0>(tri.circumcenter[0]);
+    result.bits |= decode_2_bits_in_float<2>(tri.circumcenter[1]);
+    result.bits |= decode_2_bits_in_float<4>(tri.normal[0]);
+    result.bits |= decode_2_bits_in_float<6>(tri.normal[1]);
+    result.bits |= decode_2_bits_in_float<8>(tri.angleA);
+    result.bits |= decode_2_bits_in_float<10>(tri.angleB);
+    result.bits |= decode_2_bits_in_float<12>(tri.angleC);
+    result.bits |= extract_sign_bit<14>(tri.distance);
+
+    tri.circumcenter[0].bits &= 0x3FFF;
+    tri.circumcenter[1].bits &= 0x3FFF;
+    tri.normal[0].bits &= 0x3FFF;
+    tri.normal[1].bits &= 0x3FFF;
+    tri.angleA.bits &= 0x3FFF;
+    tri.angleB.bits &= 0x3FFF;
+    tri.angleC.bits &= 0x3FFF;
+    tri.distance.bits &= 0x7FFF;
+
+    return result;
+}
 
 
 
@@ -520,36 +323,26 @@ void test_tri_packing(PackedTriangle& outTriData)
     float r = circumcenter(a, b, c, s, n);
     float d = math::length(s);
 
-    const math::vec3&& sn = math::normalize(s);
-    const math::vec2&& sh = spheremap_norm_encode(sn);
-
     const math::vec3&& as = math::normalize(a-s);
     const math::vec3&& bs = math::normalize(b-s);
     const math::vec3&& cs = math::normalize(c-s);
 
-    #if 1
-        math::vec3 right;
-        math::vec3 up;
-        create_orthonormal_basis(n, right, up);
-    #else
-        const math::mat3&& o = math::pure_look_at(math::vec3{0.f}, n, math::vec3{0.f, 1.f, 0.f});
-        const math::vec3& x = o[0];
-        const math::vec3& y = o[1];
-        const math::vec3& z = o[2];
-        const math::vec3 right = {x[0], y[0], z[0]};
-    #endif
+    const math::vec3&& sn = math::normalize(s);
+    const math::vec2&& sh = spheremap_norm_encode(sn);
+    const math::vec2&& m = spheremap_norm_encode(n);
+    const math::vec3&& right = create_orthonormal_basis_x(n);
 
-    const float angleA = -std::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
-    const float angleB = -std::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
-    const float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
-
-    d = n[2] > -0.f ? d : -d;
-    n[2] = std::abs(n[2]);
-    const math::vec2&& m = hemimax_norm_encode(n);
+    float angleA = -std::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
+    float angleB = -std::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
+    float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+    angleA += LS_TWO_PI * math::step(angleA, -0.f);
+    angleB += LS_TWO_PI * math::step(angleB, -0.f);
+    angleC += LS_TWO_PI * math::step(angleC, -0.f);
 
     std::cout
         << "In Triangle:"
         << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tSH:{" << sh[0] << ", " << sh[1] << '}'
         << "\n\tD:  " << d
         << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
         << "\n\tM: {" << m[0] << ", " << m[1] << '}'
@@ -562,56 +355,40 @@ void test_tri_packing(PackedTriangle& outTriData)
         << "\n\tc:  " << angleC
         << '\n' << std::endl;
 
-    outTriData.circumcenter = sh;
-    outTriData.distance = d;
+    outTriData.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
+    outTriData.normal = (math::vec2_t<math::half>)math::clamp(m * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
+    outTriData.distance = (math::half)d;
+    outTriData.angleA = (math::half)math::clamp(angleA/LS_TWO_PI, 0.f, 1.f);
+    outTriData.angleB = (math::half)math::clamp(angleB/LS_TWO_PI, 0.f, 1.f);
+    outTriData.angleC = (math::half)math::clamp(angleC/LS_TWO_PI, 0.f, 1.f);
 
-    outTriData.normal = octahedral_to_int16(m);
-    outTriData.radius = r;
-
-    outTriData.angleA = angleA;
-    outTriData.angleB = angleB;
-    outTriData.angleC = angleC;
+    outTriData = encode_tri_radius(outTriData, (math::half)r);
 }
 
 
 
-void test_tri_unpacking(const PackedTriangle& triData)
+void test_tri_unpacking(PackedTriangle triData)
 {
-    const math::vec3&& sn = spheremap_norm_decode(triData.circumcenter);
-    const float d = triData.distance;
-    const math::vec3&& s = sn * math::abs(d);
+    const float r = (float)decode_tri_radius(triData);
 
-    const math::vec2 m = int16_to_octahedral(triData.normal);
-    math::vec3&& n = hemimax_norm_decode(m);
-    float r = triData.radius;
+    const math::vec2&& sn = (math::vec2)triData.circumcenter * 2.f - 1.f;
+    const math::vec2&& m = (math::vec2)triData.normal * 2.f - 1.f;
+    float d = (float)triData.distance;
 
-    n[2] = d > -0.f ? n[2] : -n[2];
+    const float angleA = (float)triData.angleA * LS_TWO_PI;
+    const float angleB = (float)triData.angleB * LS_TWO_PI;
+    const float angleC = (float)triData.angleC * LS_TWO_PI;
 
-    const float angleA = triData.angleA;
-    const float angleB = triData.angleB;
-    const float angleC = triData.angleC;
+    const math::vec3&& s = spheremap_norm_decode(sn) * d;
+    const math::vec3&& n = spheremap_norm_decode(m);
+    const math::mat3&& o = create_orthonormal_basis(n);
+    const math::mat3&& v = axial_rotation_matrix(o, angleA, angleB, angleC);
 
-    math::mat3 v;
+    const math::vec3&& a = (v[0] * r) + s;
+    const math::vec3&& b = (v[1] * r) + s;
+    const math::vec3&& c = (v[2] * r) + s;
 
-    #if 1
-        math::mat3 o;
-        o[2] = n;
-        create_orthonormal_basis(n, o[0], o[1]);
-        v = axial_rotation_matrix<false>(o, angleA, angleB, angleC);
-    #else
-        const math::mat3&& o = math::pure_look_at(math::vec3{0.f}, n, math::vec3{0.f, 1.f, 0.f});
-        v = axial_rotation_matrix<true>(o, angleA, angleB, angleC);
-    #endif
-
-    const math::vec3& x = v[0];
-    const math::vec3& y = v[1];
-    const math::vec3& z = v[2];
-
-    const math::vec3&& a = (x * r) + s;
-    const math::vec3&& b = (y * r) + s;
-    const math::vec3&& c = (z * r) + s;
-
-    std::cout //<< std::setprecision(std::numeric_limits<float>::digits)
+    std::cout
         << "Out Triangle:"
         << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
         << "\n\tD:  " << d
@@ -631,36 +408,37 @@ void test_tri_unpacking(const PackedTriangle& triData)
 
 int main()
 {
-    //test_packed_tri_length();
-    //test_tri_circumcemath::length(nter();
-    //test_tri_incenter();
+    /*
+    test_tri_circumcenter();
+    test_tri_incenter();
+    */
 
     PackedTriangle triData;
     test_tri_packing(triData);
     test_tri_unpacking(triData);
 
     #if 0
-    math::vec3&& m = math::normalize(math::vec3{1.5f, 1.3f, 2.f});
-    math::vec3&& n = math::normalize(math::vec3{8.f, 1.42f, 0.77f});
-    std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
-    std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
+        math::vec3&& m = math::normalize(math::vec3{1.5f, 1.3f, 2.f});
+        math::vec3&& n = math::normalize(math::vec3{8.f, 1.42f, 0.77f});
+        std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
+        std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
 
-    math::vec2 sh = hemimax_norm_encode(m);
-    math::vec2 nh = hemimax_norm_encode(n);
-    std::cout << "R:  " << math::length(sh) << std::endl;
-    std::cout << "R:  " << math::length(nh) << std::endl;
-    std::cout << "E: {" << sh[0] << ", " << sh[1] << '}' << std::endl;
-    std::cout << "F: {" << nh[0] << ", " << nh[1] << '}' << std::endl;
+        math::vec2 sh = hemimax_norm_encode(m);
+        math::vec2 nh = hemimax_norm_encode(n);
+        std::cout << "R:  " << math::length(sh) << std::endl;
+        std::cout << "R:  " << math::length(nh) << std::endl;
+        std::cout << "E: {" << sh[0] << ", " << sh[1] << '}' << std::endl;
+        std::cout << "F: {" << nh[0] << ", " << nh[1] << '}' << std::endl;
 
-    math::vec2 r = sh / nh;
-    std::cout << "R0: " << r[0] << std::endl;
-    std::cout << "R1: " << r[1] << std::endl;
+        math::vec2 r = sh / nh;
+        std::cout << "R0: " << r[0] << std::endl;
+        std::cout << "R1: " << r[1] << std::endl;
 
-    m = hemimax_norm_decode(math::vec2{sh[1]-sh[0], -sh[0]});
-    n = hemimax_norm_decode(sh / r);
+        m = hemimax_norm_decode(math::vec2{sh[1]-sh[0], -sh[0]});
+        n = hemimax_norm_decode(sh / r);
 
-    std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
-    std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
+        std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
+        std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
     #endif
 
     return 0;
