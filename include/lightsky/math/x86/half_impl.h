@@ -23,9 +23,9 @@ namespace math
 -------------------------------------*/
 inline LS_INLINE half::half(const float f) noexcept :
     #if defined(LS_COMPILER_MSC)
-        bits{(uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC) & 0x07U))}
+        bits{(uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC) & 0x07U))}
     #else
-        bits{_cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC)}
+        bits{_cvtss_sh(f, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC)}
     #endif
 {}
 
@@ -37,9 +37,9 @@ inline LS_INLINE half::half(const float f) noexcept :
 inline LS_INLINE half& half::operator=(const float f) noexcept
 {
     #if defined(LS_COMPILER_MSC)
-        bits = (uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC) & 0x07U));
+        bits = (uint16_t)_mm_cvtsi128_si32(_mm_cvtps_ph(_mm_set_ss(f), (_MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC) & 0x07U));
     #else
-        bits = _cvtss_sh(f, _MM_FROUND_TO_ZERO|_MM_FROUND_NO_EXC);
+        bits = _cvtss_sh(f, _MM_FROUND_TO_NEAREST_INT|_MM_FROUND_NO_EXC);
     #endif
 
     return *this;

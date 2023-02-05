@@ -58,7 +58,7 @@ math::vec2_t<num_t> math::normalize(const vec2_t <num_t>& v) noexcept
 {
     //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec2_t<num_t>&& temp = v * v;
-    return v / math::fast_sqrt(math::sum<num_t>(temp));
+    return v / std::sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -76,7 +76,7 @@ num_t math::length_squared(const vec2_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec2_t <num_t>& v) noexcept
 {
-    return math::fast_sqrt(math::length_squared<num_t>(v));
+    return std::sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
@@ -495,7 +495,7 @@ math::vec3_t<num_t> math::normalize(const vec3_t <num_t>& v) noexcept
 {
     //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec3_t<num_t>&& temp = v * v;
-    return v / math::fast_sqrt(math::sum<num_t>(temp));
+    return v / std::sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -513,7 +513,7 @@ num_t math::length_squared(const vec3_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec3_t <num_t>& v) noexcept
 {
-    return math::fast_sqrt(math::length_squared<num_t>(v));
+    return std::sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
@@ -969,7 +969,7 @@ math::vec4_t<num_t> math::normalize(const vec4_t <num_t>& v) noexcept
 {
     //return v * inversesqrt(math::length_squared<num_t>(v));
     const math::vec4_t<num_t>&& temp = v * v;
-    return v / math::fast_sqrt(math::sum<num_t>(temp));
+    return v / std::sqrt(math::sum<num_t>(temp));
 }
 
 /*-------------------------------------
@@ -987,7 +987,7 @@ num_t math::length_squared(const vec4_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 num_t math::length(const vec4_t <num_t>& v) noexcept
 {
-    return math::fast_sqrt(math::length_squared<num_t>(v));
+    return std::sqrt(math::length_squared<num_t>(v));
 }
 
 /*-------------------------------------
