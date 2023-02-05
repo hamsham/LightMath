@@ -223,6 +223,9 @@ int main()
     std::cout << "GLM quat1 * mat4: " << glm::mat4_cast(glmQuat1) * glmMat << std::endl;
     std::cout << "ls quat1 * mat4: " << ls::math::quat_to_mat4(lsQuat1) * lsMat << std::endl;
 
+    std::cout << "GLM mat4 to quat1: " << glm::quat_cast(glmMat) << std::endl;
+    std::cout << "ls mat4 to quat1: " << ls::math::mat_to_quat(lsMat) << std::endl;
+
     std::cout << std::endl;
 
     return 0;
