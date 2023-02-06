@@ -69,10 +69,53 @@ float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, ma
 
 
 
+void test_tri_circumcenter()
+{
+    math::vec3 a = {5.75f, 6.9f, 4.25f};
+    math::vec3 b = {13.77f, 8.96f, 2.7f};
+    math::vec3 c = {1.234f, -3.12f, -1.1f};
+    math::vec3 s, n;
+    float r = circumcenter(a, b, c, s, n);
+
+    std::cout
+        << "Curcumcenter:"
+        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tRadius: " << r
+        << '\n' << std::endl;
+}
+
+
+
+void test_tri_incenter()
+{
+    math::vec3 a = {5.75f, 6.9f, 4.25f};
+    math::vec3 b = {13.77f, 8.96f, 2.7f};
+    math::vec3 c = {1.234f, -3.12f, -1.1f};
+    math::vec3 s, n;
+    float r = incenter(a, b, c, s, n);
+
+    std::cout
+        << "Incenter:"
+        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tRadius: " << r
+        << '\n' << std::endl;
+}
+
+
+
 inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
-    return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
+    //return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
+    return math::vec2_cast(n) * math::inversesqrt(2.f * n[2] + 2.f);
 }
 
 
@@ -174,48 +217,6 @@ inline math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
 
 
 
-void test_tri_circumcenter()
-{
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
-    math::vec3 s, n;
-    float r = circumcenter(a, b, c, s, n);
-
-    std::cout
-        << "Curcumcenter:"
-        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
-        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
-        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tRadius: " << r
-        << '\n' << std::endl;
-}
-
-
-
-void test_tri_incenter()
-{
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
-    math::vec3 s, n;
-    float r = incenter(a, b, c, s, n);
-
-    std::cout
-        << "Incenter:"
-        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
-        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
-        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tRadius: " << r
-        << '\n' << std::endl;
-}
-
-
-
 struct alignas(uint16_t) PackedTriangle
 {
     math::vec2_t<math::half> circumcenter;
@@ -269,17 +270,19 @@ inline math::half insert_sign_bit(math::half f, math::half bits) noexcept
 
 
 
-inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::half& f) noexcept
+inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::half& radius) noexcept
 {
+    // exploit the spare 2 bits of each of the 7 input variables, plus sign bit
+    // of the circumcenter's distance from origin, for a total of 15 spare bits
     PackedTriangle result;
-    result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], f);
-    result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], f);
-    result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       f);
-    result.normal[1]       = encode_2_bits_in_float<6>(tri.normal[1],       f);
-    result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          f);
-    result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         f);
-    result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         f);
-    result.distance        = insert_sign_bit<14>(tri.distance,              f);
+    result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], radius);
+    result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], radius);
+    result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       radius);
+    result.normal[1]       = encode_2_bits_in_float<6>(tri.normal[1],       radius);
+    result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          radius);
+    result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         radius);
+    result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         radius);
+    result.distance        = insert_sign_bit<14>(tri.distance,              radius);
 
     return result;
 }
@@ -299,6 +302,7 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
     result.bits |= decode_2_bits_in_float<12>(tri.angleC);
     result.bits |= extract_sign_bit<14>(tri.distance);
 
+    // Reset the highest 2 bits of each IEEE half-float
     tri.circumcenter[0].bits &= 0x3FFF;
     tri.circumcenter[1].bits &= 0x3FFF;
     tri.normal[0].bits &= 0x3FFF;
@@ -306,7 +310,7 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
     tri.angleA.bits &= 0x3FFF;
     tri.angleB.bits &= 0x3FFF;
     tri.angleC.bits &= 0x3FFF;
-    tri.distance.bits &= 0x7FFF;
+    tri.distance.bits &= 0x7FFF; // only reset the sign bit here
 
     return result;
 }
@@ -320,84 +324,122 @@ void test_tri_packing(PackedTriangle& outTriData)
     math::vec3 c = {1.234f, -3.12f, -1.1f};
 
     math::vec3 s, n;
+
+    // triangle packing using the circumcenter and signed angles to each vertex
     float r = circumcenter(a, b, c, s, n);
     float d = math::length(s);
 
+    // subtract circumcenter from each vertex to place them in a common basis
     const math::vec3&& as = math::normalize(a-s);
     const math::vec3&& bs = math::normalize(b-s);
     const math::vec3&& cs = math::normalize(c-s);
 
+    // encode the circumcenter and normal as 2-component vectors in the range
+    // of (0, 1). This range will help with reconstruction
     const math::vec3&& sn = math::normalize(s);
+
+    // Although Spheremap-encoding is more expensive to encode/decode than
+    // Octahedral normal encoding, it allows for a signed z-component.
     const math::vec2&& sh = spheremap_norm_encode(sn);
     const math::vec2&& m = spheremap_norm_encode(n);
+
+    // Generate an orthonormal basis using the revised Frisvad method from Duff
+    // et. al:
+    // https://jcgt.org/published/0006/01/01/
     const math::vec3&& right = create_orthonormal_basis_x(n);
 
+    // Retrieve the angles to each vertex along the triangle's plane using our
+    // orthonormal basis
     float angleA = -std::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
     float angleB = -std::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
     float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+
+    // Ensure all values are greater than 0 (see below for reasoning).
     angleA += LS_TWO_PI * math::step(angleA, -0.f);
     angleB += LS_TWO_PI * math::step(angleB, -0.f);
     angleC += LS_TWO_PI * math::step(angleC, -0.f);
 
+    // Debug
     std::cout
         << "In Triangle:"
-        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tSH:{" << sh[0] << ", " << sh[1] << '}'
-        << "\n\tD:  " << d
-        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tM: {" << m[0] << ", " << m[1] << '}'
-        << "\n\tR:  " << r
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
         << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
         << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tD:  " << d
+        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tR:  " << r
         << "\n\ta:  " << angleA
         << "\n\tb:  " << angleB
         << "\n\tc:  " << angleC
         << '\n' << std::endl;
 
-    outTriData.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    outTriData.normal = (math::vec2_t<math::half>)math::clamp(m * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    outTriData.distance = (math::half)d;
-    outTriData.angleA = (math::half)math::clamp(angleA/LS_TWO_PI, 0.f, 1.f);
-    outTriData.angleB = (math::half)math::clamp(angleB/LS_TWO_PI, 0.f, 1.f);
-    outTriData.angleC = (math::half)math::clamp(angleC/LS_TWO_PI, 0.f, 1.f);
+    // Force all values to be within the range of (0, 1), with the exception of
+    // the distance to our triangle's circumcenter. Because all 8 values are
+    // IEEE 16-bit half-precision floats we can exploit the highest 2 bits* of
+    // each variable (for a total of 15 reclaimed bits) to encode the
+    // circumcenter's radius without the explicit need for extra storage.
+    //
+    // *The circumcenter's distance is unbounded above zero, so we may only use
+    // the sign-bit. This is fine as the radius is always positive and only
+    // needs 15 bits to be stored correctly.
+    PackedTriangle result;
+    result.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
+    result.normal = (math::vec2_t<math::half>)math::clamp(m * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
+    result.distance = (math::half)d;
+    result.angleA = (math::half)math::clamp(angleA/LS_TWO_PI, 0.f, 1.f);
+    result.angleB = (math::half)math::clamp(angleB/LS_TWO_PI, 0.f, 1.f);
+    result.angleC = (math::half)math::clamp(angleC/LS_TWO_PI, 0.f, 1.f);
 
-    outTriData = encode_tri_radius(outTriData, (math::half)r);
+    // Encode the radius' 15 bits in our reclaimed spare bits
+    outTriData = encode_tri_radius(result, (math::half)r);
 }
 
 
 
 void test_tri_unpacking(PackedTriangle triData)
 {
+    // Decode the radius' 15 bits from our reclaimed spare bits
     const float r = (float)decode_tri_radius(triData);
 
+    // decode the direction to our triangle's circumcenter
     const math::vec2&& sn = (math::vec2)triData.circumcenter * 2.f - 1.f;
+
+    // decode the triangle's face normal
     const math::vec2&& m = (math::vec2)triData.normal * 2.f - 1.f;
+
+    // decode the distance to the triangle's circumcenter
     float d = (float)triData.distance;
 
+    // Decode the angles from the circumcenter's orthonormal basis to each
+    // vertex.
     const float angleA = (float)triData.angleA * LS_TWO_PI;
     const float angleB = (float)triData.angleB * LS_TWO_PI;
     const float angleC = (float)triData.angleC * LS_TWO_PI;
 
     const math::vec3&& s = spheremap_norm_decode(sn) * d;
     const math::vec3&& n = spheremap_norm_decode(m);
+
+    // Rebuild the orthonormal basis of our triangle using the same method
+    // performed during encoding. This will give us a fairly accurate
+    // reconstruction of each vertex.
     const math::mat3&& o = create_orthonormal_basis(n);
     const math::mat3&& v = axial_rotation_matrix(o, angleA, angleB, angleC);
 
+    // Expand the vertices to their original positions
     const math::vec3&& a = (v[0] * r) + s;
     const math::vec3&& b = (v[1] * r) + s;
     const math::vec3&& c = (v[2] * r) + s;
 
     std::cout
         << "Out Triangle:"
-        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tD:  " << d
-        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tM: {" << m[0] << ", " << m[1] << '}'
-        << "\n\tR:  " << r
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
         << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
         << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tD:  " << d
+        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tR:  " << r
         << "\n\ta:  " << angleA
         << "\n\tb:  " << angleB
         << "\n\tc:  " << angleC
