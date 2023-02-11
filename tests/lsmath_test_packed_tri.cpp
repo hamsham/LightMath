@@ -129,6 +129,44 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 
 
 
+inline math::vec2 octahedral_norm_encode(const math::vec3& n) noexcept
+{
+    math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
+    m[0] += m[2] >= 0.f ? 0.f : 1.f;
+    m[1] += m[2] >= 0.f ? 0.f : 1.f;
+    return math::vec2_cast(m);// * num_t{0.5} + num_t{0.5};
+}
+
+
+
+inline math::vec3 octahedral_norm_decode(const math::vec2& n) noexcept
+{
+    math::vec2 f = n;// * num_t{2.0} - num_t{1.0};
+    math::vec3&& m = {f[0], f[1], 1.f - math::abs(f[0]) - math::abs(f[1])};
+    float t = math::saturate(-m[2]);
+    m[0] -= std::copysign(t, m[0]);
+    m[1] -= std::copysign(t, m[1]);
+    return math::normalize(m);
+}
+
+
+
+inline math::vec2 octahedral_norm_encode2(const math::vec3& n) noexcept
+{
+    math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
+    return math::vec2{m[0] + m[1], m[0] - m[1]};
+}
+
+
+
+inline math::vec3 octahedral_norm_decode2(const math::vec2& n) noexcept
+{
+    const math::vec2 f{n[0] + n[1], n[0] - n[1]};
+    return math::normalize(math::vec3{f[0], f[1], 2.f - math::abs(f[0]) - math::abs(f[1])});
+}
+
+
+
 inline math::vec2 hemimax_norm_encode(const math::vec3& n) noexcept
 {
     math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
@@ -171,21 +209,100 @@ inline math::vec3 spherical_norm_decode(const math::vec2& n) noexcept
 
 
 
+inline math::vec2 norm_encode(const math::vec3& n) noexcept
+{
+    #if 1
+        return spheremap_norm_encode(n);
+    #elif 1
+        return octahedral_norm_encode(n);
+    #elif 1
+        return octahedral_norm_encode2(n);
+    #elif 1
+        return hemimax_norm_encode(n);
+    #else
+        return spherical_norm_encode(n);
+    #endif
+}
+
+
+
+inline math::vec3 norm_decode(const math::vec2& n) noexcept
+{
+    #if 1
+        return spheremap_norm_decode(n);
+    #elif 1
+        return octahedral_norm_decode(n);
+    #elif 1
+        return octahedral_norm_decode2(n);
+    #elif 1
+        return hemimax_norm_decode(n);
+    #else
+        return spherical_norm_decode(n);
+    #endif
+}
+
+
+
+constexpr math::vec2 cos_sin_sign(const math::vec2& x) noexcept
+{
+    return math::vec2{
+        (x[0] < 0.f ? -1.f : (x[0] > 0.f ? 1.f : 0.f)),
+        (x[1] < 0.f ? -1.f : (x[1] > 0.f ? 1.f : 0.f))
+    };
+}
+
+
+
+constexpr math::vec2 cos_sin_floor(const math::vec2& n) noexcept
+{
+    return math::vec2{
+        static_cast<float>(static_cast<long long>(n[0]) - (n[0] < 0.f)),
+        static_cast<float>(static_cast<long long>(n[1]) - (n[1] < 0.f))
+    };
+}
+
+
+
+constexpr math::vec2 cos_sin_fract(const math::vec2& n) noexcept
+{
+    return n - cos_sin_floor(n);
+}
+
+
+
+// Cosine/Sine approximation adapted from Demofox,
+// https://www.shadertoy.com/view/XddSzH
+inline math::vec2 cos_sin(float x) noexcept
+{
+    // x is between 0-1, corresponding to 0-360 degrees
+    const math::vec2& si = cos_sin_fract(math::vec2{0.5f, 1.f} - x * 2.f) * 2.f - 1.f;
+    const math::vec2& so = cos_sin_sign(math::vec2{0.5f} - cos_sin_fract(math::vec2{0.25f, 0.5f} - x));
+    return so * (math::vec2{20.f} / (si*si + 4.f) - 4.f);
+}
+
+
+
 inline math::mat3 axial_rotation_matrix(const math::mat3& r, float angleA, float angleB, float angleC) noexcept
 {
-    const float cx = std::cos(angleA);
-    const float sx = std::sin(angleA);
-
-    const float cy = std::cos(angleB);
-    const float sy = std::sin(angleB);
-
-    const float cz = std::cos(angleC);
-    const float sz = std::sin(angleC);
+    #if 1
+        // use a custom cos & sin approximation for better performance while
+        // also taking into account the angles encoded between 0 through 1.
+        const math::vec2&& x = cos_sin(angleA);
+        const math::vec2&& y = cos_sin(angleB);
+        const math::vec2&& z = cos_sin(angleC);
+    #else
+        angleA *= LS_TWO_PI;
+        angleB *= LS_TWO_PI;
+        angleC *= LS_TWO_PI;
+        const math::vec2&& x = math::vec2{std::cos(angleA), std::sin(angleA)};
+        const math::vec2&& y = math::vec2{std::cos(angleB), std::sin(angleB)};
+        const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
+    #endif
 
     return math::mat3{
-        math::normalize(math::vec3{(r.m[0][0] * cx) + (r.m[0][1] * sx), (r.m[1][0] * cx) + (r.m[1][1] * sx), (r.m[2][0] * cx) + (r.m[2][1] * sx)}),
-        math::normalize(math::vec3{(r.m[0][0] * cy) + (r.m[0][1] * sy), (r.m[1][0] * cy) + (r.m[1][1] * sy), (r.m[2][0] * cy) + (r.m[2][1] * sy)}),
-        math::normalize(math::vec3{(r.m[0][0] * cz) + (r.m[0][1] * sz), (r.m[1][0] * cz) + (r.m[1][1] * sz), (r.m[2][0] * cz) + (r.m[2][1] * sz)})
+        math::normalize(math::vec3{(r.m[0][0] * x[0]) + (r.m[0][1] * x[1]), (r.m[1][0] * x[0]) + (r.m[1][1] * x[1]), (r.m[2][0] * x[0]) + (r.m[2][1] * x[1])}),
+        math::normalize(math::vec3{(r.m[0][0] * y[0]) + (r.m[0][1] * y[1]), (r.m[1][0] * y[0]) + (r.m[1][1] * y[1]), (r.m[2][0] * y[0]) + (r.m[2][1] * y[1])}),
+        math::normalize(math::vec3{(r.m[0][0] * z[0]) + (r.m[0][1] * z[1]), (r.m[1][0] * z[0]) + (r.m[1][1] * z[1]), (r.m[2][0] * z[0]) + (r.m[2][1] * z[1])})
     };
 }
 
@@ -340,8 +457,8 @@ void test_tri_packing(PackedTriangle& outTriData)
 
     // Although Spheremap-encoding is more expensive to encode/decode than
     // Octahedral normal encoding, it allows for a signed z-component.
-    const math::vec2&& sh = spheremap_norm_encode(sn);
-    const math::vec2&& m = spheremap_norm_encode(n);
+    const math::vec2&& sh = norm_encode(sn);
+    const math::vec2&& m = norm_encode(n);
 
     // Generate an orthonormal basis using the revised Frisvad method from Duff
     // et. al:
@@ -354,10 +471,26 @@ void test_tri_packing(PackedTriangle& outTriData)
     float angleB = -std::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
     float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
 
-    // Ensure all values are greater than 0 (see below for reasoning).
-    angleA += LS_TWO_PI * math::step(angleA, -0.f);
-    angleB += LS_TWO_PI * math::step(angleB, -0.f);
-    angleC += LS_TWO_PI * math::step(angleC, -0.f);
+    // Ensure all angles are greater than 0 (see below for reasoning) and less
+    // than or equal to 1.
+    if (angleA < 0.f)
+    {
+        angleA += LS_TWO_PI;
+    }
+
+    if (angleB < 0.f)
+    {
+        angleB += LS_TWO_PI;
+    }
+
+    if (angleC < 0.f)
+    {
+        angleC += LS_TWO_PI;
+    }
+
+    angleA /= LS_TWO_PI;
+    angleB /= LS_TWO_PI;
+    angleC /= LS_TWO_PI;
 
     // Debug
     std::cout
@@ -387,9 +520,9 @@ void test_tri_packing(PackedTriangle& outTriData)
     result.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
     result.normal = (math::vec2_t<math::half>)math::clamp(m * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
     result.distance = (math::half)d;
-    result.angleA = (math::half)math::clamp(angleA/LS_TWO_PI, 0.f, 1.f);
-    result.angleB = (math::half)math::clamp(angleB/LS_TWO_PI, 0.f, 1.f);
-    result.angleC = (math::half)math::clamp(angleC/LS_TWO_PI, 0.f, 1.f);
+    result.angleA = (math::half)math::clamp(angleA, 0.f, 1.f);
+    result.angleB = (math::half)math::clamp(angleB, 0.f, 1.f);
+    result.angleC = (math::half)math::clamp(angleC, 0.f, 1.f);
 
     // Encode the radius' 15 bits in our reclaimed spare bits
     outTriData = encode_tri_radius(result, (math::half)r);
@@ -412,13 +545,13 @@ void test_tri_unpacking(PackedTriangle triData)
     float d = (float)triData.distance;
 
     // Decode the angles from the circumcenter's orthonormal basis to each
-    // vertex.
-    const float angleA = (float)triData.angleA * LS_TWO_PI;
-    const float angleB = (float)triData.angleB * LS_TWO_PI;
-    const float angleC = (float)triData.angleC * LS_TWO_PI;
+    // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
+    const float angleA = (float)triData.angleA;
+    const float angleB = (float)triData.angleB;
+    const float angleC = (float)triData.angleC;
 
-    const math::vec3&& s = spheremap_norm_decode(sn) * d;
-    const math::vec3&& n = spheremap_norm_decode(m);
+    const math::vec3&& s = norm_decode(sn) * d;
+    const math::vec3&& n = norm_decode(m);
 
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
