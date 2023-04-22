@@ -245,7 +245,7 @@ inline LS_INLINE int sign_mask(const vec4_t<float>& x) noexcept
     #if defined(LS_ARCH_AARCH64)
         const uint32x4_t zero     = veorq_u32(vreinterpretq_u32_f32(x.simd), vreinterpretq_u32_f32(x.simd));
         const uint32x4_t signBits = vcltq_f32(x.simd, vreinterpretq_f32_u32(zero));
-        const int32x4_t  masks    = vcombine_u32(vcreate_u32(0x0000000200000001), vcreate_u32(0x0000000800000004));
+        const uint32x4_t masks    = vcombine_u32(vcreate_u32(0x0000000200000001), vcreate_u32(0x0000000800000004));
         const uint32x4_t bits     = vandq_u32(masks, signBits);
 
         // Adding powers-of-two only sets the corresponding bits.

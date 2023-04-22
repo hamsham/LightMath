@@ -491,60 +491,60 @@ constexpr LS_INLINE
 bool vec4_t<float>::operator==(const vec4_t<float>& compare) const
 {
     return
-        v[0] == compare[0] &&
-        v[1] == compare[1] &&
-        v[2] == compare[2] &&
-        v[3] == compare[3];
+        v[0] == compare.v[0] &&
+        v[1] == compare.v[1] &&
+        v[2] == compare.v[2] &&
+        v[3] == compare.v[3];
 }
 
 constexpr LS_INLINE
 bool vec4_t<float>::operator!=(const vec4_t<float>& compare) const
 {
     return
-        v[0] != compare[0] ||
-        v[1] != compare[1] ||
-        v[2] != compare[2] ||
-        v[3] != compare[3];
+        v[0] != compare.v[0] ||
+        v[1] != compare.v[1] ||
+        v[2] != compare.v[2] ||
+        v[3] != compare.v[3];
 }
 
 constexpr LS_INLINE
 bool vec4_t<float>::operator<(const vec4_t<float>& compare) const
 {
     return
-        v[0] < compare[0] &&
-        v[1] < compare[1] &&
-        v[2] < compare[2] &&
-        v[3] < compare[3];
+        v[0] < compare.v[0] &&
+        v[1] < compare.v[1] &&
+        v[2] < compare.v[2] &&
+        v[3] < compare.v[3];
 }
 
 constexpr LS_INLINE
 bool vec4_t<float>::operator>(const vec4_t<float>& compare) const
 {
     return
-        v[0] > compare[0] &&
-        v[1] > compare[1] &&
-        v[2] > compare[2] &&
-        v[3] > compare[3];
+        v[0] > compare.v[0] &&
+        v[1] > compare.v[1] &&
+        v[2] > compare.v[2] &&
+        v[3] > compare.v[3];
 }
 
 constexpr LS_INLINE
 bool vec4_t<float>::operator<=(const vec4_t<float>& compare) const
 {
     return
-        v[0] <= compare[0] &&
-        v[1] <= compare[1] &&
-        v[2] <= compare[2] &&
-        v[3] <= compare[3];
+        v[0] <= compare.v[0] &&
+        v[1] <= compare.v[1] &&
+        v[2] <= compare.v[2] &&
+        v[3] <= compare.v[3];
 }
 
 constexpr LS_INLINE
 bool vec4_t<float>::operator>=(const vec4_t<float>& compare) const
 {
     return
-        v[0] >= compare[0] &&
-        v[1] >= compare[1] &&
-        v[2] >= compare[2] &&
-        v[3] >= compare[3];
+        v[0] >= compare.v[0] &&
+        v[1] >= compare.v[1] &&
+        v[2] >= compare.v[2] &&
+        v[3] >= compare.v[3];
 }
 
 /*-------------------------------------
