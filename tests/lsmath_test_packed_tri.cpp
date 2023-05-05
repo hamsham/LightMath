@@ -115,7 +115,7 @@ inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
     //return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
-    return math::vec2_cast(n) * math::inversesqrt(2.f * n[2] + 2.f);
+    return math::vec2_cast(n) * math::inversesqrt(n[2] + n[2] + 2.f);
 }
 
 
@@ -124,7 +124,7 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
     float f = math::length_squared(n);
-    return math::vec3_cast(n * 2.f * std::sqrt(1.f - f), 1.f - 2.f * f);
+    return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - 2.f * f);
 }
 
 
@@ -275,14 +275,14 @@ constexpr math::vec2 cos_sin_fract(const math::vec2& n) noexcept
 inline math::vec2 cos_sin(float x) noexcept
 {
     // x is between 0-1, corresponding to 0-360 degrees
-    const math::vec2& si = cos_sin_fract(math::vec2{0.5f, 1.f} - x * 2.f) * 2.f - 1.f;
+    const math::vec2& si = cos_sin_fract(math::vec2{0.5f, 1.f} - (x + x)) * 2.f - 1.f;
     const math::vec2& so = cos_sin_sign(math::vec2{0.5f} - cos_sin_fract(math::vec2{0.25f, 0.5f} - x));
     return so * (math::vec2{20.f} / (si*si + 4.f) - 4.f);
 }
 
 
 
-inline math::mat3 axial_rotation_matrix(const math::mat3& r, float angleA, float angleB, float angleC) noexcept
+inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, float angleB, float angleC) noexcept
 {
     #if 1
         // use a custom cos & sin approximation for better performance while
@@ -299,10 +299,15 @@ inline math::mat3 axial_rotation_matrix(const math::mat3& r, float angleA, float
         const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
     #endif
 
+    const math::vec2&& bx = math::vec2_cast(basis[0]);
+    const math::vec2&& by = math::vec2_cast(basis[1]);
+    const math::vec2&& bz = math::vec2_cast(basis[2]);
+
+    // normalize?
     return math::mat3{
-        math::normalize(math::vec3{(r.m[0][0] * x[0]) + (r.m[0][1] * x[1]), (r.m[1][0] * x[0]) + (r.m[1][1] * x[1]), (r.m[2][0] * x[0]) + (r.m[2][1] * x[1])}),
-        math::normalize(math::vec3{(r.m[0][0] * y[0]) + (r.m[0][1] * y[1]), (r.m[1][0] * y[0]) + (r.m[1][1] * y[1]), (r.m[2][0] * y[0]) + (r.m[2][1] * y[1])}),
-        math::normalize(math::vec3{(r.m[0][0] * z[0]) + (r.m[0][1] * z[1]), (r.m[1][0] * z[0]) + (r.m[1][1] * z[1]), (r.m[2][0] * z[0]) + (r.m[2][1] * z[1])})
+        math::vec3{math::dot(bx, x), math::dot(by, x), math::dot(bz, x)},
+        math::vec3{math::dot(bx, y), math::dot(by, y), math::dot(bz, y)},
+        math::vec3{math::dot(bx, z), math::dot(by, z), math::dot(bz, z)}
     };
 }
 
@@ -345,7 +350,7 @@ struct alignas(uint16_t) PackedTriangle
     math::half angleC;
 };
 
-static_assert(sizeof(PackedTriangle) == sizeof(uint16_t)*8, "Invalid size of packed triangle structure.");
+static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of packed triangle structure.");
 
 
 
@@ -410,24 +415,56 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 {
     math::half result{0};
 
-    result.bits |= decode_2_bits_in_float<0>(tri.circumcenter[0]);
-    result.bits |= decode_2_bits_in_float<2>(tri.circumcenter[1]);
-    result.bits |= decode_2_bits_in_float<4>(tri.normal[0]);
-    result.bits |= decode_2_bits_in_float<6>(tri.normal[1]);
-    result.bits |= decode_2_bits_in_float<8>(tri.angleA);
-    result.bits |= decode_2_bits_in_float<10>(tri.angleB);
-    result.bits |= decode_2_bits_in_float<12>(tri.angleC);
-    result.bits |= extract_sign_bit<14>(tri.distance);
+    #ifndef LS_X86_BMI2
+        result.bits |= decode_2_bits_in_float<0>(tri.circumcenter[0]);
+        result.bits |= decode_2_bits_in_float<2>(tri.circumcenter[1]);
+        result.bits |= decode_2_bits_in_float<4>(tri.normal[0]);
+        result.bits |= decode_2_bits_in_float<6>(tri.normal[1]);
+        result.bits |= decode_2_bits_in_float<8>(tri.angleA);
+        result.bits |= decode_2_bits_in_float<10>(tri.angleB);
+        result.bits |= decode_2_bits_in_float<12>(tri.angleC);
+        result.bits |= extract_sign_bit<14>(tri.distance);
+    #else
+        const uint64_t loBits    = (reinterpret_cast<const uint64_t*>(&tri))[0];
+        const uint64_t hiBits    = (reinterpret_cast<const uint64_t*>(&tri))[1];
+        const uint64_t bits_0_7  = (uint16_t)_pext_u64(loBits, 0xC000C000C000C000ull) << 0;
+        const uint64_t bits_8_14 = (uint16_t)_pext_u64(hiBits, 0xC000C000C0000000ull) << 8;
+        const uint64_t bit15     = (uint16_t)_pext_u64(hiBits, 0x0000000000008000ull) << 14;
+        result.bits = bit15 | bits_8_14 | bits_0_7;
 
-    // Reset the highest 2 bits of each IEEE half-float
-    tri.circumcenter[0].bits &= 0x3FFF;
-    tri.circumcenter[1].bits &= 0x3FFF;
-    tri.normal[0].bits &= 0x3FFF;
-    tri.normal[1].bits &= 0x3FFF;
-    tri.angleA.bits &= 0x3FFF;
-    tri.angleB.bits &= 0x3FFF;
-    tri.angleC.bits &= 0x3FFF;
-    tri.distance.bits &= 0x7FFF; // only reset the sign bit here
+    #endif
+
+    // Leaving this commented-out to see what's actually happening with the
+    // bitmasks.
+    #if 0
+            // Reset the highest 2 bits of each IEEE half-float
+            tri.circumcenter[0].bits &= 0x3FFF;
+            tri.circumcenter[1].bits &= 0x3FFF;
+            tri.normal[0].bits &= 0x3FFF;
+            tri.normal[1].bits &= 0x3FFF;
+            tri.angleA.bits &= 0x3FFF;
+            tri.angleB.bits &= 0x3FFF;
+            tri.angleC.bits &= 0x3FFF;
+            tri.distance.bits &= 0x7FFF; // only reset the sign bit here
+
+    #else
+        union
+        {
+            PackedTriangle* t;
+            struct Bits
+            {
+                uint64_t lo;
+                uint64_t hi;
+            }* bits;
+        } bits{&tri};
+
+        constexpr uint64_t loMask = 0x3FFF3FFF3FFF3FFFull; // Reset the highest 2 bits of each IEEE half-float
+        constexpr uint64_t hiMask = 0x3FFF3FFF3FFF7FFFull; // but only reset the lowest sign bit here (for 15 total bits)
+
+        bits.bits->lo &= loMask;
+        bits.bits->hi &= hiMask;
+
+    #endif
 
     return result;
 }
@@ -472,7 +509,8 @@ void test_tri_packing(PackedTriangle& outTriData)
     float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
 
     // Ensure all angles are greater than 0 (see below for reasoning) and less
-    // than or equal to 1.
+    // than or equal to 1. This way we ensure two bits in each angle variable
+    // are available by exploiting the IEEE data format.
     if (angleA < 0.f)
     {
         angleA += LS_TWO_PI;
