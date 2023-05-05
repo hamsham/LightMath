@@ -2,6 +2,9 @@
 #ifndef LS_MATH_HALF_IMPL_H
 #define LS_MATH_HALF_IMPL_H
 
+#include "lightsky/math/bits.h" // ls::math::clz_u32
+#include "lightsky/math/scalar_utils.h" // ls::math::abs
+
 namespace ls
 {
 namespace math
@@ -10,79 +13,71 @@ namespace impl
 {
 
 /**
- * @brief Helpful converter between float and halves.
+ * @brief Helpful converter between float and halves using IEEE behavior.
  *
- * Source code provided by:
- * https://stackoverflow.com/questions/1659440/32-bit-to-16-bit-floating-point-conversion
+ * Conversion methods extrapolated from:
+ * https://github.com/Maratyszcza/FP16/blob/master/include/fp16/fp16.h
  */
 class Float16Converter
 {
-    union Bits
+    static inline float fp32_from_bits(uint32_t bits) noexcept
     {
-        float f;
-        int32_t si;
-        uint32_t ui;
-    };
+        const union
+        {
+            uint32_t u;
+            float f;
+        } result{bits};
 
-    static constexpr int shift = 13;
-    static constexpr int shiftSign = 16;
+        return result.f;
+    }
 
-    static constexpr int32_t infN = 0x7F800000; // flt32 infinity
-    static constexpr int32_t maxN = 0x477FE000; // max flt16 normal as a flt32
-    static constexpr int32_t minN = 0x38800000; // min flt16 normal as a flt32
-    static constexpr int32_t signN = 0x80000000; // flt32 sign bit
+    static inline uint32_t fp32_to_bits(float f) noexcept
+    {
+        const union
+        {
+            float f;
+            uint32_t u;
+        } result{f};
 
-    static constexpr int32_t infC = infN >> shift;
-    static constexpr int32_t nanN = (infC + 1) << shift; // minimum flt16 nan as a flt32
-    static constexpr int32_t maxC = maxN >> shift;
-    static constexpr int32_t minC = minN >> shift;
-    static constexpr int32_t signC = signN >> shiftSign; // flt16 sign bit
-
-    static constexpr int32_t mulN = 0x52000000; // (1 << 23) / minN
-    static constexpr int32_t mulC = 0x33800000; // minN / (1 << (23 - shift))
-
-    static constexpr int32_t subC = 0x003FF; // max flt32 subnormal down shifted
-    static constexpr int32_t norC = 0x00400; // min flt32 normal down shifted
-
-    static constexpr int32_t maxD = infC - maxC - 1;
-    static constexpr int32_t minD = minC - subC - 1;
+        return result.u;
+    }
 
   public:
     static inline uint16_t LS_IMPERATIVE single_to_half(float value) noexcept
     {
-        Bits v, s;
-        v.f = value;
-        uint32_t sign = v.si & signN;
-        v.si ^= sign;
-        sign >>= shiftSign; // logical shift
-        s.si = mulN;
-        s.si = s.f * v.f; // correct subnormals
-        v.si ^= (s.si ^ v.si) & -(minN > v.si);
-        v.si ^= (infN ^ v.si) & -((infN > v.si) & (v.si > maxN));
-        v.si ^= (nanN ^ v.si) & -((nanN > v.si) & (v.si > infN));
-        v.ui >>= shift; // logical shift
-        v.si ^= ((v.si - maxD) ^ v.si) & -(v.si > maxC);
-        v.si ^= ((v.si - minD) ^ v.si) & -(v.si > subC);
-        return (uint16_t)(v.ui | sign);
+        const float scale_to_inf = fp32_from_bits(0x77800000u);
+        const float scale_to_zero = fp32_from_bits(0x08800000u);
+        float base = (ls::math::abs(value) * scale_to_inf) * scale_to_zero;
+
+        const uint32_t w = fp32_to_bits(value);
+        const uint32_t shl1_w = w + w;
+        const uint32_t sign = w & 0x80000000u;
+        uint32_t bias = shl1_w & 0xFF000000u;
+
+        if (bias < 0x71000000u)
+        {
+            bias = 0x71000000u;
+        }
+
+        base = fp32_from_bits((bias >> 1u) + 0x07800000u) + base;
+        const uint32_t bits = fp32_to_bits(base);
+        const uint32_t exp_bits = (bits >> 13u) & 0x00007C00u;
+        const uint32_t mantissa_bits = bits & 0x00000FFFu;
+        const uint32_t nonsign = exp_bits + mantissa_bits;
+        const uint32_t result = (sign >> 16u) | (shl1_w > 0xFF000000u ? 0x00007E00u : nonsign);
+        return (uint16_t)(result);
     }
 
     static inline float LS_IMPERATIVE half_to_single(uint16_t value) noexcept
     {
-        Bits v;
-        v.ui = value;
-        int32_t sign = v.si & signC;
-        v.si ^= sign;
-        sign <<= shiftSign;
-        v.si ^= ((v.si + minD) ^ v.si) & -(v.si > subC);
-        v.si ^= ((v.si + maxD) ^ v.si) & -(v.si > maxC);
-        Bits s;
-        s.si = mulC;
-        s.f *= (float)v.si;
-        int32_t mask = -(norC > v.si);
-        v.si <<= shift;
-        v.si ^= (s.si ^ v.si) & mask;
-        v.si |= sign;
-        return v.f;
+        const uint32_t w = (uint32_t)value << 16u;
+        const uint32_t sign = w & 0x80000000u;
+        const uint32_t nonsign = w & 0x7FFFFFFFu;
+        uint32_t renorm_shift = ls::math::clz_u32(nonsign);
+        renorm_shift = renorm_shift > 5u ? (renorm_shift - 5u) : 0u;
+        const int32_t zero_mask = (int32_t) (nonsign - 1u) >> 31u;
+        const uint32_t result = ((nonsign << renorm_shift >> 3u) + ((0x00000070u - renorm_shift) << 23u)) & ~zero_mask;
+        return fp32_from_bits(sign | result);
     }
 };
 

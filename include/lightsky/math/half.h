@@ -9,7 +9,8 @@
 #include "lightsky/setup/Types.h"
 
 #if defined(LS_X86_FP16)
-    extern "C" {
+    extern "C"
+    {
         #include <immintrin.h>
     }
 #elif defined(LS_ARCH_AARCH64)
