@@ -397,14 +397,29 @@ inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::h
     // exploit the spare 2 bits of each of the 7 input variables, plus sign bit
     // of the circumcenter's distance from origin, for a total of 15 spare bits
     PackedTriangle result;
-    result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], radius);
-    result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], radius);
-    result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       radius);
-    result.normal[1]       = encode_2_bits_in_float<6>(tri.normal[1],       radius);
-    result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          radius);
-    result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         radius);
-    result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         radius);
-    result.distance        = insert_sign_bit<14>(tri.distance,              radius);
+
+    #if !defined(LS_X86_BMI2)
+        result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], radius);
+        result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], radius);
+        result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       radius);
+        result.normal[1]       = encode_2_bits_in_float<6>(tri.normal[1],       radius);
+        result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          radius);
+        result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         radius);
+        result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         radius);
+
+    #else
+        const uint64_t loBits    = reinterpret_cast<const uint64_t*>(&tri)[0];
+        const uint64_t hiBits    = reinterpret_cast<const uint64_t*>(&tri)[1];
+        uint64_t* const outLoBits = reinterpret_cast<uint64_t*>(&result) + 0;
+        uint64_t* const outHiBits = reinterpret_cast<uint64_t*>(&result) + 1;
+
+        uint64_t radLoBits  = _pdep_u64((uint64_t)(radius.bits >> 0),  0xC000C000C000C000ull);
+        uint64_t radHiBits  = _pdep_u64((uint64_t)(radius.bits >> 8),  0xC000C000C0000000ull);
+        uint64_t radSignBit = _pdep_u64((uint64_t)(radius.bits >> 14), 0x0000000000008000ull);
+
+        *outLoBits = loBits | radLoBits;
+        *outHiBits = hiBits | radHiBits | radSignBit;
+    #endif
 
     return result;
 }
@@ -415,7 +430,7 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 {
     math::half result{0};
 
-    #ifndef LS_X86_BMI2
+    #if !defined(LS_X86_BMI2)
         result.bits |= decode_2_bits_in_float<0>(tri.circumcenter[0]);
         result.bits |= decode_2_bits_in_float<2>(tri.circumcenter[1]);
         result.bits |= decode_2_bits_in_float<4>(tri.normal[0]);
@@ -424,6 +439,7 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
         result.bits |= decode_2_bits_in_float<10>(tri.angleB);
         result.bits |= decode_2_bits_in_float<12>(tri.angleC);
         result.bits |= extract_sign_bit<14>(tri.distance);
+
     #else
         const uint64_t loBits    = (reinterpret_cast<const uint64_t*>(&tri))[0];
         const uint64_t hiBits    = (reinterpret_cast<const uint64_t*>(&tri))[1];
@@ -431,21 +447,20 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
         const uint64_t bits_8_14 = (uint16_t)_pext_u64(hiBits, 0xC000C000C0000000ull) << 8;
         const uint64_t bit15     = (uint16_t)_pext_u64(hiBits, 0x0000000000008000ull) << 14;
         result.bits = bit15 | bits_8_14 | bits_0_7;
-
     #endif
 
     // Leaving this commented-out to see what's actually happening with the
     // bitmasks.
     #if 0
-            // Reset the highest 2 bits of each IEEE half-float
-            tri.circumcenter[0].bits &= 0x3FFF;
-            tri.circumcenter[1].bits &= 0x3FFF;
-            tri.normal[0].bits &= 0x3FFF;
-            tri.normal[1].bits &= 0x3FFF;
-            tri.angleA.bits &= 0x3FFF;
-            tri.angleB.bits &= 0x3FFF;
-            tri.angleC.bits &= 0x3FFF;
-            tri.distance.bits &= 0x7FFF; // only reset the sign bit here
+        // Reset the highest 2 bits of each IEEE half-float
+        tri.circumcenter[0].bits &= 0x3FFF;
+        tri.circumcenter[1].bits &= 0x3FFF;
+        tri.normal[0].bits &= 0x3FFF;
+        tri.normal[1].bits &= 0x3FFF;
+        tri.angleA.bits &= 0x3FFF;
+        tri.angleB.bits &= 0x3FFF;
+        tri.angleC.bits &= 0x3FFF;
+        tri.distance.bits &= 0x7FFF; // only reset the sign bit here
 
     #else
         union
@@ -471,12 +486,8 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 
 
 
-void test_tri_packing(PackedTriangle& outTriData)
+void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3& c, PackedTriangle& outTriData)
 {
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
-
     math::vec3 s, n;
 
     // triangle packing using the circumcenter and signed angles to each vertex
@@ -511,26 +522,16 @@ void test_tri_packing(PackedTriangle& outTriData)
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
     // are available by exploiting the IEEE data format.
-    if (angleA < 0.f)
-    {
-        angleA += LS_TWO_PI;
-    }
-
-    if (angleB < 0.f)
-    {
-        angleB += LS_TWO_PI;
-    }
-
-    if (angleC < 0.f)
-    {
-        angleC += LS_TWO_PI;
-    }
+    if (angleA < 0.f) { angleA += LS_TWO_PI; }
+    if (angleB < 0.f) { angleB += LS_TWO_PI; }
+    if (angleC < 0.f) { angleC += LS_TWO_PI; }
 
     angleA /= LS_TWO_PI;
     angleB /= LS_TWO_PI;
     angleC /= LS_TWO_PI;
 
     // Debug
+    /*
     std::cout
         << "In Triangle:"
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
@@ -544,6 +545,7 @@ void test_tri_packing(PackedTriangle& outTriData)
         << "\n\tb:  " << angleB
         << "\n\tc:  " << angleC
         << '\n' << std::endl;
+    */
 
     // Force all values to be within the range of (0, 1), with the exception of
     // the distance to our triangle's circumcenter. Because all 8 values are
@@ -556,11 +558,11 @@ void test_tri_packing(PackedTriangle& outTriData)
     // needs 15 bits to be stored correctly.
     PackedTriangle result;
     result.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    result.normal = (math::vec2_t<math::half>)math::clamp(m * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    result.distance = (math::half)d;
-    result.angleA = (math::half)math::clamp(angleA, 0.f, 1.f);
-    result.angleB = (math::half)math::clamp(angleB, 0.f, 1.f);
-    result.angleC = (math::half)math::clamp(angleC, 0.f, 1.f);
+    result.normal       = (math::vec2_t<math::half>)math::clamp(m  * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
+    result.distance     = (math::half)d;
+    result.angleA       = (math::half)math::clamp(angleA, 0.f, 1.f);
+    result.angleB       = (math::half)math::clamp(angleB, 0.f, 1.f);
+    result.angleC       = (math::half)math::clamp(angleC, 0.f, 1.f);
 
     // Encode the radius' 15 bits in our reclaimed spare bits
     outTriData = encode_tri_radius(result, (math::half)r);
@@ -568,7 +570,7 @@ void test_tri_packing(PackedTriangle& outTriData)
 
 
 
-void test_tri_unpacking(PackedTriangle triData)
+void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, math::vec3& c)
 {
     // Decode the radius' 15 bits from our reclaimed spare bits
     const float r = (float)decode_tri_radius(triData);
@@ -598,10 +600,12 @@ void test_tri_unpacking(PackedTriangle triData)
     const math::mat3&& v = axial_rotation_matrix(o, angleA, angleB, angleC);
 
     // Expand the vertices to their original positions
-    const math::vec3&& a = (v[0] * r) + s;
-    const math::vec3&& b = (v[1] * r) + s;
-    const math::vec3&& c = (v[2] * r) + s;
+    a = (v[0] * r) + s;
+    b = (v[1] * r) + s;
+    c = (v[2] * r) + s;
 
+    // Debug
+    /*
     std::cout
         << "Out Triangle:"
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
@@ -615,6 +619,7 @@ void test_tri_unpacking(PackedTriangle triData)
         << "\n\tb:  " << angleB
         << "\n\tc:  " << angleC
         << '\n' << std::endl;
+    */
 }
 
 
@@ -626,33 +631,27 @@ int main()
     test_tri_incenter();
     */
 
+    math::vec3 a = {5.75f, 6.9f, 4.25f};
+    math::vec3 b = {13.77f, 8.96f, 2.7f};
+    math::vec3 c = {1.234f, -3.12f, -1.1f};
+
+    std::cout
+        << "In Triangle:"
+        << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << std::endl;
+
     PackedTriangle triData;
-    test_tri_packing(triData);
-    test_tri_unpacking(triData);
+    test_tri_packing(a, b, c, triData);
+    test_tri_unpacking(triData, a, b, c);
 
-    #if 0
-        math::vec3&& m = math::normalize(math::vec3{1.5f, 1.3f, 2.f});
-        math::vec3&& n = math::normalize(math::vec3{8.f, 1.42f, 0.77f});
-        std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
-        std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
-
-        math::vec2 sh = hemimax_norm_encode(m);
-        math::vec2 nh = hemimax_norm_encode(n);
-        std::cout << "R:  " << math::length(sh) << std::endl;
-        std::cout << "R:  " << math::length(nh) << std::endl;
-        std::cout << "E: {" << sh[0] << ", " << sh[1] << '}' << std::endl;
-        std::cout << "F: {" << nh[0] << ", " << nh[1] << '}' << std::endl;
-
-        math::vec2 r = sh / nh;
-        std::cout << "R0: " << r[0] << std::endl;
-        std::cout << "R1: " << r[1] << std::endl;
-
-        m = hemimax_norm_decode(math::vec2{sh[1]-sh[0], -sh[0]});
-        n = hemimax_norm_decode(sh / r);
-
-        std::cout << "M: {" << m[0] << ", " << m[1] << ", " << m[2] << '}' << std::endl;
-        std::cout << "N: {" << n[0] << ", " << n[1] << ", " << n[2] << '}' << std::endl;
-    #endif
+    std::cout
+        << "Out Triangle:"
+        << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << std::endl;
 
     return 0;
 }

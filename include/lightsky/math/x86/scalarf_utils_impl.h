@@ -178,7 +178,24 @@ inline LS_INLINE float fmod_1(const float n) noexcept
 -------------------------------------*/
 inline LS_INLINE float inversesqrt(float x) noexcept
 {
-    return _mm_cvtss_f32(_mm_rcp_ss(_mm_sqrt_ss(_mm_set_ss(x))));
+    #if defined(LS_MATH_HIGH_PREC)
+        __m128 retr = _mm_div_ss(_mm_set_ss(1.f), _mm_sqrt_ss(_mm_set_ss(x)));
+        return _mm_cvtss_f32(retr);
+    #else
+        const __m128 scalar = _mm_set_ss(x);
+        const __m128 rsqr   = _mm_rsqrt_ss(scalar);
+        const __m128 sqrr   = _mm_mul_ss(scalar, rsqr);
+
+        #if defined(LS_X86_FMA)
+            const __m128 subr   = _mm_fnmadd_ss(sqrr, rsqr, _mm_set_ss(3.f));
+        #else
+            const __m128 mulr   = _mm_mul_ss(sqrr, rsqr);
+            const __m128 subr   = _mm_sub_ss(_mm_set_ss(3.f), mulr);
+        #endif
+        const __m128 hlfr   = _mm_mul_ss(_mm_set_ss(0.5f), rsqr);
+        const __m128 retr   = _mm_mul_ss(subr, hlfr);
+        return _mm_cvtss_f32(retr);
+    #endif
 }
 
 
