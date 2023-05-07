@@ -821,68 +821,6 @@ inline LS_INLINE scalar_t math::exp2(scalar_t x) noexcept
 
 
 /*-------------------------------------
-    sin
--------------------------------------*/
-template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
-{
-    //static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-
-    return x
-           - (x * x * x / scalar_t{6.0})
-           + (x * x * x * x * x / scalar_t{120.0})
-           - (x * x * x * x * x * x * x / scalar_t{5040.0})
-           + (x * x * x * x * x * x * x * x * x / scalar_t{362880.0});
-}
-
-// Alternate (non-taylor-series) method found here:
-// https://blog.demofox.org/2014/11/04/four-ways-to-calculate-sine-without-trig/
-namespace math
-{
-    namespace impl
-    {
-        template <typename scalar_t>
-        constexpr LS_INLINE scalar_t tan_step(scalar_t x) noexcept
-        {
-            return scalar_t{2.0} * (x * x * (scalar_t{3.0} - (scalar_t{2.0} * x))) - scalar_t{1.0};
-        }
-
-        template <typename scalar_t>
-        constexpr LS_INLINE scalar_t sincos_step1(const scalar_t x, const scalar_t coeff0) noexcept
-        {
-            return ls::math::fract(coeff0 + x * scalar_t{-2.0}) * scalar_t{2.0} - scalar_t{1.0};
-        }
-
-        template <typename scalar_t>
-        constexpr LS_INLINE scalar_t sincos_step2(const scalar_t x, const scalar_t coeff1) noexcept
-        {
-            return ls::math::sign(scalar_t{0.5}-ls::math::fract(coeff1 - x));
-        }
-
-        template <typename scalar_t>
-        constexpr LS_INLINE scalar_t sincos_step3(const scalar_t si, const scalar_t so) noexcept
-        {
-            return ((scalar_t{20.0} / (si*si + scalar_t{4.0}) - scalar_t{4.0}) * so);
-        }
-
-        template <typename scalar_t>
-        constexpr LS_INLINE scalar_t sincos_impl(const scalar_t x, const scalar_t coeff0, const scalar_t coeff1) noexcept
-        {
-            return sincos_step3(sincos_step1(x, coeff0), sincos_step2(x, coeff1));
-        }
-    }
-}
-
-template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
-{
-    static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return ls::math::impl::sincos_impl(ls::math::fmod_1(x / scalar_t{LS_TWO_PI}), scalar_t{1.0}, scalar_t{0.5});
-}
-
-
-
-/*-------------------------------------
     cos
 -------------------------------------*/
 template<typename scalar_t>
@@ -897,11 +835,60 @@ constexpr LS_INLINE scalar_t math::cos(typename setup::EnableIf<!setup::IsFloat<
            + (x * x * x * x * x * x * x * x / scalar_t{40320.0});
 }
 
+// Alternate (non-taylor-series) method found here:
+// https://stackoverflow.com/a/28050328
+namespace math
+{
+    namespace impl
+    {
+        template<typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step3(scalar_t x) noexcept
+        {
+            return x + (scalar_t{0.225} * x * (ls::math::abs(x) - scalar_t{1.0}));
+        }
+
+        template<typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step2(scalar_t x) noexcept
+        {
+            return sincos_step3<scalar_t>(x * (scalar_t{16.0} * (ls::math::abs(x) - scalar_t{0.5})));
+        }
+
+        template<typename scalar_t>
+        constexpr LS_INLINE scalar_t sincos_step1(scalar_t x) noexcept
+        {
+            return sincos_step2<scalar_t>(x - (scalar_t{0.25} + ls::math::floor(x + scalar_t{0.25})));
+        }
+    }
+}
+
 template<typename scalar_t>
 constexpr LS_INLINE scalar_t math::cos(scalar_t x) noexcept
 {
     static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
-    return ls::math::impl::sincos_impl(ls::math::fmod_1(x / scalar_t{LS_TWO_PI}), scalar_t{0.5}, scalar_t{0.25});
+    return ls::math::impl::sincos_step1<scalar_t>(x * scalar_t{1.0 / LS_TWO_PI});
+}
+
+
+
+/*-------------------------------------
+    sin
+-------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept
+{
+    //static_assert(setup::IsFloat<scalar_t>::value, "Input value is not a floating-point type.");
+
+    return x
+           - (x * x * x / scalar_t{6.0})
+           + (x * x * x * x * x / scalar_t{120.0})
+           - (x * x * x * x * x * x * x / scalar_t{5040.0})
+           + (x * x * x * x * x * x * x * x * x / scalar_t{362880.0});
+}
+
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::sin(scalar_t x) noexcept
+{
+    return ls::math::cos<scalar_t>(x - scalar_t{LS_PI_OVER_2});
 }
 
 
@@ -951,7 +938,8 @@ inline scalar_t math::atan2(scalar_t y, scalar_t x) noexcept
     angle = piOver16 * r * r * r - pi5Over16 * r + theta;
 
     // negate if in quad III or IV
-    return math::sign(y) * angle;
+    //return math::sign(y) * angle;
+    return (y < scalar_t{0.0}) ? -angle : angle;
 }
 
 

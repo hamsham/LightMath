@@ -564,20 +564,6 @@ template <typename scalar_t>
 inline scalar_t exp2(scalar_t x) noexcept;
 
 /**
- * @brief sin
- * Evaluate the sine of an angle at compile-time.
- *
- * @param An angle, in radians, who's sine value is to be calculated.
- *
- * @return The sine of a given angle.
- */
-template <typename scalar_t>
-constexpr scalar_t sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
-
-template <typename scalar_t>
-constexpr scalar_t sin(scalar_t x) noexcept;
-
-/**
  * @brief cos
  * Evaluate the cosine of an angle at compile-time.
  *
@@ -590,6 +576,20 @@ constexpr scalar_t cos(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value
 
 template <typename scalar_t>
 constexpr scalar_t cos(scalar_t x) noexcept;
+
+/**
+ * @brief sin
+ * Evaluate the sine of an angle at compile-time.
+ *
+ * @param An angle, in radians, who's sine value is to be calculated.
+ *
+ * @return The sine of a given angle.
+ */
+template <typename scalar_t>
+constexpr scalar_t sin(typename setup::EnableIf<!setup::IsFloat<scalar_t>::value, scalar_t>::type x) noexcept;
+
+template <typename scalar_t>
+constexpr scalar_t sin(scalar_t x) noexcept;
 
 /**
  * @brief tan

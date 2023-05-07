@@ -6,7 +6,6 @@
 
 
 
-
 void test_trig_values(float x, float (*pStdFunc)(float), float (*pLsFunc)(float))
 {
     float y = ls::math::radians(x);

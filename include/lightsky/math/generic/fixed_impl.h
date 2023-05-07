@@ -763,7 +763,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::sin(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     typedef ls::math::fixed_t<fixed_base_t, num_frac_digits> FixedType;
-    return ls::math::impl::sincos_impl<FixedType>(ls::math::fmod_1<FixedType>(x / FixedType{LS_TWO_PI}), FixedType{1.0}, FixedType{0.5});
+    return ls::math::impl::sincos_step1<FixedType>(x * FixedType{1.0 / LS_TWO_PI});
 }
 
 
@@ -775,7 +775,7 @@ template<typename fixed_base_t, unsigned num_frac_digits>
 inline LS_INLINE const math::fixed_t<fixed_base_t, num_frac_digits> math::cos(const math::fixed_t<fixed_base_t, num_frac_digits>& x) noexcept
 {
     typedef ls::math::fixed_t<fixed_base_t, num_frac_digits> FixedType;
-    return ls::math::impl::sincos_impl<FixedType>(ls::math::fmod_1<FixedType>(x / FixedType{LS_TWO_PI}), FixedType{0.5}, FixedType{0.25});
+    return ls::math::cos<fixed_base_t, num_frac_digits>(x - FixedType{LS_PI_OVER_2});
 }
 
 
