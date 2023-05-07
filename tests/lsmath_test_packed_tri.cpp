@@ -5,6 +5,7 @@
  * Created on Jan 12, 2023 at 6:22 PM
  */
 
+#include <chrono>
 #include <iostream>
 
 #include "lightsky/math/mat_utils.h"
@@ -124,160 +125,20 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
     float f = math::length_squared(n);
-    return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - 2.f * f);
-}
-
-
-
-inline math::vec2 octahedral_norm_encode(const math::vec3& n) noexcept
-{
-    math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
-    m[0] += m[2] >= 0.f ? 0.f : 1.f;
-    m[1] += m[2] >= 0.f ? 0.f : 1.f;
-    return math::vec2_cast(m);// * num_t{0.5} + num_t{0.5};
-}
-
-
-
-inline math::vec3 octahedral_norm_decode(const math::vec2& n) noexcept
-{
-    math::vec2 f = n;// * num_t{2.0} - num_t{1.0};
-    math::vec3&& m = {f[0], f[1], 1.f - math::abs(f[0]) - math::abs(f[1])};
-    float t = math::saturate(-m[2]);
-    m[0] -= std::copysign(t, m[0]);
-    m[1] -= std::copysign(t, m[1]);
-    return math::normalize(m);
-}
-
-
-
-inline math::vec2 octahedral_norm_encode2(const math::vec3& n) noexcept
-{
-    math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
-    return math::vec2{m[0] + m[1], m[0] - m[1]};
-}
-
-
-
-inline math::vec3 octahedral_norm_decode2(const math::vec2& n) noexcept
-{
-    const math::vec2 f{n[0] + n[1], n[0] - n[1]};
-    return math::normalize(math::vec3{f[0], f[1], 2.f - math::abs(f[0]) - math::abs(f[1])});
-}
-
-
-
-inline math::vec2 hemimax_norm_encode(const math::vec3& n) noexcept
-{
-    math::vec3&& m = n / (math::abs(n[0]) + math::abs(n[1]) + math::abs(n[2]));
-    return math::vec2{m[0] + m[1], m[0] - m[1]};
-}
-
-
-
-inline math::vec3 hemimax_norm_decode(const math::vec2& n) noexcept
-{
-    const math::vec2&& f = math::vec2{n[0] + n[1], n[0] - n[1]};
-    return math::normalize(math::vec3{f[0], f[1], 2.f - math::abs(f[0]) - math::abs(f[1])});
-}
-
-
-
-inline math::vec2 spherical_norm_encode(const math::vec3& n) noexcept
-{
-    const math::vec2&& v = math::vec2{
-        std::atan2(n[1], n[0]),
-        std::acos(n[2])
-    };
-
-    return math::vec2{
-        v[0] + LS_TWO_PI * math::step(n[0], -0.f),
-        v[1] + LS_TWO_PI * math::step(n[1], -0.f)
-    };
-}
-
-
-
-inline math::vec3 spherical_norm_decode(const math::vec2& n) noexcept
-{
-    return math::vec3{
-        std::sin(n[1]) * std::cos(n[0]),
-        std::sin(n[1]) * std::sin(n[0]),
-        std::cos(n[1])
-    };
-}
-
-
-
-inline math::vec2 norm_encode(const math::vec3& n) noexcept
-{
-    #if 1
-        return spheremap_norm_encode(n);
-    #elif 1
-        return octahedral_norm_encode(n);
-    #elif 1
-        return octahedral_norm_encode2(n);
-    #elif 1
-        return hemimax_norm_encode(n);
-    #else
-        return spherical_norm_encode(n);
-    #endif
-}
-
-
-
-inline math::vec3 norm_decode(const math::vec2& n) noexcept
-{
-    #if 1
-        return spheremap_norm_decode(n);
-    #elif 1
-        return octahedral_norm_decode(n);
-    #elif 1
-        return octahedral_norm_decode2(n);
-    #elif 1
-        return hemimax_norm_decode(n);
-    #else
-        return spherical_norm_decode(n);
-    #endif
-}
-
-
-
-constexpr math::vec2 cos_sin_sign(const math::vec2& x) noexcept
-{
-    return math::vec2{
-        (x[0] < 0.f ? -1.f : (x[0] > 0.f ? 1.f : 0.f)),
-        (x[1] < 0.f ? -1.f : (x[1] > 0.f ? 1.f : 0.f))
-    };
-}
-
-
-
-constexpr math::vec2 cos_sin_floor(const math::vec2& n) noexcept
-{
-    return math::vec2{
-        static_cast<float>(static_cast<long long>(n[0]) - (n[0] < 0.f)),
-        static_cast<float>(static_cast<long long>(n[1]) - (n[1] < 0.f))
-    };
-}
-
-
-
-constexpr math::vec2 cos_sin_fract(const math::vec2& n) noexcept
-{
-    return n - cos_sin_floor(n);
+    return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - (f + f));
 }
 
 
 
 // Cosine/Sine approximation adapted from Demofox,
 // https://www.shadertoy.com/view/XddSzH
-inline math::vec2 cos_sin(float x) noexcept
+constexpr math::vec2 cos_sin(float x) noexcept
 {
     // x is between 0-1, corresponding to 0-360 degrees
-    const math::vec2& si = cos_sin_fract(math::vec2{0.5f, 1.f} - (x + x)) * 2.f - 1.f;
-    const math::vec2& so = cos_sin_sign(math::vec2{0.5f} - cos_sin_fract(math::vec2{0.25f, 0.5f} - x));
-    return so * (math::vec2{20.f} / (si*si + 4.f) - 4.f);
+    return math::vec2{
+        math::cos<float>(x),
+        math::sin<float>(x)
+    };
 }
 
 
@@ -285,15 +146,10 @@ inline math::vec2 cos_sin(float x) noexcept
 inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, float angleB, float angleC) noexcept
 {
     #if 1
-        // use a custom cos & sin approximation for better performance while
-        // also taking into account the angles encoded between 0 through 1.
         const math::vec2&& x = cos_sin(angleA);
         const math::vec2&& y = cos_sin(angleB);
         const math::vec2&& z = cos_sin(angleC);
     #else
-        angleA *= LS_TWO_PI;
-        angleB *= LS_TWO_PI;
-        angleC *= LS_TWO_PI;
         const math::vec2&& x = math::vec2{std::cos(angleA), std::sin(angleA)};
         const math::vec2&& y = math::vec2{std::cos(angleB), std::sin(angleB)};
         const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
@@ -339,7 +195,7 @@ inline math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
 
 
 
-struct alignas(uint16_t) PackedTriangle
+struct alignas(sizeof(uint64_t)*2) PackedTriangle
 {
     math::vec2_t<math::half> circumcenter;
     math::vec2_t<math::half> normal;
@@ -391,14 +247,13 @@ inline math::half insert_sign_bit(math::half f, math::half bits) noexcept
 }
 
 
-
 inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::half& radius) noexcept
 {
     // exploit the spare 2 bits of each of the 7 input variables, plus sign bit
     // of the circumcenter's distance from origin, for a total of 15 spare bits
-    PackedTriangle result;
 
     #if !defined(LS_X86_BMI2)
+        PackedTriangle result;
         result.circumcenter[0] = encode_2_bits_in_float<0>(tri.circumcenter[0], radius);
         result.circumcenter[1] = encode_2_bits_in_float<2>(tri.circumcenter[1], radius);
         result.normal[0]       = encode_2_bits_in_float<4>(tri.normal[0],       radius);
@@ -406,19 +261,20 @@ inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::h
         result.angleA          = encode_2_bits_in_float<8>(tri.angleA,          radius);
         result.angleB          = encode_2_bits_in_float<10>(tri.angleB,         radius);
         result.angleC          = encode_2_bits_in_float<12>(tri.angleC,         radius);
+        result.distance        = insert_sign_bit<14>(tri.distance,              radius);
 
     #else
-        const uint64_t loBits    = reinterpret_cast<const uint64_t*>(&tri)[0];
-        const uint64_t hiBits    = reinterpret_cast<const uint64_t*>(&tri)[1];
+        PackedTriangle result = tri;
         uint64_t* const outLoBits = reinterpret_cast<uint64_t*>(&result) + 0;
         uint64_t* const outHiBits = reinterpret_cast<uint64_t*>(&result) + 1;
 
-        uint64_t radLoBits  = _pdep_u64((uint64_t)(radius.bits >> 0),  0xC000C000C000C000ull);
-        uint64_t radHiBits  = _pdep_u64((uint64_t)(radius.bits >> 8),  0xC000C000C0000000ull);
-        uint64_t radSignBit = _pdep_u64((uint64_t)(radius.bits >> 14), 0x0000000000008000ull);
+        const uint64_t radBits    = (uint64_t)radius.bits;
+        const uint64_t radLoBits  = _pdep_u64(radBits >> 0ull, 0xC000C000C000C000ull);
+        const uint64_t radHiBits  = _pdep_u64(radBits >> 8ull, 0xC000C000C0000000ull);
+        const uint64_t radSignBit = (radBits & 0x0000000000004000ull) << 1ull;
 
-        *outLoBits = loBits | radLoBits;
-        *outHiBits = hiBits | radHiBits | radSignBit;
+        *outLoBits |= radLoBits;
+        *outHiBits |= radHiBits | radSignBit;
     #endif
 
     return result;
@@ -441,12 +297,14 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
         result.bits |= extract_sign_bit<14>(tri.distance);
 
     #else
+    {
         const uint64_t loBits    = (reinterpret_cast<const uint64_t*>(&tri))[0];
         const uint64_t hiBits    = (reinterpret_cast<const uint64_t*>(&tri))[1];
-        const uint64_t bits_0_7  = (uint16_t)_pext_u64(loBits, 0xC000C000C000C000ull) << 0;
-        const uint64_t bits_8_14 = (uint16_t)_pext_u64(hiBits, 0xC000C000C0000000ull) << 8;
-        const uint64_t bit15     = (uint16_t)_pext_u64(hiBits, 0x0000000000008000ull) << 14;
+        const uint64_t bits_0_7  = _pext_u64(loBits, 0xC000C000C000C000ull) << 0ull;
+        const uint64_t bits_8_14 = _pext_u64(hiBits, 0xC000C000C0000000ull) << 8ull;
+        const uint64_t bit15     = (hiBits & 0x0000000000008000ull) >> 1ull;
         result.bits = bit15 | bits_8_14 | bits_0_7;
+    }
     #endif
 
     // Leaving this commented-out to see what's actually happening with the
@@ -463,22 +321,15 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
         tri.distance.bits &= 0x7FFF; // only reset the sign bit here
 
     #else
-        union
-        {
-            PackedTriangle* t;
-            struct Bits
-            {
-                uint64_t lo;
-                uint64_t hi;
-            }* bits;
-        } bits{&tri};
-
+    {
+        uint64_t* loBits = (reinterpret_cast<uint64_t*>(&tri)) + 0;
+        uint64_t* hiBits = (reinterpret_cast<uint64_t*>(&tri)) + 1;
         constexpr uint64_t loMask = 0x3FFF3FFF3FFF3FFFull; // Reset the highest 2 bits of each IEEE half-float
         constexpr uint64_t hiMask = 0x3FFF3FFF3FFF7FFFull; // but only reset the lowest sign bit here (for 15 total bits)
 
-        bits.bits->lo &= loMask;
-        bits.bits->hi &= hiMask;
-
+        *loBits &= loMask;
+        *hiBits &= hiMask;
+    }
     #endif
 
     return result;
@@ -505,8 +356,8 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
 
     // Although Spheremap-encoding is more expensive to encode/decode than
     // Octahedral normal encoding, it allows for a signed z-component.
-    const math::vec2&& sh = norm_encode(sn);
-    const math::vec2&& m = norm_encode(n);
+    const math::vec2&& sh = spheremap_norm_encode(sn);
+    const math::vec2&& m = spheremap_norm_encode(n);
 
     // Generate an orthonormal basis using the revised Frisvad method from Duff
     // et. al:
@@ -515,9 +366,9 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
-    float angleA = -std::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
-    float angleB = -std::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
-    float angleC = -std::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+    float angleA = -math::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
+    float angleB = -math::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
+    float angleC = -math::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
 
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
@@ -556,13 +407,14 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // *The circumcenter's distance is unbounded above zero, so we may only use
     // the sign-bit. This is fine as the radius is always positive and only
     // needs 15 bits to be stored correctly.
-    PackedTriangle result;
-    result.circumcenter = (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    result.normal       = (math::vec2_t<math::half>)math::clamp(m  * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f});
-    result.distance     = (math::half)d;
-    result.angleA       = (math::half)math::clamp(angleA, 0.f, 1.f);
-    result.angleB       = (math::half)math::clamp(angleB, 0.f, 1.f);
-    result.angleC       = (math::half)math::clamp(angleC, 0.f, 1.f);
+    PackedTriangle result = {
+        (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f}),
+        (math::vec2_t<math::half>)math::clamp(m  * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f}),
+        (math::half)d,
+        (math::half)math::clamp(angleA, 0.f, 1.f),
+        (math::half)math::clamp(angleB, 0.f, 1.f),
+        (math::half)math::clamp(angleC, 0.f, 1.f)
+    };
 
     // Encode the radius' 15 bits in our reclaimed spare bits
     outTriData = encode_tri_radius(result, (math::half)r);
@@ -586,12 +438,12 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
 
     // Decode the angles from the circumcenter's orthonormal basis to each
     // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
-    const float angleA = (float)triData.angleA;
-    const float angleB = (float)triData.angleB;
-    const float angleC = (float)triData.angleC;
+    const float angleA = (float)triData.angleA * LS_TWO_PI;
+    const float angleB = (float)triData.angleB * LS_TWO_PI;
+    const float angleC = (float)triData.angleC * LS_TWO_PI;
 
-    const math::vec3&& s = norm_decode(sn) * d;
-    const math::vec3&& n = norm_decode(m);
+    const math::vec3&& s = spheremap_norm_decode(sn) * d;
+    const math::vec3&& n = spheremap_norm_decode(m);
 
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
@@ -626,10 +478,11 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
 
 int main()
 {
-    /*
     test_tri_circumcenter();
     test_tri_incenter();
-    */
+
+    typedef std::chrono::system_clock::time_point system_time_point;
+    typedef std::chrono::duration<long double, std::milli> system_duration;
 
     math::vec3 a = {5.75f, 6.9f, 4.25f};
     math::vec3 b = {13.77f, 8.96f, 2.7f};
@@ -642,9 +495,31 @@ int main()
         << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
         << std::endl;
 
-    PackedTriangle triData;
-    test_tri_packing(a, b, c, triData);
-    test_tri_unpacking(triData, a, b, c);
+    std::cout << "Benchmarking triangle packing..." << std::endl;
+    system_duration execTime{0};
+    PackedTriangle triData{};
+    math::vec3 x;
+    math::vec3 y;
+    math::vec3 z;
+
+    for (unsigned i = 0; i < 10000000u; ++i)
+    {
+        x = a;
+        y = b;
+        z = c;
+
+        const system_time_point&& startTime = std::chrono::system_clock::now();
+
+        test_tri_packing(x, y, z, triData);
+        test_tri_unpacking(triData, x, y, z);
+
+        execTime += system_duration{std::chrono::system_clock::now() - startTime};
+    }
+    std::cout << "\tDone. Test completed in " << execTime.count() << "ms." << std::endl;
+
+    a = x;
+    b = y;
+    c = z;
 
     std::cout
         << "Out Triangle:"
