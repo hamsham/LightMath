@@ -132,13 +132,44 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 
 // Cosine/Sine approximation adapted from Demofox,
 // https://www.shadertoy.com/view/XddSzH
-constexpr math::vec2 cos_sin(float x) noexcept
+inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 {
-    // x is between 0-1, corresponding to 0-360 degrees
-    return math::vec2{
-        math::cos<float>(x),
-        math::sin<float>(x)
-    };
+    #if defined(LS_X86_SSE)
+    const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
+    const __m128 c = _mm_set_ss(x);
+    const __m128 s = _mm_sub_ss(c, _mm_set_ss(LS_PI_OVER_2));
+
+    const __m128 x0 = _mm_unpacklo_ps(c, s);
+
+    // This step is not necessary if x is between 0-1, corresponding to 0-360 degrees
+    const __m128 x1 = _mm_mul_ps(x0, _mm_set1_ps(1.f / LS_TWO_PI));
+    const __m128 x2Floor = _mm_floor_ps(_mm_add_ps(x1, _mm_set1_ps(0.25f)));
+
+    const __m128 x2 = _mm_sub_ps(x1, _mm_add_ps(_mm_set1_ps(0.25f), x2Floor));
+
+    const __m128 x3Abs = _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(0.5f));
+    const __m128 x3 = _mm_mul_ps(_mm_mul_ps(x2, _mm_set1_ps(16.f)), x3Abs);
+
+    const __m128 x4Norm = _mm_mul_ps(x3, _mm_sub_ps(_mm_and_ps(absMask, x3), _mm_set1_ps(1.f)));
+
+    #if defined(LS_X86_FMA)
+        const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x4Norm, x3);
+    #else
+        const __m128 x4 = _mm_add_ps(_mm_mul_ps(_mm_set_ps(0.225f), x4Norm), x3);
+    #endif
+
+    math::vec2 result;
+    _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castpd_ps(x4));
+
+    #else
+        math::vec2 result{
+            math::cos(x),
+            math::sin(x)
+        };
+
+    #endif
+
+    return result;
 }
 
 

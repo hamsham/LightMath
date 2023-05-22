@@ -460,6 +460,41 @@ inline LS_INLINE float exp2(float x) noexcept
 }
 
 
+/*-------------------------------------
+    Fast, imprecise sin/cos
+-------------------------------------*/
+inline LS_INLINE float cos(float x) noexcept
+{
+    const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
+    const __m128 x0 = _mm_set_ss(x);
+
+    const __m128 x1 = _mm_mul_ss(x0, _mm_set_ss(1.f / LS_TWO_PI));
+    const __m128 x2Floor = _mm_floor_ps(_mm_add_ss(x1, _mm_set_ss(0.25f)));
+
+    const __m128 x2 = _mm_sub_ss(x1, _mm_add_ss(_mm_set_ss(0.25f), x2Floor));
+
+    const __m128 x3Abs = _mm_sub_ss(_mm_and_ps(absMask, x2), _mm_set_ss(0.5f));
+    const __m128 x3 = _mm_mul_ss(_mm_mul_ss(x2, _mm_set_ss(16.f)), x3Abs);
+
+    const __m128 x4Norm = _mm_mul_ss(x3, _mm_sub_ss(_mm_and_ps(absMask, x3), _mm_set_ss(1.f)));
+
+    #if defined(LS_X86_FMA)
+        const __m128 x4 = _mm_fmadd_ss(_mm_set_ss(0.225f), x4Norm, x3);
+    #else
+        const __m128 x4 = _mm_add_ss(_mm_mul_ss(_mm_set_ss(0.225f), x4Norm), x3);
+    #endif
+
+    return _mm_cvtss_f32(x4);
+}
+
+
+
+inline LS_INLINE float sin(float x) noexcept
+{
+    return ls::math::cos(x - LS_PI_OVER_2);
+}
+
+
 
 /*-------------------------------------
     atan2, accurate to within 0.01 radians.
