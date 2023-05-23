@@ -159,7 +159,7 @@ inline LS_INLINE math::vec2 cos_sin(float x) noexcept
     #endif
 
     math::vec2 result;
-    _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castpd_ps(x4));
+    _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castps_pd(x4));
 
     #else
         math::vec2 result{
