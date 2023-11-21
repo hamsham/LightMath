@@ -12,6 +12,10 @@
 #include "lightsky/math/quat_utils.h"
 #include "lightsky/math/vec_utils.h"
 
+#ifndef TRI_PACK_NORMALIZED_SINCOS
+    #define TRI_PACK_NORMALIZED_SINCOS 1
+#endif
+
 namespace math = ls::math;
 
 
@@ -130,42 +134,70 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 
 
 
+constexpr float inverse_mix(float a, float b, float v) noexcept
+{
+    return (v - a) / (b - a);
+}
+
+
+
 // Cosine/Sine approximation adapted from Demofox,
 // https://www.shadertoy.com/view/XddSzH
+//
+// New version by milianw:
+// https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b/28050328#28050328
 inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 {
     #if defined(LS_X86_SSE)
-    const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
-    const __m128 c = _mm_set_ss(x);
-    const __m128 s = _mm_sub_ss(c, _mm_set_ss(LS_PI_OVER_2));
+        const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
+        const __m128 c = _mm_set_ss(x);
 
-    const __m128 x0 = _mm_unpacklo_ps(c, s);
+        #if TRI_PACK_NORMALIZED_SINCOS != 0
+            const __m128 s = _mm_sub_ss(c, _mm_set_ss(0.25f));
+        #else
+            const __m128 s = _mm_sub_ss(c, _mm_set_ss(LS_PI_OVER_2));
+        #endif
 
-    // This step is not necessary if x is between 0-1, corresponding to 0-360 degrees
-    const __m128 x1 = _mm_mul_ps(x0, _mm_set1_ps(1.f / LS_TWO_PI));
-    const __m128 x2Floor = _mm_floor_ps(_mm_add_ps(x1, _mm_set1_ps(0.25f)));
+        const __m128 x0 = _mm_unpacklo_ps(c, s);
 
-    const __m128 x2 = _mm_sub_ps(x1, _mm_add_ps(_mm_set1_ps(0.25f), x2Floor));
+        // This step is not necessary if x is between 0-1, corresponding to 0-360 degrees
+        #if TRI_PACK_NORMALIZED_SINCOS != 0
+            const __m128 x1 = x0;
+        #else
+            const __m128 x1 = _mm_mul_ps(x0, _mm_set1_ps(1.f / LS_TWO_PI));
+        #endif
 
-    const __m128 x3Abs = _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(0.5f));
-    const __m128 x3 = _mm_mul_ps(_mm_mul_ps(x2, _mm_set1_ps(16.f)), x3Abs);
+        const __m128 x2Floor = _mm_floor_ps(_mm_add_ps(x1, _mm_set1_ps(0.25f)));
 
-    const __m128 x4Norm = _mm_mul_ps(x3, _mm_sub_ps(_mm_and_ps(absMask, x3), _mm_set1_ps(1.f)));
+        const __m128 x2 = _mm_sub_ps(x1, _mm_add_ps(_mm_set1_ps(0.25f), x2Floor));
 
-    #if defined(LS_X86_FMA)
-        const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x4Norm, x3);
+        const __m128 x3Abs = _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(0.5f));
+        const __m128 x3 = _mm_mul_ps(_mm_mul_ps(x2, _mm_set1_ps(16.f)), x3Abs);
+
+        const __m128 x4Norm = _mm_mul_ps(x3, _mm_sub_ps(_mm_and_ps(absMask, x3), _mm_set1_ps(1.f)));
+
+        #if defined(LS_X86_FMA)
+            const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x4Norm, x3);
+        #else
+            const __m128 x4 = _mm_add_ps(_mm_mul_ps(_mm_set_ps(0.225f), x4Norm), x3);
+        #endif
+
+        math::vec2 result;
+        _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castps_pd(x4));
+
     #else
-        const __m128 x4 = _mm_add_ps(_mm_mul_ps(_mm_set_ps(0.225f), x4Norm), x3);
-    #endif
+        #if TRI_PACK_NORMALIZED_SINCOS != 0
+            math::vec2 result{
+                math::cos(x * LS_TWO_PI),
+                math::sin(x * LS_TWO_PI)
+            };
 
-    math::vec2 result;
-    _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castps_pd(x4));
-
-    #else
-        math::vec2 result{
-            math::cos(x),
-            math::sin(x)
-        };
+        #else
+            math::vec2 result{
+                math::cos(x),
+                math::sin(x)
+            };
+        #endif
 
     #endif
 
@@ -469,9 +501,16 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
 
     // Decode the angles from the circumcenter's orthonormal basis to each
     // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
-    const float angleA = (float)triData.angleA * LS_TWO_PI;
-    const float angleB = (float)triData.angleB * LS_TWO_PI;
-    const float angleC = (float)triData.angleC * LS_TWO_PI;
+    #if TRI_PACK_NORMALIZED_SINCOS != 0
+        const float angleA = (float)triData.angleA;
+        const float angleB = (float)triData.angleB;
+        const float angleC = (float)triData.angleC;
+
+    #else
+        const float angleA = (float)triData.angleA * LS_TWO_PI;
+        const float angleB = (float)triData.angleB * LS_TWO_PI;
+        const float angleC = (float)triData.angleC * LS_TWO_PI;
+    #endif
 
     const math::vec3&& s = spheremap_norm_decode(sn) * d;
     const math::vec3&& n = spheremap_norm_decode(m);
