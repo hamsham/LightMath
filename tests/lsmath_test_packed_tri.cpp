@@ -12,8 +12,8 @@
 #include "lightsky/math/quat_utils.h"
 #include "lightsky/math/vec_utils.h"
 
-#ifndef TRI_PACK_NORMALIZED_SINCOS
-    #define TRI_PACK_NORMALIZED_SINCOS 1
+#ifndef TRI_PACK_FAST_SINCOS
+    #define TRI_PACK_FAST_SINCOS 1
 #endif
 
 namespace math = ls::math;
@@ -146,58 +146,41 @@ constexpr float inverse_mix(float a, float b, float v) noexcept
 //
 // New version by milianw:
 // https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b/28050328#28050328
+//
+// Note: This function expects the input angle to be between 0 and 1,
+// representing an angle bewteen 0 and 2pi.
 inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 {
+    math::vec2 result;
+
     #if defined(LS_X86_SSE)
         const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
         const __m128 c = _mm_set_ss(x);
 
-        #if TRI_PACK_NORMALIZED_SINCOS != 0
-            const __m128 s = _mm_sub_ss(c, _mm_set_ss(0.25f));
-        #else
-            const __m128 s = _mm_sub_ss(c, _mm_set_ss(LS_PI_OVER_2));
-        #endif
-
+        const __m128 s = _mm_sub_ss(c, _mm_set_ss(0.25f));
         const __m128 x0 = _mm_unpacklo_ps(c, s);
+        const __m128 x0Floor = _mm_floor_ps(_mm_add_ps(x0, _mm_set1_ps(0.25f)));
 
-        // This step is not necessary if x is between 0-1, corresponding to 0-360 degrees
-        #if TRI_PACK_NORMALIZED_SINCOS != 0
-            const __m128 x1 = x0;
-        #else
-            const __m128 x1 = _mm_mul_ps(x0, _mm_set1_ps(1.f / LS_TWO_PI));
-        #endif
+        const __m128 x1 = _mm_sub_ps(x0, _mm_add_ps(_mm_set1_ps(0.25f), x0Floor));
 
-        const __m128 x2Floor = _mm_floor_ps(_mm_add_ps(x1, _mm_set1_ps(0.25f)));
+        const __m128 x1Abs = _mm_sub_ps(_mm_and_ps(absMask, x1), _mm_set1_ps(0.5f));
+        const __m128 x2 = _mm_mul_ps(_mm_mul_ps(x1, _mm_set1_ps(16.f)), x1Abs);
 
-        const __m128 x2 = _mm_sub_ps(x1, _mm_add_ps(_mm_set1_ps(0.25f), x2Floor));
-
-        const __m128 x3Abs = _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(0.5f));
-        const __m128 x3 = _mm_mul_ps(_mm_mul_ps(x2, _mm_set1_ps(16.f)), x3Abs);
-
-        const __m128 x4Norm = _mm_mul_ps(x3, _mm_sub_ps(_mm_and_ps(absMask, x3), _mm_set1_ps(1.f)));
+        const __m128 x3 = _mm_mul_ps(x2, _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(1.f)));
 
         #if defined(LS_X86_FMA)
-            const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x4Norm, x3);
+            const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x3, x2);
         #else
             const __m128 x4 = _mm_add_ps(_mm_mul_ps(_mm_set_ps(0.225f), x4Norm), x3);
         #endif
 
-        math::vec2 result;
         _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castps_pd(x4));
 
     #else
-        #if TRI_PACK_NORMALIZED_SINCOS != 0
-            math::vec2 result{
-                math::cos(x * LS_TWO_PI),
-                math::sin(x * LS_TWO_PI)
-            };
-
-        #else
-            math::vec2 result{
-                math::cos(x),
-                math::sin(x)
-            };
-        #endif
+        math::vec2 sc{x, x - 0.25f};
+        sc -= math::floor(sc + 0.25f) + 0.25f;
+        sc *= (math::abs(sc) - 0.5f) * 16.f;
+        result = sc + ((math::abs(sc) - 1.f) * sc * 0.225f);
 
     #endif
 
@@ -208,11 +191,15 @@ inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 
 inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, float angleB, float angleC) noexcept
 {
-    #if 1
+    #if TRI_PACK_FAST_SINCOS != 0
         const math::vec2&& x = cos_sin(angleA);
         const math::vec2&& y = cos_sin(angleB);
         const math::vec2&& z = cos_sin(angleC);
     #else
+        angleA *= LS_TWO_PI;
+        angleB *= LS_TWO_PI;
+        angleC *= LS_TWO_PI;
+
         const math::vec2&& x = math::vec2{std::cos(angleA), std::sin(angleA)};
         const math::vec2&& y = math::vec2{std::cos(angleB), std::sin(angleB)};
         const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
@@ -425,7 +412,7 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Generate an orthonormal basis using the revised Frisvad method from Duff
     // et. al:
     // https://jcgt.org/published/0006/01/01/
-    const math::vec3&& right = create_orthonormal_basis_x(n);
+    const math::vec3&& right = math::normalize(create_orthonormal_basis_x(n));
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
@@ -501,16 +488,9 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
 
     // Decode the angles from the circumcenter's orthonormal basis to each
     // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
-    #if TRI_PACK_NORMALIZED_SINCOS != 0
-        const float angleA = (float)triData.angleA;
-        const float angleB = (float)triData.angleB;
-        const float angleC = (float)triData.angleC;
-
-    #else
-        const float angleA = (float)triData.angleA * LS_TWO_PI;
-        const float angleB = (float)triData.angleB * LS_TWO_PI;
-        const float angleC = (float)triData.angleC * LS_TWO_PI;
-    #endif
+    const float angleA = (float)triData.angleA;
+    const float angleB = (float)triData.angleB;
+    const float angleC = (float)triData.angleC;
 
     const math::vec3&& s = spheremap_norm_decode(sn) * d;
     const math::vec3&& n = spheremap_norm_decode(m);
@@ -542,6 +522,21 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
         << "\n\tc:  " << angleC
         << '\n' << std::endl;
     */
+}
+
+
+
+template <typename T, typename... U>
+constexpr T average(U... values) noexcept
+{
+    return math::sum<U...>(values...) / (T)sizeof...(U);
+}
+
+
+
+constexpr float calc_relative_error(float x, float y) noexcept
+{
+    return ls::math::abs(x - y) / ls::math::abs(x);
 }
 
 
@@ -587,6 +582,10 @@ int main()
     }
     std::cout << "\tDone. Test completed in " << execTime.count() << "ms." << std::endl;
 
+    float errA = average<float>(calc_relative_error(a[0], x[0]), calc_relative_error(a[1], x[1]), calc_relative_error(a[2], x[2])) * 100.f;
+    float errB = average<float>(calc_relative_error(b[0], y[0]), calc_relative_error(b[1], y[1]), calc_relative_error(b[2], y[2])) * 100.f;
+    float errC = average<float>(calc_relative_error(c[0], z[0]), calc_relative_error(c[1], z[1]), calc_relative_error(c[2], z[2])) * 100.f;
+
     a = x;
     b = y;
     c = z;
@@ -596,6 +595,7 @@ int main()
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
         << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
         << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tAverage Error: {" << errA << ", " << errB << ", " << errC << '}'
         << std::endl;
 
     return 0;
