@@ -536,7 +536,7 @@ constexpr T average(U... values) noexcept
 
 constexpr float calc_relative_error(float x, float y) noexcept
 {
-    return ls::math::abs(x - y) / ls::math::abs(x);
+    return ls::math::abs<float>(x - y) / ls::math::abs<float>(x);
 }
 
 
