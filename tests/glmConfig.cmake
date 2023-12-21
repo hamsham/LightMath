@@ -101,8 +101,8 @@ if (NOT GLM_FOUND)
             "https://github.com/g-truc/glm.git"
         GIT_TAG
             "${GLM_BRANCH}"
-        UPDATE_COMMAND
-            ${GIT_EXECUTABLE} fetch
+        GIT_REMOTE_UPDATE_STRATEGY
+            CHECKOUT
         CMAKE_COMMAND
             ${CMAKE_COMMAND}
         CMAKE_CACHE_ARGS
