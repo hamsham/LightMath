@@ -47,6 +47,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/vec2.h
     include/lightsky/math/vec3.h
     include/lightsky/math/vec4.h
+    include/lightsky/math/vec_swizzle.h
     include/lightsky/math/vec_utils.h
 
     include/lightsky/math/generic/fixed_impl.h
@@ -62,6 +63,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/vec2_impl.h
     include/lightsky/math/generic/vec3_impl.h
     include/lightsky/math/generic/vec4_impl.h
+    include/lightsky/math/generic/vec_swizzle_impl.h
     include/lightsky/math/generic/vec_utils_impl.h
 )
 
@@ -76,6 +78,7 @@ set(LS_MATH_PLATFORM_HEADERS
     include/lightsky/math/x86/quatf_utils_impl.h
     include/lightsky/math/x86/scalarf_utils_impl.h
     include/lightsky/math/x86/vec4f_impl.h
+    include/lightsky/math/x86/vecf_swizzle_impl.h
     include/lightsky/math/x86/vecf_utils_impl.h
 
     include/lightsky/math/arm/half_impl.h
