@@ -9,11 +9,12 @@
 #include <iostream>
 
 #include "lightsky/math/mat_utils.h"
-#include "lightsky/math/quat_utils.h"
 #include "lightsky/math/vec_utils.h"
+#include "lightsky/math/vec_swizzle.h"
 
+// For this compression method, accuracy is far more important than speed
 #ifndef TRI_PACK_FAST_SINCOS
-    #define TRI_PACK_FAST_SINCOS 1
+    #define TRI_PACK_FAST_SINCOS 0
 #endif
 
 namespace math = ls::math;
@@ -119,8 +120,8 @@ void test_tri_incenter()
 inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
-    //return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
-    return math::vec2_cast(n) * math::inversesqrt(n[2] + n[2] + 2.f);
+    return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
+    //return math::vec2_cast(n) * math::inversesqrt(n[2] + n[2] + 2.f);
 }
 
 
@@ -130,13 +131,6 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
     float f = math::length_squared(n);
     return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - (f + f));
-}
-
-
-
-constexpr float inverse_mix(float a, float b, float v) noexcept
-{
-    return (v - a) / (b - a);
 }
 
 
@@ -226,9 +220,9 @@ inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
     const float b = n[0] * n[1] * a;
 
     return math::mat3{
-        math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]},
-        -math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]},
-        n
+        math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
+        math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
+        n * -sign
     };
 }
 
@@ -407,18 +401,24 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Although Spheremap-encoding is more expensive to encode/decode than
     // Octahedral normal encoding, it allows for a signed z-component.
     const math::vec2&& sh = spheremap_norm_encode(sn);
-    const math::vec2&& m = spheremap_norm_encode(n);
 
     // Generate an orthonormal basis using the revised Frisvad method from Duff
     // et. al:
     // https://jcgt.org/published/0006/01/01/
-    const math::vec3&& right = math::normalize(create_orthonormal_basis_x(n));
+     const math::mat3&& basis = create_orthonormal_basis(n);
+    const math::vec2&& m = spheremap_norm_encode(basis[2]);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
-    float angleA = -math::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
-    float angleB = -math::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
-    float angleC = -math::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+    #if TRI_PACK_FAST_SINCOS
+        float angleA = -math::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
+        float angleB = -math::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
+        float angleC = -math::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+    #else
+        float angleA = -std::atan2(math::dot(math::cross(basis[0], as), basis[2]), math::dot(as, basis[0]));
+        float angleB = -std::atan2(math::dot(math::cross(basis[0], bs), basis[2]), math::dot(bs, basis[0]));
+        float angleC = -std::atan2(math::dot(math::cross(basis[0], cs), basis[2]), math::dot(cs, basis[0]));
+    #endif
 
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
@@ -498,8 +498,8 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
     // reconstruction of each vertex.
-    const math::mat3&& o = create_orthonormal_basis(n);
-    const math::mat3&& v = axial_rotation_matrix(o, angleA, angleB, angleC);
+    const math::mat3&& basis = create_orthonormal_basis(n);
+    const math::mat3&& v = axial_rotation_matrix(basis, angleA, angleB, angleC);
 
     // Expand the vertices to their original positions
     a = (v[0] * r) + s;
@@ -549,9 +549,15 @@ int main()
     typedef std::chrono::system_clock::time_point system_time_point;
     typedef std::chrono::duration<long double, std::milli> system_duration;
 
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
+    #if 1
+        math::vec3 a = {5.75f, 6.9f, 4.25f};
+        math::vec3 b = {13.77f, 8.96f, 2.7f};
+        math::vec3 c = {1.234f, -3.12f, -1.1f};
+    #else
+        math::vec3 a = math::vec3{2.f, 0.f, 0.f} + math::vec3{0.25f, 0.6f,   0.8f};
+        math::vec3 b = math::vec3{0.f, 2.f, 0.f} + math::vec3{0.4f,  0.125f, 0.2f};
+        math::vec3 c = math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f};
+    #endif
 
     std::cout
         << "In Triangle:"
