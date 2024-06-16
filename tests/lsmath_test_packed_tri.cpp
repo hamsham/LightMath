@@ -14,7 +14,7 @@
 
 // For this compression method, accuracy is far more important than speed
 #ifndef TRI_PACK_FAST_SINCOS
-    #define TRI_PACK_FAST_SINCOS 1
+    #define TRI_PACK_FAST_SINCOS 0
 #endif
 
 namespace math = ls::math;
@@ -228,7 +228,7 @@ inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
     return math::mat3{
         math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
         math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
-        n
+        n * -sign
     };
 }
 
@@ -413,7 +413,7 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // et. al:
     // https://jcgt.org/published/0006/01/01/
      const math::mat3&& basis = create_orthonormal_basis(n);
-    const math::vec2&& m = spheremap_norm_encode(basis[2]);
+     const math::vec2&& m = spheremap_norm_encode(basis[2]);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
