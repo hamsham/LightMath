@@ -14,13 +14,37 @@
 
 // For this compression method, accuracy is far more important than speed
 #ifndef TRI_PACK_FAST_SINCOS
-    #define TRI_PACK_FAST_SINCOS 0
+    #define TRI_PACK_FAST_SINCOS 1
 #endif
 
 namespace math = ls::math;
 
 
 
+/*-----------------------------------------------------------------------------
+ * Packed Triangle Structure
+-----------------------------------------------------------------------------*/
+struct alignas(alignof(uint64_t)*2) PackedTriangle
+{
+    math::vec2_t<math::half> circumcenter;
+    math::vec2_t<math::half> normal;
+
+    math::half distance;
+    math::half angleA;
+    math::half angleB;
+    math::half angleC;
+};
+
+static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of packed triangle structure.");
+
+
+
+/*-----------------------------------------------------------------------------
+ * Triangle Attributes
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Triangle Circumcenter
+-------------------------------------*/
 float circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
 {
     const math::vec3&& ac = c - a;
@@ -46,6 +70,9 @@ float circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c
 
 
 
+/*-------------------------------------
+ * Triangle Incenter
+-------------------------------------*/
 float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
 {
     const math::vec3&& bc = b - c;
@@ -75,48 +102,12 @@ float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, ma
 
 
 
-void test_tri_circumcenter()
-{
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
-    math::vec3 s, n;
-    float r = circumcenter(a, b, c, s, n);
-
-    std::cout
-        << "Curcumcenter:"
-        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
-        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
-        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tRadius: " << r
-        << '\n' << std::endl;
-}
-
-
-
-void test_tri_incenter()
-{
-    math::vec3 a = {5.75f, 6.9f, 4.25f};
-    math::vec3 b = {13.77f, 8.96f, 2.7f};
-    math::vec3 c = {1.234f, -3.12f, -1.1f};
-    math::vec3 s, n;
-    float r = incenter(a, b, c, s, n);
-
-    std::cout
-        << "Incenter:"
-        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
-        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
-        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
-        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
-        << "\n\tRadius: " << r
-        << '\n' << std::endl;
-}
-
-
-
+/*-----------------------------------------------------------------------------
+ * Normal Vector Representation
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Spheremap Encoding (3D -> 2D)
+-------------------------------------*/
 inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
@@ -126,6 +117,9 @@ inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
 
 
 
+/*-------------------------------------
+ * Spheremap Decoding (2D -> 3D)
+-------------------------------------*/
 inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 {
     // Extrapolated from https://www.shadertoy.com/view/llfcRl
@@ -135,6 +129,12 @@ inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
 
 
 
+/*-----------------------------------------------------------------------------
+ * Coordinate Systems & Rotations
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Combined Cosine+Sine Approximation
+-------------------------------------*/
 // Cosine/Sine approximation adapted from Demofox,
 // https://www.shadertoy.com/view/XddSzH
 //
@@ -183,6 +183,9 @@ inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 
 
 
+/*-------------------------------------
+ * 2D Rotation Matrix in a 3D Coordinate System
+-------------------------------------*/
 inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, float angleB, float angleC) noexcept
 {
     #if TRI_PACK_FAST_SINCOS != 0
@@ -213,6 +216,9 @@ inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, f
 
 
 
+/*-------------------------------------
+ * Generate an Orthonormal Basis from a Normal Vector
+-------------------------------------*/
 inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
 {
     const float sign = n[2] < 0.f ? -1.f : 1.f;
@@ -222,38 +228,18 @@ inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
     return math::mat3{
         math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
         math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
-        n * -sign
+        n
     };
 }
 
 
 
-inline math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
-{
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    const float a = -1.f / (sign+n[2]);
-    const float b = n[0] * n[1] * a;
-
-    return math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]};
-}
-
-
-
-struct alignas(sizeof(uint64_t)*2) PackedTriangle
-{
-    math::vec2_t<math::half> circumcenter;
-    math::vec2_t<math::half> normal;
-
-    math::half distance;
-    math::half angleA;
-    math::half angleB;
-    math::half angleC;
-};
-
-static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of packed triangle structure.");
-
-
-
+/*-----------------------------------------------------------------------------
+ * Bit Packing Operations
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Place 2 bits into the least-significant bits of a half-float
+-------------------------------------*/
 template <uint16_t numShifts>
 inline math::half encode_2_bits_in_float(math::half f, math::half bits) noexcept
 {
@@ -264,6 +250,9 @@ inline math::half encode_2_bits_in_float(math::half f, math::half bits) noexcept
 
 
 
+/*-------------------------------------
+ * Extract 2 bits from the least-significant bits of a half-float
+-------------------------------------*/
 template <uint16_t numShifts>
 inline uint16_t decode_2_bits_in_float(const math::half f) noexcept
 {
@@ -273,6 +262,9 @@ inline uint16_t decode_2_bits_in_float(const math::half f) noexcept
 
 
 
+/*-------------------------------------
+ * Place a bit into the sign bits of a half-float
+-------------------------------------*/
 template <uint16_t bitPos>
 inline uint16_t extract_sign_bit(math::half f) noexcept
 {
@@ -282,6 +274,9 @@ inline uint16_t extract_sign_bit(math::half f) noexcept
 
 
 
+/*-------------------------------------
+ * Extract a bit from the sign bits of a half-float
+-------------------------------------*/
 template <uint16_t bitPos>
 inline math::half insert_sign_bit(math::half f, math::half bits) noexcept
 {
@@ -291,6 +286,9 @@ inline math::half insert_sign_bit(math::half f, math::half bits) noexcept
 }
 
 
+/*-------------------------------------
+ * Encode a 15-bit half-float within unused bits of 8 half-floats
+-------------------------------------*/
 inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::half& radius) noexcept
 {
     // exploit the spare 2 bits of each of the 7 input variables, plus sign bit
@@ -326,6 +324,9 @@ inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::h
 
 
 
+/*-------------------------------------
+ * Decode a 15-bit half-float from the unused bits of 8 half-floats
+-------------------------------------*/
 inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 {
     math::half result{0};
@@ -381,7 +382,13 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 
 
 
-void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3& c, PackedTriangle& outTriData)
+/*-----------------------------------------------------------------------------
+ * Triangle Packing/Unpacking
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Packed Triangle Encoding
+-------------------------------------*/
+void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3& c, PackedTriangle& outTriData) noexcept
 {
     math::vec3 s, n;
 
@@ -411,9 +418,9 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
     #if TRI_PACK_FAST_SINCOS
-        float angleA = -math::atan2(math::dot(math::cross(right, as), n), math::dot(as, right));
-        float angleB = -math::atan2(math::dot(math::cross(right, bs), n), math::dot(bs, right));
-        float angleC = -math::atan2(math::dot(math::cross(right, cs), n), math::dot(cs, right));
+        float angleA = -math::atan2(math::dot(math::cross(basis[0], as), basis[2]), math::dot(as, basis[0]));
+        float angleB = -math::atan2(math::dot(math::cross(basis[0], bs), basis[2]), math::dot(bs, basis[0]));
+        float angleC = -math::atan2(math::dot(math::cross(basis[0], cs), basis[2]), math::dot(cs, basis[0]));
     #else
         float angleA = -std::atan2(math::dot(math::cross(basis[0], as), basis[2]), math::dot(as, basis[0]));
         float angleB = -std::atan2(math::dot(math::cross(basis[0], bs), basis[2]), math::dot(bs, basis[0]));
@@ -423,13 +430,13 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
     // are available by exploiting the IEEE data format.
-    if (angleA < 0.f) { angleA += LS_TWO_PI; }
-    if (angleB < 0.f) { angleB += LS_TWO_PI; }
-    if (angleC < 0.f) { angleC += LS_TWO_PI; }
-
     angleA /= LS_TWO_PI;
     angleB /= LS_TWO_PI;
     angleC /= LS_TWO_PI;
+
+    if (angleA < 0.f) { angleA += 1.f; }
+    if (angleB < 0.f) { angleB += 1.f; }
+    if (angleC < 0.f) { angleC += 1.f; }
 
     // Debug
     /*
@@ -472,7 +479,10 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
 
 
 
-void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, math::vec3& c)
+/*-------------------------------------
+ * Packed Triangle Decoding
+-------------------------------------*/
+void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, math::vec3& c) noexcept
 {
     // Decode the radius' 15 bits from our reclaimed spare bits
     const float r = (float)decode_tri_radius(triData);
@@ -526,6 +536,12 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
 
 
 
+/*-----------------------------------------------------------------------------
+ * Functional Tests
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Calculate the average of a group of numbers
+-------------------------------------*/
 template <typename T, typename... U>
 constexpr T average(U... values) noexcept
 {
@@ -534,6 +550,9 @@ constexpr T average(U... values) noexcept
 
 
 
+/*-------------------------------------
+ * Calculate the relative error between two variables
+-------------------------------------*/
 constexpr float calc_relative_error(float x, float y) noexcept
 {
     return ls::math::abs<float>(x - y) / ls::math::abs<float>(x);
@@ -541,30 +560,91 @@ constexpr float calc_relative_error(float x, float y) noexcept
 
 
 
-int main()
+/*-------------------------------------
+ * Triangle Circumcenter Validation
+-------------------------------------*/
+void test_tri_circumcenter(const math::vec3& a, const math::vec3 b, const math::vec3& c)
 {
-    test_tri_circumcenter();
-    test_tri_incenter();
-
-    typedef std::chrono::system_clock::time_point system_time_point;
-    typedef std::chrono::duration<long double, std::milli> system_duration;
-
-    #if 1
-        math::vec3 a = {5.75f, 6.9f, 4.25f};
-        math::vec3 b = {13.77f, 8.96f, 2.7f};
-        math::vec3 c = {1.234f, -3.12f, -1.1f};
-    #else
-        math::vec3 a = math::vec3{2.f, 0.f, 0.f} + math::vec3{0.25f, 0.6f,   0.8f};
-        math::vec3 b = math::vec3{0.f, 2.f, 0.f} + math::vec3{0.4f,  0.125f, 0.2f};
-        math::vec3 c = math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f};
-    #endif
+    math::vec3 s, n;
+    float r = circumcenter(a, b, c, s, n);
 
     std::cout
-        << "In Triangle:"
+        << "Curcumcenter:"
+        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tRadius: " << r
+        << '\n' << std::endl;
+}
+
+
+
+/*-------------------------------------
+ * Triangle Incenter Validation
+-------------------------------------*/
+void test_tri_incenter(const math::vec3& a, const math::vec3 b, const math::vec3& c)
+{
+    math::vec3 s, n;
+    float r = incenter(a, b, c, s, n);
+
+    std::cout
+        << "Incenter:"
+        << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tCenter: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tNormal: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tRadius: " << r
+        << '\n' << std::endl;
+}
+
+
+
+/*-------------------------------------
+ * Packed Triangle Validation
+-------------------------------------*/
+void test_tri_packing(const math::vec3& a, const math::vec3 b, const math::vec3& c)
+{
+    PackedTriangle triData{};
+    math::vec3 x = a;
+    math::vec3 y = b;
+    math::vec3 z = c;
+
+    test_tri_packing(x, y, z, triData);
+    test_tri_unpacking(triData, x, y, z);
+
+    float errA = average<float>(calc_relative_error(a[0], x[0]), calc_relative_error(a[1], x[1]), calc_relative_error(a[2], x[2])) * 100.f;
+    float errB = average<float>(calc_relative_error(b[0], y[0]), calc_relative_error(b[1], y[1]), calc_relative_error(b[2], y[2])) * 100.f;
+    float errC = average<float>(calc_relative_error(c[0], z[0]), calc_relative_error(c[1], z[1]), calc_relative_error(c[2], z[2])) * 100.f;
+
+    std::cout
+        << "Triangle Packing:"
+        << "\nIn Triangle:"
         << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
         << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
         << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << std::endl;
+        << "\nOut Triangle:"
+        << "\n\tA: {" << x[0] << ", " << x[1] << ", " << x[2] << '}'
+        << "\n\tB: {" << y[0] << ", " << y[1] << ", " << y[2] << '}'
+        << "\n\tC: {" << z[0] << ", " << z[1] << ", " << z[2] << '}'
+        << "\n\tAverage Error: {" << errA << ", " << errB << ", " << errC << '}'
+        << '\n' << std::endl;
+}
+
+
+
+/*-----------------------------------------------------------------------------
+ * Benchmarks
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Packed Triangle Benchmark
+-------------------------------------*/
+void benchmark_tri_packing(const math::vec3& a, const math::vec3 b, const math::vec3& c)
+{
+    typedef std::chrono::system_clock::time_point system_time_point;
+    typedef std::chrono::duration<long double, std::milli> system_duration;
 
     std::cout << "Benchmarking triangle packing..." << std::endl;
     system_duration execTime{0};
@@ -587,22 +667,32 @@ int main()
         execTime += system_duration{std::chrono::system_clock::now() - startTime};
     }
     std::cout << "\tDone. Test completed in " << execTime.count() << "ms." << std::endl;
+}
 
-    float errA = average<float>(calc_relative_error(a[0], x[0]), calc_relative_error(a[1], x[1]), calc_relative_error(a[2], x[2])) * 100.f;
-    float errB = average<float>(calc_relative_error(b[0], y[0]), calc_relative_error(b[1], y[1]), calc_relative_error(b[2], y[2])) * 100.f;
-    float errC = average<float>(calc_relative_error(c[0], z[0]), calc_relative_error(c[1], z[1]), calc_relative_error(c[2], z[2])) * 100.f;
 
-    a = x;
-    b = y;
-    c = z;
 
-    std::cout
-        << "Out Triangle:"
-        << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
-        << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
-        << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
-        << "\n\tAverage Error: {" << errA << ", " << errB << ", " << errC << '}'
-        << std::endl;
+/*-----------------------------------------------------------------------------
+ * Main()
+-----------------------------------------------------------------------------*/
+int main()
+{
+    #if 1
+        math::vec3 a = {5.75f, 6.9f, 4.25f};
+        math::vec3 b = {13.77f, 8.96f, 2.7f};
+        math::vec3 c = {1.234f, -3.12f, -1.1f};
+    #else
+        math::vec3 a = math::vec3{2.f, 0.f, 0.f} + math::vec3{0.25f, 0.6f,   0.8f};
+        math::vec3 b = math::vec3{0.f, 2.f, 0.f} + math::vec3{0.4f,  0.125f, 0.2f};
+        math::vec3 c = math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f};
+    #endif
+
+    test_tri_circumcenter(a, b, c);
+    test_tri_incenter(a, b, c);
+    test_tri_packing(a, b, c);
+
+    // benchmark after validation test since some instructions might have been
+    // placed into thhe CPU's instruction cache (found a 150ms performance win)
+    benchmark_tri_packing(a, b, c);
 
     return 0;
 }
