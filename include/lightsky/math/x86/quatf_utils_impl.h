@@ -34,6 +34,28 @@ inline LS_INLINE float dot(const quat_t<float>& q1, const quat_t<float>& q2)
 }
 
 /*-------------------------------------
+    4D Magnitude-Squared
+-------------------------------------*/
+inline LS_INLINE float length_squared(const quat_t<float>& q)
+{
+    // cache
+    const __m128 s = _mm_loadu_ps(q.q);
+
+    // horizontal add
+    const __m128 a = _mm_mul_ps(s, s);
+
+    // swap the words of each vector
+    const __m128 b = _mm_shuffle_ps(a, a, 0xB1);
+    const __m128 c = _mm_add_ps(a, b);
+
+    // swap each half of the vector
+    const __m128 d = _mm_shuffle_ps(c, c, 0x0F);
+    const __m128 e = _mm_add_ps(c, d);
+
+    return _mm_cvtss_f32(e);
+}
+
+/*-------------------------------------
     4D Magnitude
 -------------------------------------*/
 inline LS_INLINE float length(const quat_t<float>& q)

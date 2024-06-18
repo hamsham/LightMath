@@ -100,25 +100,6 @@ template <typename N> inline
 quat_t<N> normalize(const quat_t<N>&);
 
 /**
- * @brief Rotate a vector by the orientation specified by a quaternion.
- *
- * This method was adapted (aggressively) from Laurent Couvidou's StackExchange
- * post regarding vector rotation:
- * http://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
- *
- * @param v
- * A constant reference to the vector which is to be rotated.
- *
- * @param q
- * A constant reference to the quaternion which contains an orientation that
- * will be used to manipulate "v".
- *
- * @return A 3D vector rotated by the quaternion "q".
- */
-template <typename N> inline
-vec3_t<N> rotate(const vec3_t<N>& v, const quat_t<N>& q);
-
-/**
  *  @brief
  *  Linearly interpolate a quaternion towards another by some percentage. This
  *  is the same as calling "ls::math::mix()" for a vector or scalar.
@@ -226,6 +207,25 @@ vec3_t<N> reorient(const quat_t<N>& q, const vec3_t<N>& v);
  */
 template <typename N> inline
 vec3_t<N> reorient(const vec3_t<N>& v, const quat_t<N>& q);
+
+/**
+ * @brief Rotate a vector by the orientation specified by a quaternion.
+ *
+ * This method was adapted (aggressively) from Laurent Couvidou's StackExchange
+ * post regarding vector rotation:
+ * http://gamedev.stackexchange.com/questions/28395/rotating-vector3-by-a-quaternion
+ *
+ * @param v
+ * A constant reference to the vector which is to be rotated.
+ *
+ * @param q
+ * A constant reference to the quaternion which contains an orientation that
+ * will be used to manipulate "v".
+ *
+ * @return A 3D vector rotated by the quaternion "q".
+ */
+template <typename N> inline
+vec3_t<N> rotate(const vec3_t<N>& v, const quat_t<N>& q);
 
 /*-----------------------------------------------------------------------------
     Quaternions & Matrices

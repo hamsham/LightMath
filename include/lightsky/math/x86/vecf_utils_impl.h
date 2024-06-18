@@ -47,22 +47,24 @@ inline LS_INLINE float dot(const vec3_t<float>& v1, const vec3_t<float>& v2) noe
 -------------------------------------*/
 inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float>& v2) noexcept
 {
-    union
-    {
-        vec3_t<float> vec;
-        __m128 simd;
-    } a{v1}, b{v2}, ret;
+    const __m128 a = _mm_set_ps(0.f, v1.v[2], v1.v[1], v1.v[0]);
+    const __m128 b = _mm_set_ps(0.f, v2.v[2], v2.v[1], v2.v[0]);
 
-    const __m128 yzxA = _mm_shuffle_ps(a.simd, a.simd, _MM_SHUFFLE(3, 0, 2, 1));
-    const __m128 yzxB = _mm_shuffle_ps(b.simd, b.simd, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 yzxA = _mm_shuffle_ps(a, a, _MM_SHUFFLE(3, 0, 2, 1));
+    const __m128 yzxB = _mm_shuffle_ps(b, b, _MM_SHUFFLE(3, 0, 2, 1));
 
     #ifdef LS_X86_FMA
-        const __m128 c = _mm_fmsub_ps(a.simd, yzxB, _mm_mul_ps(yzxA, b.simd));
+        const __m128 c = _mm_fmsub_ps(a, yzxB, _mm_mul_ps(yzxA, b));
     #else
         const __m128 c = _mm_sub_ps(_mm_mul_ps(a.simd, yzxB), _mm_mul_ps(yzxA, b.simd));
     #endif
 
-    ret.simd = _mm_shuffle_ps(c, c, _MM_SHUFFLE(3, 0, 2, 1));
+    union
+    {
+        __m128 simd;
+        vec3_t<float> vec;
+    } ret{_mm_shuffle_ps(c, c, _MM_SHUFFLE(3, 0, 2, 1))};
+
     return ret.vec;
 }
 

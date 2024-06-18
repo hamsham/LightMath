@@ -10,11 +10,21 @@
 
 #include "lightsky/math/mat_utils.h"
 #include "lightsky/math/vec_utils.h"
-#include "lightsky/math/vec_swizzle.h"
+#include "lightsky/math/quat_utils.h"
 
 // For this compression method, accuracy is far more important than speed
 #ifndef TRI_PACK_FAST_SINCOS
     #define TRI_PACK_FAST_SINCOS 0
+#endif
+
+// Control accuracy vs performance with quaternions vs rotation matrices
+#ifndef TRI_PACK_NORMALIZE_ROTATIONS
+    #define TRI_PACK_NORMALIZE_ROTATIONS 0
+#endif
+
+// Control accuracy vs performance with quaternions vs rotation matrices
+#ifndef TRI_PACK_QUATERNION_ROTATIONS
+    #define TRI_PACK_QUATERNION_ROTATIONS 1
 #endif
 
 namespace math = ls::math;
@@ -184,10 +194,66 @@ inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 
 
 /*-------------------------------------
+ * Generate an Orthonormal Basis from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float a = -1.f / (sign+n[2]);
+    const float b = n[0] * n[1] * a;
+
+    return math::mat3{
+        math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
+        math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
+        n * -sign
+    };
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis' X-direction from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float a = -1.f / (sign+n[2]);
+    const float b = n[0] * n[1] * a;
+
+    return math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]});
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis' Z-direction from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::vec3 create_orthonormal_basis_z(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    return n * -sign;
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis' Z-direction from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::vec3 create_orthonormal_basis_z_inverted(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    return n * sign;
+}
+
+
+
+/*-------------------------------------
  * 2D Rotation Matrix in a 3D Coordinate System
 -------------------------------------*/
-inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, float angleB, float angleC) noexcept
+inline LS_INLINE math::mat3 rotate_axes_matrix(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
 {
+    const math::mat3& basis = create_orthonormal_basis(n);
+
     #if TRI_PACK_FAST_SINCOS != 0
         const math::vec2&& x = cos_sin(angleA);
         const math::vec2&& y = cos_sin(angleB);
@@ -217,18 +283,33 @@ inline math::mat3 axial_rotation_matrix(const math::mat3& basis, float angleA, f
 
 
 /*-------------------------------------
- * Generate an Orthonormal Basis from a Normal Vector
+ * Packed Triangle Decoding
 -------------------------------------*/
-inline math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
+inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
 {
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    const float a = -1.f / (sign+n[2]);
-    const float b = n[0] * n[1] * a;
+    const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+
+    const float ah = angleA * LS_PI;
+    const float bh = angleB * LS_PI;
+    const float ch = angleC * LS_PI;
+
+    const float as = std::sin(ah);
+    const float bs = std::sin(bh);
+    const float cs = std::sin(ch);
+
+    const float ac = std::cos(ah);
+    const float bc = std::cos(bh);
+    const float cc = std::cos(ch);
+
+    const math::quat&& basisA = math::quat{as*basisZ[0], as*basisZ[1], as*basisZ[2], ac};
+    const math::quat&& basisB = math::quat{bs*basisZ[0], bs*basisZ[1], bs*basisZ[2], bc};
+    const math::quat&& basisC = math::quat{cs*basisZ[0], cs*basisZ[1], cs*basisZ[2], cc};
 
     return math::mat3{
-        math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
-        math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
-        n * -sign
+        math::rotate(basisX, basisA),
+        math::rotate(basisX, basisB),
+        math::rotate(basisX, basisC)
     };
 }
 
@@ -412,19 +493,20 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Generate an orthonormal basis using the revised Frisvad method from Duff
     // et. al:
     // https://jcgt.org/published/0006/01/01/
-     const math::mat3&& basis = create_orthonormal_basis(n);
-     const math::vec2&& m = spheremap_norm_encode(basis[2]);
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+    const math::vec3&& basisZ = create_orthonormal_basis_z(n);
+    const math::vec2&& m      = spheremap_norm_encode(basisZ);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
     #if TRI_PACK_FAST_SINCOS
-        float angleA = -math::atan2(math::dot(math::cross(basis[0], as), basis[2]), math::dot(as, basis[0]));
-        float angleB = -math::atan2(math::dot(math::cross(basis[0], bs), basis[2]), math::dot(bs, basis[0]));
-        float angleC = -math::atan2(math::dot(math::cross(basis[0], cs), basis[2]), math::dot(cs, basis[0]));
+        float angleA = -math::atan2(math::dot(math::cross(basisX, as), basisZ), math::dot(as, basisX));
+        float angleB = -math::atan2(math::dot(math::cross(basisX, bs), basisZ), math::dot(bs, basisX));
+        float angleC = -math::atan2(math::dot(math::cross(basisX, cs), basisZ), math::dot(cs, basisX));
     #else
-        float angleA = -std::atan2(math::dot(math::cross(basis[0], as), basis[2]), math::dot(as, basis[0]));
-        float angleB = -std::atan2(math::dot(math::cross(basis[0], bs), basis[2]), math::dot(bs, basis[0]));
-        float angleC = -std::atan2(math::dot(math::cross(basis[0], cs), basis[2]), math::dot(cs, basis[0]));
+        float angleA = -std::atan2(math::dot(math::cross(basisX, as), basisZ), math::dot(as, basisX));
+        float angleB = -std::atan2(math::dot(math::cross(basisX, bs), basisZ), math::dot(bs, basisX));
+        float angleC = -std::atan2(math::dot(math::cross(basisX, cs), basisZ), math::dot(cs, basisX));
     #endif
 
     // Ensure all angles are greater than 0 (see below for reasoning) and less
@@ -477,11 +559,6 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     outTriData = encode_tri_radius(result, (math::half)r);
 }
 
-
-
-/*-------------------------------------
- * Packed Triangle Decoding
--------------------------------------*/
 void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, math::vec3& c) noexcept
 {
     // Decode the radius' 15 bits from our reclaimed spare bits
@@ -496,25 +573,35 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
     // decode the distance to the triangle's circumcenter
     float d = (float)triData.distance;
 
+    const math::vec3&& s = spheremap_norm_decode(sn) * d;
+    const math::vec3&& n = spheremap_norm_decode(m);
+
     // Decode the angles from the circumcenter's orthonormal basis to each
     // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
     const float angleA = (float)triData.angleA;
     const float angleB = (float)triData.angleB;
     const float angleC = (float)triData.angleC;
 
-    const math::vec3&& s = spheremap_norm_decode(sn) * d;
-    const math::vec3&& n = spheremap_norm_decode(m);
-
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
     // reconstruction of each vertex.
-    const math::mat3&& basis = create_orthonormal_basis(n);
-    const math::mat3&& v = axial_rotation_matrix(basis, angleA, angleB, angleC);
+    #if TRI_PACK_QUATERNION_ROTATIONS
+        math::mat3&& v = rotate_axes_quaternion(n, angleA, angleB, angleC);
+
+    #else
+        math::mat3&& v = rotate_axes_matrix(n, angleA, angleB, angleC);
+    #endif
+
+    #if TRI_PACK_NORMALIZE_ROTATIONS
+        v[0] = math::normalize(v[0]);
+        v[1] = math::normalize(v[1]);
+        v[2] = math::normalize(v[2]);
+    #endif
 
     // Expand the vertices to their original positions
-    a = (v[0] * r) + s;
-    b = (v[1] * r) + s;
-    c = (v[2] * r) + s;
+    a = v[0] * r + s;
+    b = v[1] * r + s;
+    c = v[2] * r + s;
 
     // Debug
     /*
@@ -691,7 +778,7 @@ int main()
     test_tri_packing(a, b, c);
 
     // benchmark after validation test since some instructions might have been
-    // placed into thhe CPU's instruction cache (found a 150ms performance win)
+    // placed into the CPU's instruction cache (found a 150ms performance win)
     benchmark_tri_packing(a, b, c);
 
     return 0;
