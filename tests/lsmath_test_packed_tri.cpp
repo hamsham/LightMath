@@ -287,30 +287,47 @@ inline LS_INLINE math::mat3 rotate_axes_matrix(const math::vec3& n, float angleA
 -------------------------------------*/
 inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
 {
-    const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
-    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+    #if 1
+        const math::vec3&& basisX = create_orthonormal_basis_x(n);
 
-    const float ah = angleA * LS_PI;
-    const float bh = angleB * LS_PI;
-    const float ch = angleC * LS_PI;
+        const float ah = angleA * LS_PI;
+        const float bh = angleB * LS_PI;
+        const float ch = angleC * LS_PI;
 
-    const float as = std::sin(ah);
-    const float bs = std::sin(bh);
-    const float cs = std::sin(ch);
+        const float as = std::sin(ah);
+        const float bs = std::sin(bh);
+        const float cs = std::sin(ch);
 
-    const float ac = std::cos(ah);
-    const float bc = std::cos(bh);
-    const float cc = std::cos(ch);
+        const float ac = std::cos(ah);
+        const float bc = std::cos(bh);
+        const float cc = std::cos(ch);
 
-    const math::quat&& basisA = math::quat{as*basisZ[0], as*basisZ[1], as*basisZ[2], ac};
-    const math::quat&& basisB = math::quat{bs*basisZ[0], bs*basisZ[1], bs*basisZ[2], bc};
-    const math::quat&& basisC = math::quat{cs*basisZ[0], cs*basisZ[1], cs*basisZ[2], cc};
+        const math::quat&& basisA = math::quat{as*n[0], as*n[1], as*n[2], ac};
+        const math::quat&& basisB = math::quat{bs*n[0], bs*n[1], bs*n[2], bc};
+        const math::quat&& basisC = math::quat{cs*n[0], cs*n[1], cs*n[2], cc};
 
-    return math::mat3{
-        math::rotate(basisX, basisA),
-        math::rotate(basisX, basisB),
-        math::rotate(basisX, basisC)
-    };
+        return math::mat3{
+            math::rotate(basisX, basisA),
+            math::rotate(basisX, basisB),
+            math::rotate(basisX, basisC)
+        };
+
+    #else
+        const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
+        const math::vec3&& basisX = create_orthonormal_basis_x(n);
+        const math::quat&& basisQ = math::normalize(math::quat{basisX[0], basisX[1], basisX[2], 1.f});
+
+        const math::quat&& basisA = basisQ * math::normalize(math::quat{basisZ[0], basisZ[1], basisZ[2], 1.f+angleA});
+        const math::quat&& basisB = basisQ * math::normalize(math::quat{basisZ[0], basisZ[1], basisZ[2], 1.f+angleB});
+        const math::quat&& basisC = basisQ * math::normalize(math::quat{basisZ[0], basisZ[1], basisZ[2], 1.f+angleC});
+
+        return math::mat3{
+            math::get_x_axis(basisA),
+            math::get_x_axis(basisB),
+            math::get_x_axis(basisC)
+        };
+
+    #endif
 }
 
 
@@ -494,8 +511,16 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // et. al:
     // https://jcgt.org/published/0006/01/01/
     const math::vec3&& basisX = create_orthonormal_basis_x(n);
-    const math::vec3&& basisZ = create_orthonormal_basis_z(n);
-    const math::vec2&& m      = spheremap_norm_encode(basisZ);
+
+    #if TRI_PACK_QUATERNION_ROTATIONS
+        const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
+        n = -basisZ;
+    #else
+        const math::vec3&& basisZ = create_orthonormal_basis_z(n);
+        n = basisZ;
+    #endif
+
+    const math::vec2&& m = spheremap_norm_encode(n);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
