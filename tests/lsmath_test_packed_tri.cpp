@@ -22,6 +22,11 @@
     #define TRI_PACK_NORMALIZE_ROTATIONS 0
 #endif
 
+// Control accuracy vs performance with quaternions vs rotation matrices
+#ifndef TRI_PACK_QUATERNION_ROTATIONS
+    #define TRI_PACK_QUATERNION_ROTATIONS 1
+#endif
+
 namespace math = ls::math;
 
 
@@ -32,10 +37,12 @@ namespace math = ls::math;
 struct alignas(alignof(uint64_t)*2) PackedTriangle
 {
     math::half distance;
-    math::half angleC;
-    math::vec2_t<math::half> dirA;
-    math::vec2_t<math::half> dirB;
     math::vec2_t<math::half> circumcenter;
+
+    math::vec2_t<math::half> normal;
+    math::half angleA;
+    math::half angleB;
+    math::half angleC;
 };
 
 static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of packed triangle structure.");
@@ -307,32 +314,6 @@ inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float an
 
 
 
-/*-------------------------------------
- * Packed Triangle Decoding
--------------------------------------*/
-inline LS_INLINE math::vec3 rotate_axes_quaternion(const math::vec3& n, const math::vec3& basisX, float angleC) noexcept
-{
-    #if TRI_PACK_FAST_SINCOS != 0
-        const math::vec2&& ch = cos_sin(angleC * -0.5f);
-        const float cc = ch[0];
-        const float cs = ch[1];
-
-    #else
-        // Converting a quaternion from an axis-angle format requires using the
-        // half-angle between vectors. Multiply by Pi instead of 2Pi, flipping
-        // the sign bit to rotate towards the reconstructed vector.
-        const float ch = angleC * -LS_PI;
-        const float cc = std::cos(ch);
-        const float cs = std::sin(ch);
-
-    #endif
-
-    const math::quat&& basisC = math::normalize(math::quat{cs*n[0], cs*n[1], cs*n[2], cc});
-    return math::rotate(basisX, basisC);
-}
-
-
-
 /*-----------------------------------------------------------------------------
  * Bit Packing Operations
 -----------------------------------------------------------------------------*/
@@ -508,18 +489,61 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Although Spheremap-encoding is more expensive to encode/decode than
     // Octahedral normal encoding, it allows for a signed z-component.
     const math::vec2&& sh = spheremap_norm_encode(sn);
-    const math::vec2&& na = spheremap_norm_encode(as);
-    const math::vec2&& nb = spheremap_norm_encode(bs);
+
+    // Generate an orthonormal basis using the revised Frisvad method from Duff
+    // et. al:
+    // https://jcgt.org/published/0006/01/01/
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+
+    #if TRI_PACK_QUATERNION_ROTATIONS
+        const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
+        n = -basisZ;
+    #else
+        const math::vec3&& basisZ = create_orthonormal_basis_z(n);
+        n = basisZ;
+    #endif
+
+    const math::vec2&& m = spheremap_norm_encode(n);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis
-    float angleC = -std::atan2(math::dot(math::cross(as, cs), n), math::dot(cs, as));
+    #if TRI_PACK_FAST_SINCOS
+        float angleA = -math::atan2(math::dot(math::cross(basisX, as), basisZ), math::dot(as, basisX));
+        float angleB = -math::atan2(math::dot(math::cross(basisX, bs), basisZ), math::dot(bs, basisX));
+        float angleC = -math::atan2(math::dot(math::cross(basisX, cs), basisZ), math::dot(cs, basisX));
+    #else
+        float angleA = -std::atan2(math::dot(math::cross(basisX, as), basisZ), math::dot(as, basisX));
+        float angleB = -std::atan2(math::dot(math::cross(basisX, bs), basisZ), math::dot(bs, basisX));
+        float angleC = -std::atan2(math::dot(math::cross(basisX, cs), basisZ), math::dot(cs, basisX));
+    #endif
 
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
     // are available by exploiting the IEEE data format.
+    angleA /= LS_TWO_PI;
+    angleB /= LS_TWO_PI;
     angleC /= LS_TWO_PI;
+
+    if (angleA < 0.f) { angleA += 1.f; }
+    if (angleB < 0.f) { angleB += 1.f; }
     if (angleC < 0.f) { angleC += 1.f; }
+
+    // Debug
+    /*
+    std::cout
+        << "In Triangle:"
+        << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tD:  " << d
+        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tR:  " << r
+        << "\n\ta:  " << angleA
+        << "\n\tb:  " << angleB
+        << "\n\tc:  " << angleC
+        << '\n' << std::endl;
+    */
 
     // Force all values to be within the range of (0, 1), with the exception of
     // the distance to our triangle's circumcenter. Because all 8 values are
@@ -532,10 +556,11 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // needs 15 bits to be stored correctly.
     PackedTriangle result = {
         (math::half)d,
-        (math::half)math::clamp(angleC, 0.f, 1.f),
-        (math::vec2_t<math::half>)math::clamp(na * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f}),
-        (math::vec2_t<math::half>)math::clamp(nb * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f}),
-        (math::vec2_t<math::half>)math::clamp(sh * 0.5f + 0.5f, math::vec2{0.f}, math::vec2{1.f})
+        (math::vec2_t<math::half>)math::saturate(sh * 0.5f + 0.5f),
+        (math::vec2_t<math::half>)math::saturate(m  * 0.5f + 0.5f),
+        (math::half)math::saturate(angleA),
+        (math::half)math::saturate(angleB),
+        (math::half)math::saturate(angleC)
     };
 
     // Encode the radius' 15 bits in our reclaimed spare bits
@@ -550,40 +575,58 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
     // decode the distance to the triangle's circumcenter
     float d = (float)triData.distance;
 
-    // Decode the angles from the circumcenter's orthonormal basis to each
-    // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
-    const float angleC = (float)triData.angleC;
-
-    const math::vec2&& na = (math::vec2)triData.dirA;
-    const math::vec2&& nb = (math::vec2)triData.dirB;
-
     // decode the direction to our triangle's circumcenter
-    const math::vec2&& sn = (math::vec2)triData.circumcenter;
-
-    #if TRI_PACK_NORMALIZE_ROTATIONS != 0
-        const math::vec3&& as = math::normalize(spheremap_norm_decode(na * 2.f - 1.f));
-        const math::vec3&& bs = math::normalize(spheremap_norm_decode(nb * 2.f - 1.f));
-        const math::vec3&& s  = math::normalize(spheremap_norm_decode(sn * 2.f - 1.f)) * d;
-    #else
-        const math::vec3&& as = spheremap_norm_decode(na * 2.f - 1.f);
-        const math::vec3&& bs = spheremap_norm_decode(nb * 2.f - 1.f);
-        const math::vec3&& s  = spheremap_norm_decode(sn * 2.f - 1.f) * d;
-    #endif
+    const math::vec2&& sn = (math::vec2)triData.circumcenter * 2.f - 1.f;
 
     // decode the triangle's face normal
-    const math::vec3&& n = math::normalize(math::cross(as, bs));
+    const math::vec2&& m = (math::vec2)triData.normal * 2.f - 1.f;
+
+    const math::vec3&& s = spheremap_norm_decode(sn) * d;
+    const math::vec3&& n = spheremap_norm_decode(m);
+
+    // Decode the angles from the circumcenter's orthonormal basis to each
+    // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
+    const float angleA = (float)triData.angleA;
+    const float angleB = (float)triData.angleB;
+    const float angleC = (float)triData.angleC;
 
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
     // reconstruction of each vertex.
-    const math::vec3&& cs = rotate_axes_quaternion(n, as, angleC);
+    #if TRI_PACK_QUATERNION_ROTATIONS
+        math::mat3&& v = rotate_axes_quaternion(n, angleA, angleB, angleC);
+
+    #else
+        math::mat3&& v = rotate_axes_matrix(n, angleA, angleB, angleC);
+    #endif
+
+    #if TRI_PACK_NORMALIZE_ROTATIONS
+        v[0] = math::normalize(v[0]);
+        v[1] = math::normalize(v[1]);
+        v[2] = math::normalize(v[2]);
+    #endif
 
     // Expand the vertices to their original positions
-    // Expand the vertices to their original positions
-    a = as * r + s;
-    b = bs * r + s;
-    c = cs * r + s;
+    a = v[0] * r + s;
+    b = v[1] * r + s;
+    c = v[2] * r + s;
 
+    // Debug
+    /*
+    std::cout
+        << "Out Triangle:"
+        << "\n\tA: {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
+        << "\n\tB: {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
+        << "\n\tC: {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
+        << "\n\tS: {" << s[0] << ", " << s[1] << ", " << s[2] << '}'
+        << "\n\tD:  " << d
+        << "\n\tN: {" << n[0] << ", " << n[1] << ", " << n[2] << '}'
+        << "\n\tR:  " << r
+        << "\n\ta:  " << angleA
+        << "\n\tb:  " << angleB
+        << "\n\tc:  " << angleC
+        << '\n' << std::endl;
+    */
 }
 
 
@@ -728,19 +771,19 @@ void benchmark_tri_packing(const math::vec3& a, const math::vec3 b, const math::
 -----------------------------------------------------------------------------*/
 int main()
 {
-    #if 1
-        math::vec3 a = {5.75f, 6.9f, 4.25f};
-        math::vec3 b = {13.77f, 8.96f, 2.7f};
-        math::vec3 c = {1.234f, -3.12f, -1.1f};
-    #else
-        math::vec3 a = math::vec3{2.f, 0.f, 0.f} + math::vec3{0.25f, 0.6f,   0.8f};
-        math::vec3 b = math::vec3{0.f, 2.f, 0.f} + math::vec3{0.4f,  0.125f, 0.2f};
-        math::vec3 c = math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f};
-    #endif
-
+    constexpr math::vec3 a{5.75f, 6.9f, 4.25f};
+    constexpr math::vec3 b{13.77f, 8.96f, 2.7f};
+    constexpr math::vec3 c{1.234f, -3.12f, -1.1f};
     test_tri_circumcenter(a, b, c);
     test_tri_incenter(a, b, c);
+
     test_tri_packing(a, b, c);
+
+    test_tri_packing(
+        math::vec3{2.f, 0.f, 0.f} + math::vec3{0.25f, 0.6f,   0.8f},
+        math::vec3{0.f, 2.f, 0.f} + math::vec3{0.4f,  0.125f, 0.2f},
+        math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f}
+    );
 
     //constexpr float rads = LS_DEG2RAD(30.f) / LS_PI;
     const math::vec3 va{0.35f, 0.f, 0.65f};
