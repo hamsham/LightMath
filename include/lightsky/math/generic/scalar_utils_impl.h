@@ -49,9 +49,20 @@ constexpr LS_INLINE scalar_t math::min(const scalar_t& a, const scalar_t& b, con
     mix
 -------------------------------------*/
 template<typename scalar_t>
-constexpr LS_INLINE scalar_t math::mix(scalar_t a, scalar_t b, scalar_t percent) noexcept
+constexpr LS_INLINE scalar_t math::mix(scalar_t a, scalar_t b, scalar_t t) noexcept
 {
-    return a + ((b - a) * percent);
+    return a + ((b - a) * t);
+}
+
+
+
+/*-------------------------------------
+    unmix
+-------------------------------------*/
+template<typename scalar_t>
+constexpr LS_INLINE scalar_t math::unmix(scalar_t a, scalar_t b, scalar_t t) noexcept
+{
+    return (t - a) / (b - a);
 }
 
 

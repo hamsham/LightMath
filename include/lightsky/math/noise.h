@@ -1,20 +1,16 @@
 /*
- * File:   math/perlinNoise.h
+ * File:   math/noise.h
  * Author: miles
  *
  * Created on August 15, 2014, 9:23 PM
  */
 
-#ifndef LS_MATH_PERLIN_NOISE_H
-#define LS_MATH_PERLIN_NOISE_H
+#ifndef LS_MATH_NOISE_H
+#define LS_MATH_NOISE_H
 
-#include <chrono>
-#include <utility> // std::move
-
-#include "lightsky/setup/Api.h"
+#include "lightsky/setup/Macros.h"
 
 #include "lightsky/math/vec3.h"
-#include "lightsky/utils/Copy.h"
 #include "lightsky/utils/RandomNum.h"
 
 namespace ls {
@@ -29,7 +25,8 @@ namespace math {
  * http://flafla2.github.io/2014/08/09/perlinnoise.html
  */
 template <typename num_t = float>
-class PerlinNoise {
+class PerlinNoise
+{
   private:
     /**
      * Pointer to a pseudo-random number generator that will be used to
@@ -205,6 +202,6 @@ LS_DECLARE_CLASS_TYPE(PerlinNoised, PerlinNoise, double);
 } // end math namespace
 } // end ls namespace
 
-#include "lightsky/math/generic/perlinNoise_impl.h"
+#include "lightsky/math/generic/noise_impl.h"
 
-#endif  /* LS_MATH_PERLIN_NOISE_H */
+#endif  /* LS_MATH_NOISE_H */

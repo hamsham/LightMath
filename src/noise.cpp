@@ -1,6 +1,5 @@
 
-#include "lightsky/math/Math.h"
-#include "lightsky/math/PerlinNoise.h"
+#include "lightsky/math/noise.h"
 
 namespace ls {
 namespace math {

@@ -546,22 +546,20 @@ inline LS_INLINE mat4_t<num_t>& mat4_t<num_t>::operator/=(num_t input)
     Non-Member Matrix-Scalar operations
 -------------------------------------*/
 template<typename num_t>
-constexpr LS_INLINE mat4_t<num_t> operator+(num_t n, const mat4_t<num_t>& m)
-{
+constexpr LS_INLINE mat4_t<num_t> operator+(num_t n, const mat4_t<num_t>& m) {
     return m + n;
 }
 
 template<typename num_t>
-constexpr LS_INLINE mat4_t<num_t> operator-(num_t n, const mat4_t<num_t>& m)
-{
+constexpr LS_INLINE mat4_t<num_t> operator-(num_t n, const mat4_t<num_t>& m) {
     return m - n;
 }
 
 template<typename num_t>
-constexpr LS_INLINE mat4_t<num_t> operator*(num_t n, const mat4_t<num_t>& m)
-{
+constexpr LS_INLINE mat4_t<num_t> operator*(num_t n, const mat4_t<num_t>& m) {
     return m * n;
 }
+
 } //end math namespace
 } //end ls namespace
 

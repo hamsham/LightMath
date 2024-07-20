@@ -2,23 +2,21 @@
 #ifndef LS_MATH_VEC4_H
 #define LS_MATH_VEC4_H
 
-#include "lightsky/setup/Api.h"
 #include "lightsky/setup/Arch.h"
 
-#include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
-#include "lightsky/math/half.h"
 
 namespace ls {
 namespace math {
 
-/* 4x4 Matrix forward declaration */
+struct half;
+
 template <typename num_t>
 struct mat4_t;
 
 
 
-/**----------------------------------------------------------------------------
+/**
  *  @brief 4D Vector Structure
  *
  *  Recommended for use with non-integral types
@@ -29,7 +27,7 @@ struct mat4_t;
  *      1 = Y
  *      2 = Z
  *      3 = W
------------------------------------------------------------------------------*/
+ */
 template <typename num_t>
 union vec4_t
 {
@@ -120,23 +118,14 @@ vec4_t<num_t> operator*(num_t n, const vec4_t<num_t>& v);
 /*-------------------------------------
     4D Vector Specializations
 -------------------------------------*/
-/*
-LS_DECLARE_STRUCT_TYPE(vec4f, vec4_t, float);
-LS_DECLARE_STRUCT_TYPE(vec4d, vec4_t, double);
-LS_DECLARE_STRUCT_TYPE(vec4i, vec4_t, int);
-LS_DECLARE_STRUCT_TYPE(vec4ui, vec4_t, unsigned);
-LS_DECLARE_STRUCT_TYPE(vec4x, vec4_t, medp_t);
-LS_DECLARE_STRUCT_TYPE(vec4, vec4_t, LS_FLOAT);
-*/
-struct half;
-
 typedef vec4_t<half>     vec4h;
 typedef vec4_t<float>    vec4f;
 typedef vec4_t<double>   vec4d;
 typedef vec4_t<int>      vec4i;
 typedef vec4_t<unsigned> vec4u;
 typedef vec4_t<medp_t>   vec4x;
-typedef vec4_t<LS_FLOAT> vec4;
+
+typedef vec4_t<float> vec4;
 
 } //end math namespace
 } //end ls namespace

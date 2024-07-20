@@ -23,6 +23,7 @@ constexpr LS_INLINE mat2_t<num_t>::mat2_t(
 {
 }
 
+/*
 template <typename num_t>
 constexpr LS_INLINE mat2_t<num_t>::mat2_t() :
     m{
@@ -31,6 +32,7 @@ constexpr LS_INLINE mat2_t<num_t>::mat2_t() :
     }
 {
 }
+*/
 
 template <typename num_t>
 constexpr LS_INLINE mat2_t<num_t>::mat2_t(num_t n) :
@@ -276,7 +278,7 @@ vec2_t<num_t>& vec2_t<num_t>::operator*=(const mat2_t<num_t>& m) {
 -------------------------------------*/
 template <typename num_t> constexpr LS_INLINE
 mat2_t<num_t> mat2_t<num_t>::operator+(const vec2_t<num_t>& input) const {
-    return mat2_t{
+    return mat2_t<num_t>{
         m[0][0] + input.v[0], m[0][1] + input.v[1],
         m[1][0] + input.v[0], m[1][1] + input.v[1]
     };
@@ -284,7 +286,7 @@ mat2_t<num_t> mat2_t<num_t>::operator+(const vec2_t<num_t>& input) const {
 
 template <typename num_t> constexpr LS_INLINE
 mat2_t<num_t> mat2_t<num_t>::operator-(const vec2_t<num_t>& input) const {
-    return mat2_t{
+    return mat2_t<num_t>{
         m[0][0] - input.v[0], m[0][1] - input.v[1],
         m[1][0] - input.v[0], m[1][1] - input.v[1]
     };

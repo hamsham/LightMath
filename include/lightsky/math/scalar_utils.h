@@ -9,12 +9,25 @@
 #define LS_MATH_SCALAR_UTILS_H
 
 #include <climits> // CHAR_BIT
+#include <cmath>
+#include <cstdint>
 #include <limits> // std::numeric_limits
 
 #include "lightsky/setup/Arch.h"
 #include "lightsky/setup/Types.h"
 
-#include "lightsky/math/Types.h"
+#include "lightsky/math/constants.h"
+
+// MSVC defines its own min/max functions.
+#ifdef LS_COMPILER_MSC
+    #ifdef min
+        #undef min
+    #endif /* min */
+
+    #ifdef max
+        #undef max
+    #endif /* max */
+#endif /* LS_COMPILER_MSC */
 
 namespace ls
 {
@@ -74,10 +87,30 @@ constexpr scalar_t min(const scalar_t& a, const scalar_t& b, const scalars_t&...
  * 
  * @param b
  *
- * @return The linear "mix" of a and b.
+ * @param t
+ * The percent at which the value from at to b should exist.
+ *
+ * @return The linear "mix" of a and b at percent t.
  */
 template <typename scalar_t>
-constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t percent) noexcept;
+constexpr scalar_t mix(scalar_t a, scalar_t b, scalar_t t) noexcept;
+
+/**
+ * @brief unmix
+ * Determine the percentage of difference of a value from a to b.
+ *
+ * @param a
+ *
+ * @param b
+ *
+ * @param t
+ * The value which should be used to extract a percentage of closeness to b
+ * from a.
+ *
+ * @return The inverse linear "mix" of a and b.
+ */
+template <typename scalar_t>
+constexpr scalar_t unmix(scalar_t a, scalar_t b, scalar_t t) noexcept;
 
 /**
  * @brief max
@@ -461,7 +494,7 @@ inline int64_t next_pow2(int64_t) noexcept;
  *
  * @param An unsigned integral type
  *
- * @return The previous power of two.
+ * @return The current or previous power of two.
  */
 inline uint8_t  prev_pow2(uint8_t) noexcept;
 inline uint16_t prev_pow2(uint16_t) noexcept;
@@ -475,7 +508,7 @@ inline uint64_t prev_pow2(uint64_t) noexcept;
  *
  * @param A signed integral type
  *
- * @return The previous power of two.
+ * @return The current or previous power of two.
  */
 inline int8_t  prev_pow2(int8_t) noexcept;
 inline int16_t prev_pow2(int16_t) noexcept;

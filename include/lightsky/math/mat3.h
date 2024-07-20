@@ -2,21 +2,20 @@
 #ifndef LS_MATH_MAT3_H
 #define LS_MATH_MAT3_H
 
-#include "lightsky/setup/Api.h"
-
-#include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec3.h"
 
 namespace ls {
 namespace math {
 
+struct half;
+
 template<typename num_t>
 struct mat4_t;
 
 
 
-/**----------------------------------------------------------------------------
+/**
  *  @brief 3D Matrix Structure
  *  recommended for use with non-integral types
  *
@@ -26,18 +25,20 @@ struct mat4_t;
  *      0[0-2] = XX  XY  XZ
  *      1[0-2] = YX  YY  YZ
  *      2[0-2] = ZX  ZY  ZZ
------------------------------------------------------------------------------*/
+ */
 template <typename num_t>
-struct alignas(sizeof(num_t)) mat3_t {
+struct alignas(sizeof(num_t)) mat3_t
+{
     // data
     vec3_t<num_t> m[3];
 
-    // Main Constructor
+    ~mat3_t() = default;
+
     constexpr mat3_t(
         num_t inXX, num_t inXY, num_t inXZ,
         num_t inYX, num_t inYY, num_t inYZ,
         num_t inZX, num_t inZY, num_t inZZ
-        );
+    );
 
     // Delegated Constructors
     constexpr mat3_t();
@@ -49,9 +50,7 @@ struct alignas(sizeof(num_t)) mat3_t {
         const vec3_t<num_t>& x,
         const vec3_t<num_t>& y,
         const vec3_t<num_t>& z
-        );
-
-    ~mat3_t() = default;
+    );
 
     // Conversions & Casting
     template <typename other_t>
@@ -116,23 +115,14 @@ mat3_t<num_t> operator*(num_t n, const mat3_t<num_t>& m);
 /*-------------------------------------
     3x3 Matrix Specializations
 -------------------------------------*/
-/*
-LS_DECLARE_STRUCT_TYPE(mat3f, mat3_t, float);
-LS_DECLARE_STRUCT_TYPE(mat3d, mat3_t, double);
-LS_DECLARE_STRUCT_TYPE(mat3i, mat3_t, int);
-LS_DECLARE_STRUCT_TYPE(mat3u, mat3_t, unsigned);
-LS_DECLARE_STRUCT_TYPE(mat3x, mat3_t, medp_t);
-LS_DECLARE_STRUCT_TYPE(mat3, mat3_t, LS_FLOAT);
-*/
-struct half;
-
 typedef mat3_t<half>     mat3h;
 typedef mat3_t<float>    mat3f;
 typedef mat3_t<double>   mat3d;
 typedef mat3_t<int>      mat3i;
 typedef mat3_t<unsigned> mat3u;
 typedef mat3_t<medp_t>   mat3x;
-typedef mat3_t<LS_FLOAT> mat3;
+
+typedef mat3_t<float> mat3;
 
 } //end math namespace
 } //end ls namespace

@@ -2,18 +2,17 @@
 #ifndef LS_MATH_MAT2_H
 #define LS_MATH_MAT2_H
 
-#include "lightsky/setup/Api.h"
-
-#include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 #include "lightsky/math/vec2.h"
 
 namespace ls {
 namespace math {
 
+struct half;
 
 
-/**----------------------------------------------------------------------------
+
+/**
  *  @brief 2D Matrix Structure
  *  recommended for use with non-integral types
  *
@@ -22,29 +21,29 @@ namespace math {
  *  Orientation is as follows:
  *      0[0-1] = XX  XY
  *      1[0-1] = YX  YY
------------------------------------------------------------------------------*/
+ */
 template <typename num_t>
-struct alignas(sizeof(num_t)) mat2_t {
+struct alignas(sizeof(num_t)) mat2_t
+{
     // data
     vec2_t<num_t> m[2];
 
-    // Main Constructor
+    ~mat2_t() = default;
+
     constexpr mat2_t(
         num_t inXX, num_t inXY,
         num_t inYX, num_t inYY
-        );
+    );
 
     // Delegated constructors
-    constexpr mat2_t();
+    constexpr mat2_t() = default;
     constexpr mat2_t(num_t);
     constexpr mat2_t(const mat2_t<num_t>&);
     constexpr mat2_t(mat2_t<num_t>&&);
     constexpr mat2_t(
         const vec2_t<num_t>& x,
         const vec2_t<num_t>& y
-        );
-
-    ~mat2_t() = default;
+    );
 
     // Conversions & Casting
     template <typename other_t>
@@ -109,23 +108,14 @@ mat2_t<num_t> operator*(num_t n, const mat2_t<num_t>& m);
 /*-------------------------------------
     2x2 Matrix Specializations
 -------------------------------------*/
-/*
-LS_DECLARE_STRUCT_TYPE(mat2f, mat2_t, float);
-LS_DECLARE_STRUCT_TYPE(mat2d, mat2_t, double);
-LS_DECLARE_STRUCT_TYPE(mat2i, mat2_t, int);
-LS_DECLARE_STRUCT_TYPE(mat2u, mat2_t, unsigned);
-LS_DECLARE_STRUCT_TYPE(mat2x, mat2_t, medp_t);
-LS_DECLARE_STRUCT_TYPE(mat2, mat2_t, LS_FLOAT);
-*/
-struct half;
-
 typedef mat2_t<half>     mat2h;
 typedef mat2_t<float>    mat2f;
 typedef mat2_t<double>   mat2d;
 typedef mat2_t<int>      mat2i;
 typedef mat2_t<unsigned> mat2u;
 typedef mat2_t<medp_t>   mat2x;
-typedef mat2_t<LS_FLOAT> mat2;
+
+typedef mat2_t<float> mat2;
 
 } //end math namespace
 } //end ls namespace

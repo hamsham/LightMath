@@ -20,7 +20,7 @@ set(LS_MATH_SOURCES
     src/mat3.cpp
     src/mat4.cpp
     src/mat_utils.cpp
-    src/PerlinNoise.cpp
+    src/noise.cpp
     src/quat.cpp
     src/scalar_utils.cpp
     src/vec2.cpp
@@ -31,19 +31,18 @@ set(LS_MATH_SOURCES
 
 set(LS_MATH_HEADERS
     include/lightsky/math/bits.h
+    include/lightsky/math/constants.h
     include/lightsky/math/fixed.h
     include/lightsky/math/half.h
-    include/lightsky/math/Interpolate.h
+    include/lightsky/math/interpolate.h
     include/lightsky/math/mat2.h
     include/lightsky/math/mat3.h
     include/lightsky/math/mat4.h
-    include/lightsky/math/Math.h
     include/lightsky/math/mat_utils.h
-    include/lightsky/math/PerlinNoise.h
+    include/lightsky/math/noise.h
     include/lightsky/math/quat.h
     include/lightsky/math/quat_utils.h
     include/lightsky/math/scalar_utils.h
-    include/lightsky/math/Types.h
     include/lightsky/math/vec2.h
     include/lightsky/math/vec3.h
     include/lightsky/math/vec4.h
@@ -56,7 +55,7 @@ set(LS_MATH_HEADERS
     include/lightsky/math/generic/mat3_impl.h
     include/lightsky/math/generic/mat4_impl.h
     include/lightsky/math/generic/mat_utils_impl.h
-    include/lightsky/math/generic/perlinNoise_impl.h
+    include/lightsky/math/generic/noise_impl.h
     include/lightsky/math/generic/quat_impl.h
     include/lightsky/math/generic/quat_utils_impl.h
     include/lightsky/math/generic/scalar_utils_impl.h

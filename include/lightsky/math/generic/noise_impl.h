@@ -2,6 +2,11 @@
 #ifndef LS_MATH_PERLIN_NOISE_IMPL_H
 #define LS_MATH_PERLIN_NOISE_IMPL_H
 
+#include <chrono>
+#include <utility> // std::move
+
+#include "lightsky/utils/Copy.h"
+
 namespace ls
 {
 namespace math

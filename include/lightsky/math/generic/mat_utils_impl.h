@@ -48,9 +48,7 @@ math::mat2_t<num_t> math::inverse(const mat2_t<num_t>& m) noexcept {
     return mat2_t<num_t>{
         m.m[1][1], -m.m[0][1],
         -m.m[1][0], m.m[0][0]
-    }
-    *(num_t{1}
-    / determinant(m));
+    } / determinant(m);
 }
 
 /*-------------------------------------
@@ -80,8 +78,8 @@ math::mat2_t<num_t> math::mat_row_mul(const mat2_t<num_t>& m, const vec2_t<num_t
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat2_t<num_t> math::rotate(const mat2_t<num_t>& m, num_t angle) noexcept {
-    const num_t c = LS_COS(angle);
-    const num_t s = LS_SIN(angle);
+    const num_t c = std::cos(angle);
+    const num_t s = std::sin(angle);
 
     return m * mat2_t<num_t>{
         c, s,
@@ -145,9 +143,7 @@ math::mat3_t<num_t> math::inverse(const mat3_t<num_t>& m) noexcept {
         (m.m[0][1] * m.m[1][2] - m.m[1][1] * m.m[0][2]),
         (m.m[1][0] * m.m[0][2] - m.m[0][0] * m.m[1][2]),
         (m.m[0][0] * m.m[1][1] - m.m[1][0] * m.m[0][1])
-    }
-    *(num_t{1}
-    / determinant(m));
+    } / determinant(m);
 }
 
 /*-------------------------------------
@@ -191,8 +187,8 @@ math::mat3_t<num_t> math::transpose(const mat3_t<num_t>& m) noexcept {
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat3_t<num_t> math::rotate(const mat3_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) noexcept {
-    const num_t c = LS_COS(angle);
-    const num_t s = LS_SIN(angle);
+    const num_t c = std::cos(angle);
+    const num_t s = std::sin(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
     const num_t omc = num_t{1}-c;
     const num_t xy = (a.v[0] * a.v[1]) * omc;
@@ -363,8 +359,7 @@ math::mat4_t<num_t> math::inverse(const mat4_t<num_t>& m) noexcept {
         (pm[0][1] * zzwx) - (pm[0][2] * zywx) + (pm[0][2] * zxwy) - (pm[0][0] * zzwy) - (pm[0][1] * zxwz) + (pm[0][0] * zywz),
         (xzyy * pm[3][0]) - (xyyz * pm[3][0]) - (xzyx * pm[3][1]) + (xxyz * pm[3][1]) + (xyyx * pm[3][2]) - (xxyy * pm[3][2]),
         (xyyz * pm[2][0]) - (xzyy * pm[2][0]) + (xzyx * pm[2][1]) - (xxyz * pm[2][1]) - (xyyx * pm[2][2]) + (xxyy * pm[2][2])
-    }
-    *num_t{1} / determinant(m);
+    } / determinant(m);
     // FML
 }
 
@@ -412,8 +407,8 @@ math::mat4_t<num_t> math::transpose(const mat4_t<num_t>& m) noexcept {
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::rotate(const mat4_t<num_t>& m, const vec3_t<num_t>& axis, num_t angle) noexcept {
-    const num_t c = LS_COS(angle);
-    const num_t s = LS_SIN(angle);
+    const num_t c = std::cos(angle);
+    const num_t s = std::sin(angle);
     const vec3_t<num_t>&& a = normalize<num_t>(axis);
     const num_t omc = num_t{1} - c;
     const num_t xy = (a.v[0] * a.v[1]) * omc;
@@ -462,7 +457,7 @@ math::mat4_t<num_t> math::translate(const mat4_t<num_t>& m, const vec3_t<num_t>&
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_t zFar) noexcept {
-    const num_t top = LS_TAN(fov / num_t{2}) * zNear;
+    const num_t top = std::tan(fov / num_t{2}) * zNear;
     const num_t bottom = -top;
     const num_t xMin = bottom * aspect;
     const num_t xMax = top * aspect;
@@ -481,7 +476,7 @@ math::mat4_t<num_t> math::perspective(num_t fov, num_t aspect, num_t zNear, num_
 -------------------------------------*/
 template <typename num_t> inline LS_INLINE
 math::mat4_t<num_t> math::infinite_perspective(num_t fov, num_t aspect, num_t zNear) noexcept {
-    const num_t viewAngle = num_t{1} / LS_TAN(fov / num_t{2});
+    const num_t viewAngle = num_t{1} / std::tan(fov / num_t{2});
 
     return mat4_t<num_t>{
         viewAngle/aspect, num_t{0},  num_t{0}, num_t{0},

@@ -85,8 +85,8 @@ num_t math::length(const vec2_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 math::vec2_t<num_t> math::rotate(const vec2_t <num_t>& v, num_t angle) noexcept
 {
-    const num_t s = LS_SIN(angle);
-    const num_t c = LS_COS(angle);
+    const num_t s = std::sin(angle);
+    const num_t c = std::cos(angle);
 
     return vec2_t<num_t>((v.v[0] * c) - (v.v[1] * s), (v.v[0] * s) + (v.v[1] * c));
 }
@@ -522,8 +522,8 @@ num_t math::length(const vec3_t <num_t>& v) noexcept
 template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::x_rotation(num_t angle) noexcept
 {
-    const num_t s = LS_SIN(angle);
-    const num_t c = LS_COS(angle);
+    const num_t s = std::sin(angle);
+    const num_t c = std::cos(angle);
 
     return vec3_t<num_t>(num_t{1}, c + s, c - s);
 }
@@ -534,8 +534,8 @@ math::vec3_t<num_t> math::x_rotation(num_t angle) noexcept
 template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::y_rotation(num_t angle) noexcept
 {
-    const num_t s = LS_SIN(angle);
-    const num_t c = LS_COS(angle);
+    const num_t s = std::sin(angle);
+    const num_t c = std::cos(angle);
 
     return vec3_t<num_t>(c - s, num_t{1}, s + c);
 }
@@ -546,8 +546,8 @@ math::vec3_t<num_t> math::y_rotation(num_t angle) noexcept
 template <typename num_t> inline LS_INLINE
 math::vec3_t<num_t> math::z_rotation(num_t angle) noexcept
 {
-    const num_t s = LS_SIN(angle);
-    const num_t c = LS_COS(angle);
+    const num_t s = std::sin(angle);
+    const num_t c = std::cos(angle);
 
     return vec3_t<num_t>(c + s, c - s, num_t{1});
 }

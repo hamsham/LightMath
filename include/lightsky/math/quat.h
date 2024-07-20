@@ -2,17 +2,16 @@
 #ifndef LS_MATH_QUAT_H
 #define LS_MATH_QUAT_H
 
-#include "lightsky/setup/Api.h"
-
-#include "lightsky/math/scalar_utils.h"
 #include "lightsky/math/fixed.h"
 
 namespace ls {
 namespace math {
 
+struct half;
 
 
-/**----------------------------------------------------------------------------
+
+/**
  *  @brief Quaternion Structure
  *
  *  Recommended for use with non-integral types
@@ -23,18 +22,18 @@ namespace math {
  *      1 = Y
  *      2 = Z
  *      3 = W   (real component)
------------------------------------------------------------------------------*/
+ */
 template <typename num_t>
-struct alignas(sizeof(num_t)) quat_t {
+struct alignas(sizeof(num_t)) quat_t
+{
     // data
     num_t q[4];
 
     ~quat_t() = default;
 
-    // Main Constructor
-    constexpr quat_t();
+    constexpr quat_t() = default;
     constexpr quat_t(num_t inX, num_t inY, num_t inZ, num_t inW);
-    constexpr quat_t(num_t n);
+    constexpr quat_t(num_t xyz, num_t w);
 
     quat_t(const quat_t<num_t>&) = default;
     quat_t(quat_t<num_t>&&) = default;
@@ -83,25 +82,28 @@ struct alignas(sizeof(num_t)) quat_t {
 };
 
 /*-------------------------------------
+    Non-Member Quaternion-Scalar operations
+-------------------------------------*/
+template <typename num_t> constexpr
+quat_t<num_t> operator+(num_t n, const quat_t<num_t>& q);
+
+template <typename num_t> constexpr
+quat_t<num_t> operator-(num_t n, const quat_t<num_t>& q);
+
+template <typename num_t> constexpr
+quat_t<num_t> operator*(num_t n, const quat_t<num_t>& q);
+
+/*-------------------------------------
     Quaternion Template Specializations
 -------------------------------------*/
-/*
-LS_DECLARE_STRUCT_TYPE(quatf, quat_t, float);
-LS_DECLARE_STRUCT_TYPE(quatd, quat_t, double);
-LS_DECLARE_STRUCT_TYPE(quati, quat_t, int); // not recommended
-LS_DECLARE_STRUCT_TYPE(quatu, quat_t, unsigned); // not recommended
-LS_DECLARE_STRUCT_TYPE(quatx, quat_t, medp_t);
-LS_DECLARE_STRUCT_TYPE(quat, quat_t, LS_FLOAT);
-*/
-struct half;
-
-typedef quat_t<half>    quath;
+typedef quat_t<half>     quath;
 typedef quat_t<float>    quatf;
 typedef quat_t<double>   quatd;
 typedef quat_t<int>      quati;
 typedef quat_t<unsigned> quatu;
 typedef quat_t<medp_t>   quatx;
-typedef quat_t<LS_FLOAT> quat;
+
+typedef quat_t<float> quat;
 
 } //end math namespace
 } //end ls namespace

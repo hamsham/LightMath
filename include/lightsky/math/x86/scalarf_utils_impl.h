@@ -2,6 +2,10 @@
 #ifndef LS_MATH_SCALARF_UTILS_IMPL_H
 #define LS_MATH_SCALARF_UTILS_IMPL_H
 
+#ifdef LS_COMPILER_MSC
+    #include <intrin.h>
+#endif /* LS_COMPILER_MSC */
+
 #include <immintrin.h> // SSE3
 
 namespace ls

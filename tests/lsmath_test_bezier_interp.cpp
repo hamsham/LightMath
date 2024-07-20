@@ -1,7 +1,7 @@
 
 #include <iostream>
 
-#include "lightsky/math/Interpolate.h"
+#include "lightsky/math/interpolate.h"
 
 namespace math = ls::math;
 

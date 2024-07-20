@@ -4,9 +4,7 @@
 
 #include "lightsky/setup/Compiler.h"
 
-#ifdef LS_COMPILER_MSC
-    #include <intrin.h>
-#endif /* LS_COMPILER_MSC */
+#include "lightsky/math/half.h"
 
 extern "C" {
     #include <immintrin.h>

@@ -8,28 +8,14 @@ namespace ls {
 namespace math {
 
 /*-------------------------------------
-    Non-Member Quaternion-Scalar operations
--------------------------------------*/
-template <typename num_t> constexpr LS_INLINE
-quat_t<num_t> operator+(num_t n, const quat_t<num_t>& q);
-
-template <typename num_t> constexpr LS_INLINE
-quat_t<num_t> operator-(num_t n, const quat_t<num_t>& q);
-
-template <typename num_t> constexpr LS_INLINE
-quat_t<num_t> operator*(num_t n, const quat_t<num_t>& q);
-
-template <typename num_t> constexpr LS_INLINE
-quat_t<num_t> operator/(num_t n, const quat_t<num_t>& q);
-
-/*-------------------------------------
     Constructors
 -------------------------------------*/
-// Main Constructor
+/*
 template <typename num_t>
 constexpr LS_INLINE quat_t<num_t>::quat_t() :
     q{num_t{0}, num_t{0}, num_t{0}, num_t{1}}
 {}
+*/
 
 template <typename num_t>
 constexpr LS_INLINE quat_t<num_t>::quat_t(num_t inX, num_t inY, num_t inZ, num_t inW) :
@@ -37,8 +23,8 @@ constexpr LS_INLINE quat_t<num_t>::quat_t(num_t inX, num_t inY, num_t inZ, num_t
 {}
 
 template <typename num_t>
-constexpr LS_INLINE quat_t<num_t>::quat_t(num_t n) :
-    q{n, n, n, num_t{1}}
+constexpr LS_INLINE quat_t<num_t>::quat_t(num_t xyz, num_t w) :
+    q{xyz, xyz, xyz, w}
 {}
 
 /*
@@ -329,11 +315,6 @@ quat_t<num_t> operator-(num_t n, const quat_t<num_t>& q) {
 template <typename num_t> constexpr LS_INLINE
 quat_t<num_t> operator*(num_t n, const quat_t<num_t>& q) {
     return q * n;
-}
-
-template <typename num_t> constexpr LS_INLINE
-quat_t<num_t> operator/(num_t n, const quat_t<num_t>& q) {
-    return q / n;
 }
 
 } //end math namespace

@@ -2,8 +2,6 @@
 #ifndef LS_MATH_MAT_UTILS_H
 #define LS_MATH_MAT_UTILS_H
 
-#include "lightsky/setup/Arch.h"
-
 #include "lightsky/math/vec_utils.h"
 #include "lightsky/math/mat2.h"
 #include "lightsky/math/mat3.h"

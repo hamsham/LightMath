@@ -8,23 +8,9 @@
 #ifndef LS_MATH_VEC_UTILS_H
 #define LS_MATH_VEC_UTILS_H
 
-#include "lightsky/setup/Arch.h"
 #include "lightsky/setup/Compiler.h"
-#include "lightsky/setup/Types.h"
-
- // MSVC defines its own min/max functions.
-#ifdef LS_COMPILER_MSC
-    #ifdef min
-        #undef min
-    #endif /* min */
-
-    #ifdef max
-        #undef max
-    #endif /* max */
-#endif /* LS_COMPILER_MSC */
 
 #include "lightsky/math/scalar_utils.h"
-
 #include "lightsky/math/vec2.h"
 #include "lightsky/math/vec3.h"
 #include "lightsky/math/vec4.h"

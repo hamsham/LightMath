@@ -327,7 +327,7 @@ inline LS_INLINE math::vec3 rotate_axes_quaternion(const math::vec3& n, const ma
 
     #endif
 
-    const math::quat&& basisC = math::normalize(math::quat{cs*n[0], cs*n[1], cs*n[2], cc});
+    const math::quat&& basisC = math::quat{cs*n[0], cs*n[1], cs*n[2], cc};
     return math::rotate(basisX, basisC);
 }
 
@@ -742,25 +742,9 @@ int main()
     test_tri_incenter(a, b, c);
     test_tri_packing(a, b, c);
 
-    //constexpr float rads = LS_DEG2RAD(30.f) / LS_PI;
-    const math::vec3 va{0.35f, 0.f, 0.65f};
-    const math::vec3 vb{0.f, 0.f, 1.f};
-    //const math::vec3 vc{1.f, 0.f, 0.f};
-    const math::vec3&& cab = math::cross(va, vb);
-    const float dab = math::dot(va, vb);
-    const math::quat&& theta = math::normalize(math::quat_cast(cab, dab + std::sqrt(dab*dab+math::length_squared(cab))));
-    const math::vec3&& thetaX = math::rotate(vb, theta);
-    const math::vec3&& thetaY = math::reorient(theta, vb);
-    const math::vec3&& thetaZ = math::reorient(vb, theta);
-    std::cout << "Quaternion Axis:   " << theta[0] << ", " << theta[1] << ", " << theta[2] << std::endl;
-    std::cout << "Quaternion X Axis: " << thetaX[0] << ", " << thetaX[1] << ", " << thetaX[2] << std::endl;
-    std::cout << "Quaternion Y Axis: " << thetaY[0] << ", " << thetaY[1] << ", " << thetaY[2] << std::endl;
-    std::cout << "Quaternion Z Axis: " << thetaZ[0] << ", " << thetaZ[1] << ", " << thetaZ[2] << std::endl;
-    //std::cout << math::dot(math::quat{0.f, 0.f, 0.f, 1.f}, math::normalize(math::quat{0.f, 0.f, 0.f, 1.f} * math::quat{0.f, theta, 0.f, 1.f})) << std::endl;
-
     // benchmark after validation test since some instructions might have been
     // placed into the CPU's instruction cache (found a 150ms performance win)
-    //benchmark_tri_packing(a, b, c);
+    benchmark_tri_packing(a, b, c);
 
     return 0;
 }

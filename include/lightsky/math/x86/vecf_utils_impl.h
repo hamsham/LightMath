@@ -56,7 +56,7 @@ inline LS_INLINE vec3_t<float> cross(const vec3_t<float>& v1, const vec3_t<float
     #ifdef LS_X86_FMA
         const __m128 c = _mm_fmsub_ps(a, yzxB, _mm_mul_ps(yzxA, b));
     #else
-        const __m128 c = _mm_sub_ps(_mm_mul_ps(a.simd, yzxB), _mm_mul_ps(yzxA, b.simd));
+        const __m128 c = _mm_sub_ps(_mm_mul_ps(a, yzxB), _mm_mul_ps(yzxA, b));
     #endif
 
     union
