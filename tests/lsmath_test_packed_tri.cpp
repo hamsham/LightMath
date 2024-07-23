@@ -50,271 +50,6 @@ static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of pac
 
 
 /*-----------------------------------------------------------------------------
- * Triangle Attributes
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * Triangle Circumcenter
--------------------------------------*/
-float circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
-{
-    const math::vec3&& ac = c - a;
-    const math::vec3&& ab = b - a;
-    const math::vec3&& abac = math::cross(ab, ac); // triangle normal
-
-    const float abLen = math::length_squared(ab);
-    const float acLen = math::length_squared(ac);
-    const float abacLen = math::length_squared(abac);
-
-    const math::vec3&& abx = math::cross(abac, ab);
-    const math::vec3&& acx = math::cross(ac, abac);
-
-    // center is relative to the vector A
-    const math::vec3&& center = (abx * acLen + acx * abLen) / (abacLen + abacLen);
-
-    // add vector A to get the location of the circumcenter
-    outCircumcenter = a + center;
-    outTriNormal = math::normalize(abac);
-
-    return math::length(center); // radius
-}
-
-
-
-/*-------------------------------------
- * Triangle Incenter
--------------------------------------*/
-float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
-{
-    const math::vec3&& bc = b - c;
-    const math::vec3&& ac = a - c;
-    const math::vec3&& ab = a - b;
-    const math::vec3&& abac = math::cross(ab, ac); // triangle normal
-
-    const float la = math::length(bc);
-    const float lb = math::length(ac);
-    const float lc = math::length(ab);
-    const float p = math::sum(la, lb, lc);
-
-    const math::vec3&& center = (la*a + lc*b + lc*c) / p;
-
-    // add vector A to get the location of the circumcenter
-    outCircumcenter = center;
-    outTriNormal = math::normalize(abac);
-
-    const float s = p * 0.5f;
-    const float sa = s-la;
-    const float sb = s-lb;
-    const float sc = s-lc;
-    const float area = std::sqrt(s*sa*sb*sc);
-
-    return area/s; // radius
-}
-
-
-
-/*-----------------------------------------------------------------------------
- * Normal Vector Representation
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * Spheremap Encoding (3D -> 2D)
--------------------------------------*/
-inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
-{
-    // Extrapolated from https://www.shadertoy.com/view/llfcRl
-    return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
-    //return math::vec2_cast(n) * math::inversesqrt(n[2] + n[2] + 2.f);
-}
-
-
-
-/*-------------------------------------
- * Spheremap Decoding (2D -> 3D)
--------------------------------------*/
-inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
-{
-    // Extrapolated from https://www.shadertoy.com/view/llfcRl
-    float f = math::length_squared(n);
-    return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - (f + f));
-}
-
-
-
-/*-----------------------------------------------------------------------------
- * Coordinate Systems & Rotations
------------------------------------------------------------------------------*/
-/*-------------------------------------
- * Combined Cosine+Sine Approximation
--------------------------------------*/
-// Cosine/Sine approximation adapted from Demofox,
-// https://www.shadertoy.com/view/XddSzH
-//
-// New version by milianw:
-// https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b/28050328#28050328
-//
-// Note: This function expects the input angle to be between 0 and 1,
-// representing an angle bewteen 0 and 2pi.
-inline LS_INLINE math::vec2 cos_sin(float x) noexcept
-{
-    math::vec2 result;
-
-    #if defined(LS_X86_SSE)
-        const __m128 absMask = _mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF));
-        const __m128 c = _mm_set_ss(x);
-
-        const __m128 s = _mm_sub_ss(c, _mm_set_ss(0.25f));
-        const __m128 x0 = _mm_unpacklo_ps(c, s);
-        const __m128 x0Floor = _mm_floor_ps(_mm_add_ps(x0, _mm_set1_ps(0.25f)));
-
-        const __m128 x1 = _mm_sub_ps(x0, _mm_add_ps(_mm_set1_ps(0.25f), x0Floor));
-
-        const __m128 x1Abs = _mm_sub_ps(_mm_and_ps(absMask, x1), _mm_set1_ps(0.5f));
-        const __m128 x2 = _mm_mul_ps(_mm_mul_ps(x1, _mm_set1_ps(16.f)), x1Abs);
-
-        const __m128 x3 = _mm_mul_ps(x2, _mm_sub_ps(_mm_and_ps(absMask, x2), _mm_set1_ps(1.f)));
-
-        #if defined(LS_X86_FMA)
-            const __m128 x4 = _mm_fmadd_ps(_mm_set1_ps(0.225f), x3, x2);
-        #else
-            const __m128 x4 = _mm_add_ps(_mm_mul_ps(_mm_set_ps(0.225f), x4Norm), x3);
-        #endif
-
-        _mm_storel_pd(reinterpret_cast<double*>(&result.v[0]), _mm_castps_pd(x4));
-
-    #else
-        math::vec2 sc{x, x - 0.25f};
-        sc -= math::floor(sc + 0.25f) + 0.25f;
-        sc *= (math::abs(sc) - 0.5f) * 16.f;
-        result = sc + ((math::abs(sc) - 1.f) * sc * 0.225f);
-
-    #endif
-
-    return result;
-}
-
-
-
-/*-------------------------------------
- * Generate an Orthonormal Basis from a Normal Vector
--------------------------------------*/
-inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
-{
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    const float a = -1.f / (sign+n[2]);
-    const float b = n[0] * n[1] * a;
-
-    return math::mat3{
-        math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
-        math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
-        n * -sign
-    };
-}
-
-
-
-/*-------------------------------------
- * Generate an Orthonormal Basis' X-direction from a Normal Vector
--------------------------------------*/
-inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
-{
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    const float a = -1.f / (sign+n[2]);
-    const float b = n[0] * n[1] * a;
-
-    return math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]});
-}
-
-
-
-/*-------------------------------------
- * Generate an Orthonormal Basis' Z-direction from a Normal Vector
--------------------------------------*/
-inline LS_INLINE math::vec3 create_orthonormal_basis_z(const math::vec3& n) noexcept
-{
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    return n * -sign;
-}
-
-
-
-/*-------------------------------------
- * Generate an Orthonormal Basis' Z-direction from a Normal Vector
--------------------------------------*/
-inline LS_INLINE math::vec3 create_orthonormal_basis_z_inverted(const math::vec3& n) noexcept
-{
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    return n * sign;
-}
-
-
-
-/*-------------------------------------
- * 2D Rotation Matrix in a 3D Coordinate System
--------------------------------------*/
-inline LS_INLINE math::mat3 rotate_axes_matrix(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
-{
-    const math::mat3& basis = create_orthonormal_basis(n);
-
-    #if TRI_PACK_FAST_SINCOS != 0
-        const math::vec2&& x = cos_sin(angleA);
-        const math::vec2&& y = cos_sin(angleB);
-        const math::vec2&& z = cos_sin(angleC);
-    #else
-        angleA *= LS_TWO_PI;
-        angleB *= LS_TWO_PI;
-        angleC *= LS_TWO_PI;
-
-        const math::vec2&& x = math::vec2{std::cos(angleA), std::sin(angleA)};
-        const math::vec2&& y = math::vec2{std::cos(angleB), std::sin(angleB)};
-        const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
-    #endif
-
-    const math::vec2&& bx = math::vec2_cast(basis[0]);
-    const math::vec2&& by = math::vec2_cast(basis[1]);
-    const math::vec2&& bz = math::vec2_cast(basis[2]);
-
-    // normalize?
-    return math::mat3{
-        math::vec3{math::dot(bx, x), math::dot(by, x), math::dot(bz, x)},
-        math::vec3{math::dot(bx, y), math::dot(by, y), math::dot(bz, y)},
-        math::vec3{math::dot(bx, z), math::dot(by, z), math::dot(bz, z)}
-    };
-}
-
-
-
-/*-------------------------------------
- * Packed Triangle Decoding
--------------------------------------*/
-inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
-{
-    const math::vec3&& basisX = create_orthonormal_basis_x(n);
-
-    const float ah = angleA * LS_PI;
-    const float bh = angleB * LS_PI;
-    const float ch = angleC * LS_PI;
-
-    const float as = std::sin(ah);
-    const float bs = std::sin(bh);
-    const float cs = std::sin(ch);
-
-    const float ac = std::cos(ah);
-    const float bc = std::cos(bh);
-    const float cc = std::cos(ch);
-
-    const math::quat&& basisA = math::quat{as*n[0], as*n[1], as*n[2], ac};
-    const math::quat&& basisB = math::quat{bs*n[0], bs*n[1], bs*n[2], bc};
-    const math::quat&& basisC = math::quat{cs*n[0], cs*n[1], cs*n[2], cc};
-
-    return math::mat3{
-        math::rotate(basisX, basisA),
-        math::rotate(basisX, basisB),
-        math::rotate(basisX, basisC)
-    };
-}
-
-
-
-/*-----------------------------------------------------------------------------
  * Bit Packing Operations
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
@@ -464,6 +199,233 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 
 
 /*-----------------------------------------------------------------------------
+ * Triangle Attributes
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Triangle Circumcenter
+-------------------------------------*/
+float circumcenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
+{
+    const math::vec3&& ac = c - a;
+    const math::vec3&& ab = b - a;
+    const math::vec3&& abac = math::cross(ab, ac); // triangle normal
+
+    const float abLen = math::length_squared(ab);
+    const float acLen = math::length_squared(ac);
+    const float abacLen = math::length_squared(abac);
+
+    const math::vec3&& abx = math::cross(abac, ab);
+    const math::vec3&& acx = math::cross(ac, abac);
+
+    // center is relative to the vector A
+    const math::vec3&& center = (abx * acLen + acx * abLen) / (abacLen + abacLen);
+
+    // add vector A to get the location of the circumcenter
+    outCircumcenter = a + center;
+    outTriNormal = math::normalize(abac);
+
+    return math::length(center); // radius
+}
+
+
+
+/*-------------------------------------
+ * Triangle Incenter
+-------------------------------------*/
+float incenter(const math::vec3& a, const math::vec3& b, const math::vec3& c, math::vec3& outCircumcenter, math::vec3& outTriNormal) noexcept
+{
+    const math::vec3&& bc = b - c;
+    const math::vec3&& ac = a - c;
+    const math::vec3&& ab = a - b;
+    const math::vec3&& abac = math::cross(ab, ac); // triangle normal
+
+    const float la = math::length(bc);
+    const float lb = math::length(ac);
+    const float lc = math::length(ab);
+    const float p = math::sum(la, lb, lc);
+
+    const math::vec3&& center = (la*a + lc*b + lc*c) / p;
+
+    // add vector A to get the location of the circumcenter
+    outCircumcenter = center;
+    outTriNormal = math::normalize(abac);
+
+    const float s = p * 0.5f;
+    const float sa = s-la;
+    const float sb = s-lb;
+    const float sc = s-lc;
+    const float area = std::sqrt(s*sa*sb*sc);
+
+    return area/s; // radius
+}
+
+
+
+/*-----------------------------------------------------------------------------
+ * Normal Vector Representation
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Spheremap Encoding (3D -> 2D)
+-------------------------------------*/
+inline math::vec2 spheremap_norm_encode(const math::vec3& n) noexcept
+{
+    // Extrapolated from https://www.shadertoy.com/view/llfcRl
+    return math::vec2_cast(n) / std::sqrt(2.f * n[2] + 2.f);
+    //return math::vec2_cast(n) * math::inversesqrt(n[2] + n[2] + 2.f);
+}
+
+
+
+/*-------------------------------------
+ * Spheremap Decoding (2D -> 3D)
+-------------------------------------*/
+inline math::vec3 spheremap_norm_decode(const math::vec2& n) noexcept
+{
+    // Extrapolated from https://www.shadertoy.com/view/llfcRl
+    float f = math::length_squared(n);
+    return math::vec3_cast((n + n) * std::sqrt(1.f - f), 1.f - (f + f));
+}
+
+
+
+/*-----------------------------------------------------------------------------
+ * Coordinate Systems & Rotations
+-----------------------------------------------------------------------------*/
+/*-------------------------------------
+ * Combined Cosine+Sine Approximation
+-------------------------------------*/
+// Cosine/Sine approximation adapted from Demofox,
+// https://www.shadertoy.com/view/XddSzH
+//
+// New version by milianw:
+// https://stackoverflow.com/questions/18662261/fastest-implementation-of-sine-cosine-and-square-root-in-c-doesnt-need-to-b/28050328#28050328
+//
+// Note: This function expects the input angle to be between 0 and 1,
+// representing an angle bewteen 0 and 2pi.
+inline LS_INLINE math::vec2 cos_sin(float x) noexcept
+{
+    math::vec2 sc{x, x - 0.25f};
+    sc -= math::floor(sc + 0.25f) + 0.25f;
+    sc *= (math::abs(sc) - 0.5f) * 16.f;
+    return sc + ((math::abs(sc) - 1.f) * sc * 0.225f);
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float a = -1.f / (sign+n[2]);
+    const float b = n[0] * n[1] * a;
+
+    return math::mat3{
+        math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]}),
+        math::normalize(-math::vec3{b, sign + (n[1] * n[1]) * a, -n[1]}),
+        n * -sign
+    };
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis' X-direction from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float a = -1.f / (sign+n[2]);
+    const float b = n[0] * n[1] * a;
+
+    return math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]});
+}
+
+
+
+/*-------------------------------------
+ * Generate an Orthonormal Basis' Z-direction from a Normal Vector
+-------------------------------------*/
+inline LS_INLINE math::vec3 create_orthonormal_basis_z(const math::vec3& n) noexcept
+{
+    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    return n * -sign;
+}
+
+
+
+/*-------------------------------------
+ * 2D Rotation Matrix in a 3D Coordinate System
+-------------------------------------*/
+inline LS_INLINE math::mat3 rotate_axes_matrix(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
+{
+    const math::mat3& basis = create_orthonormal_basis(n);
+
+    #if TRI_PACK_FAST_SINCOS != 0
+        const math::vec2&& x = cos_sin(angleA);
+        const math::vec2&& y = cos_sin(angleB);
+        const math::vec2&& z = cos_sin(angleC);
+    #else
+        angleA *= (float)LS_TWO_PI;
+        angleB *= (float)LS_TWO_PI;
+        angleC *= (float)LS_TWO_PI;
+
+        const math::vec2&& x = math::vec2{std::cos(angleA), std::sin(angleA)};
+        const math::vec2&& y = math::vec2{std::cos(angleB), std::sin(angleB)};
+        const math::vec2&& z = math::vec2{std::cos(angleC), std::sin(angleC)};
+    #endif
+
+    const math::vec2&& bx = math::vec2_cast(basis[0]);
+    const math::vec2&& by = math::vec2_cast(basis[1]);
+    const math::vec2&& bz = math::vec2_cast(basis[2]);
+
+    // normalize?
+    return math::mat3{
+        math::vec3{math::dot(bx, x), math::dot(by, x), math::dot(bz, x)},
+        math::vec3{math::dot(bx, y), math::dot(by, y), math::dot(bz, y)},
+        math::vec3{math::dot(bx, z), math::dot(by, z), math::dot(bz, z)}
+    };
+}
+
+
+
+/*-------------------------------------
+ * Packed Triangle Decoding
+-------------------------------------*/
+inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
+{
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+
+    #if TRI_PACK_FAST_SINCOS != 0
+        const math::vec2&& x = cos_sin(angleA);
+        const math::vec2&& y = cos_sin(angleB);
+        const math::vec2&& z = cos_sin(angleC);
+
+    #else
+        const float ah = angleA * (float)LS_PI;
+        const float bh = angleB * (float)LS_PI;
+        const float ch = angleC * (float)LS_PI;
+
+        const math::vec2&& x = math::vec2{std::cos(ah), std::sin(ah)};
+        const math::vec2&& y = math::vec2{std::cos(bh), std::sin(bh)};
+        const math::vec2&& z = math::vec2{std::cos(ch), std::sin(ch)};
+    #endif
+
+    const math::quat&& basisA = math::quat_cast(n*x[1], x[0]);
+    const math::quat&& basisB = math::quat_cast(n*y[1], y[0]);
+    const math::quat&& basisC = math::quat_cast(n*z[1], z[0]);
+
+    return math::mat3{
+        math::rotate(basisX, basisA),
+        math::rotate(basisX, basisB),
+        math::rotate(basisX, basisC)
+    };
+}
+
+
+
+/*-----------------------------------------------------------------------------
  * Triangle Packing/Unpacking
 -----------------------------------------------------------------------------*/
 /*-------------------------------------
@@ -496,8 +458,7 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     const math::vec3&& basisX = create_orthonormal_basis_x(n);
 
     #if TRI_PACK_QUATERNION_ROTATIONS
-        const math::vec3&& basisZ = create_orthonormal_basis_z_inverted(n);
-        n = -basisZ;
+        const math::vec3& basisZ = -n;
     #else
         const math::vec3&& basisZ = create_orthonormal_basis_z(n);
         n = basisZ;
@@ -520,9 +481,9 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Ensure all angles are greater than 0 (see below for reasoning) and less
     // than or equal to 1. This way we ensure two bits in each angle variable
     // are available by exploiting the IEEE data format.
-    angleA /= LS_TWO_PI;
-    angleB /= LS_TWO_PI;
-    angleC /= LS_TWO_PI;
+    angleA /= (float)LS_TWO_PI;
+    angleB /= (float)LS_TWO_PI;
+    angleC /= (float)LS_TWO_PI;
 
     if (angleA < 0.f) { angleA += 1.f; }
     if (angleB < 0.f) { angleB += 1.f; }
@@ -785,25 +746,9 @@ int main()
         math::vec3{0.f, 0.f, 2.f} + math::vec3{1.f,   0.f,    1.f}
     );
 
-    //constexpr float rads = LS_DEG2RAD(30.f) / LS_PI;
-    const math::vec3 va{0.35f, 0.f, 0.65f};
-    const math::vec3 vb{0.f, 0.f, 1.f};
-    //const math::vec3 vc{1.f, 0.f, 0.f};
-    const math::vec3&& cab = math::cross(va, vb);
-    const float dab = math::dot(va, vb);
-    const math::quat&& theta = math::normalize(math::quat_cast(cab, dab + std::sqrt(dab*dab+math::length_squared(cab))));
-    const math::vec3&& thetaX = math::rotate(vb, theta);
-    const math::vec3&& thetaY = math::reorient(theta, vb);
-    const math::vec3&& thetaZ = math::reorient(vb, theta);
-    std::cout << "Quaternion Axis:   " << theta[0] << ", " << theta[1] << ", " << theta[2] << std::endl;
-    std::cout << "Quaternion X Axis: " << thetaX[0] << ", " << thetaX[1] << ", " << thetaX[2] << std::endl;
-    std::cout << "Quaternion Y Axis: " << thetaY[0] << ", " << thetaY[1] << ", " << thetaY[2] << std::endl;
-    std::cout << "Quaternion Z Axis: " << thetaZ[0] << ", " << thetaZ[1] << ", " << thetaZ[2] << std::endl;
-    //std::cout << math::dot(math::quat{0.f, 0.f, 0.f, 1.f}, math::normalize(math::quat{0.f, 0.f, 0.f, 1.f} * math::quat{0.f, theta, 0.f, 1.f})) << std::endl;
-
     // benchmark after validation test since some instructions might have been
     // placed into the CPU's instruction cache (found a 150ms performance win)
-    //benchmark_tri_packing(a, b, c);
+    benchmark_tri_packing(a, b, c);
 
     return 0;
 }

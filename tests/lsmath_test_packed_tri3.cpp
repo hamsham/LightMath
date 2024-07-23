@@ -1,8 +1,8 @@
 /*
- * File:   lsmath_test_packed_tri.cpp
+ * File:   lsmath_test_packed_tri3.cpp
  * Author: hammy
  *
- * Created on Jan 12, 2023 at 6:22 PM
+ * Created on Jul 22, 2023 at 6:22 PM
  */
 
 #include <chrono>
@@ -11,11 +11,6 @@
 #include "lightsky/math/mat_utils.h"
 #include "lightsky/math/vec_utils.h"
 #include "lightsky/math/quat_utils.h"
-
-// For this compression method, accuracy is far more important than speed
-#ifndef TRI_PACK_FAST_SINCOS
-    #define TRI_PACK_FAST_SINCOS 0
-#endif
 
 // Control accuracy vs performance with quaternions vs rotation matrices
 #ifndef TRI_PACK_NORMALIZE_ROTATIONS
@@ -32,10 +27,12 @@ namespace math = ls::math;
 struct alignas(alignof(uint64_t)*2) PackedTriangle
 {
     math::half distance;
-    math::half angleC;
-    math::vec2_t<math::half> dirA;
-    math::vec2_t<math::half> dirB;
     math::vec2_t<math::half> circumcenter;
+
+    math::vec2_t<math::half> normal;
+    math::half angleA;
+    math::half angleB;
+    math::half angleC;
 };
 
 static_assert(sizeof(PackedTriangle) == sizeof(uint64_t)*2, "Invalid size of packed triangle structure.");
@@ -360,15 +357,22 @@ inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noex
 /*-------------------------------------
  * Packed Triangle Decoding
 -------------------------------------*/
-inline LS_INLINE math::vec3 rotate_axes_quaternion(const math::vec3& n, const math::vec3& basisX, float angleC) noexcept
+inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float angleA, float angleB, float angleC) noexcept
 {
-    // Converting a quaternion from an axis-angle format requires using the
-    // half-angle between vectors. Multiply by Pi instead of 2Pi, flipping
-    // the sign bit to rotate towards the reconstructed vector.
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+    const float sinA = std::sqrt(1.f - angleA*angleA);
+    const float sinB = std::sqrt(1.f - angleB*angleB);
     const float sinC = std::sqrt(1.f - angleC*angleC);
+
+    const math::quat&& basisA = math::quat_cast(n*sinA, angleA);
+    const math::quat&& basisB = math::quat_cast(n*sinB, angleB);
     const math::quat&& basisC = math::quat_cast(n*sinC, angleC);
-    
-    return math::rotate(basisX, basisC);
+
+    return math::mat3{
+        math::reorient(basisX, basisA),
+        math::reorient(basisX, basisB),
+        math::reorient(basisX, basisC)
+    };
 }
 
 
@@ -399,12 +403,18 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // Although Spheremap-encoding is more expensive to encode/decode than
     // Octahedral normal encoding, it allows for a signed z-component.
     const math::vec2&& sh = spheremap_norm_encode(sn);
-    const math::vec2&& na = spheremap_norm_encode(as);
-    const math::vec2&& nb = spheremap_norm_encode(bs);
+
+    // Generate an orthonormal basis using the revised Frisvad method from Duff
+    // et. al:
+    // https://jcgt.org/published/0006/01/01/
+    const math::vec3&& basisX = create_orthonormal_basis_x(n);
+    const math::vec2&& m = spheremap_norm_encode(n);
 
     // Retrieve the angles to each vertex along the triangle's plane using our
-    // orthonormal basis
-    const float angleC = cos_atan2(math::dot(math::cross(as, cs), n), math::dot(cs, as));
+    // orthonormal basis.
+    const float angleA = cos_atan2(math::dot(math::cross(basisX, as), n), math::dot(as, basisX));
+    const float angleB = cos_atan2(math::dot(math::cross(basisX, bs), n), math::dot(bs, basisX));
+    const float angleC = cos_atan2(math::dot(math::cross(basisX, cs), n), math::dot(cs, basisX));
 
     // Force all values to be within the range of (0, 1), with the exception of
     // the distance to our triangle's circumcenter. Because all 8 values are
@@ -417,10 +427,11 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
     // needs 15 bits to be stored correctly.
     PackedTriangle result = {
         (math::half)d,
-        (math::half)math::saturate(angleC * 0.5f + 0.5f),
-        (math::vec2_t<math::half>)math::saturate(na * 0.5f + 0.5f),
-        (math::vec2_t<math::half>)math::saturate(nb * 0.5f + 0.5f),
-        (math::vec2_t<math::half>)math::saturate(sh * 0.5f + 0.5f)
+        (math::vec2_t<math::half>)math::saturate(sh * 0.5f + 0.5f),
+        (math::vec2_t<math::half>)math::saturate(m  * 0.5f + 0.5f),
+        (math::half)math::saturate(angleA * 0.5f + 0.5f),
+        (math::half)math::saturate(angleB * 0.5f + 0.5f),
+        (math::half)math::saturate(angleC * 0.5f + 0.5f)
     };
 
     // Encode the radius' 15 bits in our reclaimed spare bits
@@ -435,40 +446,36 @@ void test_tri_unpacking(PackedTriangle triData, math::vec3& a, math::vec3& b, ma
     // decode the distance to the triangle's circumcenter
     const float d = (float)triData.distance;
 
-    // Decode the angles from the circumcenter's orthonormal basis to each
-    // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
-    const float angleC = (float)triData.angleC * 2.f - 1.f;
-
-    const math::vec2&& na = (math::vec2)triData.dirA;
-    const math::vec2&& nb = (math::vec2)triData.dirB;
-
     // decode the direction to our triangle's circumcenter
-    const math::vec2&& sn = (math::vec2)triData.circumcenter;
-
-    #if TRI_PACK_NORMALIZE_ROTATIONS != 0
-        const math::vec3&& as = math::normalize(spheremap_norm_decode(na * 2.f - 1.f));
-        const math::vec3&& bs = math::normalize(spheremap_norm_decode(nb * 2.f - 1.f));
-        const math::vec3&& s  = math::normalize(spheremap_norm_decode(sn * 2.f - 1.f)) * d;
-    #else
-        const math::vec3&& as = spheremap_norm_decode(na * 2.f - 1.f);
-        const math::vec3&& bs = spheremap_norm_decode(nb * 2.f - 1.f);
-        const math::vec3&& s  = spheremap_norm_decode(sn * 2.f - 1.f) * d;
-    #endif
+    const math::vec2&& sn = (math::vec2)triData.circumcenter * 2.f - 1.f;
 
     // decode the triangle's face normal
-    const math::vec3&& n = math::normalize(math::cross(as, bs));
+    const math::vec2&& m = (math::vec2)triData.normal * 2.f - 1.f;
+
+    const math::vec3&& s = spheremap_norm_decode(sn) * d;
+    const math::vec3&& n = spheremap_norm_decode(m);
+
+    // Decode the angles from the circumcenter's orthonormal basis to each
+    // vertex. All angles are between 0 - 1, corresponding to 0 - 2pi
+    const float angleA = (float)triData.angleA * 2.f - 1.f;
+    const float angleB = (float)triData.angleB * 2.f - 1.f;
+    const float angleC = (float)triData.angleC * 2.f - 1.f;
 
     // Rebuild the orthonormal basis of our triangle using the same method
     // performed during encoding. This will give us a fairly accurate
     // reconstruction of each vertex.
-    const math::vec3&& cs = rotate_axes_quaternion(n, as, angleC);
+    math::mat3&& v = rotate_axes_quaternion(n, angleA, angleB, angleC);
+
+    #if TRI_PACK_NORMALIZE_ROTATIONS
+        v[0] = math::normalize(v[0]);
+        v[1] = math::normalize(v[1]);
+        v[2] = math::normalize(v[2]);
+    #endif
 
     // Expand the vertices to their original positions
-    // Expand the vertices to their original positions
-    a = as * r + s;
-    b = bs * r + s;
-    c = cs * r + s;
-
+    a = v[0] * r + s;
+    b = v[1] * r + s;
+    c = v[2] * r + s;
 }
 
 
