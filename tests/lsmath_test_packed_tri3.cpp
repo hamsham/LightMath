@@ -309,15 +309,16 @@ inline float cos_atan2(float y, float x) noexcept
 {
     #if TRI_PACK_NORMALIZE_ROTATIONS != 0
         const math::vec2&& point = math::normalize(math::vec2{x, y});
-    #else
-        const math::vec2&& point = math::vec2{x, y};
+        x = point[0];
+        y = point[1];
     #endif
 
-    const float x2 = point[0] * point[0];
-    const float y2 = point[1] * point[1];
+    const float sign = y < 0.f ? -1.f : 1.f;
+    const float x2 = x*x;
+    const float y2 = y*y;
     const float l2 = x2+y2;
-    const float z = std::sqrt(l2) + point[0];
-    return std::copysign(1.f / std::sqrt(1.f + (y2/(z*z))), point[1]);
+    const float z = std::sqrt(l2) + x;
+    return sign * math::inversesqrt(1.f + (y2 * math::rcp(z*z)));
 }
 
 
@@ -369,9 +370,9 @@ inline LS_INLINE math::mat3 rotate_axes_quaternion(const math::vec3& n, float an
     const math::quat&& basisC = math::quat_cast(n*sinC, angleC);
 
     return math::mat3{
-        math::reorient(basisX, basisA),
-        math::reorient(basisX, basisB),
-        math::reorient(basisX, basisC)
+        math::rotate(basisX, basisA),
+        math::rotate(basisX, basisB),
+        math::rotate(basisX, basisC)
     };
 }
 
