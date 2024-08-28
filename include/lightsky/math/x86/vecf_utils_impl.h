@@ -338,6 +338,16 @@ inline LS_INLINE vec4_t<float> sign(const vec4_t<float>& x) noexcept
 }
 
 /*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+inline LS_INLINE vec4_t<float> copysign(const vec4_t<float>& n, const vec4_t<float>& s) noexcept
+{
+    const __m128 a = _mm_and_ps(_mm_castsi128_ps(_mm_set1_epi32(0x80000000)), s.simd);
+    const __m128 b = _mm_and_ps(_mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF)), n.simd);
+    return vec4_t<float>{_mm_or_ps(a, b)};
+}
+
+/*-------------------------------------
     4D floor
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> floor(const vec4_t<float>& v) noexcept

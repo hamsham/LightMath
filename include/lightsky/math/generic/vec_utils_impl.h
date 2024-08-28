@@ -271,6 +271,18 @@ math::vec2_t<N> math::sign(const vec2_t <N>& x) noexcept
 }
 
 /*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec2_t<N> math::copysign(const vec2_t<N>& n, const vec2_t<N>& s) noexcept
+{
+    return math::vec2_t<N>{
+        math::copysign(n[0], s[0]),
+        math::copysign(n[1], s[1])
+    };
+}
+
+/*-------------------------------------
     2D floor
 -------------------------------------*/
 template <typename num_t> constexpr LS_INLINE
@@ -741,6 +753,19 @@ math::vec3_t<N> math::sign(const vec3_t <N>& x) noexcept
 }
 
 /*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec3_t<N> math::copysign(const vec3_t<N>& n, const vec3_t<N>& s) noexcept
+{
+    return math::vec3_t<N>{
+        math::copysign(n[0], s[0]),
+        math::copysign(n[1], s[1]),
+        math::copysign(n[2], s[2])
+    };
+}
+
+/*-------------------------------------
     3D floor
 -------------------------------------*/
 template <typename num_t> constexpr LS_INLINE
@@ -1186,6 +1211,20 @@ math::vec4_t<N> math::sign(const vec4_t <N>& x) noexcept
         math::sign(x.v[1]),
         math::sign(x.v[2]),
         math::sign(x.v[3])
+    };
+}
+
+/*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+template <typename N> constexpr LS_INLINE
+math::vec4_t<N> math::copysign(const vec4_t<N>& n, const vec4_t<N>& s) noexcept
+{
+    return math::vec4_t<N>{
+        math::copysign(n[0], s[0]),
+        math::copysign(n[1], s[1]),
+        math::copysign(n[2], s[2]),
+        math::copysign(n[3], s[3])
     };
 }
 

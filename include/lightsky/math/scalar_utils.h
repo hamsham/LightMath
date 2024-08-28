@@ -852,6 +852,21 @@ template <typename data_t>
 constexpr data_t sign(data_t x) noexcept;
 
 /**
+ * @brief Copy the sign of one value into another.
+ *
+ * @tparam data_t
+ * A signed arithmetic data type.
+ *
+ * @param n
+ *
+ * @param s
+ *
+ * @return A value with the magnitude of \p n and the sign of \p s.
+ */
+template <typename data_t>
+constexpr data_t copysign(data_t n, data_t s) noexcept;
+
+/**
  * @brief Retrieve the absolute value of a number
  *
  * @param x

@@ -1138,6 +1138,17 @@ constexpr LS_INLINE data_t math::sign(data_t x) noexcept
 
 
 /*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+template <typename data_t>
+constexpr LS_INLINE data_t math::copysign(data_t n, data_t s) noexcept
+{
+    return (s < data_t{0}) ? -math::abs(n) : math::abs(n);
+}
+
+
+
+/*-------------------------------------
     Absolute Value
 -------------------------------------*/
 namespace math

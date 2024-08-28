@@ -265,6 +265,18 @@ inline LS_INLINE float sign(float x) noexcept
 
 
 /*-------------------------------------
+    Create a value with the magnitude of n and sign of s
+-------------------------------------*/
+inline LS_INLINE float copysign(float n, float s) noexcept
+{
+    const __m128 a = _mm_and_ps(_mm_castsi128_ps(_mm_set1_epi32(0x80000000)), _mm_set_ss(s));
+    const __m128 b = _mm_and_ps(_mm_castsi128_ps(_mm_set1_epi32(0x7FFFFFFF)), _mm_set_ss(n));
+    return _mm_cvtss_f32(_mm_or_ps(a, b));
+}
+
+
+
+/*-------------------------------------
     abs
 -------------------------------------*/
 inline LS_INLINE float abs(float x) noexcept

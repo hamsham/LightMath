@@ -346,6 +346,21 @@ template <typename N> constexpr
 vec2_t<N> sign(const vec2_t<N>& x) noexcept;
 
 /**
+ * @brief Copy the sign of one value into another.
+ *
+ * @tparam data_t
+ * A signed arithmetic data type.
+ *
+ * @param n
+ *
+ * @param s
+ *
+ * @return A value with the magnitude of \p n and the sign of \p s.
+ */
+template <typename N> constexpr
+vec2_t<N> copysign(const vec2_t<N>& n, const vec2_t<N>& s) noexcept;
+
+/**
  *  @brief floor
  *
  *  Calculate the floating-point floor of all vector elements.
@@ -869,6 +884,21 @@ template <typename N> constexpr
 vec3_t<N> sign(const vec3_t<N>& x) noexcept;
 
 /**
+ * @brief Copy the sign of one value into another.
+ *
+ * @tparam data_t
+ * A signed arithmetic data type.
+ *
+ * @param n
+ *
+ * @param s
+ *
+ * @return A value with the magnitude of \p n and the sign of \p s.
+ */
+template <typename N> constexpr
+vec3_t<N> copysign(const vec3_t<N>& n, const vec3_t<N>& s) noexcept;
+
+/**
  *  @brief floor
  *
  *  Calculate the floating-point floor of all vector elements.
@@ -1351,6 +1381,21 @@ int sign_mask(const vec4_t<N>& x) noexcept;
  */
 template <typename N> constexpr
 vec4_t<N> sign(const vec4_t<N>& x) noexcept;
+
+/**
+ * @brief Copy the sign of one value into another.
+ *
+ * @tparam data_t
+ * A signed arithmetic data type.
+ *
+ * @param n
+ *
+ * @param s
+ *
+ * @return A value with the magnitude of \p n and the sign of \p s.
+ */
+template <typename N> constexpr
+vec4_t<N> copysign(const vec4_t<N>& n, const vec4_t<N>& s) noexcept;
 
 /**
  *  @brief floor
