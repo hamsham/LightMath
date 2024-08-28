@@ -317,7 +317,7 @@ inline LS_INLINE math::vec2 cos_sin(float x) noexcept
 -------------------------------------*/
 inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexcept
 {
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float sign = math::copysign(1.f, n[2]);
     const float a = -1.f / (sign+n[2]);
     const float b = n[0] * n[1] * a;
 
@@ -335,11 +335,11 @@ inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexce
 -------------------------------------*/
 inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
 {
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
+    const float sign = math::copysign(1.f, n[2]);
     const float a = -1.f / (sign+n[2]);
     const float b = n[0] * n[1] * a;
 
-    return math::normalize(math::vec3{1.f + sign * (n[0] * n[0]) * a, sign * b, -sign * n[0]});
+    return math::normalize(math::vec3{1.f + (n[0] * n[0]) * a, b, -sign * n[0]});
 }
 
 
@@ -349,8 +349,7 @@ inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noex
 -------------------------------------*/
 inline LS_INLINE math::vec3 create_orthonormal_basis_z(const math::vec3& n) noexcept
 {
-    const float sign = n[2] < 0.f ? -1.f : 1.f;
-    return n * -sign;
+    return math::copysign(n, math::vec3{n[2]});
 }
 
 
@@ -506,11 +505,11 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
         << '\n' << std::endl;
     */
 
-    // Force all values to be within the range of (0, 1), with the exception of
-    // the distance to our triangle's circumcenter. Because all 8 values are
-    // IEEE 16-bit half-precision floats we can exploit the highest 2 bits* of
-    // each variable (for a total of 15 reclaimed bits) to encode the
-    // circumcenter's radius without the explicit need for extra storage.
+    // Force all values to be within the range of (0, 1), except for the
+    // distance to our triangle's circumcenter. Because all 8 values are IEEE
+    // 16-bit half-precision floats we can exploit the highest 2 bits* of each
+    // variable (for a total of 15 reclaimed bits) to encode the circumcenter's
+    // radius without the explicit need for extra storage.
     //
     // *The circumcenter's distance is unbounded above zero, so we may only use
     // the sign-bit. This is fine as the radius is always positive and only
@@ -625,7 +624,7 @@ void test_tri_circumcenter(const math::vec3& a, const math::vec3 b, const math::
     float r = circumcenter(a, b, c, s, n);
 
     std::cout
-        << "Curcumcenter:"
+        << "Circumcenter:"
         << "\n\tV0:     {" << a[0] << ", " << a[1] << ", " << a[2] << '}'
         << "\n\tV1:     {" << b[0] << ", " << b[1] << ", " << b[2] << '}'
         << "\n\tV2:     {" << c[0] << ", " << c[1] << ", " << c[2] << '}'
