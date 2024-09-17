@@ -111,14 +111,14 @@ inline PackedTriangle encode_tri_radius(const PackedTriangle& tri, const math::h
 
     #if !defined(LS_X86_BMI2)
         PackedTriangle result;
-        result.distance        = insert_sign_bit<0>(tri.distance,              radius);
-        result.angleC          = encode_2_bits_in_float<1>(tri.angleC,         radius);
-        result.dirA[0]         = encode_2_bits_in_float<3>(tri.dirA[0],         radius);
-        result.dirA[1]         = encode_2_bits_in_float<5>(tri.dirA[1],         radius);
-        result.dirB[0]         = encode_2_bits_in_float<7>(tri.dirB[0],         radius);
-        result.dirB[1]         = encode_2_bits_in_float<9>(tri.dirB[1],        radius);
-        result.circumcenter[0] = encode_2_bits_in_float<11>(tri.circumcenter[0], radius);
-        result.circumcenter[1] = encode_2_bits_in_float<13>(tri.circumcenter[1], radius);
+        result.distance        = insert_sign_bit<0>(tri.distance,               radius);
+        result.circumcenter[0] = encode_2_bits_in_float<1>(tri.circumcenter[0], radius);
+        result.circumcenter[1] = encode_2_bits_in_float<3>(tri.circumcenter[1], radius);
+        result.normal[0]       = encode_2_bits_in_float<5>(tri.normal[0],       radius);
+        result.normal[1]       = encode_2_bits_in_float<7>(tri.normal[1],       radius);
+        result.angleA          = encode_2_bits_in_float<9>(tri.angleA,          radius);
+        result.angleB          = encode_2_bits_in_float<11>(tri.angleB,         radius);
+        result.angleC          = encode_2_bits_in_float<13>(tri.angleC,         radius);
 
     #else
         PackedTriangle result = tri;
@@ -147,13 +147,13 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
 
     #if !defined(LS_X86_BMI2)
         result.bits |= extract_sign_bit<0>(tri.distance);
-        result.bits |= decode_2_bits_in_float<1>(tri.angleC);
-        result.bits |= decode_2_bits_in_float<3>(tri.dirA[0]);
-        result.bits |= decode_2_bits_in_float<5>(tri.dirA[1]);
-        result.bits |= decode_2_bits_in_float<7>(tri.dirB[0]);
-        result.bits |= decode_2_bits_in_float<9>(tri.dirB[1]);
-        result.bits |= decode_2_bits_in_float<11>(tri.circumcenter[0]);
-        result.bits |= decode_2_bits_in_float<13>(tri.circumcenter[1]);
+        result.bits |= decode_2_bits_in_float<1>(tri.circumcenter[0]);
+        result.bits |= decode_2_bits_in_float<3>(tri.circumcenter[1]);
+        result.bits |= decode_2_bits_in_float<5>(tri.normal[0]);
+        result.bits |= decode_2_bits_in_float<7>(tri.normal[1]);
+        result.bits |= decode_2_bits_in_float<9>(tri.angleA);
+        result.bits |= decode_2_bits_in_float<11>(tri.angleB);
+        result.bits |= decode_2_bits_in_float<13>(tri.angleC);
 
     #else
     {
@@ -170,13 +170,13 @@ inline math::half decode_tri_radius(PackedTriangle& tri) noexcept
     #if 0
         // Reset the highest 2 bits of each IEEE half-float
         tri.distance.bits        &= 0x7FFF; // only reset the sign bit here
-        tri.angleC.bits          &= 0x3FFF;
-        tri.dirA[0].bits         &= 0x3FFF;
-        tri.dirA[1].bits         &= 0x3FFF;
-        tri.dirB[0].bits         &= 0x3FFF;
-        tri.dirB[1].bits         &= 0x3FFF;
         tri.circumcenter[0].bits &= 0x3FFF;
         tri.circumcenter[1].bits &= 0x3FFF;
+        tri.normal[0].bits       &= 0x3FFF;
+        tri.normal[1].bits       &= 0x3FFF;
+        tri.angleA.bits          &= 0x3FFF;
+        tri.angleB.bits          &= 0x3FFF;
+        tri.angleC.bits          &= 0x3FFF;
 
     #else
     {
@@ -336,8 +336,8 @@ inline LS_INLINE math::mat3 create_orthonormal_basis(const math::vec3& n) noexce
 inline LS_INLINE math::vec3 create_orthonormal_basis_x(const math::vec3& n) noexcept
 {
     const float sign = math::copysign(1.f, n[2]);
-    const float a = -1.f / (sign+n[2]);
-    const float b = n[0] * n[1] * a;
+    const float a = -sign * math::rcp(sign+n[2]);
+    const float b = (n[0] * n[1]) * a;
 
     return math::normalize(math::vec3{1.f + (n[0] * n[0]) * a, b, -sign * n[0]});
 }
