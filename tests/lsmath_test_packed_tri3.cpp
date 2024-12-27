@@ -413,9 +413,24 @@ void test_tri_packing(const math::vec3& a, const math::vec3& b, const math::vec3
 
     // Retrieve the angles to each vertex along the triangle's plane using our
     // orthonormal basis.
-    const float angleA = cos_atan2(math::dot(math::cross(basisX, as), n), math::dot(as, basisX));
-    const float angleB = cos_atan2(math::dot(math::cross(basisX, bs), n), math::dot(bs, basisX));
-    const float angleC = cos_atan2(math::dot(math::cross(basisX, cs), n), math::dot(cs, basisX));
+    float angleA, angleB, angleC;
+    {
+        const math::vec3&& axx = math::cross(basisX, as);
+        const math::vec3&& bxx = math::cross(basisX, bs);
+        const math::vec3&& cxx = math::cross(basisX, cs);
+
+        const float axn = math::dot(axx, n);
+        const float bxn = math::dot(bxx, n);
+        const float cxn = math::dot(cxx, n);
+
+        const float adx = math::dot(basisX, as);
+        const float bdx = math::dot(basisX, bs);
+        const float cdx = math::dot(basisX, cs);
+
+        angleA = cos_atan2(axn, adx);
+        angleB = cos_atan2(bxn, bdx);
+        angleC = cos_atan2(cxn, cdx);
+    }
 
     // Force all values to be within the range of (0, 1), except for the
     // distance to our triangle's circumcenter. Because all 8 values are IEEE
@@ -592,25 +607,23 @@ void benchmark_tri_packing(const math::vec3& a, const math::vec3 b, const math::
     typedef std::chrono::duration<long double, std::milli> system_duration;
 
     std::cout << "Benchmarking triangle packing..." << std::endl;
-    system_duration execTime{0};
     PackedTriangle triData{};
     math::vec3 x;
     math::vec3 y;
     math::vec3 z;
 
+    const system_time_point&& startTime = std::chrono::system_clock::now();
     for (unsigned i = 0; i < 10000000u; ++i)
     {
         x = a;
         y = b;
         z = c;
 
-        const system_time_point&& startTime = std::chrono::system_clock::now();
-
         test_tri_packing(x, y, z, triData);
         test_tri_unpacking(triData, x, y, z);
-
-        execTime += system_duration{std::chrono::system_clock::now() - startTime};
     }
+
+    const system_duration&& execTime = system_duration{std::chrono::system_clock::now() - startTime};
     std::cout << "\tDone. Test completed in " << execTime.count() << "ms." << std::endl;
 }
 

@@ -274,7 +274,7 @@ inline LS_INLINE vec4_t<float> clamp(const vec4_t<float>& v, const vec4_t<float>
 -------------------------------------*/
 inline LS_INLINE vec4_t<float> saturate(const vec4_t<float>& v) noexcept
 {
-    return vec4_t<float>{_mm_min_ps(_mm_set1_ps(1.f), _mm_max_ps(v.simd, _mm_xor_ps(v.simd, v.simd)))};
+    return vec4_t<float>{_mm_min_ps(_mm_and_ps(v.simd, _mm_castsi128_ps(_mm_set1_epi32(0x3FFFFFFF))), _mm_set1_ps(1.f))};
 }
 
 /*-------------------------------------

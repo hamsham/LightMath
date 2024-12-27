@@ -97,8 +97,8 @@ inline LS_INLINE float clamp(float n, float minVal, float maxVal) noexcept
 -------------------------------------*/
 inline LS_INLINE float saturate(float n) noexcept
 {
-    const __m128 s = _mm_set1_ps(n);
-    return _mm_cvtss_f32(_mm_max_ss(_mm_min_ss(s, _mm_set_ss(1.f)), _mm_xor_ps(s, s)));
+    const __m128 s = _mm_set_ss(n);
+    return _mm_cvtss_f32(_mm_min_ss(_mm_and_ps(s, _mm_castsi128_ps(_mm_set1_epi32(0x3FFFFFFF))), _mm_set_ss(1.f)));
 }
 
 

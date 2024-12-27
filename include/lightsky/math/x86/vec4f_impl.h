@@ -348,9 +348,9 @@ template <>
 inline LS_INLINE vec4_t<float>::operator vec4_t<half>() const
 {
     #if defined(LS_COMPILER_MSC)
-        const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_ZERO);
+        const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_NEAREST_INT);
     #else
-        const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_ZERO | _MM_FROUND_NO_EXC);
+        const __m128i data = _mm_cvtps_ph(simd, _MM_FROUND_TO_NEAREST_INT | _MM_FROUND_NO_EXC);
     #endif
 
     vec4_t<half> ret;
