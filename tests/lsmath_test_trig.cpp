@@ -7,7 +7,7 @@
 
 // Un-vectorized from v_sincos(), in:
 // https://github.com/GaijinEntertainment/vecmath/blob/master/dag_vecMath_trig.h
-// BSD license as of Jun 11, 2025
+// Under BSD license as of Jun 11, 2025
 void math_sincos(float theta, float& s, float& c) noexcept
 {
     float xl;
